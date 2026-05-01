@@ -1,4 +1,4 @@
-# WeRent backend
+# mamabear-backend
 
 ## Endpoints
 
@@ -39,4 +39,3 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
-# mamabear-backend
