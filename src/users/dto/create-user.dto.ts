@@ -1,4 +1,4 @@
-import { Role } from "@prisma/client"
+import { Role } from "@/generated/prisma"
 import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator"
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
 
