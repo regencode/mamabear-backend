@@ -1,6 +1,6 @@
 # MamaBear API Contract
 
-Base URL: `http://localhost:3000`
+Base URL: `mamabear-backend-production.up.railway.app`
 
 ## Shared Types
 
