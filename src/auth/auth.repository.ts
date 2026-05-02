@@ -12,6 +12,12 @@ export class AuthRepository {
     });
   }
 
+  findUserById(id: string) {
+    return this.prisma.user.findFirst({
+      where: { id },
+    });
+  }
+
   findUserByVerificationToken(token: string) {
     return this.prisma.user.findFirst({
       where: {

@@ -1341,6 +1341,8 @@ export namespace Prisma {
     verificationTokenExpiry: Date | null
     resetToken: string | null
     resetTokenExpiry: Date | null
+    refreshToken: string | null
+    refreshTokenExpiry: Date | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -1357,6 +1359,8 @@ export namespace Prisma {
     verificationTokenExpiry: Date | null
     resetToken: string | null
     resetTokenExpiry: Date | null
+    refreshToken: string | null
+    refreshTokenExpiry: Date | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -1373,6 +1377,8 @@ export namespace Prisma {
     verificationTokenExpiry: number
     resetToken: number
     resetTokenExpiry: number
+    refreshToken: number
+    refreshTokenExpiry: number
     _all: number
   }
 
@@ -1391,6 +1397,8 @@ export namespace Prisma {
     verificationTokenExpiry?: true
     resetToken?: true
     resetTokenExpiry?: true
+    refreshToken?: true
+    refreshTokenExpiry?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -1407,6 +1415,8 @@ export namespace Prisma {
     verificationTokenExpiry?: true
     resetToken?: true
     resetTokenExpiry?: true
+    refreshToken?: true
+    refreshTokenExpiry?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -1423,6 +1433,8 @@ export namespace Prisma {
     verificationTokenExpiry?: true
     resetToken?: true
     resetTokenExpiry?: true
+    refreshToken?: true
+    refreshTokenExpiry?: true
     _all?: true
   }
 
@@ -1512,6 +1524,8 @@ export namespace Prisma {
     verificationTokenExpiry: Date | null
     resetToken: string | null
     resetTokenExpiry: Date | null
+    refreshToken: string | null
+    refreshTokenExpiry: Date | null
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -1545,6 +1559,8 @@ export namespace Prisma {
     verificationTokenExpiry?: boolean
     resetToken?: boolean
     resetTokenExpiry?: boolean
+    refreshToken?: boolean
+    refreshTokenExpiry?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1561,6 +1577,8 @@ export namespace Prisma {
     verificationTokenExpiry?: boolean
     resetToken?: boolean
     resetTokenExpiry?: boolean
+    refreshToken?: boolean
+    refreshTokenExpiry?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1577,6 +1595,8 @@ export namespace Prisma {
     verificationTokenExpiry?: boolean
     resetToken?: boolean
     resetTokenExpiry?: boolean
+    refreshToken?: boolean
+    refreshTokenExpiry?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -1593,9 +1613,11 @@ export namespace Prisma {
     verificationTokenExpiry?: boolean
     resetToken?: boolean
     resetTokenExpiry?: boolean
+    refreshToken?: boolean
+    refreshTokenExpiry?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "hashedPassword" | "name" | "phone" | "role" | "createdAt" | "updatedAt" | "isVerified" | "verificationToken" | "verificationTokenExpiry" | "resetToken" | "resetTokenExpiry", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "hashedPassword" | "name" | "phone" | "role" | "createdAt" | "updatedAt" | "isVerified" | "verificationToken" | "verificationTokenExpiry" | "resetToken" | "resetTokenExpiry" | "refreshToken" | "refreshTokenExpiry", ExtArgs["result"]["user"]>
 
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
@@ -1614,6 +1636,8 @@ export namespace Prisma {
       verificationTokenExpiry: Date | null
       resetToken: string | null
       resetTokenExpiry: Date | null
+      refreshToken: string | null
+      refreshTokenExpiry: Date | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -2050,6 +2074,8 @@ export namespace Prisma {
     readonly verificationTokenExpiry: FieldRef<"User", 'DateTime'>
     readonly resetToken: FieldRef<"User", 'String'>
     readonly resetTokenExpiry: FieldRef<"User", 'DateTime'>
+    readonly refreshToken: FieldRef<"User", 'String'>
+    readonly refreshTokenExpiry: FieldRef<"User", 'DateTime'>
   }
     
 
@@ -7013,7 +7039,9 @@ export namespace Prisma {
     verificationToken: 'verificationToken',
     verificationTokenExpiry: 'verificationTokenExpiry',
     resetToken: 'resetToken',
-    resetTokenExpiry: 'resetTokenExpiry'
+    resetTokenExpiry: 'resetTokenExpiry',
+    refreshToken: 'refreshToken',
+    refreshTokenExpiry: 'refreshTokenExpiry'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -7207,6 +7235,8 @@ export namespace Prisma {
     verificationTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
     resetToken?: StringNullableFilter<"User"> | string | null
     resetTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
+    refreshToken?: StringNullableFilter<"User"> | string | null
+    refreshTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
   }
 
   export type UserOrderByWithRelationInput = {
@@ -7223,6 +7253,8 @@ export namespace Prisma {
     verificationTokenExpiry?: SortOrderInput | SortOrder
     resetToken?: SortOrderInput | SortOrder
     resetTokenExpiry?: SortOrderInput | SortOrder
+    refreshToken?: SortOrderInput | SortOrder
+    refreshTokenExpiry?: SortOrderInput | SortOrder
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -7242,6 +7274,8 @@ export namespace Prisma {
     verificationTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
     resetToken?: StringNullableFilter<"User"> | string | null
     resetTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
+    refreshToken?: StringNullableFilter<"User"> | string | null
+    refreshTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -7258,6 +7292,8 @@ export namespace Prisma {
     verificationTokenExpiry?: SortOrderInput | SortOrder
     resetToken?: SortOrderInput | SortOrder
     resetTokenExpiry?: SortOrderInput | SortOrder
+    refreshToken?: SortOrderInput | SortOrder
+    refreshTokenExpiry?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -7280,6 +7316,8 @@ export namespace Prisma {
     verificationTokenExpiry?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     resetToken?: StringNullableWithAggregatesFilter<"User"> | string | null
     resetTokenExpiry?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    refreshToken?: StringNullableWithAggregatesFilter<"User"> | string | null
+    refreshTokenExpiry?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   }
 
   export type ProductWhereInput = {
@@ -7550,6 +7588,8 @@ export namespace Prisma {
     verificationTokenExpiry?: Date | string | null
     resetToken?: string | null
     resetTokenExpiry?: Date | string | null
+    refreshToken?: string | null
+    refreshTokenExpiry?: Date | string | null
   }
 
   export type UserUncheckedCreateInput = {
@@ -7566,6 +7606,8 @@ export namespace Prisma {
     verificationTokenExpiry?: Date | string | null
     resetToken?: string | null
     resetTokenExpiry?: Date | string | null
+    refreshToken?: string | null
+    refreshTokenExpiry?: Date | string | null
   }
 
   export type UserUpdateInput = {
@@ -7582,6 +7624,8 @@ export namespace Prisma {
     verificationTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    refreshTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type UserUncheckedUpdateInput = {
@@ -7598,6 +7642,8 @@ export namespace Prisma {
     verificationTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    refreshTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type UserCreateManyInput = {
@@ -7614,6 +7660,8 @@ export namespace Prisma {
     verificationTokenExpiry?: Date | string | null
     resetToken?: string | null
     resetTokenExpiry?: Date | string | null
+    refreshToken?: string | null
+    refreshTokenExpiry?: Date | string | null
   }
 
   export type UserUpdateManyMutationInput = {
@@ -7630,6 +7678,8 @@ export namespace Prisma {
     verificationTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    refreshTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -7646,6 +7696,8 @@ export namespace Prisma {
     verificationTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    refreshTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ProductCreateInput = {
@@ -7992,6 +8044,8 @@ export namespace Prisma {
     verificationTokenExpiry?: SortOrder
     resetToken?: SortOrder
     resetTokenExpiry?: SortOrder
+    refreshToken?: SortOrder
+    refreshTokenExpiry?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -8008,6 +8062,8 @@ export namespace Prisma {
     verificationTokenExpiry?: SortOrder
     resetToken?: SortOrder
     resetTokenExpiry?: SortOrder
+    refreshToken?: SortOrder
+    refreshTokenExpiry?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -8024,6 +8080,8 @@ export namespace Prisma {
     verificationTokenExpiry?: SortOrder
     resetToken?: SortOrder
     resetTokenExpiry?: SortOrder
+    refreshToken?: SortOrder
+    refreshTokenExpiry?: SortOrder
   }
 
   export type UuidWithAggregatesFilter<$PrismaModel = never> = {

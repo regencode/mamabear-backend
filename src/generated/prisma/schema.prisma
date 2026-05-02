@@ -28,6 +28,9 @@ model User {
 
   resetToken       String?
   resetTokenExpiry DateTime?
+
+  refreshToken       String?
+  refreshTokenExpiry DateTime?
 }
 
 model Product {

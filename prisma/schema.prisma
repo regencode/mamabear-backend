@@ -27,7 +27,10 @@ model User {
     verificationTokenExpiry  DateTime?  
 
     resetToken               String?    
-    resetTokenExpiry         DateTime?  
+    resetTokenExpiry         DateTime? 
+
+    refreshToken String?
+    refreshTokenExpiry DateTime? 
 }
 
 model Product {
