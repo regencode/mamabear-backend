@@ -79,100 +79,23 @@ Base URL: `http://localhost:3000`
 
 ### POST /auth/logout
 
-**Request** — no body
-
-**Response** `200`
-
-```json
-{
-  "message": "string"
-}
-```
-
----
+Coming soon!
 
 ### POST /auth/refresh
 
-**Request**
-
-```json
-{
-  "refreshToken": "string (JWT)"
-}
-```
-
-**Response** `200`
-
-```json
-{
-  "access_token": "string (JWT)",
-  "refresh_token": "string (JWT)"
-}
-```
-
----
+Coming soon!
 
 ### POST /auth/forgot-password
 
-**Request**
+Coming soon!
 
-```json
-{
-  "email": "string (valid email)"
-}
-```
+### POST /auth/reset-password/:access_token
 
-**Response** `200`
-
-```json
-{
-  "message": "string"
-}
-```
-
----
-
-### POST /auth/reset-password/:token
-
-**Request**
-
-| Param | Type   |
-|-------|--------|
-| token | string |
-
-```json
-{
-  "password": "string"
-}
-```
-
-**Response** `200`
-
-```json
-{
-  "message": "string"
-}
-```
-
----
+Coming soon!
 
 ### GET /auth/verify-email/:token
 
-**Request** — no body
-
-| Param | Type   |
-|-------|--------|
-| token | string |
-
-**Response** `200`
-
-```json
-{
-  "message": "string"
-}
-```
-
----
+Coming soon!
 
 ## Users
 
