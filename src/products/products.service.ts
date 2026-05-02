@@ -1,26 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductsRepository } from './products.repository';
 
 @Injectable()
 export class ProductsService {
+  constructor(private readonly productsRepository: ProductsRepository) {}
+
   create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+    return this.productsRepository.create(createProductDto);
   }
 
   findAll() {
-    return `This action returns all products`;
+    return this.productsRepository.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: number) {
+    const product = await this.productsRepository.findById(id);
+    if (!product) {
+      throw new NotFoundException(`Product with id ${id} not found`);
+    }
+    return product;
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+    return this.productsRepository.update(id, updateProductDto);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} product`;
+    return this.productsRepository.delete(id);
   }
 }
