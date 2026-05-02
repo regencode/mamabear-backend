@@ -38,10 +38,10 @@ export class UsersRepository {
   }
 
   update(id: string, data: UpdateUserDto) {
-    const { password, ...rest } = data;
-    const updateData: Record<string, unknown> = { ...rest };
-    if (password !== undefined) {
-      updateData.hashedPassword = password;
+    const updateData: Record<string, unknown> = { ...data };
+    if ('password' in data && data.password !== undefined) {
+      delete updateData.password;
+      updateData.hashedPassword = data.password;
     }
     return this.prisma.user.update({
       where: { id },
