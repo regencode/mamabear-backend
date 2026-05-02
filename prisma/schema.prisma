@@ -12,7 +12,7 @@ enum Role {
 }
 
 model User {
-    id         Int        @id    @default(autoincrement())
+    id         String @id    @default(dbgenerated("gen_random_uuid()")) @db.Uuid
     email      String     @unique          
     password   String                      
     name       String                      
