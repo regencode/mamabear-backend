@@ -12,4 +12,21 @@ export class AuthController {
   
   @Post("/register")
   register(dto: RegisterUserDto) {}
+
+  @Post("/logout")
+  logout() {}
+
+  @Post("/refresh")
+  refresh() {}
+
+  @Post("/forgot-password")
+  forgotPassword() {}
+    
+  @Post("/reset-password/:token")
+  resetPassword(@Param("token") token: string) {
+  }
+
+  @Get("/verify-email/:token")
+  verifyEmail(@Param("token") token: string) {
+  }
 }
