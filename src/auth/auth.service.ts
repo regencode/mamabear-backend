@@ -84,7 +84,8 @@ export class AuthService {
     });
     console.log('USER:', user);
 
-    this.mailService.sendVerificationEmail(dto.email, verificationToken);
+    // Later when application is production ready
+    // this.mailService.sendVerificationEmail(dto.email, verificationToken);
 
     return {
       message: 'Register success, check your email to verify',
