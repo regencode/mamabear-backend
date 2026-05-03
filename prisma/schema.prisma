@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -12,12 +13,12 @@ enum Role {
 }
 
 model User {
-    id         String @id    @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+    id         String     @id    @default(dbgenerated("gen_random_uuid()")) @db.Uuid
     email      String     @unique          
-    password   String                      
+    hashedPassword   String                      
     name       String                      
     phone      String                      
-    role       Role                        
+    role       Role       @default(USER)                        
     createdAt  DateTime   @default(now())  
     updatedAt  DateTime?                   
     
@@ -26,7 +27,10 @@ model User {
     verificationTokenExpiry  DateTime?  
 
     resetToken               String?    
-    resetTokenExpiry         DateTime?  
+    resetTokenExpiry         DateTime? 
+
+    refreshToken String?
+    refreshTokenExpiry DateTime? 
 }
 
 model Product {
