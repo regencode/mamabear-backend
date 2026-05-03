@@ -64,14 +64,8 @@ Base URL: `mamabear-backend-production.up.railway.app`
 
 ```json
 {
-  "id": "string (UUID)",
-  "email": "string",
-  "name": "string",
-  "phone": "string",
-  "role": "USER",
-  "isVerified": false,
-  "createdAt": "string (ISO 8601 datetime)",
-  "updatedAt": "string (ISO 8601 datetime) | null"
+    "message": "string",
+    "verificationToken": "string"
 }
 ```
 
