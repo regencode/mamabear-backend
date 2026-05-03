@@ -10,6 +10,8 @@ import * as crypto from 'crypto';
 import { AuthRepository } from './auth.repository';
 import { MailService } from './mail.service';
 import { JwtService } from '@nestjs/jwt';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -138,6 +140,10 @@ export class AuthService {
     }
 
     if (!user.refreshTokenExpiry || user.refreshTokenExpiry < new Date()) {
+      await this.repo.update(
+        { id: user.id },
+        { refreshToken: null, refreshTokenExpiry: null },
+      );
       throw new UnauthorizedException('Refresh token expired');
     }
 
@@ -174,6 +180,69 @@ export class AuthService {
 
     return {
       message: 'Logout success',
+    };
+  }
+
+  async forgotPassord(dto: ForgotPasswordDto) {
+    const user = await this.repo.findEmail(dto.email);
+
+    if (!user) throw new BadRequestException('User not found');
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    const resetTokenExpiry = new Date(Date.now() + 1000 * 60 * 15);
+
+    await this.repo.update(
+      { id: user.id },
+      {
+        resetToken,
+        resetTokenExpiry,
+      },
+    );
+
+    await this.mailService.sendForgotPasswordPasswordMail(
+      dto.email,
+      resetToken,
+    );
+
+    return {
+      message: 'Check your email to reset password',
+    };
+  }
+
+  async resetPassword(token: string, dto: ResetPasswordDto) {
+    const user = await this.repo.findUserByResetToken(token);
+
+    if (!user) throw new BadRequestException('Invalid token');
+
+    if (!user.resetTokenExpiry || user.resetTokenExpiry < new Date()) {
+      await this.repo.update(
+        { id: user.id },
+        {
+          resetToken: null,
+          resetTokenExpiry: null,
+        },
+      );
+      throw new BadRequestException('Reset token expired');
+    }
+
+    const hashed = await bcrypt.hash(dto.password, 10);
+
+    await this.repo.update(
+      {
+        id: user.id,
+      },
+      {
+        hashedPassword: hashed,
+        refreshToken: null,
+        refreshTokenExpiry: null,
+        resetToken: null,
+        resetTokenExpiry: null,
+      },
+    );
+
+    return {
+      message: 'Password reset success',
     };
   }
 }
