@@ -3,9 +3,13 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { TransformInterceptor } from './common/interceptors/transformer.interceptor';
+import { HttpExceptionFilter } from './common/filters/exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useGlobalInterceptors(new TransformInterceptor());
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors({
       origin: process.env.CORS_ORIGIN,
       credentials: true,
@@ -19,7 +23,6 @@ async function bootstrap() {
           forbidNonWhitelisted: true,
       }),
   )
-
   const config = new DocumentBuilder()
     .setTitle('MamaBear API')
     .setDescription('MamaBear Backend API Documentation')
