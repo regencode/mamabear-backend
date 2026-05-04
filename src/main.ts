@@ -3,15 +3,17 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { Logger } from 'pino-nestjs';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { bufferLogs: true });
   app.enableCors({
       origin: process.env.CORS_ORIGIN,
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
       allowedHeaders: ['Content-Type', 'Authorization'],
   });
+  app.useLogger(app.get(Logger));
   app.useGlobalPipes(
       new ValidationPipe({
           transform: true,
@@ -24,6 +26,17 @@ async function bootstrap() {
     .setTitle('MamaBear API')
     .setDescription('MamaBear Backend API Documentation')
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JwtAuthGuard', // 🔑 This name must match the @ApiBearerAuth decorator
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
