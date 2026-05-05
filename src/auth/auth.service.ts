@@ -183,7 +183,7 @@ export class AuthService {
     };
   }
 
-  async forgotPassord(dto: ForgotPasswordDto) {
+  async forgotPassword(dto: ForgotPasswordDto) {
     const user = await this.repo.findEmail(dto.email);
 
     if (!user) throw new BadRequestException('User not found');
