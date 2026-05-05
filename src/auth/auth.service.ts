@@ -79,7 +79,6 @@ export class AuthService {
         secret: process.env.JWT_REFRESH_SECRET,
         expiresIn: '7d',
       });
-
       const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
       await this.repo.update(
         { id: user.id },
