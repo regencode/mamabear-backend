@@ -19,6 +19,8 @@ jobs:
       PGDATABASE: mamabear
       PGUSERNAME: regencode
       PGPASSWORD: pgpasswordregencode
+      CORS_ORIGIN: "*"
+      JWT_SECRET_KEY: blablablablablabla
     steps:
     - name: Add PostgreSQL binaries to PATH
       shell: bash
