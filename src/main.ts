@@ -54,6 +54,7 @@ async function bootstrap() {
         process.exit(0);
     }, 10000); 
   }   
+  console.log("lol test");
   else await app.listen(3000);
 }
 await bootstrap();
