@@ -1,21 +1,49 @@
-name: NodeJS with Webpack
+name: ci
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
 
 jobs:
-  build:
+  ci:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
-
+        node-version: [20.x, 22.x]
+    timeout-minutes: 5
+    env:
+      PGHOST: localhost
+      PGDATABASE: mamabear
+      PGUSERNAME: regencode
+      PGPASSWORD: pgpasswordregencode
     steps:
     - uses: actions/checkout@v4
+    - name: Initialize and start PostgreSQL
+      shell: bash
+      run: |
+        echo "initializing database cluster..."
+
+        # convert backslashes to forward slashes in runner_temp for windows git bash
+        export pghost="${runner_temp//\\//}/postgres"
+        export pgdata="$pghost/pgdata"
+        mkdir -p "$pgdata"
+
+        # initdb requires file for password in non-interactive mode
+        export pwfile="$runner_temp/pwfile"
+        echo "postgres" > "$pwfile"
+        initdb --pgdata="$pgdata" --username="postgres" --pwfile="$pwfile"
+
+        echo "starting postgresql..."
+        echo "unix_socket_directories = '$pghost'" >> "$pgdata/postgresql.conf"
+        pg_ctl start
+
+        echo "creating user..."
+        psql --host "$pghost" --username="postgres" --dbname="postgres" --command="create user $pgusername password '$pgpassword'" --command="\du"
+
+        echo "creating database..."
+        createdb --owner="$PGUSERNAME" --username="postgres" "$PGDATABASE"
 
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
