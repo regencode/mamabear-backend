@@ -14,7 +14,7 @@ jobs:
         node-version: [20.x, 22.x]
     timeout-minutes: 5
     env:
-      runner_temp: /tmp
+      RUNNER_TEMP: /tmp
       RUNNER_OS: Linux
       PGHOST: localhost
       PGDATABASE: mamabear
@@ -46,7 +46,7 @@ jobs:
 
         echo "starting postgresql..."
         echo "unix_socket_directories = '$pghost'" >> "$pgdata/postgresql.conf"
-        pg_ctl start
+        pg_ctl -D $pgdata start
 
         echo "creating user..."
         psql --host "$pghost" --username="postgres" --dbname="postgres" --command="create user $pgusername password '$pgpassword'" --command="\du"
