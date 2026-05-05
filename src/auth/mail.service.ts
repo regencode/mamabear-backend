@@ -13,4 +13,14 @@ export class MailService {
       text: `Verify your email here ${verifyUrl}`,
     });
   }
+
+  async sendForgotPasswordPasswordMail(email: string, token: string) {
+    const resetUrl = `${process.env.BACKEND_URL}/auth/reset-password/${token}`;
+
+    await this.mailService.sendMail({
+      to: email,
+      subject: 'Reset your password',
+      text: `Reset your password here ${resetUrl}`,
+    });
+  }
 }

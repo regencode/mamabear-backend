@@ -5,17 +5,22 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { TransformInterceptor } from './common/interceptors/transformer.interceptor';
 import { HttpExceptionFilter } from './common/filters/exceptions.filter';
+import { Logger } from 'pino-nestjs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule, { bufferLogs: true });
   app.enableCors({
       origin: process.env.CORS_ORIGIN,
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
       allowedHeaders: ['Content-Type', 'Authorization'],
   });
+  app.useLogger(app.get(Logger));
   app.useGlobalPipes(
       new ValidationPipe({
           transform: true,
@@ -27,6 +32,17 @@ async function bootstrap() {
     .setTitle('MamaBear API')
     .setDescription('MamaBear Backend API Documentation')
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JwtAuthGuard', // 🔑 This name must match the @ApiBearerAuth decorator
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

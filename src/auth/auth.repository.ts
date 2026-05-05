@@ -13,6 +13,14 @@ export class AuthRepository {
     return user;
   }
 
+  findUserByResetToken(token: string) {
+    return this.prisma.user.findFirst({
+      where: {
+        resetToken: token,
+      },
+    });
+  }
+
   findUserById(id: string) {
     return this.prisma.user.findFirst({
       where: { id },
