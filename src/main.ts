@@ -8,12 +8,10 @@ import { HttpExceptionFilter } from './common/filters/exceptions.filter';
 import { Logger } from 'pino-nestjs';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { bufferLogs: true });
   app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
   app.enableCors({
       origin: process.env.CORS_ORIGIN,
       credentials: true,
