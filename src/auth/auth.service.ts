@@ -84,8 +84,6 @@ export class AuthService {
       verificationToken,
       verificationTokenExpiry,
     });
-    console.log('USER:', user);
-
     await this.mailService.sendVerificationEmail(dto.email, verificationToken);
 
     return {

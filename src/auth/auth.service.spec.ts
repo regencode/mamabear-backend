@@ -6,10 +6,15 @@ import { JwtService } from '@nestjs/jwt';
 import { MailService } from './mail.service';
 import * as bcrypt from 'bcrypt';
 import { BadRequestException } from '@nestjs/common';
+import * as crypto from 'crypto';
 
 jest.mock('bcrypt', () => ({
   compare: jest.fn(),
   hash: jest.fn(),
+}));
+
+jest.mock('crypto', () => ({
+  randomBytes: jest.fn(),
 }));
 
 describe('AuthService', () => {
@@ -19,10 +24,6 @@ describe('AuthService', () => {
   let jwt: JwtService;
   let mail: MailService;
 
-  const mockAuth = {
-    login: jest.fn(),
-  };
-
   const mockRepo = {
     findEmail: jest.fn(),
     update: jest.fn(),
@@ -31,7 +32,9 @@ describe('AuthService', () => {
   const mockJwt = {
     signAsync: jest.fn(),
   };
-  const mockMail = {};
+  const mockMail = {
+    sendVerificationEmail: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -132,5 +135,65 @@ describe('AuthService', () => {
     await expect(service.login(dto)).rejects.toThrow(
       new BadRequestException('Invalid password'),
     );
+  });
+
+  it('should register successfully', async () => {
+    const dto = {
+      email: 'test@gmail.com',
+      password: 'test123',
+      name: 'test',
+      phone: '0822',
+    };
+
+    const result = {
+      message: 'Register success, check your email to verify',
+    };
+
+    mockRepo.findEmail.mockResolvedValue(null);
+    (bcrypt.hash as jest.Mock).mockResolvedValue('hashedPassword');
+    (crypto.randomBytes as jest.Mock).mockReturnValue({
+      toString: () => 'verificationToken',
+    });
+
+    mockRepo.create.mockResolvedValue({
+      id: 'userId-1',
+      ...dto,
+    });
+
+    const sendEmailSpy = jest
+      .spyOn(mockMail, 'sendVerificationEmail')
+      .mockResolvedValue(undefined);
+
+    const resultResponse = await service.register(dto);
+    expect(resultResponse).toEqual(result);
+    expect(mockRepo.findEmail).toHaveBeenCalledWith(dto.email);
+    expect(bcrypt.hash).toHaveBeenCalledWith(dto.password, 10);
+    expect(crypto.randomBytes).toHaveBeenCalledWith(32);
+    expect(mockRepo.create).toHaveBeenCalledWith({
+      name: dto.name,
+      email: dto.email,
+      hashedPassword: 'hashedPassword',
+      phone: dto.phone,
+      verificationToken: 'verificationToken',
+      verificationTokenExpiry: expect.any(Date),
+    });
+    expect(sendEmailSpy).toHaveBeenCalledWith(dto.email, 'verificationToken');
+  });
+
+  it('should throw BadRequestException if email already exist', async () => {
+    const dto = {
+      email: 'test@gmail.com',
+      password: 'test123',
+      name: 'test',
+      phone: '0822',
+    };
+
+    mockRepo.findEmail.mockResolvedValue(dto);
+
+    await expect(service.register(dto)).rejects.toThrow(
+      new BadRequestException('Email already exist'),
+    );
+
+    expect(mockRepo.create).not.toHaveBeenCalled();
   });
 });
