@@ -15,11 +15,20 @@ jobs:
     timeout-minutes: 5
     env:
       runner_temp: /tmp
+      RUNNER_OS: Linux
       PGHOST: localhost
       PGDATABASE: mamabear
       PGUSERNAME: regencode
       PGPASSWORD: pgpasswordregencode
     steps:
+    - name: Add PostgreSQL binaries to PATH
+      shell: bash
+      run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            echo "$PGBIN" >> $GITHUB_PATH
+          elif [ "$RUNNER_OS" == "Linux" ]; then
+            echo "$(pg_config --bindir)" >> $GITHUB_PATH
+          fi
     - name: Initialize and start PostgreSQL
       shell: bash
       run: |
