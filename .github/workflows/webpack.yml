@@ -49,7 +49,7 @@ jobs:
         pg_ctl -D $pgdata start
 
         echo "creating user..."
-        psql --host "$pghost" --username="postgres" --dbname="postgres" --command="create user $pgusername password '$pgpassword'" --command="\du"
+        psql --host "$pghost" --username="postgres" --dbname="postgres" --command="create user $PGUSERNAME password '$PGPASSWORD'" --command="\du"
 
         echo "creating database..."
         createdb --owner="$PGUSERNAME" --username="postgres" "$PGDATABASE"
@@ -59,9 +59,14 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Build
+    - name: Apply migrations and generate Prisma
       run: |
+        export DATABASE_URL="postgresql://$PGUSERNAME:$PGPASSWORD@$PGHOST/$PGDATABASE?schema=public"
         npm install
         npx prisma migrate build
         npx prisma generate
+
+    - name: Build NestJS application
+      run: |
+        npx nest build
         npx nest start
