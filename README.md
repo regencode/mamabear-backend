@@ -39,3 +39,14 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
+```bash
+# pino logger
+$ npm install pino-nestjs pino-http
+
+# pino pretty
+$ npm install --save-dev pino-pretty
+
+# pino roll
+$ npm install pino-roll
+```

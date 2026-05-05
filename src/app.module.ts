@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { CustomLoggerModule } from './common/logger/logger.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    CustomLoggerModule,
     MailerModule.forRoot({
       transport: {
         host: 'smtp.gmail.com',
