@@ -39,12 +39,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 7.6.0
- * Query Engine version: 75cbdc1eb7150937890ad5465d861175c6624711
+ * Prisma Client JS version: 7.8.0
+ * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
  */
 Prisma.prismaVersion = {
-  client: "7.6.0",
-  engine: "75cbdc1eb7150937890ad5465d861175c6624711"
+  client: "7.8.0",
+  engine: "3c6e192761c0362d496ed980de936e2f3cebcd3a"
 }
 
 Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
@@ -178,8 +178,8 @@ exports.Prisma.ModelName = {
  */
 const config = {
   "previewFeatures": [],
-  "clientVersion": "7.6.0",
-  "engineVersion": "75cbdc1eb7150937890ad5465d861175c6624711",
+  "clientVersion": "7.8.0",
+  "engineVersion": "3c6e192761c0362d496ed980de936e2f3cebcd3a",
   "activeProvider": "postgresql",
   "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nenum Role {\n  USER\n  ADMIN\n}\n\nmodel User {\n  id             String    @id @default(dbgenerated(\"gen_random_uuid()\")) @db.Uuid\n  email          String    @unique\n  hashedPassword String\n  name           String\n  phone          String\n  role           Role      @default(USER)\n  createdAt      DateTime  @default(now())\n  updatedAt      DateTime?\n\n  isVerified              Boolean   @default(false)\n  verificationToken       String?\n  verificationTokenExpiry DateTime?\n\n  resetToken       String?\n  resetTokenExpiry DateTime?\n\n  refreshToken       String?\n  refreshTokenExpiry DateTime?\n}\n\nmodel Product {\n  id          Int              @id @default(autoincrement())\n  name        String\n  slug        String\n  description String\n  price_idr   Decimal          @db.Decimal(10, 2)\n  weight_g    Int\n  sku         String?\n  stock       Int              @default(0)\n  isActive    Boolean          @default(true)\n  createdAt   DateTime         @default(now())\n  updatedAt   DateTime?\n  categoryId  Int?\n  category    Category?        @relation(fields: [categoryId], references: [id])\n  images      ProductImage[]\n  variants    ProductVariant[]\n}\n\nmodel ProductImage {\n  id        Int     @id @default(autoincrement())\n  productId Int\n  product   Product @relation(fields: [productId], references: [id])\n  imageUrl  String  @default(\"https://placehold.co/600x400\")\n  sortOrder Int\n  altText   String?\n}\n\nmodel ProductVariant {\n  id        Int     @id @default(autoincrement())\n  productId Int\n  product   Product @relation(fields: [productId], references: [id])\n  name      String\n  price_idr Decimal @db.Decimal(10, 2)\n  stock     Int     @default(0)\n}\n\nmodel Category {\n  id       Int       @id @default(autoincrement())\n  name     String\n  products Product[]\n}\n"
 }
