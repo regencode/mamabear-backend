@@ -19,7 +19,6 @@ jobs:
       PGUSERNAME: regencode
       PGPASSWORD: pgpasswordregencode
     steps:
-    - uses: actions/checkout@v4
     - name: Initialize and start PostgreSQL
       shell: bash
       run: |
