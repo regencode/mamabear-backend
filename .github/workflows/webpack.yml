@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20.x, 22.x]
+        node-version: [22.x]
     timeout-minutes: 5
     env:
       RUNNER_OS: Linux
@@ -69,7 +69,7 @@ jobs:
     - name: Apply migrations and generate Prisma
       run: |
         export DATABASE_URL="postgresql://$PGUSERNAME:$PGPASSWORD@$PGHOST/$PGDATABASE?schema=public"
-        npx prisma migrate build
+        npx prisma migrate deploy
         npx prisma generate
 
     - name: Build NestJS application
