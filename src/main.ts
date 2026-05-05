@@ -32,12 +32,14 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   if (process.env.NODE_ENV == 'ci') {
-    await app.listen(process.env.PORT ?? 3000);
+    app.listen(process.env.PORT ?? 3000);
+    const timeMs = 10000
+    console.log(`[ci] Aborting application within ${timeMs}`);
     setTimeout(async () => {
         await app.close();
         process.exit(0);
-    }, 5000); 
+    }, 10000); 
   }   
-  await app.listen(3000);
+  else await app.listen(3000);
 }
 await bootstrap();
