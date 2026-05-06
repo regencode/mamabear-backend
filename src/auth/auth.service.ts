@@ -84,6 +84,7 @@ export class AuthService {
       verificationToken,
       verificationTokenExpiry,
     });
+
     await this.mailService.sendVerificationEmail(dto.email, verificationToken);
 
     return {
@@ -142,7 +143,7 @@ export class AuthService {
         { id: user.id },
         { refreshToken: null, refreshTokenExpiry: null },
       );
-      throw new UnauthorizedException('Refresh token expired');
+      throw new BadRequestException('Refresh token expired');
     }
 
     const newPayload = {
