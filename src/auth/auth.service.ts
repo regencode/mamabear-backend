@@ -199,10 +199,7 @@ export class AuthService {
       },
     );
 
-    await this.mailService.sendForgotPasswordPasswordMail(
-      dto.email,
-      resetToken,
-    );
+    await this.mailService.sendForgotPasswordMail(dto.email, resetToken);
 
     return {
       message: 'Check your email to reset password',
