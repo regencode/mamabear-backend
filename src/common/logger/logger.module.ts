@@ -4,7 +4,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggerModule } from 'pino-nestjs';
 import { v4 as uuidv4 } from 'uuid';
 
-
 @Global()
 @Module({
   imports: [
@@ -25,8 +24,8 @@ import { v4 as uuidv4 } from 'uuid';
             return `${req.method} ${req.url} ${res.statusCode}`;
           },
 
-          customErrorMessage: (req, res) => {
-            return `${req.method} ${req.url} ${res.statusCode}`;
+          customErrorMessage: (req, res, err) => {
+            return `${req.method} ${req.url} ${res.statusCode} - ${err.message}`;
           },
 
           customLogLevel: (req, res, err) => {
