@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 import { HealthModule } from './health/health.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CustomLoggerModule } from './common/logger/logger.module';
+import { MailHogOptions } from './options/mailhog.options';
 
 @Module({
   imports: [
@@ -23,17 +24,7 @@ import { CustomLoggerModule } from './common/logger/logger.module';
       isGlobal: true,
     }),
     CustomLoggerModule,
-    MailerModule.forRoot({
-      transport: {
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false,
-        auth: {
-          user: process.env.MAIL_USER,
-          pass: process.env.MAIL_PASS,
-        },
-      },
-    }),
+    MailerModule.forRoot(MailHogOptions),
     PrismaModule,
     ProductsModule,
     UsersModule,

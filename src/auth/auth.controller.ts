@@ -16,6 +16,7 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { JwtPayload } from '@/types/JwtPayload';
 
 @UseGuards(ThrottlerGuard)
 @ApiTags('auth')
@@ -47,8 +48,8 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('/logout')
-  logout(@Req() req) {
-    return this.authService.logout(req.user.id);
+  logout(@Req() req: JwtPayload) {
+    return this.authService.logout(req.sub);
   }
 
   @Throttle({

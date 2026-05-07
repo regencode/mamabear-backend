@@ -147,8 +147,8 @@ export class AuthService {
         verificationTokenExpiry,
       });
 
-      // Later when application is production ready
-      // this.mailService.sendVerificationEmail(dto.email, verificationToken);
+      // send email
+      await this.mailService.sendVerificationEmail(dto.email, verificationToken);
 
       this.logger.info({
         level: 'info',
@@ -427,10 +427,8 @@ export class AuthService {
         },
       );
 
-      await this.mailService.sendForgotPasswordMail(
-        dto.email,
-        resetToken,
-      );
+      // send email
+      await this.mailService.sendForgotPasswordMail(dto.email, resetToken);
 
       this.logger.info({
         level: 'info',

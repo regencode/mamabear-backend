@@ -12,6 +12,7 @@ jobs:
     strategy:
       matrix:
         node-version: [22.x]
+        unit-tests: [auth]
     timeout-minutes: 5
     env:
       NODE_ENV: ci
@@ -57,6 +58,12 @@ jobs:
         echo "creating database..."
         createdb --owner="$PGUSERNAME" --username="postgres" "$PGDATABASE"
 
+    - name: Set up MailHog
+      run: |
+        sudo apt-get -y install golang-go
+        go install github.com/mailhog/MailHog@latest
+        ~/go/bin/MailHog -h
+
     - name: Checkout repository
       uses: actions/checkout@v4
 
@@ -74,6 +81,10 @@ jobs:
         export DATABASE_URL="postgresql://$PGUSERNAME:$PGPASSWORD@$PGHOST/$PGDATABASE?schema=public"
         npx prisma migrate deploy
         npx prisma generate
+
+    - name: Run implemented unit tests
+      run: |
+        npm run test auth
 
     - name: Build NestJS application
       run: |
