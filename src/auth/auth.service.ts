@@ -81,7 +81,6 @@ export class AuthService {
       });
 
       const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-
       await this.repo.update(
         { id: user.id },
         {
@@ -183,6 +182,7 @@ export class AuthService {
       throw error;
     }
   }
+
 
   async verifyEmail(token: string) {
     try {
@@ -402,7 +402,7 @@ export class AuthService {
     }
   }
 
-  async forgotPassord(dto: ForgotPasswordDto) {
+  async forgotPassword(dto: ForgotPasswordDto) {
     try {
       const user = await this.repo.findEmail(dto.email);
 

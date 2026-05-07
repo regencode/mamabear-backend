@@ -70,7 +70,7 @@ export class AuthController {
   })
   @Post('/forgot-password')
   forgotPassword(@Body() dto: ForgotPasswordDto) {
-    return this.authService.forgotPassord(dto);
+    return this.authService.forgotPassword(dto);
   }
 
   @Throttle({
