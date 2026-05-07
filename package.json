@@ -32,6 +32,7 @@
     "@nestjs/throttler": "^6.5.0",
     "@prisma/adapter-pg": "^7.6.0",
     "@prisma/client": "^7.6.0",
+    "@prisma/client-runtime-utils": "^7.8.0",
     "bcrypt": "^6.0.0",
     "chokidar": "^4.0.3",
     "class-transformer": "^0.5.1",
@@ -95,6 +96,9 @@
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/$1"
     },
     "collectCoverageFrom": [
       "**/*.(t|j)s"
