@@ -14,7 +14,7 @@ export class MailService {
     });
   }
 
-  async sendForgotPasswordPasswordMail(email: string, token: string) {
+  async sendForgotPasswordMail(email: string, token: string) {
     const resetUrl = `${process.env.BACKEND_URL}/auth/reset-password/${token}`;
 
     await this.mailService.sendMail({

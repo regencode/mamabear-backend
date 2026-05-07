@@ -30,6 +30,7 @@ describe('AuthService', () => {
     create: jest.fn(),
     findUserByVerificationToken: jest.fn(),
     findUserById: jest.fn(),
+    findUserByResetToken: jest.fn(),
   };
   const mockJwt = {
     signAsync: jest.fn(),
@@ -37,6 +38,7 @@ describe('AuthService', () => {
   };
   const mockMail = {
     sendVerificationEmail: jest.fn(),
+    sendForgotPasswordMail: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -95,8 +97,7 @@ describe('AuthService', () => {
       }),
     );
   });
-
-  it('should throw BadRequestException if email is not found', async () => {
+  it('should throw BadRequestException if email is not found for login', async () => {
     const dto = { email: 'wrong@gmail.com', password: 'password' };
 
     mockRepo.findEmail.mockResolvedValue(null);
@@ -106,7 +107,7 @@ describe('AuthService', () => {
     );
   });
 
-  it('should throw BadRequestException if password is invalid', async () => {
+  it('should throw BadRequestException if password is invalid for login', async () => {
     const dto = { email: 'test@gmail.com', password: 'wrongPassword' };
 
     const user = {
@@ -124,7 +125,7 @@ describe('AuthService', () => {
     );
   });
 
-  it('should throw BadRequestException if user is not verified', async () => {
+  it('should throw BadRequestException if user is not verified for login', async () => {
     const dto = { email: 'test@gmail.com', password: 'test123' };
     const user = {
       id: 'userId-1',
@@ -183,7 +184,7 @@ describe('AuthService', () => {
     expect(sendEmailSpy).toHaveBeenCalledWith(dto.email, 'verificationToken');
   });
 
-  it('should throw BadRequestException if email already exist', async () => {
+  it('should throw BadRequestException if email already exist for register', async () => {
     const dto = {
       email: 'test@gmail.com',
       password: 'test123',
@@ -196,11 +197,12 @@ describe('AuthService', () => {
     await expect(service.register(dto)).rejects.toThrow(
       new BadRequestException('Email already exist'),
     );
+    expect(mockRepo.findEmail).toHaveBeenCalledWith(dto.email);
 
     expect(mockRepo.create).not.toHaveBeenCalled();
   });
 
-  it('should verify email successfully', async () => {
+  it('should verify email successfully for register', async () => {
     const user = {
       id: 'userId-1',
       verificationToken: 'valid-token',
@@ -214,11 +216,6 @@ describe('AuthService', () => {
     mockRepo.findUserByVerificationToken.mockResolvedValue(user);
     const resultResPonse = await service.verifyEmail(user.verificationToken);
     expect(resultResPonse).toEqual(result);
-
-    const responseFindUser = await repo.findUserByVerificationToken(
-      user.verificationToken,
-    );
-
     expect(mockRepo.findUserByVerificationToken).toHaveBeenCalledWith(
       user.verificationToken,
     );
@@ -233,7 +230,7 @@ describe('AuthService', () => {
     );
   });
 
-  it('should throw BadRequestException for invalid token', async () => {
+  it('should throw BadRequestException for invalid token for register', async () => {
     const user = {
       id: 'userId-1',
       verificationToken: 'valid-token',
@@ -245,9 +242,12 @@ describe('AuthService', () => {
     expect(service.verifyEmail(user.verificationToken)).rejects.toThrow(
       new BadRequestException('Invalid token'),
     );
+    expect(mockRepo.findUserByVerificationToken).toHaveBeenCalledWith(
+      user.verificationToken,
+    );
   });
 
-  it('should throw BadRequestException for token expired', async () => {
+  it('should throw BadRequestException for token expired for register', async () => {
     const user = {
       id: 'userId-1',
       verificationToken: 'valid-token',
@@ -259,9 +259,12 @@ describe('AuthService', () => {
     expect(service.verifyEmail(user.verificationToken)).rejects.toThrow(
       new BadRequestException('Token expired'),
     );
+    expect(mockRepo.findUserByVerificationToken).toHaveBeenCalledWith(
+      user.verificationToken,
+    );
   });
 
-  it('should refresh token successfully', async () => {
+  it('should refresh token successfully for refreshToken', async () => {
     const payload = {
       sub: 'userId-1',
     };
@@ -289,6 +292,7 @@ describe('AuthService', () => {
     expect(mockJwt.verifyAsync).toHaveBeenCalledWith(refreshToken, {
       secret: process.env.JWT_REFRESH_SECRET,
     });
+    expect(mockRepo.findUserById).toHaveBeenCalledWith(payload.sub);
     expect(bcrypt.compare).toHaveBeenCalledWith(
       refreshToken,
       user.refreshToken,
@@ -307,7 +311,7 @@ describe('AuthService', () => {
     expect(response).toEqual(result);
   });
 
-  it('should throw new UnauthorizedException for refresh token not found', async () => {
+  it('should throw new UnauthorizedException for refresh token not found for refreshToken', async () => {
     const user = {
       id: 'userId-1',
       refreshToken: null,
@@ -321,9 +325,13 @@ describe('AuthService', () => {
     await expect(service.refreshToken('token')).rejects.toThrow(
       new UnauthorizedException('Refresh token not found'),
     );
+    expect(mockJwt.verifyAsync).toHaveBeenCalledWith('token', {
+      secret: process.env.JWT_REFRESH_SECRET,
+    });
+    expect(mockRepo.findUserById).toHaveBeenCalledWith(payload.sub);
   });
 
-  it('should trhow new UnauthorizedException for Invalid iserId', async () => {
+  it('should throw new UnauthorizedException for invalid userId forRefreshToken', async () => {
     const refreshToken = 'valid-refresh-token';
     const payload = {
       sub: 'userId-1',
@@ -335,9 +343,13 @@ describe('AuthService', () => {
     await expect(service.refreshToken(refreshToken)).rejects.toThrow(
       new UnauthorizedException('User not found'),
     );
+    expect(mockJwt.verifyAsync).toHaveBeenCalledWith(refreshToken, {
+      secret: process.env.JWT_REFRESH_SECRET,
+    });
+    expect(mockRepo.findUserById).toHaveBeenCalledWith(payload.sub);
   });
 
-  it('should throw new UnauthorizedException for invalid refresh token', async () => {
+  it('should throw new UnauthorizedException for invalid refresh token for refresToken', async () => {
     const refreshToken = 'valid-refresh-token';
     const payload = {
       sub: 'userId-1',
@@ -354,9 +366,17 @@ describe('AuthService', () => {
     await expect(service.refreshToken(refreshToken)).rejects.toThrow(
       new UnauthorizedException('Invalid refresh token'),
     );
+    expect(bcrypt.compare).toHaveBeenCalledWith(
+      refreshToken,
+      user.refreshToken,
+    );
+    expect(mockRepo.findUserById).toHaveBeenCalledWith(user.id);
+    expect(mockJwt.verifyAsync).toHaveBeenCalledWith(refreshToken, {
+      secret: process.env.JWT_REFRESH_SECRET,
+    });
   });
 
-  it('should throw new BadRequestException for refresh token expired', async () => {
+  it('should throw new BadRequestException for refresh token expired for refresToken', async () => {
     const payload = {
       sub: 'userId-1',
     };
@@ -372,10 +392,179 @@ describe('AuthService', () => {
     await expect(service.refreshToken('token')).rejects.toThrow(
       'Refresh token expired',
     );
+    expect(mockJwt.verifyAsync).toHaveBeenCalledWith('token', {
+      secret: process.env.JWT_REFRESH_SECRET,
+    });
+    expect(bcrypt.compare).toHaveBeenCalledWith('token', user.refreshToken);
+    expect(mockRepo.findUserById).toHaveBeenCalledWith(user.id);
 
     expect(mockRepo.update).toHaveBeenCalledWith(
       { id: user.id },
       { refreshToken: null, refreshTokenExpiry: null },
     );
+  });
+
+  it('should logout successfully', async () => {
+    const user = {
+      id: 'userId-1',
+    };
+
+    const result = {
+      message: 'Logout success',
+    };
+
+    mockRepo.findUserById.mockResolvedValue(user);
+    const resultResponse = await service.logout(user.id);
+    expect(mockRepo.findUserById).toHaveBeenCalledWith(user.id);
+    expect(mockRepo.update).toHaveBeenCalledWith(
+      {
+        id: user.id,
+      },
+      {
+        refreshToken: null,
+        refreshTokenExpiry: null,
+      },
+    );
+    expect(resultResponse).toEqual(result);
+  });
+
+  it('should throw new BadRequestException for user user not found for logout', async () => {
+    const user = {
+      id: 'userId-1',
+    };
+
+    mockRepo.findUserById.mockResolvedValue(null);
+
+    await expect(service.logout(user.id)).rejects.toThrow('User not found');
+  });
+
+  it('should forgot password successfully for logout', async () => {
+    const dto = {
+      email: 'test@gmail.com',
+    };
+
+    const user = {
+      id: 'userId-1',
+      email: 'test@gmail.com',
+    };
+
+    const result = {
+      message: 'Check your email to reset password',
+    };
+
+    mockRepo.findEmail.mockResolvedValue(user);
+
+    (crypto.randomBytes as jest.Mock).mockReturnValue({
+      toString: () => 'resetToken',
+    });
+
+    const resultResponse = await service.forgotPassword(dto);
+    expect(resultResponse).toEqual(result);
+    expect(mockRepo.findEmail).toHaveBeenCalledWith(dto.email);
+    expect(crypto.randomBytes).toHaveBeenCalledWith(32);
+
+    expect(mockRepo.update).toHaveBeenCalledWith(
+      { id: user.id },
+      {
+        resetToken: 'resetToken',
+        resetTokenExpiry: expect.any(Date),
+      },
+    );
+
+    expect(mockMail.sendForgotPasswordMail).toHaveBeenCalledWith(
+      dto.email,
+      'resetToken',
+    );
+  });
+
+  it('should throw new BadRequestException for user not found for logout', async () => {
+    const dto = {
+      email: 'test@gmail.com',
+    };
+
+    mockRepo.findEmail.mockResolvedValue(null);
+
+    expect(service.forgotPassword(dto)).rejects.toThrow('User not found');
+    expect(mockRepo.findEmail).toHaveBeenCalledWith(dto.email);
+  });
+
+  it('should reset password successfully', async () => {
+    const user = {
+      id: 'userId-1',
+      email: 'test@gmail.com',
+      hashedPassword: 'test123',
+      resetToken: 'validResetToken',
+      resetTokenExpiry: new Date('2199-01-01'),
+    };
+    const token = 'validResetToken';
+
+    const dto = {
+      password: 'test123',
+    };
+    const result = {
+      message: 'Password reset success',
+    };
+
+    mockRepo.findUserByResetToken.mockResolvedValue(user);
+
+    jest.spyOn(bcrypt, 'hash').mockResolvedValue('hashedPassword' as never);
+
+    const resultResponse = await service.resetPassword(token, dto);
+    expect(mockRepo.findUserByResetToken).toHaveBeenCalledWith(user.resetToken);
+    expect(bcrypt.hash).toHaveBeenCalledWith(dto.password, 10);
+    expect(mockRepo.update).toHaveBeenCalledWith(
+      { id: user.id },
+      {
+        hashedPassword: 'hashedPassword',
+        refreshToken: null,
+        refreshTokenExpiry: null,
+        resetToken: null,
+        resetTokenExpiry: null,
+      },
+    );
+
+    expect(resultResponse).toEqual(result);
+  });
+
+  it('should throw new BadRequestException invalid token for reset password', async () => {
+    const dto = {
+      password: 'test123',
+    };
+
+    const token = 'invalidTokenResetToken';
+    const user = {
+      id: 'userId-1',
+      email: 'test@gmail.com',
+      hashedPassword: 'test123',
+      resetToken: 'resetToken',
+      resetTokenExpiry: new Date('2999-01-01'),
+    };
+
+    mockRepo.findUserByResetToken.mockResolvedValue(null);
+
+    expect(service.resetPassword(token, dto)).rejects.toThrow('Invalid token');
+    expect(mockRepo.findUserByResetToken).toHaveBeenCalledWith(token);
+  });
+
+  it('should throw new BadRequestException reset token expired for reset password ', async () => {
+    const user = {
+      id: 'userId-1',
+      email: 'test@gmail.com',
+      hashedPassword: 'hashed',
+      resetToken: 'validResetToken',
+      resetTokenExpiry: new Date('1999-01-01'),
+    };
+    const token = 'validResetToken';
+
+    const dto = {
+      password: 'test123',
+    };
+
+    mockRepo.findUserByResetToken.mockResolvedValue(user);
+
+    expect(service.resetPassword(token, dto)).rejects.toThrow(
+      'Reset token expired',
+    );
+    expect(mockRepo.findUserByResetToken).toHaveBeenCalledWith(token);
   });
 });

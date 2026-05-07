@@ -427,7 +427,7 @@ export class AuthService {
         },
       );
 
-      await this.mailService.sendForgotPasswordPasswordMail(
+      await this.mailService.sendForgotPasswordMail(
         dto.email,
         resetToken,
       );
