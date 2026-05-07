@@ -3,6 +3,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { Role } from '@/generated/prisma';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -68,7 +69,9 @@ describe('AuthController', () => {
 
   it('should call authService.logout', async () => {
     const req = {
-      user: { id: 'idUser1' },
+      sub: 'idUser1',
+      email: "a@em.com",
+      role: Role.USER
     };
 
     const result = {
@@ -78,7 +81,7 @@ describe('AuthController', () => {
     mockAuthService.logout.mockResolvedValue(result);
 
     const resultResponse = await controller.logout(req);
-    expect(service.logout).toHaveBeenCalledWith(req.user.id);
+    expect(service.logout).toHaveBeenCalledWith(req.sub);
     expect(resultResponse).toEqual(result);
   });
 

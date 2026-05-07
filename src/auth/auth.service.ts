@@ -71,7 +71,7 @@ export class AuthService {
       };
 
       const accessToken = await this.jwtService.signAsync(payload, {
-        secret: process.env.JWT_SECRET,
+        secret: process.env.JWT_ACCESS_SECRET,
         expiresIn: '15m',
       });
 
@@ -147,8 +147,8 @@ export class AuthService {
         verificationTokenExpiry,
       });
 
-      // Later when application is production ready
-      // this.mailService.sendVerificationEmail(dto.email, verificationToken);
+      // send email
+      await this.mailService.sendVerificationEmail(dto.email, verificationToken);
 
       this.logger.info({
         level: 'info',
@@ -315,7 +315,7 @@ export class AuthService {
       };
 
       const newAccessToken = await this.jwtService.signAsync(newPayload, {
-        secret: process.env.JWT_SECRET,
+        secret: process.env.JWT_ACCESS_SECRET,
         expiresIn: '15m',
       });
 
@@ -427,10 +427,8 @@ export class AuthService {
         },
       );
 
-      await this.mailService.sendForgotPasswordMail(
-        dto.email,
-        resetToken,
-      );
+      // send email
+      await this.mailService.sendForgotPasswordMail(dto.email, resetToken);
 
       this.logger.info({
         level: 'info',

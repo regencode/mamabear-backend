@@ -12,6 +12,7 @@ jobs:
     strategy:
       matrix:
         node-version: [22.x]
+        unit-tests: [auth]
     timeout-minutes: 5
     env:
       NODE_ENV: ci
@@ -21,7 +22,8 @@ jobs:
       PGUSERNAME: regencode
       PGPASSWORD: pgpasswordregencode
       CORS_ORIGIN: "*"
-      JWT_SECRET_KEY: blablablablablabla
+      JWT_ACCESS_SECRET: blablabla
+      JWT_REFRESH_SECRET: blablablablablabla
     steps:
     - name: Add PostgreSQL binaries to PATH
       shell: bash
@@ -60,20 +62,29 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Build Mailhog docker image
+      run: docker build -t mailhog ./mailhog
+
+    - name: Run Mailhog container
+      run: docker run -d mailhog -p 1025:1025 -p 8025:8025
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
 
     - name: Install dependencies
-      run: |
-        npm install
+      run: npm install
 
     - name: Apply migrations and generate Prisma
       run: |
         export DATABASE_URL="postgresql://$PGUSERNAME:$PGPASSWORD@$PGHOST/$PGDATABASE?schema=public"
         npx prisma migrate deploy
         npx prisma generate
+
+    - name: Run implemented unit tests
+      run: |
+        npm run test auth
 
     - name: Build NestJS application
       run: |
