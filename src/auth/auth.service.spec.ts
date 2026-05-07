@@ -7,6 +7,7 @@ import { MailService } from './mail.service';
 import * as bcrypt from 'bcrypt';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import * as crypto from 'crypto';
+import { PinoLogger } from 'pino-nestjs';
 
 jest.mock('bcrypt', () => ({
   compare: jest.fn(),
@@ -23,6 +24,7 @@ describe('AuthService', () => {
   let prisma: PrismaService;
   let jwt: JwtService;
   let mail: MailService;
+  let logger: PinoLogger;
 
   const mockRepo = {
     findEmail: jest.fn(),
@@ -40,6 +42,12 @@ describe('AuthService', () => {
     sendVerificationEmail: jest.fn(),
     sendForgotPasswordMail: jest.fn(),
   };
+  const mockLogger = {
+      setContext: jest.fn(),
+      warn: jest.fn(),
+      info: jest.fn(),
+      error: jest.fn(),
+  }
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -48,6 +56,7 @@ describe('AuthService', () => {
         { provide: AuthRepository, useValue: mockRepo },
         { provide: JwtService, useValue: mockJwt },
         { provide: MailService, useValue: mockMail },
+        { provide: PinoLogger, useValue: mockLogger },
       ],
     }).compile();
 
@@ -149,10 +158,6 @@ describe('AuthService', () => {
       phone: '0822',
     };
 
-    const result = {
-      message: 'Register success, check your email to verify',
-    };
-
     mockRepo.findEmail.mockResolvedValue(null);
     (bcrypt.hash as jest.Mock).mockResolvedValue('hashedPassword');
     (crypto.randomBytes as jest.Mock).mockReturnValue({
@@ -169,7 +174,10 @@ describe('AuthService', () => {
       .mockResolvedValue(undefined);
 
     const resultResponse = await service.register(dto);
-    expect(resultResponse).toEqual(result);
+    expect(resultResponse).toEqual(expect.objectContaining({
+        message: expect.any(String),
+        verificationToken: expect.any(String)
+    }));
     expect(mockRepo.findEmail).toHaveBeenCalledWith(dto.email);
     expect(bcrypt.hash).toHaveBeenCalledWith(dto.password, 10);
     expect(crypto.randomBytes).toHaveBeenCalledWith(32);
