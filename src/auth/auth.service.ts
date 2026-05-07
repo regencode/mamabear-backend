@@ -71,7 +71,7 @@ export class AuthService {
       };
 
       const accessToken = await this.jwtService.signAsync(payload, {
-        secret: process.env.JWT_SECRET,
+        secret: process.env.JWT_ACCESS_SECRET,
         expiresIn: '15m',
       });
 
@@ -315,7 +315,7 @@ export class AuthService {
       };
 
       const newAccessToken = await this.jwtService.signAsync(newPayload, {
-        secret: process.env.JWT_SECRET,
+        secret: process.env.JWT_ACCESS_SECRET,
         expiresIn: '15m',
       });
 

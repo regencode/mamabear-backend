@@ -312,7 +312,7 @@ describe('AuthService', () => {
         role: user.role,
       },
       {
-        secret: process.env.JWT_SECRET,
+        secret: process.env.JWT_ACCESS_SECRET,
         expiresIn: '15m',
       },
     );

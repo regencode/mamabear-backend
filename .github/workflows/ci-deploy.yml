@@ -22,7 +22,8 @@ jobs:
       PGUSERNAME: regencode
       PGPASSWORD: pgpasswordregencode
       CORS_ORIGIN: "*"
-      JWT_SECRET_KEY: blablablablablabla
+      JWT_ACCESS_SECRET: blablabla
+      JWT_REFRESH_SECRET: blablablablablabla
     steps:
     - name: Add PostgreSQL binaries to PATH
       shell: bash
