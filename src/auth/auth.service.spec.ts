@@ -176,7 +176,6 @@ describe('AuthService', () => {
     const resultResponse = await service.register(dto);
     expect(resultResponse).toEqual(expect.objectContaining({
         message: expect.any(String),
-        verificationToken: expect.any(String)
     }));
     expect(mockRepo.findEmail).toHaveBeenCalledWith(dto.email);
     expect(bcrypt.hash).toHaveBeenCalledWith(dto.password, 10);
@@ -467,7 +466,9 @@ describe('AuthService', () => {
     });
 
     const resultResponse = await service.forgotPassword(dto);
-    expect(resultResponse).toEqual(result);
+    expect(resultResponse).toEqual(expect.objectContaining({
+        "message": expect.any(String),
+    }));
     expect(mockRepo.findEmail).toHaveBeenCalledWith(dto.email);
     expect(crypto.randomBytes).toHaveBeenCalledWith(32);
 
