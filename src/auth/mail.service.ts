@@ -10,7 +10,15 @@ export class MailService {
     await this.mailService.sendMail({
       to: email,
       subject: 'Please verify your email',
-      text: `Verify your email here ${verifyUrl}`,
+      text: `Klik link dibawah untuk verify email anda:/n${verifyUrl}`,
+    });
+  }
+
+  async confirmEmailVerified(email: string, userName: string) {
+    await this.mailService.sendMail({
+      to: email,
+      subject: 'Selamat datang ke rumah Mamabear!',
+      text: `${userName}, selamat datang ke rumah Mamabear!`,
     });
   }
 
@@ -19,8 +27,8 @@ export class MailService {
 
     await this.mailService.sendMail({
       to: email,
-      subject: 'Reset your password',
-      text: `Reset your password here ${resetUrl}`,
+      subject: 'Reset password request',
+      text: `Klik link dibawah untuk verify email anda:/n${resetUrl}`,
     });
   }
 }

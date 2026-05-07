@@ -160,8 +160,7 @@ export class AuthService {
       });
 
       return {
-        message: 'Register success, check your email to verify',
-        verificationToken: verificationToken,
+        message: 'Register success, check your email to verify'
       };
     } catch (error: any) {
       if (
