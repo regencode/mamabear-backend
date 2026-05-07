@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { MailerOptions } from "@nestjs-modules/mailer";
 
 export const MailHogOptions : MailerOptions = {
@@ -6,7 +7,7 @@ export const MailHogOptions : MailerOptions = {
         to: "test@mailhog.local",
     },
     transport: {
-        host: "localhost",
+        host: process.env.MAILHOG_URL,
         port: 1025,
         secure: false
     },
