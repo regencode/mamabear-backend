@@ -14,7 +14,12 @@ export class HealthService {
     try {
       await this.prisma.$queryRaw`SELECT 1`;
       dbLatency = Date.now() - dbStartTime;
-      dbStatus = dbLatency < 50 ? 'healthy' : dbLatency <= 150 ? 'degraded' : 'unhealthy';
+      dbStatus =
+        dbLatency < 50
+          ? 'healthy'
+          : dbLatency <= 150
+            ? 'degraded'
+            : 'unhealthy';
       dbMessage = 'Connection successful';
     } catch (error: any) {
       dbLatency = Date.now() - dbStartTime;
@@ -23,7 +28,12 @@ export class HealthService {
 
     // Mock storage health check as requested
     const storageLatency = 28; // Example latency
-    const storageStatus = storageLatency < 50 ? 'healthy' : storageLatency <= 150 ? 'degraded' : 'unhealthy';
+    const storageStatus =
+      storageLatency < 50
+        ? 'healthy'
+        : storageLatency <= 150
+          ? 'degraded'
+          : 'unhealthy';
     const storageMessage = 'S3 accessible';
 
     const checks = {

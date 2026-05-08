@@ -9,7 +9,9 @@ export class ProductsService {
   constructor(
     private readonly productsRepository: ProductsRepository,
     private readonly logger: PinoLogger,
-  ) {this.logger.setContext(ProductsService.name);}
+  ) {
+    this.logger.setContext(ProductsService.name);
+  }
 
   async create(createProductDto: CreateProductDto) {
     try {

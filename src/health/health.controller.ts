@@ -3,9 +3,9 @@ import { HealthService } from './health.service';
 
 @Controller('health')
 export class HealthController {
-    constructor(private readonly healthService: HealthService) {}
-    @Get()
-    async health() {
-        return await this.healthService.getHealth()
-    }
+  constructor(private readonly healthService: HealthService) {}
+  @Get()
+  async health() {
+    return await this.healthService.getHealth();
+  }
 }

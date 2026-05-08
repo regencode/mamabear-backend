@@ -1,7 +1,7 @@
-import { PrismaService } from "@/prisma/prisma.service";
-import { Injectable } from "@nestjs/common";
-import { CreateProductDto } from "./dto/create-product.dto";
-import { UpdateProductDto } from "./dto/update-product.dto";
+import { PrismaService } from '@/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 const PRODUCT_INCLUDE = {
   category: true,
@@ -14,8 +14,15 @@ export class ProductsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   create(data: CreateProductDto) {
+    const { images, ...productData } = data;
     return this.prisma.product.create({
-      data: { ...data, slug: "" },
+      data: {
+        ...productData,
+        slug: '',
+        ...(images?.length && {
+          images: { create: images },
+        }),
+      },
       include: PRODUCT_INCLUDE,
     });
   }
@@ -32,9 +39,18 @@ export class ProductsRepository {
   }
 
   update(id: number, data: UpdateProductDto) {
+    const { images, ...productData } = data;
     return this.prisma.product.update({
       where: { id },
-      data,
+      data: {
+        ...productData,
+        ...(images && {
+          images: {
+            deleteMany: {},
+            create: images,
+          },
+        }),
+      },
       include: PRODUCT_INCLUDE,
     });
   }
