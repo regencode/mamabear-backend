@@ -83,7 +83,9 @@ jobs:
         npx prisma generate
 
     - name: Run seeder
-      run : npx prisma db seed
+      run : |
+        export DATABASE_URL="postgresql://$PGUSERNAME:$PGPASSWORD@$PGHOST/$PGDATABASE?schema=public"
+        npx prisma db seed
 
     - name: Run implemented unit tests
       run: |
