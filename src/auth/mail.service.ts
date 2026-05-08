@@ -6,7 +6,7 @@ export class MailService {
   constructor(private readonly mailService: MailerService) {}
 
   async sendVerificationEmail(email: string, token: string) {
-    const verifyUrl = `${process.env.BACKEND_URL}/auth/verify-email/${token}`;
+    const verifyUrl = `${process.env.BACKEND_URL}/auth/verify-email?token=${token}`;
     await this.mailService.sendMail({
       to: email,
       subject: 'Please verify your email',
@@ -23,7 +23,7 @@ export class MailService {
   }
 
   async sendForgotPasswordMail(email: string, token: string) {
-    const resetUrl = `${process.env.BACKEND_URL}/auth/reset-password/${token}`;
+    const resetUrl = `${process.env.BACKEND_URL}/auth/reset-password?token=${token}`;
 
     await this.mailService.sendMail({
       to: email,
