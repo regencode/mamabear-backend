@@ -13,19 +13,19 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
 
   app.enableCors({
-      origin: process.env.CORS_ORIGIN,
-      credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
   app.useLogger(app.get(Logger));
   app.useGlobalPipes(
-      new ValidationPipe({
-          transform: true,
-          whitelist: true,
-          forbidNonWhitelisted: true,
-      }),
-  )
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
   const config = new DocumentBuilder()
     .setTitle('MamaBear API')
     .setDescription('MamaBear Backend API Documentation')
@@ -47,13 +47,12 @@ async function bootstrap() {
 
   if (process.env.NODE_ENV == 'ci') {
     app.listen(process.env.PORT ?? 3000);
-    const timeMs = 10000
+    const timeMs = 10000;
     console.log(`[ci] Aborting application within ${timeMs}`);
     setTimeout(async () => {
-        await app.close();
-        process.exit(0);
-    }, 10000); 
-  }   
-  else await app.listen(process.env.PORT ?? 3000);
+      await app.close();
+      process.exit(0);
+    }, 10000);
+  } else await app.listen(process.env.PORT ?? 3000);
 }
 await bootstrap();

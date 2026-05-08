@@ -148,7 +148,10 @@ export class AuthService {
       });
 
       // send email
-      await this.mailService.sendVerificationEmail(dto.email, verificationToken);
+      await this.mailService.sendVerificationEmail(
+        dto.email,
+        verificationToken,
+      );
 
       this.logger.info({
         level: 'info',
@@ -160,7 +163,7 @@ export class AuthService {
       });
 
       return {
-        message: 'Register success, check your email to verify'
+        message: 'Register success, check your email to verify',
       };
     } catch (error: any) {
       if (
@@ -180,7 +183,6 @@ export class AuthService {
       throw error;
     }
   }
-
 
   async verifyEmail(token: string) {
     try {

@@ -1,4 +1,9 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/common';
+import {
+  ExceptionFilter,
+  Catch,
+  ArgumentsHost,
+  HttpException,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CustomResponse } from '../CustomResponse';
 
@@ -8,12 +13,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const status = exception.getStatus();
-    const responseJson : CustomResponse<null> = {
-        success: false,
-        statusCode: status,
-        message: exception.message || "No message specified",
-        data: null,
-        timestamp: new Date().toISOString(),
+    const responseJson: CustomResponse<null> = {
+      success: false,
+      statusCode: status,
+      message: exception.message || 'No message specified',
+      data: null,
+      timestamp: new Date().toISOString(),
     };
 
     response.status(status).json(responseJson);

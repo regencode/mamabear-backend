@@ -43,11 +43,11 @@ describe('AuthService', () => {
     sendForgotPasswordMail: jest.fn(),
   };
   const mockLogger = {
-      setContext: jest.fn(),
-      warn: jest.fn(),
-      info: jest.fn(),
-      error: jest.fn(),
-  }
+    setContext: jest.fn(),
+    warn: jest.fn(),
+    info: jest.fn(),
+    error: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -87,8 +87,8 @@ describe('AuthService', () => {
     jest.spyOn(bcrypt, 'hash').mockResolvedValue('hashedRefreshToken' as never);
 
     mockJwt.signAsync
-      .mockResolvedValueOnce('accessToken' as never)
-      .mockResolvedValueOnce('refreshToken' as never);
+      .mockResolvedValueOnce('accessToken')
+      .mockResolvedValueOnce('refreshToken');
 
     const resultResponse = await service.login(dto);
     expect(resultResponse).toEqual(result);
@@ -127,7 +127,7 @@ describe('AuthService', () => {
     };
 
     mockRepo.findEmail.mockResolvedValue(user);
-    (bcrypt.compare as jest.Mock).mockResolvedValue(false as never);
+    (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
     await expect(service.login(dto)).rejects.toThrow(
       new BadRequestException('Invalid password'),
@@ -143,7 +143,7 @@ describe('AuthService', () => {
       isVerified: false,
     };
     mockRepo.findEmail.mockResolvedValue(user);
-    (bcrypt.compare as jest.Mock).mockResolvedValue(false as never);
+    (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
     await expect(service.login(dto)).rejects.toThrow(
       new BadRequestException('Invalid password'),
@@ -174,9 +174,11 @@ describe('AuthService', () => {
       .mockResolvedValue(undefined);
 
     const resultResponse = await service.register(dto);
-    expect(resultResponse).toEqual(expect.objectContaining({
+    expect(resultResponse).toEqual(
+      expect.objectContaining({
         message: expect.any(String),
-    }));
+      }),
+    );
     expect(mockRepo.findEmail).toHaveBeenCalledWith(dto.email);
     expect(bcrypt.hash).toHaveBeenCalledWith(dto.password, 10);
     expect(crypto.randomBytes).toHaveBeenCalledWith(32);
@@ -466,9 +468,11 @@ describe('AuthService', () => {
     });
 
     const resultResponse = await service.forgotPassword(dto);
-    expect(resultResponse).toEqual(expect.objectContaining({
-        "message": expect.any(String),
-    }));
+    expect(resultResponse).toEqual(
+      expect.objectContaining({
+        message: expect.any(String),
+      }),
+    );
     expect(mockRepo.findEmail).toHaveBeenCalledWith(dto.email);
     expect(crypto.randomBytes).toHaveBeenCalledWith(32);
 

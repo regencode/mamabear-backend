@@ -22,8 +22,15 @@ async function main() {
   console.log(`Inserted ${users.length} users.`);
 
   console.log("Inserting product data...");
-  for (const product of products) {
-    await prisma.product.create({ data: product });
+  for (const { images, ...productData } of products) {
+    await prisma.product.create({
+      data: {
+        ...productData,
+        ...(images?.length && {
+          images: { create: images },
+        }),
+      },
+    });
   }
 
   console.log(`Inserted ${products.length} products.`);
