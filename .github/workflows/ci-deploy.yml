@@ -82,6 +82,9 @@ jobs:
         npx prisma migrate deploy
         npx prisma generate
 
+    - name: Run seeder
+      run : npx prisma db seed
+
     - name: Run implemented unit tests
       run: |
         npm run test auth
