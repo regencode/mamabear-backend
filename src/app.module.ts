@@ -11,6 +11,7 @@ import { HealthModule } from './health/health.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CustomLoggerModule } from './common/logger/logger.module';
 import { MailHogOptions } from './options/mailhog.options';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { MailHogOptions } from './options/mailhog.options';
     UsersModule,
     AuthModule,
     HealthModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -70,7 +70,17 @@ model ProductVariant {
 }
 
 model Category {
-  id       Int       @id @default(autoincrement())
-  name     String
+  id          Int     @id @default(autoincrement())
+  name        String
+  slug        String  @unique
+  description String?
+  imageUrl    String?
+
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   products Product[]
 }
