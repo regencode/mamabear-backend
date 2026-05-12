@@ -53,7 +53,20 @@ export class ProductsRepository {
     return this.prisma.productVariant.create({ data });
   }
 
+  createProductVariantCombination(
+    data: Prisma.VariantCombinationCreateManyInput[],
+  ) {
+    return this.prisma.variantCombination.createMany({
+      data,
+      skipDuplicates: true,
+    });
+  }
+
   findProductVariantsByProductId(productId: number) {
     return this.prisma.productVariant.findMany({ where: { productId } });
+  }
+
+  findAllVariantCombinations(productId: number) {
+    return this.prisma.variantCombination.findMany({ where: { productId } });
   }
 }

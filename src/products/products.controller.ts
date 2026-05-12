@@ -17,6 +17,7 @@ import { Role } from '@/generated/prisma';
 import { Roles } from '@/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 import { CreateProductVariantDto } from './dto/create-productVariant.dto';
+import { CreateVariantCombinationDto } from './dto/create-variantCombination';
 
 @ApiTags('products')
 @Controller('products')
@@ -73,5 +74,21 @@ export class ProductsController {
   @Get(':id/variants')
   getProductVariant(@Param('id') id: number) {
     return this.productsService.getProductVariant(id);
+  }
+
+  @UseGuards(new JwtAuthGuard())
+  @Roles([Role.ADMIN])
+  @Post(':id/variant-combinations')
+  createVariantCombinations(
+    @Req() req,
+    @Param('id') id: number,
+    @Body() dto: CreateVariantCombinationDto,
+  ) {
+    return this.productsService.createVariantCombinations(req.user.id, id, dto);
+  }
+
+  @Get(':id/variant-combinations')
+  getAllVariantCombinations(@Param('id') id: number) {
+    return this.productsService.getAllVariantCombinations(id);
   }
 }

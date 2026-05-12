@@ -48,7 +48,8 @@ model Product {
     categoryId   Int?                                                             
     category     Category?         @relation(fields: [categoryId],  references:  [id])
     images       ProductImage[]                                                   
-    variants     ProductVariant[]                                                 
+    variants     ProductVariant[]  
+    variantCombinations  VariantCombination[]                                               
 }
 
 model ProductImage {
@@ -77,6 +78,21 @@ model ProductVariant {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt                                           
+}
+
+model VariantCombination {
+    id Int @id @default(autoincrement())
+
+    productId Int
+    product Product @relation(fields:[productId], references:[id], onDelete: Cascade)
+
+    combination Json
+    sku String @unique
+    price Decimal @db.Decimal(10,2)
+    stock Int @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt    
 }
 
 model Category {

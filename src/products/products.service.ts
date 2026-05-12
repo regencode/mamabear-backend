@@ -9,6 +9,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsRepository } from './products.repository';
 import slugify from 'slugify';
 import { CreateProductVariantDto } from './dto/create-productVariant.dto';
+import { CreateVariantCombinationDto } from './dto/create-variantCombination';
 
 @Injectable()
 export class ProductsService {
@@ -181,8 +182,65 @@ export class ProductsService {
     };
   }
 
-  getProductVariant(variantId: number) {
-    return this.productsRepository.findProductVariantsByProductId(variantId);
+  getProductVariant(productId: number) {
+    return this.productsRepository.findProductVariantsByProductId(productId);
+  }
+
+  getAllVariantCombinations(productId: number) {
+    return this.productsRepository.findAllVariantCombinations(productId);
+  }
+
+  async createVariantCombinations(
+    userId: number,
+    productId: number,
+    dto: CreateVariantCombinationDto,
+  ) {
+    const product = await this.productsRepository.findById(productId);
+
+    if (!product) {
+      throw new BadRequestException('Product not found');
+    }
+
+    const variants =
+      await this.productsRepository.findProductVariantsByProductId(productId);
+
+    if (!variants) {
+      throw new BadRequestException('Variant not found');
+    }
+
+    const allowedVariants = variants.map(
+      (variant) => `${variant.variantType}:${variant.variantValue}`,
+    );
+
+    for (const item of dto.combinations) {
+      for (const [type, value] of Object.entries(item.combination)) {
+        const key = `${type}:${value}`;
+
+        if (!allowedVariants.includes(key)) {
+          throw new BadRequestException(
+            `Invalid variant combination: ${type} = ${value}`,
+          );
+        }
+      }
+    }
+
+    const data = dto.combinations.map((item) => {
+      return {
+        productId: product.id,
+        combination: item.combination,
+        sku:
+          item.sku ??
+          this.generateCombinationSku(product.slug, item.combination),
+        price: item.price,
+        stock: item.stock,
+      };
+    });
+    await this.productsRepository.createProductVariantCombination(data);
+
+    return {
+      success: true,
+      message: 'Variant combinations created successfully',
+    };
   }
 
   private generateSku(productSlug: string, variantValue: string): string {
@@ -190,6 +248,19 @@ export class ProductsService {
     return slugify(base, {
       lower: false,
       strict: true,
+    }).toUpperCase();
+  }
+
+  private generateCombinationSku(
+    productSlug: string,
+    combination: Record<string, string>,
+  ): string {
+    const values = Object.values(combination);
+
+    return slugify(`${productSlug}-${values.join('-')}`, {
+      strict: true,
+      lower: false,
+      trim: true,
     }).toUpperCase();
   }
 }
