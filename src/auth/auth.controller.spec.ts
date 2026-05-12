@@ -70,8 +70,8 @@ describe('AuthController', () => {
   it('should call authService.logout', async () => {
     const req = {
       sub: 'idUser1',
-      email: "a@em.com",
-      role: Role.USER
+      email: 'a@em.com',
+      role: Role.USER,
     };
 
     const result = {

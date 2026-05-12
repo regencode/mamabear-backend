@@ -9,7 +9,9 @@ export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly logger: PinoLogger,
-  ) {this.logger.setContext(UsersService.name);}
+  ) {
+    this.logger.setContext(UsersService.name);
+  }
 
   async create(createUserDto: CreateUserDto) {
     try {

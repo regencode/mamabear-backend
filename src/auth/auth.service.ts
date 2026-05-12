@@ -166,7 +166,6 @@ export class AuthService {
 
       return {
         message: 'Register success, check your email to verify',
-        verificationToken: verificationToken,
       };
     } catch (error: any) {
       if (

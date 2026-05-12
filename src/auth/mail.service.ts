@@ -6,21 +6,29 @@ export class MailService {
   constructor(private readonly mailService: MailerService) {}
 
   async sendVerificationEmail(email: string, token: string) {
-    const verifyUrl = `${process.env.BACKEND_URL}/auth/verify-email/${token}`;
+    const verifyUrl = `${process.env.BACKEND_URL}/auth/verify-email?token=${token}`;
     await this.mailService.sendMail({
       to: email,
       subject: 'Please verify your email',
-      text: `Verify your email here ${verifyUrl}`,
+      text: `Klik link berikut untuk verify email anda: ${verifyUrl}`,
+    });
+  }
+
+  async confirmEmailVerified(email: string, userName: string) {
+    await this.mailService.sendMail({
+      to: email,
+      subject: 'Selamat datang ke rumah Mamabear!',
+      text: `${userName}, selamat datang ke rumah Mamabear!`,
     });
   }
 
   async sendForgotPasswordMail(email: string, token: string) {
-    const resetUrl = `${process.env.BACKEND_URL}/auth/reset-password/${token}`;
+    const resetUrl = `${process.env.BACKEND_URL}/auth/reset-password?token=${token}`;
 
     await this.mailService.sendMail({
       to: email,
-      subject: 'Reset your password',
-      text: `Reset your password here ${resetUrl}`,
+      subject: 'Reset password request',
+      text: `Klik link berikut untuk verify email anda: ${resetUrl}`,
     });
   }
 }

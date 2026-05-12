@@ -1,6 +1,16 @@
 const PLACEHOLDER_HASH =
   "$2b$10$placeholderhashplaceholderhashplaceholderha";
 
+const IMAGE_BASE_URL =
+  "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images";
+
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export const users = [
   {
     email: "admin@mamabear.id",
@@ -46,113 +56,364 @@ export const users = [
 
 export const products = [
   {
-    name: "S-26 Procal Gold 3",
-    slug: "",
-    description:
-      "Growing-up formula for children aged 1-3 years, enriched with nucleotides and carotenoids.",
-    price_idr: 185000,
-    weight_g: 900,
-    sku: "S26-PROCAL-3-900",
-    stock: 50,
+    name: "MamaBear AlmonMix Isi 6 Sachet - Minuman Serbuk dengan Almond - Kaya Nutrisi Untuk Ibu Menyusui BPOM HALAL",
+    slug: slugify("MamaBear AlmonMix Isi 6 Sachet"),
+    description: `MamaBear AlmonMix Isi 6 Sachet
+Minuman Almond Kaya Nutrisi dengan Daun Katuk & Daun Kelor.
+
+
+LACTOSE FREE
+TINGGI VITAMIN A, B1, B2, B6, B9 (ASAM FOLAT), B12
+TINGGI VITAMIN C & ZAT BESI
+TINGGI SERAT PANGAN
+MAKRO & MIKRO NUTRISI LENGKAP
+
+
+Hadir dalam 7 varian rasa:
+Cokelat
+Choco Hazelnut
+Coffee Latte
+Strawberry
+Vanilla
+Matcha
+Caramel
+
+
+Cara penyajian:
+Seduh 1 sachet MamaBear AlmonMix dengan 200 ml air hangat.
+Dapat ditambahkan es batu jika ingin disajikan dingin.
+
+
+Ingredients:
+Daun Katuk
+Daun Kelor
+Almond
+Ekstrak Ragi
+
+
+Keunggulan Mamabear AlmonMix:
+Efektif meningkatkan produksi dan nutrisi ASI.
+Efektif membantu ASI cepat keluar.
+Meningkatkan mood untuk membantu mengurangi risiko baby blues.`,
+    price_idr: 80000,
+    weight_g: 180,
+    sku: "AL.MMBR",
+    stock: 100,
     isActive: true,
+    images: [
+      {
+        imageUrl: `${IMAGE_BASE_URL}/AlmonMix/AlmonMix-01.jpg`,
+        sortOrder: 1,
+        altText: "MamaBear AlmonMix 01",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/AlmonMix/AlmonMix-02.jpg`,
+        sortOrder: 2,
+        altText: "MamaBear AlmonMix 02",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/AlmonMix/AlmonMix-03.jpg`,
+        sortOrder: 3,
+        altText: "MamaBear AlmonMix 03",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/AlmonMix/AlmonMix-04.jpg`,
+        sortOrder: 4,
+        altText: "MamaBear AlmonMix 04",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/AlmonMix/AlmonMix-05.jpg`,
+        sortOrder: 5,
+        altText: "MamaBear AlmonMix 05",
+      },
+    ],
   },
   {
-    name: "Nutrilon Royal 2",
-    slug: "",
-    description:
-      "Follow-on formula for infants aged 6-12 months with Pronutra+ advancing immunity.",
-    price_idr: 210000,
-    weight_g: 800,
-    sku: "NUTRI-R2-800",
-    stock: 35,
+    name: "MamaBear ZoyaMix Rasa Cokelat Isi 10 Sachet - Sereal Kaya Nutrisi untuk Ibu Menyusui Halal BPOM",
+    slug: slugify("MamaBear ZoyaMix Rasa Cokelat Isi 10 Sachet"),
+    description: `MamaBear ZoyaMix Rasa Cokelat Isi 10 Sachet
+Sereal Kaya Nutrisi untuk Ibu Menyusui.
+
+
+MAKRO & MIKRO NUTRISI LENGKAP
+SUMBER PROTEIN & ZAT BESI
+TINGGI KALSIUM
+VIT A, B6, B12, KOLIN, SENG, ZAT BESI
+
+
+Cara penyajian:
+Seduh 1 sachet ZoyaMix dengan 150 ml air hangat.
+Dapat ditambahkan es batu jika ingin disajikan dingin.
+
+
+Ingredients:
+Daun Katuk
+Kedelai
+Daun Kelor
+Ekstrak Ragi
+Rolled Oat
+
+
+Keunggulan Mamabear ZoyaMix:
+Melancarkan ASI.
+Mengentalkan ASI.
+Tinggi Kalsium & Zinc.
+Kaya Kandungan Omega 3.
+Sumber Zat Besi.
+
+*Catatan: mengandung produk turunan sapi.`,
+    price_idr: 80000,
+    weight_g: 300,
+    sku: "ZM.MMBR",
+    stock: 100,
     isActive: true,
+    images: [
+      {
+        imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-01.jpg`,
+        sortOrder: 1,
+        altText: "MamaBear ZoyaMix 01",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-02.jpg`,
+        sortOrder: 2,
+        altText: "MamaBear ZoyaMix 02",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-03.jpg`,
+        sortOrder: 3,
+        altText: "MamaBear ZoyaMix 03",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-04.jpg`,
+        sortOrder: 4,
+        altText: "MamaBear ZoyaMix 04",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-05.jpg`,
+        sortOrder: 5,
+        altText: "MamaBear ZoyaMix 05",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-06.jpg`,
+        sortOrder: 6,
+        altText: "MamaBear ZoyaMix 06",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-07.jpg`,
+        sortOrder: 7,
+        altText: "MamaBear ZoyaMix 07",
+      },
+    ],
   },
   {
-    name: "Bebelac Gold 3",
-    slug: "",
-    description:
-      "Growing-up milk for toddlers 1-3 years with Combiotic+ for easy digestion.",
-    price_idr: 175000,
-    weight_g: 900,
-    sku: "BEBE-G3-900",
-    stock: 40,
+    name: "MamaBear Teh Pelancar ASI Isi 20 Sachet - ASI Booster Pelancar Peningkat Produksi ASI BPOM dan Halal",
+    slug: slugify("MamaBear Teh Pelancar ASI Isi 20 Sachet"),
+    description: `MamaBear Teh Pelancar ASI Isi 20 Sachet
+ASI Booster & Immunity Tea.
+
+
+Individual sachet praktis & higienis.
+Kantong teh bebas klorin, biodegradable, dan food grade.
+Aroma harum menenangkan, relaksASI ala busui.
+Tanpa tambahan bahan pengawet.
+Rasa manis alami.
+Herbal kaya antioksidan.
+
+
+Hadir dalam 3 varian rasa:
+Strawberry
+Blueberry
+
+
+Cara penyajian (1 box isi 20 sachet x @3gr (60gr)):
+Seduh dengan 200-300 ml air mendidih/panas, biarkan selama min 10 menit/kuning keemasan.
+Dapat ditambahkan madu/gula/lemon, atau bisa juga disajikan dingin.
+Konsumsi MamaBear Teh Pelancar ASI 3-4x sehari.
+
+
+Ingredients:
+Fenugreek
+Habbatussauda
+Kunir
+Fennel
+
+
+Keunggulan Mamabear Teh Pelancar ASI:
+Memperlancar aliran ASI.
+Meningkatkan produksi & nutrisi ASI.
+Meningkatkan lemak ASI & BB bayi (melalui ASI).
+Mempercepat pemulihan & meningkatkan daya tahan tubuh (Habbatussauda).
+
+*Catatan: tidak untuk ibu hamil.`,
+    price_idr: 65000,
+    weight_g: 60,
+    sku: "TPA.MMBR",
+    stock: 100,
     isActive: true,
+    images: [
+      {
+        imageUrl: `${IMAGE_BASE_URL}/Teh/Lactation-Tea-01.jpg`,
+        sortOrder: 1,
+        altText: "MamaBear Lactation Tea 01",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/Teh/Lactation-Tea-02.jpg`,
+        sortOrder: 2,
+        altText: "MamaBear Lactation Tea 02",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/Teh/Lactation-Tea-03.jpg`,
+        sortOrder: 3,
+        altText: "MamaBear Lactation Tea 03",
+      },
+    ],
   },
   {
-    name: "SGM Eksplor 3+",
-    slug: "",
-    description:
-      "Growing-up milk for children aged 3-5 years, fortified with iron and vitamin C.",
-    price_idr: 95000,
-    weight_g: 800,
-    sku: "SGM-E3-800",
-    stock: 60,
+    name: "MamaBear Kukis Almond Oat - Camilan Kaya Nutrisi untuk Ibu Menyusui Halal BPOM",
+    slug: slugify("MamaBear Kukis Almond Oat"),
+    description: `MamaBear Kukis Almon Oat
+Memberi segala kebaikan untuk Mama selama masa menyusui dengan :
+
+✅ SUPERFOOD meningkatkan produksi & nutrisi ASI
+✅ MAKRO & MIKRONUTRISI lengkap untuk Mama
+✅ VIT B6, Omega3 & Zat Besi
+✅ ANTIOXIDANT Selenium
+✅ Tinggi Serat Pangan untuk kesehatan saluran pencernaan
+
+
+Keunggulan lainnya :
+⭐ Brand Choice 2022
+⭐Terjamin Mutu & Sesuai Standard Keamanan Pangan
+
+- BPOM MD : 236213003799
+- HALAL MUI : 07200046370418
+
+⭐ Rasa ENAK
+⭐ Tanpa tambahan bahan pengawet
+⭐ Ukuran sekali lahap bebas remahan
+⭐ Packaging ziplock, memudahkan penyimpanan
+⭐ Aman dikonsumsi ibu hamil & menyusui, anak-anak, dewasa, & orang tua.
+
+
+*Varian Cookies and Cream & Coklat Chip mengandung produk turunan susu sapi.
+*Varian Choconut BEBAS produk turunan susu sapi & TANPA TELUR
+
+
+CATATAN PEMESANAN:
+- EstimASI pengiriman produk 3-4 hari kerja
+- Bila pemesanan sudah di checkout maka tidak bisa ganti alamat
+(Apabila ada kesalahan input alamat, bisa dibatalkan dulu pemesanan sebelumnya lalu bisa order ulang)
+
+*Baca label sebelum membeli
+
+SYARAT PENGAJUAN KOMPLAIN
+Jika ada komplain dimohon untuk cek kembali syarat & ketentuannya di BANNER TOKO
+Penilaian yang Mama berikan sangat berharga bagi kami`,
+    price_idr: 80000,
+    weight_g: 150,
+    sku: "KU.MMBR",
+    stock: 100,
     isActive: true,
+    images: [
+      {
+        imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Cover-Kukis-Almond-Oat.png`,
+        sortOrder: 1,
+        altText: "Cover MamaBear Kukis Almond Oat",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Almond-Oat-Cookies-Cream-02.jpg`,
+        sortOrder: 2,
+        altText: "Almond Oat Cookies Cream 02",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Almond-Oat-Cookies-Cream-03.jpg`,
+        sortOrder: 3,
+        altText: "Almond Oat Cookies Cream 03",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Almond-Oat-Cookies-Cream-04.jpg`,
+        sortOrder: 4,
+        altText: "Almond Oat Cookies Cream 04",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Almond-Oat-Choco-Chip-03.jpg`,
+        sortOrder: 5,
+        altText: "Almond Oat Choco Chip 03",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Kookie-Bites-Choco-Nut-02.jpg`,
+        sortOrder: 6,
+        altText: "Kookie Bites Choco Nut 02",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Kookie-Bites-Choco-Nut-04.jpg`,
+        sortOrder: 7,
+        altText: "Kookie Bites Choco Nut 04",
+      },
+    ],
   },
   {
-    name: "Frisian Flag Jelajah 1+",
-    slug: "",
-    description:
-      "Milk for toddlers aged 1-3 years with essential nutrients for growth and development.",
-    price_idr: 82000,
-    weight_g: 800,
-    sku: "FF-J1-800",
-    stock: 55,
+    name: "MamaBear ASI Booster 30 Kapsul - Pelancar ASI Fenugreek Free Halal BPOM",
+    slug: slugify("MamaBear ASI Booster 30 Kapsul"),
+    description: `MAMABEAR KAPSUL ASI BOOSTER
+
+Kapsul Pelancar ASI pertama dengan Triple Benefit dalam 1 kapsul:
+Meningkatkan produksi dan nutrisi ASI
+Membantu meredakan peradangan pada penyumbatan kelenjar ASI (Mastitis)
+Membantu meredakan nyeri pasca melahirkan
+
+Keunggulan lainnya :
+Terjamin Mutu & Sesuai Standard Keamanan Pangan
+- POM TR243057401
+- HALAL MUI : ID00110000288610422
+
+Kombinasi herbal & SUPERFOOD dari ekstrak daun katuk, ekstrak daun kelor, ekstrak jahe merah dan serbuk almond
+Fish Allergen Free
+Fenugreek Free
+17 Nutrisi Makro & Mikro
+Ekstrak Jahe untuk antioksida yang membantu menjaga daya tahan tubuh Ibu selama menyusui
+Mudah dikonsumsi tidak memerlukan penyeduhan
+
+
+ANJURAN PEMAKAIAN untuk manfaat maksimal :
+- Konsumsi MamaBear Kapsul Pelancar ASI 2-3x sehari.
+*1 kapsul setelah makan
+Catatan : Tidak untuk Ibu hamil
+
+
+
+CATATAN PEMESANAN:
+- Estimasi pengiriman produk 3-4 hari kerja
+- Bila pemesanan sudah di checkout maka tidak bisa ganti alamat
+(Apabila ada kesalahan input alamat, bisa dibatalkan dulu pemesanan sebelumnya lalu bisa order ulang)
+
+*Baca label sebelum membeli`,
+    price_idr: 100000,
+    weight_g: 30,
+    sku: "CP.AB30",
+    stock: 100,
     isActive: true,
-  },
-  {
-    name: "Morinaga Chil Kid Platinum 3",
-    slug: "",
-    description:
-      "Growing-up formula for children 1-3 years with triple care: brain, immunity, and growth.",
-    price_idr: 195000,
-    weight_g: 800,
-    sku: "MORI-CKP3-800",
-    stock: 30,
-    isActive: true,
-  },
-  {
-    name: "Lactamil Pregnasis",
-    slug: "",
-    description:
-      "Nutritional milk for pregnant mothers with DHA, folate, and high calcium.",
-    price_idr: 72000,
-    weight_g: 400,
-    sku: "LAC-PREG-400",
-    stock: 45,
-    isActive: true,
-  },
-  {
-    name: "Lactamil Lactamom",
-    slug: "",
-    description:
-      "Nutritional milk for breastfeeding mothers to support milk production and quality.",
-    price_idr: 78000,
-    weight_g: 400,
-    sku: "LAC-MOM-400",
-    stock: 45,
-    isActive: true,
-  },
-  {
-    name: "Promina Bubur Bayi Sereal Beras Merah",
-    slug: "",
-    description:
-      "Baby cereal with red rice for infants 6+ months, iron-fortified and easy to digest.",
-    price_idr: 35000,
-    weight_g: 120,
-    sku: "PROM-BR-120",
-    stock: 80,
-    isActive: true,
-  },
-  {
-    name: "S-26 Promise Gold 4",
-    slug: "",
-    description:
-      "School-age formula for children 3-9 years with enhanced memory and learning support.",
-    price_idr: 168000,
-    weight_g: 900,
-    sku: "S26-P4-900",
-    stock: 25,
-    isActive: true,
+    images: [
+      {
+        imageUrl: `${IMAGE_BASE_URL}/Kapsul/Kapsul-01.jpg`,
+        sortOrder: 1,
+        altText: "MamaBear Kapsul 01",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/Kapsul/Kapsul-02.jpg`,
+        sortOrder: 2,
+        altText: "MamaBear Kapsul 02",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/Kapsul/Kapsul-03.jpg`,
+        sortOrder: 3,
+        altText: "MamaBear Kapsul 03",
+      },
+      {
+        imageUrl: `${IMAGE_BASE_URL}/Kapsul/Kapsul-04.jpg`,
+        sortOrder: 4,
+        altText: "MamaBear Kapsul 04",
+      },
+    ],
   },
 ];
