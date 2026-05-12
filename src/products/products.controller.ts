@@ -29,8 +29,8 @@ export class ProductsController {
   ) {}
 
   @Get()
-  findAll() {
-    return this.productsService.findAll();
+  findAll(@Body() paginationDto: CursorPaginationRequestDto) {
+    return this.productsService.findAll(paginationDto);
   }
 
   @Get(':id')

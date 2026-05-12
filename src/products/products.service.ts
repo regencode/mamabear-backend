@@ -3,12 +3,15 @@ import { PinoLogger } from 'pino-nestjs';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsRepository } from './products.repository';
+import { CursorPaginationRequestDto } from '@/common/dto/request/pagination.request.dto';
+import { CursorPaginationService } from '@/common/services/pagination.service';
 
 @Injectable()
 export class ProductsService {
   constructor(
     private readonly productsRepository: ProductsRepository,
     private readonly logger: PinoLogger,
+    private readonly paginationService: CursorPaginationService,
   ) {
     this.logger.setContext(ProductsService.name);
   }
@@ -38,14 +41,19 @@ export class ProductsService {
     }
   }
 
-  async findAll() {
+  async findAll(paginationDto: CursorPaginationRequestDto) {
     try {
-      const result = await this.productsRepository.findAll();
+        const result = await this.paginationService.paginate({
+            findMany: this.productsRepository.findAll
+        },
+        paginationDto,
+        {},
+        )
       this.logger.info({
         level: 'info',
         message: 'Retrieved all products',
         endpoint: 'GET /products',
-        count: result.length,
+        count: result.data.length,
         status: 'success',
       });
       return result;
