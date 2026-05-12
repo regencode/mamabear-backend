@@ -1,26 +1,46 @@
-import { Injectable } from '@nestjs/common';
-import { CreateReviewDto } from './dto/create-review.dto';
-import { UpdateReviewDto } from './dto/update-review.dto';
+import { Injectable } from '@nestjs/common'
+import { ReviewsRepository } from './reviews.repository'
+import { CreateReviewDto } from './dto/create-review.dto'
+import { Review } from './entities/review.entity'
+import { CursorPaginationService } from '@/common/services/pagination.service'
+import { CursorPaginationRequestDto } from '@/common/dto/request/pagination.request.dto'
 
 @Injectable()
 export class ReviewsService {
-  create(createReviewDto: CreateReviewDto) {
-    return 'This action adds a new review';
+  constructor(
+    private readonly reviewsRepository: ReviewsRepository,
+    private readonly paginationService: CursorPaginationService,
+  ) {}
+
+  /**
+   * ✅ Cursor pagination tetap nested di product
+   */
+  async findReviewsOfProduct(
+    productId: string,
+    paginationDto: CursorPaginationRequestDto,
+  ) {
+    return this.paginationService.paginate<Review>(
+      this.reviewsRepository,
+      paginationDto,
+      {
+        where: { productId },
+      },
+      {
+        cursorField: 'id',
+        orderDirection: 'asc',
+      },
+    )
   }
 
-  findAll() {
-    return `This action returns all reviews`;
+  async createReviewForProduct(dto: CreateReviewDto) {
+    return this.reviewsRepository.create(dto)
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} review`;
+  async upvoteReviewWithId(id: string) {
+    return this.reviewsRepository.upvoteReviewWithId(id)
   }
 
-  update(id: number, updateReviewDto: UpdateReviewDto) {
-    return `This action updates a #${id} review`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} review`;
+  async remove(id: string) {
+    return this.reviewsRepository.remove(id)
   }
 }

@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   Put,
+  Patch,
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -15,11 +16,17 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { Role } from '@/generated/prisma';
 import { Roles } from '@/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
+import { ReviewsService } from '@/reviews/reviews.service'
+import { CreateReviewDto } from '@/reviews/dto/create-review.dto'
+//import { CursorPaginationRequestDto } from '@/common/dto/request/pagination.request.dto'
 
 @ApiTags('products')
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+      private readonly productsService: ProductsService,
+      private readonly reviewsService: ReviewsService           
+  ) {}
 
   @Get()
   findAll() {
@@ -54,4 +61,38 @@ export class ProductsController {
     // admin only
     return this.productsService.remove(+id);
   }
+
+  @Get(':id/reviews')
+  findAllReviewsOfProduct(
+    @Param('id') productId: string,
+  ) {
+    return this.reviewsService.findReviewsOfProduct(
+      productId,
+      paginationDto,
+    )
+  }
+
+  @Post(':id/reviews')
+  createReviewForProduct(
+    @Param('id') productId: string,
+    @Body() dto: CreateReviewDto,
+  ) {
+    dto.productId = parseInt(productId);
+    return this.reviewsService.createReviewForProduct(dto);
+  }
+
+  @Patch(':id/reviews/:reviewId/upvote')
+  upvoteReviewOfProduct(
+    @Param('reviewId') reviewId: string,
+  ) {
+    return this.reviewsService.upvoteReviewWithId(reviewId)
+  }
+
+  @Delete(':id/reviews/:reviewId')
+  removeReview(
+    @Param('reviewId') reviewId: string,
+  ) {
+    return this.reviewsService.remove(reviewId)
+  }
+}
 }

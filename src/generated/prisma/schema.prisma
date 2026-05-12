@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email          String    @unique
+  hashedPassword String
+  name           String
+  phone          String
+  role           Role      @default(USER)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime? @updatedAt
+
+  isVerified              Boolean   @default(false)
+  verificationToken       String?
+  verificationTokenExpiry DateTime?
+
+  resetToken       String?
+  resetTokenExpiry DateTime?
+
+  refreshToken       String?
+  refreshTokenExpiry DateTime?
+}
+
+model Product {
+  id          Int              @id @default(autoincrement())
+  name        String
+  slug        String
+  isActive    Boolean          @default(true)
+  categoryId  Int?
+  category    Category?        @relation(fields: [categoryId], references: [id])
+  highlightId Int?
+  highlight   Highlight?       @relation(fields: [highlightId], references: [id])
+  images      ProductImage[]
+  variants    ProductVariant[]
+
+  tags              String[]
+  description       String
+  ingredients       String
+  usageInstructions String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+model ProductImage {
+  id        Int             @id @default(autoincrement())
+  productId Int?
+  product   Product?        @relation(fields: [productId], references: [id])
+  variantId Int?
+  variant   ProductVariant? @relation(fields: [variantId], references: [id])
+  imageUrl  String          @default("https://placehold.co/600x400")
+  sortOrder Int
+  altText   String?
+}
+
+model Discount {
+  id        Int            @id @default(autoincrement())
+  variantId Int            @unique
+  variant   ProductVariant @relation(fields: [variantId], references: [id])
+
+  startedAt DateTime @default(now())
+  endsAt    DateTime
+}
+
+model ProductVariant {
+  id        Int            @id @default(autoincrement())
+  productId Int
+  product   Product        @relation(fields: [productId], references: [id])
+  name      String
+  images    ProductImage[]
+  priceIdr  Decimal        @db.Decimal(10, 2)
+  discount  Discount?
+  weightG   Int
+  sku       String?
+  stock     Int            @default(0)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+model Highlight {
+  id          Int       @id @default(autoincrement())
+  name        String
+  slug        String    @unique
+  description String?
+  isActive    Boolean   @default(true)
+  products    Product[]
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String
+  slug        String    @unique
+  description String?
+  imageUrl    String?
+  isActive    Boolean   @default(true)
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
