@@ -1,15 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PinoLogger } from 'pino-nestjs';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsRepository } from './products.repository';
+import slugify from 'slugify';
+import { CreateProductVariantDto } from './dto/create-productVariant.dto';
 
 @Injectable()
 export class ProductsService {
   constructor(
     private readonly productsRepository: ProductsRepository,
     private readonly logger: PinoLogger,
-  ) {this.logger.setContext(ProductsService.name);}
+  ) {
+    this.logger.setContext(ProductsService.name);
+  }
 
   async create(createProductDto: CreateProductDto) {
     try {
@@ -140,5 +148,48 @@ export class ProductsService {
       });
       throw error;
     }
+  }
+
+  async createVariant(
+    userId: number,
+    productId: number,
+    dto: CreateProductVariantDto,
+  ) {
+    const product = await this.productsRepository.findById(productId);
+
+    if (!product) {
+      throw new BadRequestException('Product not found');
+    }
+    const newSku = this.generateSku(product.slug, dto.variantValue);
+
+    await this.productsRepository.createProductVariant({
+      product: {
+        connect: {
+          id: product.id,
+        },
+      },
+      variantType: dto.variantType,
+      variantValue: dto.variantValue,
+      sku: newSku,
+      priceAdjustment: dto.priceAdjustment,
+      stock: dto.stock,
+    });
+
+    return {
+      success: true,
+      message: 'Variant created successfully',
+    };
+  }
+
+  getProductVariant(variantId: number) {
+    return this.productsRepository.findProductVariantsByProductId(variantId);
+  }
+
+  private generateSku(productSlug: string, variantValue: string): string {
+    const base = `${productSlug}-${variantValue}`;
+    return slugify(base, {
+      lower: false,
+      strict: true,
+    }).toUpperCase();
   }
 }

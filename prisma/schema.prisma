@@ -62,11 +62,21 @@ model ProductImage {
 
 model ProductVariant {
     id         Int      @id @default(autoincrement())               
+
     productId  Int                                                                 
-    product    Product  @relation(fields: [productId], references:  [id])
-    name       String                                                              
-    price_idr  Decimal  @db.Decimal(10, 2)                                      
-    stock      Int      @default(0)                                                
+    product    Product  @relation(fields: [productId], references:  [id], onDelete: Cascade)
+
+    variantType       String
+    variantValue String
+    sku String @unique
+
+    priceAdjustment  Decimal @default(0)  @db.Decimal(10, 2)                                      
+    stock      Int      @default(0)     
+    isActive Boolean @default(true)
+    sortOrder Int @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt                                           
 }
 
 model Category {

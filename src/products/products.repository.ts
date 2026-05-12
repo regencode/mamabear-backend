@@ -1,7 +1,8 @@
-import { PrismaService } from "@/prisma/prisma.service";
-import { Injectable } from "@nestjs/common";
-import { CreateProductDto } from "./dto/create-product.dto";
-import { UpdateProductDto } from "./dto/update-product.dto";
+import { PrismaService } from '@/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { Prisma } from '@/generated/prisma';
 
 const PRODUCT_INCLUDE = {
   category: true,
@@ -15,7 +16,7 @@ export class ProductsRepository {
 
   create(data: CreateProductDto) {
     return this.prisma.product.create({
-      data: { ...data, slug: "" },
+      data: { ...data, slug: '' },
       include: PRODUCT_INCLUDE,
     });
   }
@@ -44,5 +45,15 @@ export class ProductsRepository {
       where: { id },
       include: PRODUCT_INCLUDE,
     });
+  }
+
+  // Variants
+
+  createProductVariant(data: Prisma.ProductVariantCreateInput) {
+    return this.prisma.productVariant.create({ data });
+  }
+
+  findProductVariantsByProductId(productId: number) {
+    return this.prisma.productVariant.findMany({ where: { productId } });
   }
 }
