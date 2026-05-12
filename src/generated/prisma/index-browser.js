@@ -165,6 +165,8 @@ exports.Prisma.ProductImageScalarFieldEnum = {
 exports.Prisma.DiscountScalarFieldEnum = {
   id: 'id',
   variantId: 'variantId',
+  amount: 'amount',
+  isPercent: 'isPercent',
   startedAt: 'startedAt',
   endsAt: 'endsAt'
 };

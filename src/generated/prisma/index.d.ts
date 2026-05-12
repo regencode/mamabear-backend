@@ -5404,16 +5404,20 @@ export namespace Prisma {
   export type DiscountAvgAggregateOutputType = {
     id: number | null
     variantId: number | null
+    amount: Decimal | null
   }
 
   export type DiscountSumAggregateOutputType = {
     id: number | null
     variantId: number | null
+    amount: Decimal | null
   }
 
   export type DiscountMinAggregateOutputType = {
     id: number | null
     variantId: number | null
+    amount: Decimal | null
+    isPercent: boolean | null
     startedAt: Date | null
     endsAt: Date | null
   }
@@ -5421,6 +5425,8 @@ export namespace Prisma {
   export type DiscountMaxAggregateOutputType = {
     id: number | null
     variantId: number | null
+    amount: Decimal | null
+    isPercent: boolean | null
     startedAt: Date | null
     endsAt: Date | null
   }
@@ -5428,6 +5434,8 @@ export namespace Prisma {
   export type DiscountCountAggregateOutputType = {
     id: number
     variantId: number
+    amount: number
+    isPercent: number
     startedAt: number
     endsAt: number
     _all: number
@@ -5437,16 +5445,20 @@ export namespace Prisma {
   export type DiscountAvgAggregateInputType = {
     id?: true
     variantId?: true
+    amount?: true
   }
 
   export type DiscountSumAggregateInputType = {
     id?: true
     variantId?: true
+    amount?: true
   }
 
   export type DiscountMinAggregateInputType = {
     id?: true
     variantId?: true
+    amount?: true
+    isPercent?: true
     startedAt?: true
     endsAt?: true
   }
@@ -5454,6 +5466,8 @@ export namespace Prisma {
   export type DiscountMaxAggregateInputType = {
     id?: true
     variantId?: true
+    amount?: true
+    isPercent?: true
     startedAt?: true
     endsAt?: true
   }
@@ -5461,6 +5475,8 @@ export namespace Prisma {
   export type DiscountCountAggregateInputType = {
     id?: true
     variantId?: true
+    amount?: true
+    isPercent?: true
     startedAt?: true
     endsAt?: true
     _all?: true
@@ -5555,6 +5571,8 @@ export namespace Prisma {
   export type DiscountGroupByOutputType = {
     id: number
     variantId: number
+    amount: Decimal
+    isPercent: boolean
     startedAt: Date
     endsAt: Date
     _count: DiscountCountAggregateOutputType | null
@@ -5581,6 +5599,8 @@ export namespace Prisma {
   export type DiscountSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     variantId?: boolean
+    amount?: boolean
+    isPercent?: boolean
     startedAt?: boolean
     endsAt?: boolean
     variant?: boolean | ProductVariantDefaultArgs<ExtArgs>
@@ -5589,6 +5609,8 @@ export namespace Prisma {
   export type DiscountSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     variantId?: boolean
+    amount?: boolean
+    isPercent?: boolean
     startedAt?: boolean
     endsAt?: boolean
     variant?: boolean | ProductVariantDefaultArgs<ExtArgs>
@@ -5597,6 +5619,8 @@ export namespace Prisma {
   export type DiscountSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     variantId?: boolean
+    amount?: boolean
+    isPercent?: boolean
     startedAt?: boolean
     endsAt?: boolean
     variant?: boolean | ProductVariantDefaultArgs<ExtArgs>
@@ -5605,11 +5629,13 @@ export namespace Prisma {
   export type DiscountSelectScalar = {
     id?: boolean
     variantId?: boolean
+    amount?: boolean
+    isPercent?: boolean
     startedAt?: boolean
     endsAt?: boolean
   }
 
-  export type DiscountOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "variantId" | "startedAt" | "endsAt", ExtArgs["result"]["discount"]>
+  export type DiscountOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "variantId" | "amount" | "isPercent" | "startedAt" | "endsAt", ExtArgs["result"]["discount"]>
   export type DiscountInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     variant?: boolean | ProductVariantDefaultArgs<ExtArgs>
   }
@@ -5628,6 +5654,8 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       variantId: number
+      amount: Prisma.Decimal
+      isPercent: boolean
       startedAt: Date
       endsAt: Date
     }, ExtArgs["result"]["discount"]>
@@ -6056,6 +6084,8 @@ export namespace Prisma {
   interface DiscountFieldRefs {
     readonly id: FieldRef<"Discount", 'Int'>
     readonly variantId: FieldRef<"Discount", 'Int'>
+    readonly amount: FieldRef<"Discount", 'Decimal'>
+    readonly isPercent: FieldRef<"Discount", 'Boolean'>
     readonly startedAt: FieldRef<"Discount", 'DateTime'>
     readonly endsAt: FieldRef<"Discount", 'DateTime'>
   }
@@ -11202,6 +11232,8 @@ export namespace Prisma {
   export const DiscountScalarFieldEnum: {
     id: 'id',
     variantId: 'variantId',
+    amount: 'amount',
+    isPercent: 'isPercent',
     startedAt: 'startedAt',
     endsAt: 'endsAt'
   };
@@ -11668,6 +11700,8 @@ export namespace Prisma {
     NOT?: DiscountWhereInput | DiscountWhereInput[]
     id?: IntFilter<"Discount"> | number
     variantId?: IntFilter<"Discount"> | number
+    amount?: DecimalFilter<"Discount"> | Decimal | DecimalJsLike | number | string
+    isPercent?: BoolFilter<"Discount"> | boolean
     startedAt?: DateTimeFilter<"Discount"> | Date | string
     endsAt?: DateTimeFilter<"Discount"> | Date | string
     variant?: XOR<ProductVariantScalarRelationFilter, ProductVariantWhereInput>
@@ -11676,6 +11710,8 @@ export namespace Prisma {
   export type DiscountOrderByWithRelationInput = {
     id?: SortOrder
     variantId?: SortOrder
+    amount?: SortOrder
+    isPercent?: SortOrder
     startedAt?: SortOrder
     endsAt?: SortOrder
     variant?: ProductVariantOrderByWithRelationInput
@@ -11687,6 +11723,8 @@ export namespace Prisma {
     AND?: DiscountWhereInput | DiscountWhereInput[]
     OR?: DiscountWhereInput[]
     NOT?: DiscountWhereInput | DiscountWhereInput[]
+    amount?: DecimalFilter<"Discount"> | Decimal | DecimalJsLike | number | string
+    isPercent?: BoolFilter<"Discount"> | boolean
     startedAt?: DateTimeFilter<"Discount"> | Date | string
     endsAt?: DateTimeFilter<"Discount"> | Date | string
     variant?: XOR<ProductVariantScalarRelationFilter, ProductVariantWhereInput>
@@ -11695,6 +11733,8 @@ export namespace Prisma {
   export type DiscountOrderByWithAggregationInput = {
     id?: SortOrder
     variantId?: SortOrder
+    amount?: SortOrder
+    isPercent?: SortOrder
     startedAt?: SortOrder
     endsAt?: SortOrder
     _count?: DiscountCountOrderByAggregateInput
@@ -11710,6 +11750,8 @@ export namespace Prisma {
     NOT?: DiscountScalarWhereWithAggregatesInput | DiscountScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Discount"> | number
     variantId?: IntWithAggregatesFilter<"Discount"> | number
+    amount?: DecimalWithAggregatesFilter<"Discount"> | Decimal | DecimalJsLike | number | string
+    isPercent?: BoolWithAggregatesFilter<"Discount"> | boolean
     startedAt?: DateTimeWithAggregatesFilter<"Discount"> | Date | string
     endsAt?: DateTimeWithAggregatesFilter<"Discount"> | Date | string
   }
@@ -12312,6 +12354,8 @@ export namespace Prisma {
   }
 
   export type DiscountCreateInput = {
+    amount: Decimal | DecimalJsLike | number | string
+    isPercent?: boolean
     startedAt?: Date | string
     endsAt: Date | string
     variant: ProductVariantCreateNestedOneWithoutDiscountInput
@@ -12320,11 +12364,15 @@ export namespace Prisma {
   export type DiscountUncheckedCreateInput = {
     id?: number
     variantId: number
+    amount: Decimal | DecimalJsLike | number | string
+    isPercent?: boolean
     startedAt?: Date | string
     endsAt: Date | string
   }
 
   export type DiscountUpdateInput = {
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isPercent?: BoolFieldUpdateOperationsInput | boolean
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endsAt?: DateTimeFieldUpdateOperationsInput | Date | string
     variant?: ProductVariantUpdateOneRequiredWithoutDiscountNestedInput
@@ -12333,6 +12381,8 @@ export namespace Prisma {
   export type DiscountUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     variantId?: IntFieldUpdateOperationsInput | number
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isPercent?: BoolFieldUpdateOperationsInput | boolean
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endsAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -12340,11 +12390,15 @@ export namespace Prisma {
   export type DiscountCreateManyInput = {
     id?: number
     variantId: number
+    amount: Decimal | DecimalJsLike | number | string
+    isPercent?: boolean
     startedAt?: Date | string
     endsAt: Date | string
   }
 
   export type DiscountUpdateManyMutationInput = {
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isPercent?: BoolFieldUpdateOperationsInput | boolean
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endsAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -12352,6 +12406,8 @@ export namespace Prisma {
   export type DiscountUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     variantId?: IntFieldUpdateOperationsInput | number
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isPercent?: BoolFieldUpdateOperationsInput | boolean
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endsAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13105,42 +13161,6 @@ export namespace Prisma {
     sortOrder?: SortOrder
   }
 
-  export type ProductVariantScalarRelationFilter = {
-    is?: ProductVariantWhereInput
-    isNot?: ProductVariantWhereInput
-  }
-
-  export type DiscountCountOrderByAggregateInput = {
-    id?: SortOrder
-    variantId?: SortOrder
-    startedAt?: SortOrder
-    endsAt?: SortOrder
-  }
-
-  export type DiscountAvgOrderByAggregateInput = {
-    id?: SortOrder
-    variantId?: SortOrder
-  }
-
-  export type DiscountMaxOrderByAggregateInput = {
-    id?: SortOrder
-    variantId?: SortOrder
-    startedAt?: SortOrder
-    endsAt?: SortOrder
-  }
-
-  export type DiscountMinOrderByAggregateInput = {
-    id?: SortOrder
-    variantId?: SortOrder
-    startedAt?: SortOrder
-    endsAt?: SortOrder
-  }
-
-  export type DiscountSumOrderByAggregateInput = {
-    id?: SortOrder
-    variantId?: SortOrder
-  }
-
   export type DecimalFilter<$PrismaModel = never> = {
     equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
@@ -13150,6 +13170,66 @@ export namespace Prisma {
     gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+  }
+
+  export type ProductVariantScalarRelationFilter = {
+    is?: ProductVariantWhereInput
+    isNot?: ProductVariantWhereInput
+  }
+
+  export type DiscountCountOrderByAggregateInput = {
+    id?: SortOrder
+    variantId?: SortOrder
+    amount?: SortOrder
+    isPercent?: SortOrder
+    startedAt?: SortOrder
+    endsAt?: SortOrder
+  }
+
+  export type DiscountAvgOrderByAggregateInput = {
+    id?: SortOrder
+    variantId?: SortOrder
+    amount?: SortOrder
+  }
+
+  export type DiscountMaxOrderByAggregateInput = {
+    id?: SortOrder
+    variantId?: SortOrder
+    amount?: SortOrder
+    isPercent?: SortOrder
+    startedAt?: SortOrder
+    endsAt?: SortOrder
+  }
+
+  export type DiscountMinOrderByAggregateInput = {
+    id?: SortOrder
+    variantId?: SortOrder
+    amount?: SortOrder
+    isPercent?: SortOrder
+    startedAt?: SortOrder
+    endsAt?: SortOrder
+  }
+
+  export type DiscountSumOrderByAggregateInput = {
+    id?: SortOrder
+    variantId?: SortOrder
+    amount?: SortOrder
+  }
+
+  export type DecimalWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedDecimalFilter<$PrismaModel>
+    _sum?: NestedDecimalFilter<$PrismaModel>
+    _min?: NestedDecimalFilter<$PrismaModel>
+    _max?: NestedDecimalFilter<$PrismaModel>
   }
 
   export type ProductScalarRelationFilter = {
@@ -13212,22 +13292,6 @@ export namespace Prisma {
     priceIdr?: SortOrder
     weightG?: SortOrder
     stock?: SortOrder
-  }
-
-  export type DecimalWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
-    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
-    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    not?: NestedDecimalWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedDecimalFilter<$PrismaModel>
-    _sum?: NestedDecimalFilter<$PrismaModel>
-    _min?: NestedDecimalFilter<$PrismaModel>
-    _max?: NestedDecimalFilter<$PrismaModel>
   }
 
   export type ProductListRelationFilter = {
@@ -13685,6 +13749,14 @@ export namespace Prisma {
     connect?: ProductVariantWhereUniqueInput
   }
 
+  export type DecimalFieldUpdateOperationsInput = {
+    set?: Decimal | DecimalJsLike | number | string
+    increment?: Decimal | DecimalJsLike | number | string
+    decrement?: Decimal | DecimalJsLike | number | string
+    multiply?: Decimal | DecimalJsLike | number | string
+    divide?: Decimal | DecimalJsLike | number | string
+  }
+
   export type ProductVariantUpdateOneRequiredWithoutDiscountNestedInput = {
     create?: XOR<ProductVariantCreateWithoutDiscountInput, ProductVariantUncheckedCreateWithoutDiscountInput>
     connectOrCreate?: ProductVariantCreateOrConnectWithoutDiscountInput
@@ -13723,14 +13795,6 @@ export namespace Prisma {
     create?: XOR<DiscountCreateWithoutVariantInput, DiscountUncheckedCreateWithoutVariantInput>
     connectOrCreate?: DiscountCreateOrConnectWithoutVariantInput
     connect?: DiscountWhereUniqueInput
-  }
-
-  export type DecimalFieldUpdateOperationsInput = {
-    set?: Decimal | DecimalJsLike | number | string
-    increment?: Decimal | DecimalJsLike | number | string
-    decrement?: Decimal | DecimalJsLike | number | string
-    multiply?: Decimal | DecimalJsLike | number | string
-    divide?: Decimal | DecimalJsLike | number | string
   }
 
   export type ProductUpdateOneRequiredWithoutVariantsNestedInput = {
@@ -14818,12 +14882,16 @@ export namespace Prisma {
   }
 
   export type DiscountCreateWithoutVariantInput = {
+    amount: Decimal | DecimalJsLike | number | string
+    isPercent?: boolean
     startedAt?: Date | string
     endsAt: Date | string
   }
 
   export type DiscountUncheckedCreateWithoutVariantInput = {
     id?: number
+    amount: Decimal | DecimalJsLike | number | string
+    isPercent?: boolean
     startedAt?: Date | string
     endsAt: Date | string
   }
@@ -14905,12 +14973,16 @@ export namespace Prisma {
   }
 
   export type DiscountUpdateWithoutVariantInput = {
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isPercent?: BoolFieldUpdateOperationsInput | boolean
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endsAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type DiscountUncheckedUpdateWithoutVariantInput = {
     id?: IntFieldUpdateOperationsInput | number
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    isPercent?: BoolFieldUpdateOperationsInput | boolean
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endsAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

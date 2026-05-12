@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, Min, Max, IsDateString, IsOptional } from "class-validator"
+import { IsNotEmpty, IsNumber, Min, Max, IsDateString, IsOptional, IsBoolean, ValidateIf } from "class-validator"
 
 
 export class CreateDiscountDto {
@@ -6,11 +6,16 @@ export class CreateDiscountDto {
     @IsNotEmpty()
     variantId: number 
 
+    @IsBoolean()
+    @IsOptional()
+    isPercent?: boolean
+
     @IsNumber()
     @IsNotEmpty()
+    @ValidateIf(o => o.isPercent)
     @Min(1)
     @Max(100)
-    amountPercent: number
+    amount: number
 
     @IsDateString()
     @IsOptional()
