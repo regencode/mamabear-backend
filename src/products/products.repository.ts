@@ -61,4 +61,8 @@ export class ProductsRepository {
       include: PRODUCT_INCLUDE,
     });
   }
+
+  findProductVariantsByProductId(productId: number) {
+    return this.prisma.productVariant.findMany({ where: { productId } });
+  }
 }
