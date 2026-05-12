@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+<<<<<<< HEAD
 import { VariantsService } from './variants.service';
 
 describe('VariantsService', () => {
@@ -10,6 +11,19 @@ describe('VariantsService', () => {
     }).compile();
 
     service = module.get<VariantsService>(VariantsService);
+=======
+import { VariantService } from './variant.service';
+
+describe('VariantService', () => {
+  let service: VariantService;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [VariantService],
+    }).compile();
+
+    service = module.get<VariantService>(VariantService);
+>>>>>>> dev
   });
 
   it('should be defined', () => {

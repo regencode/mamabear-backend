@@ -1,26 +1,58 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateVariantDto } from './dto/create-variant.dto';
 import { UpdateVariantDto } from './dto/update-variant.dto';
+import { VariantRepository } from './variant.repository';
+import slugify from 'slugify';
 
 @Injectable()
-export class VariantsService {
-  create(createVariantDto: CreateVariantDto) {
-    return 'This action adds a new variant';
+export class VariantService {
+  constructor(private readonly repo: VariantRepository) {}
+
+  private generateSku(productSlug: string, variantValue: string): string {
+    const base = `${productSlug}-${variantValue}`;
+    return slugify(base, {
+      lower: false,
+      strict: true,
+    }).toUpperCase();
   }
 
-  findAll() {
-    return `This action returns all variants`;
+  async updateVariant(
+    userId: number,
+    variantId: number,
+    dto: UpdateVariantDto,
+  ) {
+    const variant = await this.repo.findOne(variantId);
+
+    if (!variant) {
+      throw new BadRequestException('variant not found');
+    }
+
+    const product = await this.repo.findProductById(variant.productId);
+
+    if (!product) {
+      throw new BadRequestException('Product not found');
+    }
+
+    if (dto.variantValue) {
+      const newSku = this.generateSku(product.slug, dto.variantValue);
+      dto.sku = newSku;
+    }
+
+    await this.repo.update({ id: variantId }, dto);
+
+    return {
+      success: true,
+      message: 'Variant updated successfully',
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} variant`;
-  }
-
-  update(id: number, updateVariantDto: UpdateVariantDto) {
-    return `This action updates a #${id} variant`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} variant`;
+  async deleteVariant(userId: number, variantId: number) {
+    const variant = await this.repo.findOne(variantId);
+    if (!variant) throw new BadRequestException('variant not found');
+    await this.repo.delete({ id: variantId });
+    return {
+      success: true,
+      message: `Variant ${variant.variantValue} deleted successfully`,
+    };
   }
 }

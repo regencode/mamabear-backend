@@ -142,6 +142,7 @@ exports.Prisma.ProductScalarFieldEnum = {
   id: 'id',
   name: 'name',
   slug: 'slug',
+<<<<<<< HEAD
   isActive: 'isActive',
   categoryId: 'categoryId',
   highlightId: 'highlightId',
@@ -151,17 +152,32 @@ exports.Prisma.ProductScalarFieldEnum = {
   usageInstructions: 'usageInstructions',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+=======
+  description: 'description',
+  price_idr: 'price_idr',
+  weight_g: 'weight_g',
+  sku: 'sku',
+  stock: 'stock',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  categoryId: 'categoryId'
+>>>>>>> dev
 };
 
 exports.Prisma.ProductImageScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
+<<<<<<< HEAD
   variantId: 'variantId',
+=======
+>>>>>>> dev
   imageUrl: 'imageUrl',
   sortOrder: 'sortOrder',
   altText: 'altText'
 };
 
+<<<<<<< HEAD
 exports.Prisma.DiscountScalarFieldEnum = {
   id: 'id',
   variantId: 'variantId',
@@ -179,16 +195,40 @@ exports.Prisma.ProductVariantScalarFieldEnum = {
   weightG: 'weightG',
   sku: 'sku',
   stock: 'stock',
+=======
+exports.Prisma.ProductVariantScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  variantType: 'variantType',
+  variantValue: 'variantValue',
+  sku: 'sku',
+  priceAdjustment: 'priceAdjustment',
+  stock: 'stock',
+  isActive: 'isActive',
+  sortOrder: 'sortOrder',
+>>>>>>> dev
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
+<<<<<<< HEAD
 exports.Prisma.HighlightScalarFieldEnum = {
   id: 'id',
   name: 'name',
   slug: 'slug',
   description: 'description',
   isActive: 'isActive'
+=======
+exports.Prisma.VariantCombinationScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  combination: 'combination',
+  sku: 'sku',
+  price: 'price',
+  stock: 'stock',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+>>>>>>> dev
 };
 
 exports.Prisma.CategoryScalarFieldEnum = {
@@ -203,6 +243,7 @@ exports.Prisma.CategoryScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+<<<<<<< HEAD
 exports.Prisma.ReviewScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -215,11 +256,20 @@ exports.Prisma.ReviewScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+=======
+>>>>>>> dev
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
 };
 
+<<<<<<< HEAD
+=======
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
+};
+
+>>>>>>> dev
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -229,6 +279,15 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+<<<<<<< HEAD
+=======
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+>>>>>>> dev
 exports.Role = exports.$Enums.Role = {
   USER: 'USER',
   ADMIN: 'ADMIN'
@@ -238,11 +297,17 @@ exports.Prisma.ModelName = {
   User: 'User',
   Product: 'Product',
   ProductImage: 'ProductImage',
+<<<<<<< HEAD
   Discount: 'Discount',
   ProductVariant: 'ProductVariant',
   Highlight: 'Highlight',
   Category: 'Category',
   Review: 'Review'
+=======
+  ProductVariant: 'ProductVariant',
+  VariantCombination: 'VariantCombination',
+  Category: 'Category'
+>>>>>>> dev
 };
 
 /**

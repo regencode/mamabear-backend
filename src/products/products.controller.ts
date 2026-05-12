@@ -8,6 +8,7 @@ import {
   Put,
   Patch,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
@@ -16,11 +17,16 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { Role } from '@/generated/prisma';
 import { Roles } from '@/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
+<<<<<<< HEAD
 import { ReviewsService } from '@/reviews/reviews.service'
 import { CreateReviewDto } from '@/reviews/dto/create-review.dto'
 import { CursorPaginationRequestDto } from '@/common/dto/request/pagination.request.dto'
 import { CreateDiscountDto } from '@/discounts/dto/create-discount.dto';
 import { DiscountsService } from '@/discounts/discounts.service';
+=======
+import { CreateProductVariantDto } from './dto/create-productVariant.dto';
+import { CreateVariantCombinationDto } from './dto/create-variantCombination';
+>>>>>>> dev
 
 @ApiTags('products')
 @Controller('products')
@@ -65,6 +71,7 @@ export class ProductsController {
     return this.productsService.remove(+id);
   }
 
+<<<<<<< HEAD
   @Get(':id/reviews')
   findAllReviewsOfProduct(
     @Param('id') productId: number,
@@ -114,5 +121,23 @@ export class ProductsController {
       this.discountsService.create(dto);
   }
 
+=======
+  @UseGuards(new JwtAuthGuard())
+  @Roles([Role.ADMIN])
+  @Post(':id/variants')
+  createProductVariant(
+    @Req() req,
+    @Param('id') id: number,
+    @Body() dto: CreateProductVariantDto,
+  ) {
+    console.log('DTO : ', dto);
+    return this.productsService.createVariant(req.user.id, id, dto);
+  }
+
+  @Get(':id/variants')
+  getProductVariant(@Param('id') id: number) {
+    return this.productsService.getProductVariant(id);
+  }
+>>>>>>> dev
 }
 

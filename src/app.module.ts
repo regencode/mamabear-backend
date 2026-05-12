@@ -13,10 +13,10 @@ import { CustomLoggerModule } from './common/logger/logger.module';
 import { MailHogOptions } from './options/mailhog.options';
 import { CategoryModule } from './category/category.module';
 import { UploadModule } from './upload/upload.module';
-import { VariantsModule } from './variants/variants.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { HighlightsModule } from './highlights/highlights.module';
 import { DiscountsModule } from './discounts/discounts.module';
+import { VariantModule } from './variant/variant.module';
 
 @Module({
   imports: [
@@ -38,11 +38,11 @@ import { DiscountsModule } from './discounts/discounts.module';
     HealthModule,
     CategoryModule,
     UploadModule,
-    VariantsModule,
     ReviewsModule,
     HighlightsModule,
     ReviewsModule,
     DiscountsModule,
+    VariantModule,
   ],
   controllers: [AppController],
   providers: [AppService],

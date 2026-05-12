@@ -1,9 +1,10 @@
+import { VariantService } from './variant.service';
 import { Module } from '@nestjs/common';
-import { VariantsService } from './variants.service';
-import { VariantsController } from './variants.controller';
+import { VariantController } from './variant.controller';
+import { VariantRepository } from './variant.repository';
 
 @Module({
-  controllers: [VariantsController],
-  providers: [VariantsService],
+  controllers: [VariantController],
+  providers: [VariantService, VariantRepository],
 })
-export class VariantsModule {}
+export class VariantModule {}
