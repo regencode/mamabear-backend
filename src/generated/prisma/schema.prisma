@@ -13,53 +13,50 @@ enum Role {
 }
 
 model User {
-  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email          String    @unique
-  hashedPassword String
-  name           String
-  phone          String
-  role           Role      @default(USER)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime? @updatedAt
-
+  id                      String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                   String    @unique
+  hashedPassword          String
+  name                    String
+  phone                   String
+  role                    Role      @default(USER)
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime? @updatedAt
+  reviews                 Review[]
   isVerified              Boolean   @default(false)
   verificationToken       String?
   verificationTokenExpiry DateTime?
-
-  resetToken       String?
-  resetTokenExpiry DateTime?
-
-  refreshToken       String?
-  refreshTokenExpiry DateTime?
+  resetToken              String?
+  resetTokenExpiry        DateTime?
+  refreshToken            String?
+  refreshTokenExpiry      DateTime?
 }
 
 model Product {
-  id          Int              @id @default(autoincrement())
-  name        String
-  slug        String
-  isActive    Boolean          @default(true)
-  categoryId  Int?
-  category    Category?        @relation(fields: [categoryId], references: [id])
-  highlightId Int?
-  highlight   Highlight?       @relation(fields: [highlightId], references: [id])
-  images      ProductImage[]
-  variants    ProductVariant[]
-
+  id                Int              @id @default(autoincrement())
+  name              String
+  slug              String
+  isActive          Boolean          @default(true)
+  categoryId        Int?
+  category          Category?        @relation(fields: [categoryId], references: [id])
+  highlightId       Int?
+  highlight         Highlight?       @relation(fields: [highlightId], references: [id])
+  images            ProductImage[]
+  variants          ProductVariant[]
+  reviews           Review[]
   tags              String[]
-  description       String
-  ingredients       String
-  usageInstructions String
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
+  description       String?
+  ingredients       String?
+  usageInstructions String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime?        @updatedAt
 }
 
 model ProductImage {
   id        Int             @id @default(autoincrement())
   productId Int?
-  product   Product?        @relation(fields: [productId], references: [id])
+  product   Product?        @relation(fields: [productId], references: [id], onDelete: Cascade)
   variantId Int?
-  variant   ProductVariant? @relation(fields: [variantId], references: [id])
+  variant   ProductVariant? @relation(fields: [variantId], references: [id], onDelete: Cascade)
   imageUrl  String          @default("https://placehold.co/600x400")
   sortOrder Int
   altText   String?
@@ -68,7 +65,7 @@ model ProductImage {
 model Discount {
   id        Int            @id @default(autoincrement())
   variantId Int            @unique
-  variant   ProductVariant @relation(fields: [variantId], references: [id])
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
 
   startedAt DateTime @default(now())
   endsAt    DateTime
@@ -77,7 +74,7 @@ model Discount {
 model ProductVariant {
   id        Int            @id @default(autoincrement())
   productId Int
-  product   Product        @relation(fields: [productId], references: [id])
+  product   Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
   name      String
   images    ProductImage[]
   priceIdr  Decimal        @db.Decimal(10, 2)
@@ -110,4 +107,20 @@ model Category {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   products    Product[]
+}
+
+model Review {
+  id         Int     @id @default(autoincrement())
+  title      String
+  reviewerId String  @db.Uuid
+  reviewer   User    @relation(fields: [reviewerId], references: [id])
+  productId  Int
+  product    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  rating        Float    @default(0.0)
+  numUpvotes    Int      @default(0)
+  description   String
+  attachmentUrl String[]
+
+  createdAt DateTime @default(now())
 }
