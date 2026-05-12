@@ -19,13 +19,16 @@ import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 import { ReviewsService } from '@/reviews/reviews.service'
 import { CreateReviewDto } from '@/reviews/dto/create-review.dto'
 import { CursorPaginationRequestDto } from '@/common/dto/request/pagination.request.dto'
+import { CreateDiscountDto } from '@/discounts/dto/create-discount.dto';
+import { DiscountsService } from '@/discounts/discounts.service';
 
 @ApiTags('products')
 @Controller('products')
 export class ProductsController {
   constructor(
       private readonly productsService: ProductsService,
-      private readonly reviewsService: ReviewsService           
+      private readonly reviewsService: ReviewsService,
+      private readonly discountsService: DiscountsService,
   ) {}
 
   @Get()
@@ -73,6 +76,7 @@ export class ProductsController {
     )
   }
 
+  @UseGuards(new JwtAuthGuard())
   @Post(':id/reviews')
   createReviewForProduct(
     @Param('id') productId: number,
@@ -82,6 +86,7 @@ export class ProductsController {
     return this.reviewsService.createReviewForProduct(dto);
   }
 
+  @UseGuards(new JwtAuthGuard())
   @Patch(':id/reviews/:reviewId/upvote')
   upvoteReviewOfProduct(
     @Param('reviewId') reviewId: number,
@@ -89,11 +94,25 @@ export class ProductsController {
     return this.reviewsService.upvoteReviewWithId(reviewId)
   }
 
+  @UseGuards(new JwtAuthGuard())
+  @Roles([Role.ADMIN])
   @Delete(':id/reviews/:reviewId')
   removeReview(
     @Param('reviewId') reviewId: number,
   ) {
     return this.reviewsService.remove(reviewId)
   }
+
+  @UseGuards(new JwtAuthGuard())
+  @Roles([Role.ADMIN])
+  @Post(':id/variant/:variantId/discount') 
+  createDiscount(
+      @Param('variantId') variantId: number,
+      @Body() dto: CreateDiscountDto
+  ) {
+      dto.variantId = variantId;
+      this.discountsService.create(dto);
+  }
+
 }
 

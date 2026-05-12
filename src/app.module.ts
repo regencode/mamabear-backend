@@ -16,6 +16,7 @@ import { UploadModule } from './upload/upload.module';
 import { VariantsModule } from './variants/variants.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { HighlightsModule } from './highlights/highlights.module';
+import { DiscountsModule } from './discounts/discounts.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { HighlightsModule } from './highlights/highlights.module';
     ReviewsModule,
     HighlightsModule,
     ReviewsModule,
+    DiscountsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

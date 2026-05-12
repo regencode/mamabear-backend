@@ -63,12 +63,12 @@ model ProductImage {
 }
 
 model Discount {
-    id         Int            @id  @default(autoincrement())                           
-    variantId  Int            @unique                              
-    variant    ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
-
-    startedAt  DateTime       @default(now())                
-    endsAt     DateTime                                      
+    id             Int             @id @default(autoincrement())                                 
+    variantId      Int             @unique                                                                      
+    variant        ProductVariant  @relation(fields:  [variantId], references: [id],  onDelete:  Cascade)
+    amountPercent  Int                                                                                          
+    startedAt      DateTime        @default(now())                                                              
+    endsAt         DateTime                                                                                     
 }
 
 model ProductVariant {
