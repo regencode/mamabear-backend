@@ -209,7 +209,7 @@ exports.Prisma.ReviewScalarFieldEnum = {
   rating: 'rating',
   numUpvotes: 'numUpvotes',
   description: 'description',
-  attachmentUrl: 'attachmentUrl',
+  imageUrls: 'imageUrls',
   createdAt: 'createdAt'
 };
 

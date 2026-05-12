@@ -14,7 +14,7 @@ export class ReviewsController {
     constructor(private readonly reviewsService: ReviewsService) {}
 
     @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.reviewsService.remove(+id);
+    remove(@Param('id') id: number) {
+        return this.reviewsService.remove(id);
     }
 }

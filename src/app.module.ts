@@ -42,6 +42,7 @@ import { HighlightsModule } from './highlights/highlights.module';
     ReviewsModule,
     CategoriesModule,
     HighlightsModule,
+    ReviewsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

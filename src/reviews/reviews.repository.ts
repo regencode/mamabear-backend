@@ -11,10 +11,10 @@ export class ReviewsRepository {
     return this.prisma.review.create({
       data: {
         title: dto.title,
-        reviewerName: dto.reviewerName,
         rating: dto.rating,
         description: dto.description,
-        attachmentUrl: dto.attachmentUrl,
+        imageUrls: dto.imageUrls,
+        reviewer: { connect: { id: dto.reviewerId }},
         product: { connect: { id: dto.productId }}
       },
     });
@@ -44,6 +44,6 @@ export class ReviewsRepository {
   }
 
   async findMany(args: any) {
-  return this.prisma.review.findMany(args)
-}
+      return this.prisma.review.findMany(args)
+  }
 }

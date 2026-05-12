@@ -2,9 +2,9 @@ import {
   IsNumber,
   IsString,
   IsNotEmpty,
-  IsOptional,
   Min,
   Max,
+  IsArray,
 } from 'class-validator';
 
 export class CreateReviewDto {
@@ -18,19 +18,17 @@ export class CreateReviewDto {
 
   @IsString()
   @IsNotEmpty()
-  reviewerName: string;
+  reviewerId: string;
 
   @IsString()
   @IsNotEmpty()
   description: string;
 
-  @IsString()
-  @IsOptional()
-  attachmentUrl?: string;
-
   @IsNumber()
-  @IsOptional()
   @Min(1)
   @Max(5)
-  rating?: number;
+  rating: number;
+
+  @IsArray()
+  imageUrls: string[];
 }

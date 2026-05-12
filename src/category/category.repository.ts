@@ -62,7 +62,7 @@ export class CategoryRepository {
             name: true,
             slug: true,
             description: true,
-            price_idr: true,
+            variants: true,
             category: {
               select: {
                 name: true,

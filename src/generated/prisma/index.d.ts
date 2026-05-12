@@ -10025,7 +10025,7 @@ export namespace Prisma {
     rating: number
     numUpvotes: number
     description: number
-    attachmentUrl: number
+    imageUrls: number
     createdAt: number
     _all: number
   }
@@ -10075,7 +10075,7 @@ export namespace Prisma {
     rating?: true
     numUpvotes?: true
     description?: true
-    attachmentUrl?: true
+    imageUrls?: true
     createdAt?: true
     _all?: true
   }
@@ -10172,9 +10172,9 @@ export namespace Prisma {
     reviewerId: string
     productId: number
     rating: number
-    numUpvotes: number
+    numUpvotes: number | null
     description: string
-    attachmentUrl: string[]
+    imageUrls: string[]
     createdAt: Date
     _count: ReviewCountAggregateOutputType | null
     _avg: ReviewAvgAggregateOutputType | null
@@ -10205,7 +10205,7 @@ export namespace Prisma {
     rating?: boolean
     numUpvotes?: boolean
     description?: boolean
-    attachmentUrl?: boolean
+    imageUrls?: boolean
     createdAt?: boolean
     reviewer?: boolean | UserDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -10219,7 +10219,7 @@ export namespace Prisma {
     rating?: boolean
     numUpvotes?: boolean
     description?: boolean
-    attachmentUrl?: boolean
+    imageUrls?: boolean
     createdAt?: boolean
     reviewer?: boolean | UserDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -10233,7 +10233,7 @@ export namespace Prisma {
     rating?: boolean
     numUpvotes?: boolean
     description?: boolean
-    attachmentUrl?: boolean
+    imageUrls?: boolean
     createdAt?: boolean
     reviewer?: boolean | UserDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -10247,11 +10247,11 @@ export namespace Prisma {
     rating?: boolean
     numUpvotes?: boolean
     description?: boolean
-    attachmentUrl?: boolean
+    imageUrls?: boolean
     createdAt?: boolean
   }
 
-  export type ReviewOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "reviewerId" | "productId" | "rating" | "numUpvotes" | "description" | "attachmentUrl" | "createdAt", ExtArgs["result"]["review"]>
+  export type ReviewOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "reviewerId" | "productId" | "rating" | "numUpvotes" | "description" | "imageUrls" | "createdAt", ExtArgs["result"]["review"]>
   export type ReviewInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     reviewer?: boolean | UserDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -10277,9 +10277,9 @@ export namespace Prisma {
       reviewerId: string
       productId: number
       rating: number
-      numUpvotes: number
+      numUpvotes: number | null
       description: string
-      attachmentUrl: string[]
+      imageUrls: string[]
       createdAt: Date
     }, ExtArgs["result"]["review"]>
     composites: {}
@@ -10713,7 +10713,7 @@ export namespace Prisma {
     readonly rating: FieldRef<"Review", 'Float'>
     readonly numUpvotes: FieldRef<"Review", 'Int'>
     readonly description: FieldRef<"Review", 'String'>
-    readonly attachmentUrl: FieldRef<"Review", 'String[]'>
+    readonly imageUrls: FieldRef<"Review", 'String[]'>
     readonly createdAt: FieldRef<"Review", 'DateTime'>
   }
     
@@ -11258,7 +11258,7 @@ export namespace Prisma {
     rating: 'rating',
     numUpvotes: 'numUpvotes',
     description: 'description',
-    attachmentUrl: 'attachmentUrl',
+    imageUrls: 'imageUrls',
     createdAt: 'createdAt'
   };
 
@@ -11940,9 +11940,9 @@ export namespace Prisma {
     reviewerId?: UuidFilter<"Review"> | string
     productId?: IntFilter<"Review"> | number
     rating?: FloatFilter<"Review"> | number
-    numUpvotes?: IntFilter<"Review"> | number
+    numUpvotes?: IntNullableFilter<"Review"> | number | null
     description?: StringFilter<"Review"> | string
-    attachmentUrl?: StringNullableListFilter<"Review">
+    imageUrls?: StringNullableListFilter<"Review">
     createdAt?: DateTimeFilter<"Review"> | Date | string
     reviewer?: XOR<UserScalarRelationFilter, UserWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
@@ -11954,9 +11954,9 @@ export namespace Prisma {
     reviewerId?: SortOrder
     productId?: SortOrder
     rating?: SortOrder
-    numUpvotes?: SortOrder
+    numUpvotes?: SortOrderInput | SortOrder
     description?: SortOrder
-    attachmentUrl?: SortOrder
+    imageUrls?: SortOrder
     createdAt?: SortOrder
     reviewer?: UserOrderByWithRelationInput
     product?: ProductOrderByWithRelationInput
@@ -11971,9 +11971,9 @@ export namespace Prisma {
     reviewerId?: UuidFilter<"Review"> | string
     productId?: IntFilter<"Review"> | number
     rating?: FloatFilter<"Review"> | number
-    numUpvotes?: IntFilter<"Review"> | number
+    numUpvotes?: IntNullableFilter<"Review"> | number | null
     description?: StringFilter<"Review"> | string
-    attachmentUrl?: StringNullableListFilter<"Review">
+    imageUrls?: StringNullableListFilter<"Review">
     createdAt?: DateTimeFilter<"Review"> | Date | string
     reviewer?: XOR<UserScalarRelationFilter, UserWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
@@ -11985,9 +11985,9 @@ export namespace Prisma {
     reviewerId?: SortOrder
     productId?: SortOrder
     rating?: SortOrder
-    numUpvotes?: SortOrder
+    numUpvotes?: SortOrderInput | SortOrder
     description?: SortOrder
-    attachmentUrl?: SortOrder
+    imageUrls?: SortOrder
     createdAt?: SortOrder
     _count?: ReviewCountOrderByAggregateInput
     _avg?: ReviewAvgOrderByAggregateInput
@@ -12005,9 +12005,9 @@ export namespace Prisma {
     reviewerId?: UuidWithAggregatesFilter<"Review"> | string
     productId?: IntWithAggregatesFilter<"Review"> | number
     rating?: FloatWithAggregatesFilter<"Review"> | number
-    numUpvotes?: IntWithAggregatesFilter<"Review"> | number
+    numUpvotes?: IntNullableWithAggregatesFilter<"Review"> | number | null
     description?: StringWithAggregatesFilter<"Review"> | string
-    attachmentUrl?: StringNullableListFilter<"Review">
+    imageUrls?: StringNullableListFilter<"Review">
     createdAt?: DateTimeWithAggregatesFilter<"Review"> | Date | string
   }
 
@@ -12589,9 +12589,9 @@ export namespace Prisma {
   export type ReviewCreateInput = {
     title: string
     rating?: number
-    numUpvotes?: number
+    numUpvotes?: number | null
     description: string
-    attachmentUrl?: ReviewCreateattachmentUrlInput | string[]
+    imageUrls?: ReviewCreateimageUrlsInput | string[]
     createdAt?: Date | string
     reviewer: UserCreateNestedOneWithoutReviewsInput
     product: ProductCreateNestedOneWithoutReviewsInput
@@ -12603,18 +12603,18 @@ export namespace Prisma {
     reviewerId: string
     productId: number
     rating?: number
-    numUpvotes?: number
+    numUpvotes?: number | null
     description: string
-    attachmentUrl?: ReviewCreateattachmentUrlInput | string[]
+    imageUrls?: ReviewCreateimageUrlsInput | string[]
     createdAt?: Date | string
   }
 
   export type ReviewUpdateInput = {
     title?: StringFieldUpdateOperationsInput | string
     rating?: FloatFieldUpdateOperationsInput | number
-    numUpvotes?: IntFieldUpdateOperationsInput | number
+    numUpvotes?: NullableIntFieldUpdateOperationsInput | number | null
     description?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: ReviewUpdateattachmentUrlInput | string[]
+    imageUrls?: ReviewUpdateimageUrlsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reviewer?: UserUpdateOneRequiredWithoutReviewsNestedInput
     product?: ProductUpdateOneRequiredWithoutReviewsNestedInput
@@ -12626,9 +12626,9 @@ export namespace Prisma {
     reviewerId?: StringFieldUpdateOperationsInput | string
     productId?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
-    numUpvotes?: IntFieldUpdateOperationsInput | number
+    numUpvotes?: NullableIntFieldUpdateOperationsInput | number | null
     description?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: ReviewUpdateattachmentUrlInput | string[]
+    imageUrls?: ReviewUpdateimageUrlsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -12638,18 +12638,18 @@ export namespace Prisma {
     reviewerId: string
     productId: number
     rating?: number
-    numUpvotes?: number
+    numUpvotes?: number | null
     description: string
-    attachmentUrl?: ReviewCreateattachmentUrlInput | string[]
+    imageUrls?: ReviewCreateimageUrlsInput | string[]
     createdAt?: Date | string
   }
 
   export type ReviewUpdateManyMutationInput = {
     title?: StringFieldUpdateOperationsInput | string
     rating?: FloatFieldUpdateOperationsInput | number
-    numUpvotes?: IntFieldUpdateOperationsInput | number
+    numUpvotes?: NullableIntFieldUpdateOperationsInput | number | null
     description?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: ReviewUpdateattachmentUrlInput | string[]
+    imageUrls?: ReviewUpdateimageUrlsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -12659,9 +12659,9 @@ export namespace Prisma {
     reviewerId?: StringFieldUpdateOperationsInput | string
     productId?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
-    numUpvotes?: IntFieldUpdateOperationsInput | number
+    numUpvotes?: NullableIntFieldUpdateOperationsInput | number | null
     description?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: ReviewUpdateattachmentUrlInput | string[]
+    imageUrls?: ReviewUpdateimageUrlsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -13342,7 +13342,7 @@ export namespace Prisma {
     rating?: SortOrder
     numUpvotes?: SortOrder
     description?: SortOrder
-    attachmentUrl?: SortOrder
+    imageUrls?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -13873,7 +13873,7 @@ export namespace Prisma {
     deleteMany?: ProductScalarWhereInput | ProductScalarWhereInput[]
   }
 
-  export type ReviewCreateattachmentUrlInput = {
+  export type ReviewCreateimageUrlsInput = {
     set: string[]
   }
 
@@ -13897,7 +13897,7 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type ReviewUpdateattachmentUrlInput = {
+  export type ReviewUpdateimageUrlsInput = {
     set?: string[]
     push?: string | string[]
   }
@@ -14207,9 +14207,9 @@ export namespace Prisma {
   export type ReviewCreateWithoutReviewerInput = {
     title: string
     rating?: number
-    numUpvotes?: number
+    numUpvotes?: number | null
     description: string
-    attachmentUrl?: ReviewCreateattachmentUrlInput | string[]
+    imageUrls?: ReviewCreateimageUrlsInput | string[]
     createdAt?: Date | string
     product: ProductCreateNestedOneWithoutReviewsInput
   }
@@ -14219,9 +14219,9 @@ export namespace Prisma {
     title: string
     productId: number
     rating?: number
-    numUpvotes?: number
+    numUpvotes?: number | null
     description: string
-    attachmentUrl?: ReviewCreateattachmentUrlInput | string[]
+    imageUrls?: ReviewCreateimageUrlsInput | string[]
     createdAt?: Date | string
   }
 
@@ -14260,9 +14260,9 @@ export namespace Prisma {
     reviewerId?: UuidFilter<"Review"> | string
     productId?: IntFilter<"Review"> | number
     rating?: FloatFilter<"Review"> | number
-    numUpvotes?: IntFilter<"Review"> | number
+    numUpvotes?: IntNullableFilter<"Review"> | number | null
     description?: StringFilter<"Review"> | string
-    attachmentUrl?: StringNullableListFilter<"Review">
+    imageUrls?: StringNullableListFilter<"Review">
     createdAt?: DateTimeFilter<"Review"> | Date | string
   }
 
@@ -14377,9 +14377,9 @@ export namespace Prisma {
   export type ReviewCreateWithoutProductInput = {
     title: string
     rating?: number
-    numUpvotes?: number
+    numUpvotes?: number | null
     description: string
-    attachmentUrl?: ReviewCreateattachmentUrlInput | string[]
+    imageUrls?: ReviewCreateimageUrlsInput | string[]
     createdAt?: Date | string
     reviewer: UserCreateNestedOneWithoutReviewsInput
   }
@@ -14389,9 +14389,9 @@ export namespace Prisma {
     title: string
     reviewerId: string
     rating?: number
-    numUpvotes?: number
+    numUpvotes?: number | null
     description: string
-    attachmentUrl?: ReviewCreateattachmentUrlInput | string[]
+    imageUrls?: ReviewCreateimageUrlsInput | string[]
     createdAt?: Date | string
   }
 
@@ -15226,18 +15226,18 @@ export namespace Prisma {
     title: string
     productId: number
     rating?: number
-    numUpvotes?: number
+    numUpvotes?: number | null
     description: string
-    attachmentUrl?: ReviewCreateattachmentUrlInput | string[]
+    imageUrls?: ReviewCreateimageUrlsInput | string[]
     createdAt?: Date | string
   }
 
   export type ReviewUpdateWithoutReviewerInput = {
     title?: StringFieldUpdateOperationsInput | string
     rating?: FloatFieldUpdateOperationsInput | number
-    numUpvotes?: IntFieldUpdateOperationsInput | number
+    numUpvotes?: NullableIntFieldUpdateOperationsInput | number | null
     description?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: ReviewUpdateattachmentUrlInput | string[]
+    imageUrls?: ReviewUpdateimageUrlsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     product?: ProductUpdateOneRequiredWithoutReviewsNestedInput
   }
@@ -15247,9 +15247,9 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     productId?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
-    numUpvotes?: IntFieldUpdateOperationsInput | number
+    numUpvotes?: NullableIntFieldUpdateOperationsInput | number | null
     description?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: ReviewUpdateattachmentUrlInput | string[]
+    imageUrls?: ReviewUpdateimageUrlsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -15258,9 +15258,9 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     productId?: IntFieldUpdateOperationsInput | number
     rating?: FloatFieldUpdateOperationsInput | number
-    numUpvotes?: IntFieldUpdateOperationsInput | number
+    numUpvotes?: NullableIntFieldUpdateOperationsInput | number | null
     description?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: ReviewUpdateattachmentUrlInput | string[]
+    imageUrls?: ReviewUpdateimageUrlsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -15288,9 +15288,9 @@ export namespace Prisma {
     title: string
     reviewerId: string
     rating?: number
-    numUpvotes?: number
+    numUpvotes?: number | null
     description: string
-    attachmentUrl?: ReviewCreateattachmentUrlInput | string[]
+    imageUrls?: ReviewCreateimageUrlsInput | string[]
     createdAt?: Date | string
   }
 
@@ -15356,9 +15356,9 @@ export namespace Prisma {
   export type ReviewUpdateWithoutProductInput = {
     title?: StringFieldUpdateOperationsInput | string
     rating?: FloatFieldUpdateOperationsInput | number
-    numUpvotes?: IntFieldUpdateOperationsInput | number
+    numUpvotes?: NullableIntFieldUpdateOperationsInput | number | null
     description?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: ReviewUpdateattachmentUrlInput | string[]
+    imageUrls?: ReviewUpdateimageUrlsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reviewer?: UserUpdateOneRequiredWithoutReviewsNestedInput
   }
@@ -15368,9 +15368,9 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     reviewerId?: StringFieldUpdateOperationsInput | string
     rating?: FloatFieldUpdateOperationsInput | number
-    numUpvotes?: IntFieldUpdateOperationsInput | number
+    numUpvotes?: NullableIntFieldUpdateOperationsInput | number | null
     description?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: ReviewUpdateattachmentUrlInput | string[]
+    imageUrls?: ReviewUpdateimageUrlsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -15379,9 +15379,9 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     reviewerId?: StringFieldUpdateOperationsInput | string
     rating?: FloatFieldUpdateOperationsInput | number
-    numUpvotes?: IntFieldUpdateOperationsInput | number
+    numUpvotes?: NullableIntFieldUpdateOperationsInput | number | null
     description?: StringFieldUpdateOperationsInput | string
-    attachmentUrl?: ReviewUpdateattachmentUrlInput | string[]
+    imageUrls?: ReviewUpdateimageUrlsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

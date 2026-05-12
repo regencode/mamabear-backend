@@ -18,7 +18,7 @@ import { Roles } from '@/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 import { ReviewsService } from '@/reviews/reviews.service'
 import { CreateReviewDto } from '@/reviews/dto/create-review.dto'
-//import { CursorPaginationRequestDto } from '@/common/dto/request/pagination.request.dto'
+import { CursorPaginationRequestDto } from '@/common/dto/request/pagination.request.dto'
 
 @ApiTags('products')
 @Controller('products')
@@ -64,7 +64,8 @@ export class ProductsController {
 
   @Get(':id/reviews')
   findAllReviewsOfProduct(
-    @Param('id') productId: string,
+    @Param('id') productId: number,
+    @Body() paginationDto: CursorPaginationRequestDto,
   ) {
     return this.reviewsService.findReviewsOfProduct(
       productId,
@@ -74,25 +75,25 @@ export class ProductsController {
 
   @Post(':id/reviews')
   createReviewForProduct(
-    @Param('id') productId: string,
+    @Param('id') productId: number,
     @Body() dto: CreateReviewDto,
   ) {
-    dto.productId = parseInt(productId);
+    dto.productId = productId
     return this.reviewsService.createReviewForProduct(dto);
   }
 
   @Patch(':id/reviews/:reviewId/upvote')
   upvoteReviewOfProduct(
-    @Param('reviewId') reviewId: string,
+    @Param('reviewId') reviewId: number,
   ) {
     return this.reviewsService.upvoteReviewWithId(reviewId)
   }
 
   @Delete(':id/reviews/:reviewId')
   removeReview(
-    @Param('reviewId') reviewId: string,
+    @Param('reviewId') reviewId: number,
   ) {
     return this.reviewsService.remove(reviewId)
   }
 }
-}
+

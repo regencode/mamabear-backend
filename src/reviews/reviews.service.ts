@@ -16,7 +16,7 @@ export class ReviewsService {
    * ✅ Cursor pagination tetap nested di product
    */
   async findReviewsOfProduct(
-    productId: string,
+    productId: number,
     paginationDto: CursorPaginationRequestDto,
   ) {
     return this.paginationService.paginate<Review>(
@@ -36,11 +36,11 @@ export class ReviewsService {
     return this.reviewsRepository.create(dto)
   }
 
-  async upvoteReviewWithId(id: string) {
+  async upvoteReviewWithId(id: number) {
     return this.reviewsRepository.upvoteReviewWithId(id)
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     return this.reviewsRepository.remove(id)
   }
 }
