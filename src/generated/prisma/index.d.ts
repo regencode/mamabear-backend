@@ -11538,11 +11538,11 @@ export namespace Prisma {
 
   export type ProductWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    slug?: string
     AND?: ProductWhereInput | ProductWhereInput[]
     OR?: ProductWhereInput[]
     NOT?: ProductWhereInput | ProductWhereInput[]
     name?: StringFilter<"Product"> | string
-    slug?: StringFilter<"Product"> | string
     isActive?: BoolFilter<"Product"> | boolean
     categoryId?: IntNullableFilter<"Product"> | number | null
     highlightId?: IntNullableFilter<"Product"> | number | null
@@ -11557,7 +11557,7 @@ export namespace Prisma {
     images?: ProductImageListRelationFilter
     variants?: ProductVariantListRelationFilter
     reviews?: ReviewListRelationFilter
-  }, "id">
+  }, "id" | "slug">
 
   export type ProductOrderByWithAggregationInput = {
     id?: SortOrder

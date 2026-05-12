@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PinoLogger } from 'pino-nestjs';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsRepository } from './products.repository';
 import { CursorPaginationRequestDto } from '@/common/dto/request/pagination.request.dto';
 import { CursorPaginationService } from '@/common/services/pagination.service';
+import slugify from 'slugify';
 
 @Injectable()
 export class ProductsService {
@@ -16,15 +17,16 @@ export class ProductsService {
     this.logger.setContext(ProductsService.name);
   }
 
-  async create(createProductDto: CreateProductDto) {
+  async create(dto: CreateProductDto) {
     try {
-      const result = await this.productsRepository.create(createProductDto);
+      dto.slug = slugify(dto.name, { lower: true, strict: true });
+      const result = await this.productsRepository.create(dto);
       this.logger.info({
         level: 'info',
         message: 'Product created successfully',
         endpoint: 'POST /products',
         productId: result.id,
-        name: createProductDto.name,
+        name: dto.name,
         status: 'success',
       });
       return result;
@@ -33,7 +35,7 @@ export class ProductsService {
         level: 'error',
         message: 'Product creation failed',
         endpoint: 'POST /products',
-        name: createProductDto.name,
+        name: dto.name,
         status: 'error',
         error: error.message,
       });
@@ -103,10 +105,50 @@ export class ProductsService {
       throw error;
     }
   }
-
-  async update(id: number, updateProductDto: UpdateProductDto) {
+  async findBySlug(slug: string) {
     try {
-      const result = await this.productsRepository.update(id, updateProductDto);
+      const product = await this.productsRepository.findBySlug(slug);
+      if (!product) {
+        this.logger.warn({
+          level: 'warn',
+          message: 'Product not found',
+          endpoint: 'GET /products/:id',
+          slug: slug,
+          status: 'failure',
+        });
+        throw new NotFoundException(`Product with slug ${slug} not found`);
+      }
+      this.logger.info({
+        level: 'info',
+        message: 'Retrieved product by id',
+        endpoint: 'GET /products/:id',
+        slug: slug,
+        status: 'success',
+      });
+      return product;
+    } catch (error: any) {
+      if (error instanceof NotFoundException) throw error;
+      this.logger.error({
+        level: 'error',
+        message: 'Failed to retrieve product',
+        endpoint: 'GET /products/:slug',
+        slug: slug,
+        status: 'error',
+        error: error.message,
+      });
+      throw error;
+    }
+  }
+
+  async update(id: number, dto: UpdateProductDto) {
+    try {
+    if (dto.name) {
+      const generatedSlug = slugify(dto.name, { lower: true, strict: true });
+      const resolvedProduct = await this.productsRepository.findBySlug(generatedSlug);
+      if (resolvedProduct) throw new BadRequestException(`Product with slug ${generatedSlug} already exists`);
+      dto.slug = generatedSlug;
+    }
+      const result = await this.productsRepository.update(id, dto);
       this.logger.info({
         level: 'info',
         message: 'Product updated successfully',

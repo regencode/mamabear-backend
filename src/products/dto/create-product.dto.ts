@@ -50,4 +50,8 @@ export class CreateProductDto {
   @Type(() => CreateProductImageDto)
   @IsOptional()
   images?: CreateProductImageDto[];
+
+  @IsString()
+  @IsOptional()
+  slug?: string;
 }

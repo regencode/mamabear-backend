@@ -38,6 +38,15 @@ export class ProductsRepository {
     });
   }
 
+  findBySlug(slug: string) {
+      return this.prisma.product.findUnique({
+          where: { slug },
+          include: PRODUCT_INCLUDE,
+      });
+  }
+
+
+
   update(id: number, data: UpdateProductDto) {
     const { images, ...productData } = data;
     return this.prisma.product.update({

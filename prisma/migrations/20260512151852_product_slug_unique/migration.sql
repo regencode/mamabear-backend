@@ -110,9 +110,9 @@ CREATE TABLE "Review" (
     "reviewerId" UUID NOT NULL,
     "productId" INTEGER NOT NULL,
     "rating" DOUBLE PRECISION NOT NULL DEFAULT 0.0,
-    "numUpvotes" INTEGER NOT NULL DEFAULT 0,
+    "numUpvotes" INTEGER DEFAULT 0,
     "description" TEXT NOT NULL,
-    "attachmentUrl" TEXT[],
+    "imageUrls" TEXT[] DEFAULT ARRAY[]::TEXT[],
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Review_pkey" PRIMARY KEY ("id")
@@ -120,6 +120,9 @@ CREATE TABLE "Review" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Product_slug_key" ON "Product"("slug");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Discount_variantId_key" ON "Discount"("variantId");
