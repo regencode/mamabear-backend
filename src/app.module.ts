@@ -12,6 +12,10 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { CustomLoggerModule } from './common/logger/logger.module';
 import { MailHogOptions } from './options/mailhog.options';
 import { CategoryModule } from './category/category.module';
+import { UploadModule } from './upload/upload.module';
+import { VariantsModule } from './variants/variants.module';
+import { ReviewsModule } from './reviews/reviews.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -32,6 +36,10 @@ import { CategoryModule } from './category/category.module';
     AuthModule,
     HealthModule,
     CategoryModule,
+    UploadModule,
+    VariantsModule,
+    ReviewsModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
