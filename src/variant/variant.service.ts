@@ -6,9 +6,7 @@ import slugify from 'slugify';
 
 @Injectable()
 export class VariantService {
-  constructor(
-      private readonly repo: VariantRepository
-  ) {}
+  constructor(private readonly repo: VariantRepository) {}
 
   private generateSku(productSlug: string, variantValue: string): string {
     const base = `${productSlug}-${variantValue}`;
@@ -48,11 +46,8 @@ export class VariantService {
     };
   }
 
-  async createVariant(
-    userId: number,
-    dto: CreateVariantDto,
-  ) {
-    if(!dto.productId){
+  async createVariant(userId: number, dto: CreateVariantDto) {
+    if (!dto.productId) {
       throw new BadRequestException('Product Id must be set!');
     }
     const product = await this.repo.findProductById(dto.productId);
@@ -60,9 +55,9 @@ export class VariantService {
     if (!product) {
       throw new BadRequestException('Product not found');
     }
-    if(!dto.sku) {
-        const newSku = this.generateSku(product.slug, dto.name);
-        dto.sku = newSku;
+    if (!dto.sku) {
+      const newSku = this.generateSku(product.slug, dto.name);
+      dto.sku = newSku;
     }
 
     await this.repo.createProductVariant(dto);
