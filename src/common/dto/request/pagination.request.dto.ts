@@ -5,7 +5,7 @@ export class CursorPaginationRequestDto {
   @IsOptional()
   @Type(() => Number)
   @Transform(({ value }) =>
-    value !== undefined ? Number(value) : undefined,
+    value !== undefined ? Number(value) : 0,
   )
   @IsInt()
   @Min(1)

@@ -36,7 +36,7 @@ export class ProductsController {
   ) {}
 
   @Get()
-  findAll(@Body() paginationDto: CursorPaginationRequestDto) {
+  findAll(@Body() paginationDto?: CursorPaginationRequestDto) {
     return this.productsService.findAll(paginationDto);
   }
 
