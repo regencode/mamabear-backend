@@ -142,48 +142,54 @@ exports.Prisma.ProductScalarFieldEnum = {
   id: 'id',
   name: 'name',
   slug: 'slug',
-  description: 'description',
-  price_idr: 'price_idr',
-  weight_g: 'weight_g',
-  sku: 'sku',
-  stock: 'stock',
   isActive: 'isActive',
+  categoryId: 'categoryId',
+  highlightId: 'highlightId',
+  tags: 'tags',
+  description: 'description',
+  ingredients: 'ingredients',
+  usageInstructions: 'usageInstructions',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  categoryId: 'categoryId'
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.ProductImageScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
+  variantId: 'variantId',
   imageUrl: 'imageUrl',
   sortOrder: 'sortOrder',
   altText: 'altText'
 };
 
+exports.Prisma.DiscountScalarFieldEnum = {
+  id: 'id',
+  variantId: 'variantId',
+  amount: 'amount',
+  isPercent: 'isPercent',
+  startedAt: 'startedAt',
+  endsAt: 'endsAt'
+};
+
 exports.Prisma.ProductVariantScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
-  variantType: 'variantType',
-  variantValue: 'variantValue',
+  name: 'name',
+  priceIdr: 'priceIdr',
+  weightG: 'weightG',
   sku: 'sku',
-  priceAdjustment: 'priceAdjustment',
   stock: 'stock',
-  isActive: 'isActive',
   sortOrder: 'sortOrder',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.VariantCombinationScalarFieldEnum = {
+exports.Prisma.HighlightScalarFieldEnum = {
   id: 'id',
-  productId: 'productId',
-  combination: 'combination',
-  sku: 'sku',
-  price: 'price',
-  stock: 'stock',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  isActive: 'isActive'
 };
 
 exports.Prisma.CategoryScalarFieldEnum = {
@@ -198,13 +204,21 @@ exports.Prisma.CategoryScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ReviewScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  reviewerId: 'reviewerId',
+  productId: 'productId',
+  rating: 'rating',
+  numUpvotes: 'numUpvotes',
+  description: 'description',
+  imageUrls: 'imageUrls',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
-};
-
-exports.Prisma.JsonNullValueInput = {
-  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -216,12 +230,6 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-
-exports.Prisma.JsonNullValueFilter = {
-  DbNull: Prisma.DbNull,
-  JsonNull: Prisma.JsonNull,
-  AnyNull: Prisma.AnyNull
-};
 exports.Role = exports.$Enums.Role = {
   USER: 'USER',
   ADMIN: 'ADMIN'
@@ -231,9 +239,11 @@ exports.Prisma.ModelName = {
   User: 'User',
   Product: 'Product',
   ProductImage: 'ProductImage',
+  Discount: 'Discount',
   ProductVariant: 'ProductVariant',
-  VariantCombination: 'VariantCombination',
-  Category: 'Category'
+  Highlight: 'Highlight',
+  Category: 'Category',
+  Review: 'Review'
 };
 
 /**

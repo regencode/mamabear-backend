@@ -1,18 +1,38 @@
-import { IsInt, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { IsObject } from 'class-validator';
+import { Discount, ProductImage } from '@/generated/prisma';
 
 export class CreateVariantDto {
-  @IsInt()
-  productId: number;
+    @IsNumber()
+    productId?: number; 
 
-  @IsString()
-  variantType: string;
+    @IsString()
+    @IsNotEmpty()
+    name: string;
 
-  @IsString()
-  variantValue: string;
+    @IsObject()
+    @IsOptional()
+    images?: ProductImage;
 
-  @IsString()
-  sku: string;
+    @IsNumber()
+    @IsNotEmpty()
+    priceIdr: number;
 
-  @IsInt()
-  priceAdjustment: number;
+    @IsNumber()
+    @IsNotEmpty()
+    weightG: number; 
+
+    @IsString()
+    @IsOptional()
+    sku?: string;
+
+    @IsNumber()
+    @Min(0)
+    @IsOptional()
+    stock?: number;
+
+    @IsNumber()
+    @Min(0)
+    @IsOptional()
+    sortOrder: number;
 }

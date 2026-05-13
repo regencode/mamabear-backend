@@ -7,28 +7,41 @@ import { PinoLogger } from 'pino-nestjs';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsRepository } from './products.repository';
+import { CursorPaginationRequestDto } from '@/common/dto/request/pagination.request.dto';
+import { CursorPaginationService } from '@/common/services/pagination.service';
+import { CreateVariantDto } from '@/variant/dto/create-variant.dto';
 import slugify from 'slugify';
-import { CreateProductVariantDto } from './dto/create-productVariant.dto';
-import { CreateVariantCombinationDto } from './dto/create-variantCombination';
 
 @Injectable()
 export class ProductsService {
   constructor(
     private readonly productsRepository: ProductsRepository,
     private readonly logger: PinoLogger,
+    private readonly paginationService: CursorPaginationService,
   ) {
     this.logger.setContext(ProductsService.name);
   }
 
-  async create(createProductDto: CreateProductDto) {
+  async create(dto: CreateProductDto) {
     try {
-      const result = await this.productsRepository.create(createProductDto);
+      if(!dto.variants) dto.variants = [];
+      const defaultVariant: CreateVariantDto = {
+          name: "INTERNAL_DEFAULT",
+          priceIdr: dto.priceIdr,
+          weightG: dto.weightG,
+          stock: dto.stock,
+          sku: dto.sku,
+          sortOrder: 0, // default
+      } 
+      dto.variants.push(defaultVariant);
+      const result = await this.productsRepository.create(dto);
+      if(!result) throw new BadRequestException('Cannot create product');
       this.logger.info({
         level: 'info',
         message: 'Product created successfully',
         endpoint: 'POST /products',
-        productId: result.id,
-        name: createProductDto.name,
+        productId: result?.id,
+        name: dto.name,
         status: 'success',
       });
       return result;
@@ -37,7 +50,7 @@ export class ProductsService {
         level: 'error',
         message: 'Product creation failed',
         endpoint: 'POST /products',
-        name: createProductDto.name,
+        name: dto.name,
         status: 'error',
         error: error.message,
       });
@@ -45,14 +58,19 @@ export class ProductsService {
     }
   }
 
-  async findAll() {
+  async findAll(paginationDto: CursorPaginationRequestDto) {
     try {
-      const result = await this.productsRepository.findAll();
+        const result = await this.paginationService.paginate({
+            findMany: this.productsRepository.findAll
+        },
+        paginationDto,
+        {},
+        )
       this.logger.info({
         level: 'info',
         message: 'Retrieved all products',
         endpoint: 'GET /products',
-        count: result.length,
+        count: result.data.length,
         status: 'success',
       });
       return result;
@@ -102,10 +120,49 @@ export class ProductsService {
       throw error;
     }
   }
-
-  async update(id: number, updateProductDto: UpdateProductDto) {
+  async findBySlug(slug: string) {
     try {
-      const result = await this.productsRepository.update(id, updateProductDto);
+      const product = await this.productsRepository.findBySlug(slug);
+      if (!product) {
+        this.logger.warn({
+          level: 'warn',
+          message: 'Product not found',
+          endpoint: 'GET /products/:id',
+          status: 'failure',
+        });
+        throw new NotFoundException(`Product with slug ${slug} not found`);
+      }
+      this.logger.info({
+        level: 'info',
+        message: 'Retrieved product by id',
+        endpoint: 'GET /products/:id',
+        slug: slug,
+        status: 'success',
+      });
+      return product;
+    } catch (error: any) {
+      if (error instanceof NotFoundException) throw error;
+      this.logger.error({
+        level: 'error',
+        message: 'Failed to retrieve product',
+        endpoint: 'GET /products/:slug',
+        slug: slug,
+        status: 'error',
+        error: error.message,
+      });
+      throw error;
+    }
+  }
+
+  async update(id: number, dto: UpdateProductDto) {
+    try {
+    if (dto.name) {
+      const generatedSlug = slugify(dto.name, { lower: true, strict: true });
+      const resolvedProduct = await this.productsRepository.findBySlug(generatedSlug);
+      if (resolvedProduct) throw new BadRequestException(`Product with slug ${generatedSlug} already exists`);
+      dto.slug = generatedSlug;
+    }
+      const result = await this.productsRepository.update(id, dto);
       this.logger.info({
         level: 'info',
         message: 'Product updated successfully',
@@ -149,118 +206,5 @@ export class ProductsService {
       });
       throw error;
     }
-  }
-
-  async createVariant(
-    userId: number,
-    productId: number,
-    dto: CreateProductVariantDto,
-  ) {
-    const product = await this.productsRepository.findById(productId);
-
-    if (!product) {
-      throw new BadRequestException('Product not found');
-    }
-    const newSku = this.generateSku(product.slug, dto.variantValue);
-
-    await this.productsRepository.createProductVariant({
-      product: {
-        connect: {
-          id: product.id,
-        },
-      },
-      variantType: dto.variantType,
-      variantValue: dto.variantValue,
-      sku: newSku,
-      priceAdjustment: dto.priceAdjustment,
-      stock: dto.stock,
-    });
-
-    return {
-      success: true,
-      message: 'Variant created successfully',
-    };
-  }
-
-  getProductVariant(productId: number) {
-    return this.productsRepository.findProductVariantsByProductId(productId);
-  }
-
-  getAllVariantCombinations(productId: number) {
-    return this.productsRepository.findAllVariantCombinations(productId);
-  }
-
-  async createVariantCombinations(
-    userId: number,
-    productId: number,
-    dto: CreateVariantCombinationDto,
-  ) {
-    const product = await this.productsRepository.findById(productId);
-
-    if (!product) {
-      throw new BadRequestException('Product not found');
-    }
-
-    const variants =
-      await this.productsRepository.findProductVariantsByProductId(productId);
-
-    if (!variants) {
-      throw new BadRequestException('Variant not found');
-    }
-
-    const allowedVariants = variants.map(
-      (variant) => `${variant.variantType}:${variant.variantValue}`,
-    );
-
-    for (const item of dto.combinations) {
-      for (const [type, value] of Object.entries(item.combination)) {
-        const key = `${type}:${value}`;
-
-        if (!allowedVariants.includes(key)) {
-          throw new BadRequestException(
-            `Invalid variant combination: ${type} = ${value}`,
-          );
-        }
-      }
-    }
-
-    const data = dto.combinations.map((item) => {
-      return {
-        productId: product.id,
-        combination: item.combination,
-        sku:
-          item.sku ??
-          this.generateCombinationSku(product.slug, item.combination),
-        price: item.price,
-        stock: item.stock,
-      };
-    });
-    await this.productsRepository.createProductVariantCombination(data);
-
-    return {
-      success: true,
-      message: 'Variant combinations created successfully',
-    };
-  }
-
-  private generateSku(productSlug: string, variantValue: string): string {
-    const base = `${productSlug}-${variantValue}`;
-    return slugify(base, {
-      lower: false,
-      strict: true,
-    }).toUpperCase();
-  }
-
-  private generateCombinationSku(
-    productSlug: string,
-    combination: Record<string, string>,
-  ): string {
-    const values = Object.values(combination);
-
-    return slugify(`${productSlug}-${values.join('-')}`, {
-      strict: true,
-      lower: false,
-      trim: true,
-    }).toUpperCase();
   }
 }

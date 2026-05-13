@@ -23,14 +23,6 @@ export class CategoryRepository {
 
   findAll() {
     return this.prisma.category.findMany({
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        description: true,
-        imageUrl: true,
-        isActive: true,
-      },
       orderBy: {
         sortOrder: 'asc',
       },
@@ -54,27 +46,6 @@ export class CategoryRepository {
     return this.prisma.category.findUnique({
       where: {
         slug,
-      },
-      select: {
-        products: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            description: true,
-            price_idr: true,
-            category: {
-              select: {
-                name: true,
-              },
-            },
-            images: {
-              select: {
-                imageUrl: true,
-              },
-            },
-          },
-        },
       },
     });
   }
