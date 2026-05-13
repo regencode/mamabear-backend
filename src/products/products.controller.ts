@@ -17,9 +17,9 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { Role } from '@/generated/prisma';
 import { Roles } from '@/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
-import { ReviewsService } from '@/reviews/reviews.service'
-import { CreateReviewDto } from '@/reviews/dto/create-review.dto'
-import { CursorPaginationRequestDto } from '@/common/dto/request/pagination.request.dto'
+import { ReviewsService } from '@/reviews/reviews.service';
+import { CreateReviewDto } from '@/reviews/dto/create-review.dto';
+import { CursorPaginationRequestDto } from '@/common/dto/request/pagination.request.dto';
 import { CreateDiscountDto } from '@/discounts/dto/create-discount.dto';
 import { DiscountsService } from '@/discounts/discounts.service';
 import { CreateVariantDto } from '@/variant/dto/create-variant.dto';
@@ -29,10 +29,10 @@ import { VariantService } from '@/variant/variant.service';
 @Controller('products')
 export class ProductsController {
   constructor(
-      private readonly productsService: ProductsService,
-      private readonly reviewsService: ReviewsService,
-      private readonly discountsService: DiscountsService,
-      private readonly variantService: VariantService,
+    private readonly productsService: ProductsService,
+    private readonly reviewsService: ReviewsService,
+    private readonly discountsService: DiscountsService,
+    private readonly variantService: VariantService,
   ) {}
 
   @Get()
@@ -74,10 +74,7 @@ export class ProductsController {
     @Param('id') productId: number,
     @Body() paginationDto: CursorPaginationRequestDto,
   ) {
-    return this.reviewsService.findReviewsOfProduct(
-      productId,
-      paginationDto,
-    )
+    return this.reviewsService.findReviewsOfProduct(productId, paginationDto);
   }
 
   @UseGuards(new JwtAuthGuard())
@@ -86,36 +83,32 @@ export class ProductsController {
     @Param('id') productId: number,
     @Body() dto: CreateReviewDto,
   ) {
-    dto.productId = productId
+    dto.productId = productId;
     return this.reviewsService.createReviewForProduct(dto);
   }
 
   @UseGuards(new JwtAuthGuard())
   @Patch(':id/reviews/:reviewId/upvote')
-  upvoteReviewOfProduct(
-    @Param('reviewId') reviewId: number,
-  ) {
-    return this.reviewsService.upvoteReviewWithId(reviewId)
+  upvoteReviewOfProduct(@Param('reviewId') reviewId: number) {
+    return this.reviewsService.upvoteReviewWithId(reviewId);
   }
 
   @UseGuards(new JwtAuthGuard())
   @Roles([Role.ADMIN])
   @Delete(':id/reviews/:reviewId')
-  removeReview(
-    @Param('reviewId') reviewId: number,
-  ) {
-    return this.reviewsService.remove(reviewId)
+  removeReview(@Param('reviewId') reviewId: number) {
+    return this.reviewsService.remove(reviewId);
   }
 
   @UseGuards(new JwtAuthGuard())
   @Roles([Role.ADMIN])
-  @Post(':id/variant/:variantId/discount') 
+  @Post(':id/variant/:variantId/discount')
   createDiscount(
-      @Param('variantId') variantId: number,
-      @Body() dto: CreateDiscountDto
+    @Param('variantId') variantId: number,
+    @Body() dto: CreateDiscountDto,
   ) {
-      dto.variantId = variantId;
-      this.discountsService.create(dto);
+    dto.variantId = variantId;
+    this.discountsService.create(dto);
   }
 
   @UseGuards(new JwtAuthGuard())
@@ -127,7 +120,7 @@ export class ProductsController {
     @Body() dto: CreateVariantDto,
   ) {
     console.log('DTO : ', dto);
-    dto.productId = id
+    dto.productId = id;
     return this.variantService.createVariant(req.user.id, dto);
   }
 
@@ -136,4 +129,3 @@ export class ProductsController {
     return this.variantService.getProductVariant(id);
   }
 }
-
