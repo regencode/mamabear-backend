@@ -6,10 +6,12 @@ import {
   IsNotEmpty,
   ValidateNested,
   IsArray,
+  Min,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { CreateProductImageDto } from './create-product-image.dto';
+import { CreateVariantDto } from '@/variant/dto/create-variant.dto';
 
 export class CreateProductDto {
   @ApiProperty({ example: 'S-26 Procal Gold 3' })
@@ -21,28 +23,40 @@ export class CreateProductDto {
   @IsString()
   description: string;
 
+  @ApiProperty({ example: 'Growing-up formula for children aged 1-3 years.' })
+  @IsString()
+  ingredients: string;
+
+  @ApiProperty({ example: 'Growing-up formula for children aged 1-3 years.' })
+  @IsString()
+  usageInstructions: string;
+
+  // put in default variant
   @ApiProperty({ example: 900 })
   @IsNumber()
-  weight_g: number;
+  @IsNotEmpty()
+  weightG: number;
 
   @ApiProperty({ example: 185000 })
   @IsNumber()
-  price_idr: number;
+  priceIdr: number;
 
   @ApiPropertyOptional({ example: 50 })
   @IsNumber()
   @IsOptional()
+  @Min(0)
   stock?: number;
-
-  @ApiPropertyOptional({ default: true })
-  @IsBoolean()
-  @IsOptional()
-  isActive?: boolean;
 
   @ApiPropertyOptional({ example: 'S26-PROCAL-3-900' })
   @IsString()
   @IsOptional()
   sku?: string;
+  // put in default variant
+
+  @ApiPropertyOptional({ default: true })
+  @IsBoolean()
+  @IsOptional()
+  isActive?: boolean;
 
   @ApiPropertyOptional({ type: [CreateProductImageDto] })
   @IsArray()
@@ -51,7 +65,19 @@ export class CreateProductDto {
   @IsOptional()
   images?: CreateProductImageDto[];
 
+  @ApiPropertyOptional({ type: [CreateVariantDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateVariantDto)
+  @IsOptional()
+  variants?: CreateVariantDto[];
+
   @IsString()
   @IsOptional()
-  slug?: string;
+  slug: string;
+
+  @IsArray()
+  @IsOptional()
+  tags?: string[];
 }
+

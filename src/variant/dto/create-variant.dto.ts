@@ -4,7 +4,7 @@ import { Discount, ProductImage } from '@/generated/prisma';
 
 export class CreateVariantDto {
     @IsNumber()
-    productId: number; 
+    productId?: number; 
 
     @IsString()
     @IsNotEmpty()
@@ -28,5 +28,11 @@ export class CreateVariantDto {
 
     @IsNumber()
     @Min(0)
-    stock: number;
+    @IsOptional()
+    stock?: number;
+
+    @IsNumber()
+    @Min(0)
+    @IsOptional()
+    sortOrder: number;
 }

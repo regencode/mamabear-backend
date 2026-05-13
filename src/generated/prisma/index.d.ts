@@ -6525,6 +6525,7 @@ export namespace Prisma {
     priceIdr: Decimal | null
     weightG: number | null
     stock: number | null
+    sortOrder: number | null
   }
 
   export type ProductVariantSumAggregateOutputType = {
@@ -6533,6 +6534,7 @@ export namespace Prisma {
     priceIdr: Decimal | null
     weightG: number | null
     stock: number | null
+    sortOrder: number | null
   }
 
   export type ProductVariantMinAggregateOutputType = {
@@ -6543,6 +6545,7 @@ export namespace Prisma {
     weightG: number | null
     sku: string | null
     stock: number | null
+    sortOrder: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6555,6 +6558,7 @@ export namespace Prisma {
     weightG: number | null
     sku: string | null
     stock: number | null
+    sortOrder: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6567,6 +6571,7 @@ export namespace Prisma {
     weightG: number
     sku: number
     stock: number
+    sortOrder: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -6579,6 +6584,7 @@ export namespace Prisma {
     priceIdr?: true
     weightG?: true
     stock?: true
+    sortOrder?: true
   }
 
   export type ProductVariantSumAggregateInputType = {
@@ -6587,6 +6593,7 @@ export namespace Prisma {
     priceIdr?: true
     weightG?: true
     stock?: true
+    sortOrder?: true
   }
 
   export type ProductVariantMinAggregateInputType = {
@@ -6597,6 +6604,7 @@ export namespace Prisma {
     weightG?: true
     sku?: true
     stock?: true
+    sortOrder?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6609,6 +6617,7 @@ export namespace Prisma {
     weightG?: true
     sku?: true
     stock?: true
+    sortOrder?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6621,6 +6630,7 @@ export namespace Prisma {
     weightG?: true
     sku?: true
     stock?: true
+    sortOrder?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -6720,6 +6730,7 @@ export namespace Prisma {
     weightG: number
     sku: string | null
     stock: number
+    sortOrder: number
     createdAt: Date
     updatedAt: Date | null
     _count: ProductVariantCountAggregateOutputType | null
@@ -6751,6 +6762,7 @@ export namespace Prisma {
     weightG?: boolean
     sku?: boolean
     stock?: boolean
+    sortOrder?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -6767,6 +6779,7 @@ export namespace Prisma {
     weightG?: boolean
     sku?: boolean
     stock?: boolean
+    sortOrder?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -6780,6 +6793,7 @@ export namespace Prisma {
     weightG?: boolean
     sku?: boolean
     stock?: boolean
+    sortOrder?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -6793,11 +6807,12 @@ export namespace Prisma {
     weightG?: boolean
     sku?: boolean
     stock?: boolean
+    sortOrder?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ProductVariantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "name" | "priceIdr" | "weightG" | "sku" | "stock" | "createdAt" | "updatedAt", ExtArgs["result"]["productVariant"]>
+  export type ProductVariantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "name" | "priceIdr" | "weightG" | "sku" | "stock" | "sortOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["productVariant"]>
   export type ProductVariantInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductDefaultArgs<ExtArgs>
     images?: boolean | ProductVariant$imagesArgs<ExtArgs>
@@ -6826,6 +6841,7 @@ export namespace Prisma {
       weightG: number
       sku: string | null
       stock: number
+      sortOrder: number
       createdAt: Date
       updatedAt: Date | null
     }, ExtArgs["result"]["productVariant"]>
@@ -7261,6 +7277,7 @@ export namespace Prisma {
     readonly weightG: FieldRef<"ProductVariant", 'Int'>
     readonly sku: FieldRef<"ProductVariant", 'String'>
     readonly stock: FieldRef<"ProductVariant", 'Int'>
+    readonly sortOrder: FieldRef<"ProductVariant", 'Int'>
     readonly createdAt: FieldRef<"ProductVariant", 'DateTime'>
     readonly updatedAt: FieldRef<"ProductVariant", 'DateTime'>
   }
@@ -11249,6 +11266,7 @@ export namespace Prisma {
     weightG: 'weightG',
     sku: 'sku',
     stock: 'stock',
+    sortOrder: 'sortOrder',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -11767,6 +11785,7 @@ export namespace Prisma {
     weightG?: IntFilter<"ProductVariant"> | number
     sku?: StringNullableFilter<"ProductVariant"> | string | null
     stock?: IntFilter<"ProductVariant"> | number
+    sortOrder?: IntFilter<"ProductVariant"> | number
     createdAt?: DateTimeFilter<"ProductVariant"> | Date | string
     updatedAt?: DateTimeNullableFilter<"ProductVariant"> | Date | string | null
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
@@ -11782,6 +11801,7 @@ export namespace Prisma {
     weightG?: SortOrder
     sku?: SortOrderInput | SortOrder
     stock?: SortOrder
+    sortOrder?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrderInput | SortOrder
     product?: ProductOrderByWithRelationInput
@@ -11800,6 +11820,7 @@ export namespace Prisma {
     weightG?: IntFilter<"ProductVariant"> | number
     sku?: StringNullableFilter<"ProductVariant"> | string | null
     stock?: IntFilter<"ProductVariant"> | number
+    sortOrder?: IntFilter<"ProductVariant"> | number
     createdAt?: DateTimeFilter<"ProductVariant"> | Date | string
     updatedAt?: DateTimeNullableFilter<"ProductVariant"> | Date | string | null
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
@@ -11815,6 +11836,7 @@ export namespace Prisma {
     weightG?: SortOrder
     sku?: SortOrderInput | SortOrder
     stock?: SortOrder
+    sortOrder?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrderInput | SortOrder
     _count?: ProductVariantCountOrderByAggregateInput
@@ -11835,6 +11857,7 @@ export namespace Prisma {
     weightG?: IntWithAggregatesFilter<"ProductVariant"> | number
     sku?: StringNullableWithAggregatesFilter<"ProductVariant"> | string | null
     stock?: IntWithAggregatesFilter<"ProductVariant"> | number
+    sortOrder?: IntWithAggregatesFilter<"ProductVariant"> | number
     createdAt?: DateTimeWithAggregatesFilter<"ProductVariant"> | Date | string
     updatedAt?: DateTimeNullableWithAggregatesFilter<"ProductVariant"> | Date | string | null
   }
@@ -12418,6 +12441,7 @@ export namespace Prisma {
     weightG: number
     sku?: string | null
     stock?: number
+    sortOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string | null
     product: ProductCreateNestedOneWithoutVariantsInput
@@ -12433,6 +12457,7 @@ export namespace Prisma {
     weightG: number
     sku?: string | null
     stock?: number
+    sortOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string | null
     images?: ProductImageUncheckedCreateNestedManyWithoutVariantInput
@@ -12445,6 +12470,7 @@ export namespace Prisma {
     weightG?: IntFieldUpdateOperationsInput | number
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product?: ProductUpdateOneRequiredWithoutVariantsNestedInput
@@ -12460,6 +12486,7 @@ export namespace Prisma {
     weightG?: IntFieldUpdateOperationsInput | number
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     images?: ProductImageUncheckedUpdateManyWithoutVariantNestedInput
@@ -12474,6 +12501,7 @@ export namespace Prisma {
     weightG: number
     sku?: string | null
     stock?: number
+    sortOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string | null
   }
@@ -12484,6 +12512,7 @@ export namespace Prisma {
     weightG?: IntFieldUpdateOperationsInput | number
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -12496,6 +12525,7 @@ export namespace Prisma {
     weightG?: IntFieldUpdateOperationsInput | number
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -13250,6 +13280,7 @@ export namespace Prisma {
     weightG?: SortOrder
     sku?: SortOrder
     stock?: SortOrder
+    sortOrder?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -13260,6 +13291,7 @@ export namespace Prisma {
     priceIdr?: SortOrder
     weightG?: SortOrder
     stock?: SortOrder
+    sortOrder?: SortOrder
   }
 
   export type ProductVariantMaxOrderByAggregateInput = {
@@ -13270,6 +13302,7 @@ export namespace Prisma {
     weightG?: SortOrder
     sku?: SortOrder
     stock?: SortOrder
+    sortOrder?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -13282,6 +13315,7 @@ export namespace Prisma {
     weightG?: SortOrder
     sku?: SortOrder
     stock?: SortOrder
+    sortOrder?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -13292,6 +13326,7 @@ export namespace Prisma {
     priceIdr?: SortOrder
     weightG?: SortOrder
     stock?: SortOrder
+    sortOrder?: SortOrder
   }
 
   export type ProductListRelationFilter = {
@@ -14409,6 +14444,7 @@ export namespace Prisma {
     weightG: number
     sku?: string | null
     stock?: number
+    sortOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string | null
     images?: ProductImageCreateNestedManyWithoutVariantInput
@@ -14422,6 +14458,7 @@ export namespace Prisma {
     weightG: number
     sku?: string | null
     stock?: number
+    sortOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string | null
     images?: ProductImageUncheckedCreateNestedManyWithoutVariantInput
@@ -14584,6 +14621,7 @@ export namespace Prisma {
     weightG?: IntFilter<"ProductVariant"> | number
     sku?: StringNullableFilter<"ProductVariant"> | string | null
     stock?: IntFilter<"ProductVariant"> | number
+    sortOrder?: IntFilter<"ProductVariant"> | number
     createdAt?: DateTimeFilter<"ProductVariant"> | Date | string
     updatedAt?: DateTimeNullableFilter<"ProductVariant"> | Date | string | null
   }
@@ -14648,6 +14686,7 @@ export namespace Prisma {
     weightG: number
     sku?: string | null
     stock?: number
+    sortOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string | null
     product: ProductCreateNestedOneWithoutVariantsInput
@@ -14662,6 +14701,7 @@ export namespace Prisma {
     weightG: number
     sku?: string | null
     stock?: number
+    sortOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string | null
     discount?: DiscountUncheckedCreateNestedOneWithoutVariantInput
@@ -14733,6 +14773,7 @@ export namespace Prisma {
     weightG?: IntFieldUpdateOperationsInput | number
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product?: ProductUpdateOneRequiredWithoutVariantsNestedInput
@@ -14747,6 +14788,7 @@ export namespace Prisma {
     weightG?: IntFieldUpdateOperationsInput | number
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     discount?: DiscountUncheckedUpdateOneWithoutVariantNestedInput
@@ -14758,6 +14800,7 @@ export namespace Prisma {
     weightG: number
     sku?: string | null
     stock?: number
+    sortOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string | null
     product: ProductCreateNestedOneWithoutVariantsInput
@@ -14772,6 +14815,7 @@ export namespace Prisma {
     weightG: number
     sku?: string | null
     stock?: number
+    sortOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string | null
     images?: ProductImageUncheckedCreateNestedManyWithoutVariantInput
@@ -14799,6 +14843,7 @@ export namespace Prisma {
     weightG?: IntFieldUpdateOperationsInput | number
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     product?: ProductUpdateOneRequiredWithoutVariantsNestedInput
@@ -14813,6 +14858,7 @@ export namespace Prisma {
     weightG?: IntFieldUpdateOperationsInput | number
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     images?: ProductImageUncheckedUpdateManyWithoutVariantNestedInput
@@ -15351,6 +15397,7 @@ export namespace Prisma {
     weightG: number
     sku?: string | null
     stock?: number
+    sortOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string | null
   }
@@ -15395,6 +15442,7 @@ export namespace Prisma {
     weightG?: IntFieldUpdateOperationsInput | number
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     images?: ProductImageUpdateManyWithoutVariantNestedInput
@@ -15408,6 +15456,7 @@ export namespace Prisma {
     weightG?: IntFieldUpdateOperationsInput | number
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     images?: ProductImageUncheckedUpdateManyWithoutVariantNestedInput
@@ -15421,6 +15470,7 @@ export namespace Prisma {
     weightG?: IntFieldUpdateOperationsInput | number
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     stock?: IntFieldUpdateOperationsInput | number
+    sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }

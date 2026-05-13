@@ -6,6 +6,6 @@ import { VariantRepository } from './variant.repository';
 @Module({
   controllers: [VariantController],
   providers: [VariantService, VariantRepository],
-  exports: [VariantService],
+  exports: [VariantService, VariantRepository],
 })
 export class VariantModule {}

@@ -52,6 +52,9 @@ export class VariantService {
     userId: number,
     dto: CreateVariantDto,
   ) {
+    if(!dto.productId){
+      throw new BadRequestException('Product Id must be set!');
+    }
     const product = await this.repo.findProductById(dto.productId);
 
     if (!product) {

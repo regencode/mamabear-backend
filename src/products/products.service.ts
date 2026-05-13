@@ -9,6 +9,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsRepository } from './products.repository';
 import { CursorPaginationRequestDto } from '@/common/dto/request/pagination.request.dto';
 import { CursorPaginationService } from '@/common/services/pagination.service';
+import { CreateVariantDto } from '@/variant/dto/create-variant.dto';
 import slugify from 'slugify';
 
 @Injectable()
@@ -23,13 +24,23 @@ export class ProductsService {
 
   async create(dto: CreateProductDto) {
     try {
-      dto.slug = slugify(dto.name, { lower: true, strict: true });
+      if(!dto.variants) dto.variants = [];
+      const defaultVariant: CreateVariantDto = {
+          name: "INTERNAL_DEFAULT",
+          priceIdr: dto.priceIdr,
+          weightG: dto.weightG,
+          stock: dto.stock,
+          sku: dto.sku,
+          sortOrder: 0, // default
+      } 
+      dto.variants.push(defaultVariant);
       const result = await this.productsRepository.create(dto);
+      if(!result) throw new BadRequestException('Cannot create product');
       this.logger.info({
         level: 'info',
         message: 'Product created successfully',
         endpoint: 'POST /products',
-        productId: result.id,
+        productId: result?.id,
         name: dto.name,
         status: 'success',
       });

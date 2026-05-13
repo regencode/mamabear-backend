@@ -179,6 +179,7 @@ exports.Prisma.ProductVariantScalarFieldEnum = {
   weightG: 'weightG',
   sku: 'sku',
   stock: 'stock',
+  sortOrder: 'sortOrder',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

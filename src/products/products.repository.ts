@@ -2,6 +2,7 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import slugify from 'slugify';
 
 const PRODUCT_INCLUDE = {
   category: true,
@@ -14,17 +15,22 @@ export class ProductsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   create(data: CreateProductDto) {
-    const { images, ...productData } = data;
-    return this.prisma.product.create({
-      data: {
-        ...productData,
-        slug: '',
-        ...(images?.length && {
-          images: { create: images },
-        }),
-      },
-      include: PRODUCT_INCLUDE,
-    });
+    data.slug = slugify(data.name, { lower: true, strict: true });
+    return this.prisma.$transaction(async (tx) => {
+        const { images, variants, weightG, priceIdr, stock, sku, ...productData } = data;
+        const product = await tx.product.create({ data: productData, include: PRODUCT_INCLUDE })
+        if(variants?.length) {
+            await tx.productVariant.createMany({
+                data: variants.map(v => ({...v, productId: product.id }))
+            })
+        }
+        if(images?.length) {
+            await tx.productImage.createMany({
+                data: images.map(img => ({...img, productId: product.id }))
+            })
+        }
+        return tx.product.findUnique({ where: { id: product.id }, include: PRODUCT_INCLUDE })
+    })
   }
 
   findAll() {
@@ -48,17 +54,11 @@ export class ProductsRepository {
 
 
   update(id: number, data: UpdateProductDto) {
-    const { images, ...productData } = data;
+    const { images, variants, weightG, priceIdr, stock, sku, ...productData } = data;
     return this.prisma.product.update({
       where: { id },
       data: {
         ...productData,
-        ...(images && {
-          images: {
-            deleteMany: {},
-            create: images,
-          },
-        }),
       },
       include: PRODUCT_INCLUDE,
     });
