@@ -47,6 +47,9 @@ export class CategoryRepository {
       where: {
         slug,
       },
+      include: {
+        products: true,
+      },
     });
   }
 }

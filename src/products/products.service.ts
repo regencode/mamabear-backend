@@ -24,18 +24,18 @@ export class ProductsService {
 
   async create(dto: CreateProductDto) {
     try {
-      if(!dto.variants) dto.variants = [];
+      if (!dto.variants) dto.variants = [];
       const defaultVariant: CreateVariantDto = {
-          name: "INTERNAL_DEFAULT",
-          priceIdr: dto.priceIdr,
-          weightG: dto.weightG,
-          stock: dto.stock,
-          sku: dto.sku,
-          sortOrder: 0, // default
-      } 
+        name: 'INTERNAL_DEFAULT',
+        priceIdr: dto.priceIdr,
+        weightG: dto.weightG,
+        stock: dto.stock,
+        sku: dto.sku,
+        sortOrder: 0, // default
+      };
       dto.variants.push(defaultVariant);
       const result = await this.productsRepository.create(dto);
-      if(!result) throw new BadRequestException('Cannot create product');
+      if (!result) throw new BadRequestException('Cannot create product');
       this.logger.info({
         level: 'info',
         message: 'Product created successfully',
@@ -60,12 +60,13 @@ export class ProductsService {
 
   async findAll(paginationDto: CursorPaginationRequestDto) {
     try {
-        const result = await this.paginationService.paginate({
-            findMany: this.productsRepository.findAll
+      const result = await this.paginationService.paginate(
+        {
+          findMany: this.productsRepository.findAll,
         },
         paginationDto,
         {},
-        )
+      );
       this.logger.info({
         level: 'info',
         message: 'Retrieved all products',
@@ -156,12 +157,16 @@ export class ProductsService {
 
   async update(id: number, dto: UpdateProductDto) {
     try {
-    if (dto.name) {
-      const generatedSlug = slugify(dto.name, { lower: true, strict: true });
-      const resolvedProduct = await this.productsRepository.findBySlug(generatedSlug);
-      if (resolvedProduct) throw new BadRequestException(`Product with slug ${generatedSlug} already exists`);
-      dto.slug = generatedSlug;
-    }
+      if (dto.name) {
+        const generatedSlug = slugify(dto.name, { lower: true, strict: true });
+        const resolvedProduct =
+          await this.productsRepository.findBySlug(generatedSlug);
+        if (resolvedProduct)
+          throw new BadRequestException(
+            `Product with slug ${generatedSlug} already exists`,
+          );
+        dto.slug = generatedSlug;
+      }
       const result = await this.productsRepository.update(id, dto);
       this.logger.info({
         level: 'info',
