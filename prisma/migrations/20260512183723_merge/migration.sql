@@ -73,8 +73,6 @@ CREATE TABLE "ProductVariant" (
     "weightG" INTEGER NOT NULL,
     "sku" TEXT,
     "stock" INTEGER NOT NULL DEFAULT 0,
-    "sortOrder" INTEGER NOT NULL DEFAULT 0,
-    "isActive" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3),
 

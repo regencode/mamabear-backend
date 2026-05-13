@@ -17,16 +17,13 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { Role } from '@/generated/prisma';
 import { Roles } from '@/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
-<<<<<<< HEAD
 import { ReviewsService } from '@/reviews/reviews.service'
 import { CreateReviewDto } from '@/reviews/dto/create-review.dto'
 import { CursorPaginationRequestDto } from '@/common/dto/request/pagination.request.dto'
 import { CreateDiscountDto } from '@/discounts/dto/create-discount.dto';
 import { DiscountsService } from '@/discounts/discounts.service';
-=======
-import { CreateProductVariantDto } from './dto/create-productVariant.dto';
-import { CreateVariantCombinationDto } from './dto/create-variantCombination';
->>>>>>> dev
+import { CreateVariantDto } from '@/variant/dto/create-variant.dto';
+import { VariantService } from '@/variant/variant.service';
 
 @ApiTags('products')
 @Controller('products')
@@ -35,6 +32,7 @@ export class ProductsController {
       private readonly productsService: ProductsService,
       private readonly reviewsService: ReviewsService,
       private readonly discountsService: DiscountsService,
+      private readonly variantService: VariantService,
   ) {}
 
   @Get()
@@ -71,7 +69,6 @@ export class ProductsController {
     return this.productsService.remove(+id);
   }
 
-<<<<<<< HEAD
   @Get(':id/reviews')
   findAllReviewsOfProduct(
     @Param('id') productId: number,
@@ -121,23 +118,22 @@ export class ProductsController {
       this.discountsService.create(dto);
   }
 
-=======
   @UseGuards(new JwtAuthGuard())
   @Roles([Role.ADMIN])
   @Post(':id/variants')
   createProductVariant(
     @Req() req,
     @Param('id') id: number,
-    @Body() dto: CreateProductVariantDto,
+    @Body() dto: CreateVariantDto,
   ) {
     console.log('DTO : ', dto);
-    return this.productsService.createVariant(req.user.id, id, dto);
+    dto.productId = id
+    return this.variantService.createVariant(req.user.id, dto);
   }
 
   @Get(':id/variants')
   getProductVariant(@Param('id') id: number) {
-    return this.productsService.getProductVariant(id);
+    return this.variantService.getProductVariant(id);
   }
->>>>>>> dev
 }
 
