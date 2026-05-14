@@ -142,36 +142,78 @@ exports.Prisma.ProductScalarFieldEnum = {
   id: 'id',
   name: 'name',
   slug: 'slug',
-  description: 'description',
-  price_idr: 'price_idr',
-  weight_g: 'weight_g',
-  sku: 'sku',
-  stock: 'stock',
   isActive: 'isActive',
+  categoryId: 'categoryId',
+  highlightId: 'highlightId',
+  tags: 'tags',
+  description: 'description',
+  ingredients: 'ingredients',
+  usageInstructions: 'usageInstructions',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  categoryId: 'categoryId'
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.ProductImageScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
+  variantId: 'variantId',
   imageUrl: 'imageUrl',
   sortOrder: 'sortOrder',
   altText: 'altText'
+};
+
+exports.Prisma.DiscountScalarFieldEnum = {
+  id: 'id',
+  variantId: 'variantId',
+  amount: 'amount',
+  isPercent: 'isPercent',
+  startedAt: 'startedAt',
+  endsAt: 'endsAt'
 };
 
 exports.Prisma.ProductVariantScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
   name: 'name',
-  price_idr: 'price_idr',
-  stock: 'stock'
+  priceIdr: 'priceIdr',
+  weightG: 'weightG',
+  sku: 'sku',
+  stock: 'stock',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.HighlightScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  isActive: 'isActive'
 };
 
 exports.Prisma.CategoryScalarFieldEnum = {
   id: 'id',
-  name: 'name'
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  imageUrl: 'imageUrl',
+  isActive: 'isActive',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ReviewScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  reviewerId: 'reviewerId',
+  productId: 'productId',
+  rating: 'rating',
+  numUpvotes: 'numUpvotes',
+  description: 'description',
+  imageUrls: 'imageUrls',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -197,8 +239,11 @@ exports.Prisma.ModelName = {
   User: 'User',
   Product: 'Product',
   ProductImage: 'ProductImage',
+  Discount: 'Discount',
   ProductVariant: 'ProductVariant',
-  Category: 'Category'
+  Highlight: 'Highlight',
+  Category: 'Category',
+  Review: 'Review'
 };
 
 /**
