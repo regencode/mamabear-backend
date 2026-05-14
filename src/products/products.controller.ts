@@ -9,6 +9,7 @@ import {
   Patch,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
@@ -36,7 +37,7 @@ export class ProductsController {
   ) {}
 
   @Get()
-  findAll(@Body() paginationDto?: CursorPaginationRequestDto) {
+  findAll(@Query() paginationDto: CursorPaginationRequestDto) {
     return this.productsService.findAll(paginationDto);
   }
 
@@ -53,7 +54,7 @@ export class ProductsController {
   @Get(':slug/reviews')
   findAllReviewsOfProductBySlug(
     @Param('slug') slug: string,
-    @Body() paginationDto?: CursorPaginationRequestDto,
+    @Query() paginationDto: CursorPaginationRequestDto,
   ) {
     return this.reviewsService.findReviewsOfProductBySlug(slug, paginationDto);
   }
@@ -135,7 +136,7 @@ export class ProductsController {
   @Get(':id/reviews')
   findAllReviewsOfProduct(
     @Param('id') productId: number,
-    @Body() paginationDto?: CursorPaginationRequestDto,
+    @Query() paginationDto: CursorPaginationRequestDto,
   ) {
     return this.reviewsService.findReviewsOfProduct(productId, paginationDto);
   }
