@@ -6,19 +6,15 @@ info:
 http:
   method: PATCH
   url: "{{baseUrl}}/api/users/{{userId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "John Doe (Updated)"
+      }
   auth:
     type: bearer
     token: "{{jwtToken}}"
-
-body:
-  json: |
-    {
-      "name": "Updated Name"
-    }
-
-headers:
-  - name: Content-Type
-    value: application/json
 
 runtime:
   scripts:

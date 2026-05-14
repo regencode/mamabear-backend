@@ -6,19 +6,16 @@ info:
 http:
   method: PATCH
   url: "{{baseUrl}}/api/highlights/{{highlightId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Best Seller (Updated)",
+        "description": "Updated best sellers description"
+      }
   auth:
     type: bearer
     token: "{{jwtToken}}"
-
-body:
-  json: |
-    {
-      "name": "Updated Highlight"
-    }
-
-headers:
-  - name: Content-Type
-    value: application/json
 
 runtime:
   scripts:

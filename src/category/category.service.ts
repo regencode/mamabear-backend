@@ -24,17 +24,20 @@ export class CategoryService {
     if (result === null) {
       return null;
     }
-
-    return result;
+    return {
+      success: true,
+      message: `Category with slug ${slug} found`,
+      data: result,
+    };
   }
 
   async createCategory(userId: string, dto: CreateCategoryDto) {
     const generatedSlug = slugify(dto.name, { lower: true, strict: true });
 
-    const category = await this.repo.findBySlug(generatedSlug);
-    if (category) throw new BadRequestException('Category already exists');
+    const resolvedCategory = await this.repo.findBySlug(generatedSlug);
+    if (resolvedCategory) throw new BadRequestException('Category already exists');
 
-    await this.repo.create({
+    const result = await this.repo.create({
       name: dto.name,
       slug: generatedSlug,
       description: dto.description,
@@ -44,6 +47,7 @@ export class CategoryService {
     return {
       success: true,
       message: `Category ${dto.name} created successfully`,
+      data: result,
     };
   }
 
@@ -56,22 +60,23 @@ export class CategoryService {
     categoryId: number,
     dto: UpdateCategoryDto,
   ) {
-    const category = await this.repo.findById(categoryId);
+    const resolvedCategory = await this.repo.findById(categoryId);
 
-    if (!category) throw new BadRequestException('Category not found');
+    if (!resolvedCategory) throw new BadRequestException('Category not found');
 
     if (dto.name) {
       const generatedSlug = slugify(dto.name, { lower: true, strict: true });
       const category = await this.repo.findBySlug(generatedSlug);
-      if (category) throw new BadRequestException('Category already exists');
+      if (category) throw new BadRequestException('Name update generates a slug that already exists');
       dto.slug = generatedSlug;
     }
 
-    await this.repo.update({ id: categoryId }, dto);
+    const category = await this.repo.update({ id: categoryId }, dto);
 
     return {
       success: true,
       message: `Category ${category.name} updated successfully`,
+      data: category,
     };
   }
 
@@ -80,11 +85,12 @@ export class CategoryService {
     if (!category) throw new BadRequestException('Category not found');
     if (category.products.length > 0)
       throw new BadRequestException('Category has products');
-    await this.repo.delete({ id: categoryId });
+    const deletedCategory = await this.repo.delete({ id: categoryId });
 
     return {
       success: true,
       message: `${category.name} deleted successfully`,
+      data: deletedCategory,
     };
   }
 }

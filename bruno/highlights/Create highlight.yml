@@ -6,21 +6,18 @@ info:
 http:
   method: POST
   url: "{{baseUrl}}/api/highlights"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Best Seller",
+        "description": "Products that are our best sellers",
+        "isActive": true,
+        "slug": "best-seller"
+      }
   auth:
     type: bearer
     token: "{{jwtToken}}"
-
-body:
-  json: |
-    {
-      "name": "Best Seller",
-      "description": "Products that are our best sellers",
-      "isActive": true
-    }
-
-headers:
-  - name: Content-Type
-    value: application/json
 
 runtime:
   scripts:

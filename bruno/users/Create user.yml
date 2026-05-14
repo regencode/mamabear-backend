@@ -6,22 +6,18 @@ info:
 http:
   method: POST
   url: "{{baseUrl}}/api/users"
+  body:
+    type: json
+    data: |-
+      {
+        "email": "user@email.com",
+        "password": "password123",
+        "name": "John Doe",
+        "phone": "081234567890"
+      }
   auth:
     type: bearer
     token: "{{jwtToken}}"
-
-body:
-  json: |
-    {
-      "email": "newuser@email.com",
-      "password": "password123",
-      "name": "John Doe",
-      "phone": "081234567890"
-    }
-
-headers:
-  - name: Content-Type
-    value: application/json
 
 runtime:
   scripts:

@@ -6,24 +6,20 @@ info:
 http:
   method: POST
   url: "{{baseUrl}}/api/products/{{productId}}/variants"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "S-26 Procal Gold 3 - 900g",
+        "priceIdr": 185000,
+        "weightG": 900,
+        "sku": "S26-PROCAL-3-900",
+        "stock": 50,
+        "sortOrder": 0
+      }
   auth:
     type: bearer
     token: "{{jwtToken}}"
-
-body:
-  json: |
-    {
-      "name": "Vanilla 400g",
-      "priceIdr": 120000,
-      "weightG": 400,
-      "sku": "VARIANT-VAN-400",
-      "stock": 25,
-      "sortOrder": 1
-    }
-
-headers:
-  - name: Content-Type
-    value: application/json
 
 runtime:
   scripts:

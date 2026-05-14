@@ -6,22 +6,18 @@ info:
 http:
   method: PUT
   url: "{{baseUrl}}/api/products/{{productId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "S-26 Procal Gold 3 (Updated)",
+        "description": "Updated growing-up formula for children aged 1-3 years.",
+        "priceIdr": 195000,
+        "stock": 75
+      }
   auth:
     type: bearer
     token: "{{jwtToken}}"
-
-body:
-  json: |
-    {
-      "name": "S-26 Procal Gold 3 (Updated)",
-      "description": "Updated growing-up formula for children aged 1-3 years.",
-      "priceIdr": 195000,
-      "stock": 75
-    }
-
-headers:
-  - name: Content-Type
-    value: application/json
 
 runtime:
   scripts:

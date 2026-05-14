@@ -6,21 +6,17 @@ info:
 http:
   method: PUT
   url: "{{baseUrl}}/api/variants/{{variantId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "S-26 Procal Gold 3 - 900g (Updated)",
+        "priceIdr": 195000,
+        "stock": 75
+      }
   auth:
     type: bearer
     token: "{{jwtToken}}"
-
-body:
-  json: |
-    {
-      "name": "Updated Variant",
-      "priceIdr": 150000,
-      "stock": 30
-    }
-
-headers:
-  - name: Content-Type
-    value: application/json
 
 runtime:
   scripts:

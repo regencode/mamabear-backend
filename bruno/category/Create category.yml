@@ -6,21 +6,17 @@ info:
 http:
   method: POST
   url: "{{baseUrl}}/api/categories"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Growing-up Formula",
+        "description": "Formula untuk anak usia 1-3 tahun",
+        "imageUrl": "https://example.com/images/growing-up-formula.jpg"
+      }
   auth:
     type: bearer
     token: "{{jwtToken}}"
-
-body:
-  json: |
-    {
-      "name": "Formula",
-      "description": "Baby formula products",
-      "imageUrl": "https://example.com/formula-category.jpg"
-    }
-
-headers:
-  - name: Content-Type
-    value: application/json
 
 runtime:
   scripts:

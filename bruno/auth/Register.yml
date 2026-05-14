@@ -6,20 +6,16 @@ info:
 http:
   method: POST
   url: "{{baseUrl}}/api/auth/register"
+  body:
+    type: json
+    data: |-
+      {
+        "email": "user@email.com",
+        "password": "password123",
+        "name": "Siti Rahayu",
+        "phone": "081234567890"
+      }
   auth: inherit
-
-body:
-  json: |
-    {
-      "email": "user@email.com",
-      "password": "password123",
-      "name": "Siti Rahayu",
-      "phone": "081234567890"
-    }
-
-headers:
-  - name: Content-Type
-    value: application/json
 
 settings:
   encodeUrl: true

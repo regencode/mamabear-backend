@@ -6,22 +6,19 @@ info:
 http:
   method: POST
   url: "{{baseUrl}}/api/products/{{productId}}/variant/{{variantId}}/discount"
+  body:
+    type: json
+    data: |-
+      {
+        "variantId": "{{variantId}}",
+        "isPercent": true,
+        "amount": 15000,
+        "startedAt": "2026-01-01T00:00:00.000Z",
+        "endsAt": "2026-12-31T23:59:59.000Z"
+      }
   auth:
     type: bearer
     token: "{{jwtToken}}"
-
-body:
-  json: |
-    {
-      "variantId": "{{variantId}}",
-      "isPercent": true,
-      "amount": 10,
-      "endsAt": "2026-12-31T23:59:59Z"
-    }
-
-headers:
-  - name: Content-Type
-    value: application/json
 
 runtime:
   scripts:

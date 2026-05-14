@@ -41,11 +41,12 @@ export class VariantService {
       dto.sku = newSku;
     }
 
-    await this.repo.update(variantId, dto);
+    const result = await this.repo.update(variantId, dto);
 
     return {
       success: true,
       message: 'Variant updated successfully',
+      data: result,
     };
   }
 
@@ -63,11 +64,12 @@ export class VariantService {
       dto.sku = newSku;
     }
 
-    await this.repo.createProductVariant(dto);
+    const result = await this.repo.createProductVariant(dto);
 
     return {
       success: true,
       message: 'Variant created successfully',
+      data: result,
     };
   }
 
@@ -86,10 +88,11 @@ export class VariantService {
   async deleteVariant(userId: number, variantId: number) {
     const variant = await this.repo.findOne(variantId);
     if (!variant) throw new BadRequestException('variant not found');
-    await this.repo.delete({ id: variantId });
+    const deleted = await this.repo.delete({ id: variantId });
     return {
       success: true,
       message: `Variant ${variant.sku} deleted successfully`,
+      data: deleted,
     };
   }
 }

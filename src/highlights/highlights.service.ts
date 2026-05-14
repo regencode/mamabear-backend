@@ -2,13 +2,15 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateHighlightDto } from './dto/create-highlight.dto';
 import { UpdateHighlightDto } from './dto/update-highlight.dto';
 import { HighlightsRepository } from './highlights.repository';
+import { ServiceResult } from '@/common/ServiceResult';
 import slugify from 'slugify';
+import { Highlight } from '@/generated/prisma';
 
 @Injectable()
 export class HighlightsService {
   constructor(private readonly repo: HighlightsRepository) {}
 
-  async create(dto: CreateHighlightDto) {
+  async create(dto: CreateHighlightDto): Promise<ServiceResult<Highlight>> {
     const generatedSlug = slugify(dto.name, { lower: true, strict: true });
 
     const existing = await this.repo.findBySlug(generatedSlug);
@@ -21,22 +23,33 @@ export class HighlightsService {
       isActive: dto.isActive,
     });
 
-    return result;
+    return {
+        success: true,
+        message: `Created highlight ${result.slug}`,
+        data: result,
+    }
   }
 
-  async findAll() {
-    const result = await this.repo.findAll();
-    if (result === null) return [];
-    return result;
+  async findAll(): Promise<ServiceResult<Highlight[]>> {
+    const result = await this.repo.findAll() ?? []; 
+    return {
+        success: true,
+        message: `Found ${result.length} highlights`,
+        data: result
+    }
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<ServiceResult<Highlight>> {
     const highlight = await this.repo.findById(id);
     if (!highlight) throw new BadRequestException('Highlight not found');
-    return highlight;
+    return {
+        success: true,
+        message: `Found highlight with id ${id}`,
+        data: highlight,
+    }
   }
 
-  async update(id: number, dto: UpdateHighlightDto) {
+  async update(id: number, dto: UpdateHighlightDto): Promise<ServiceResult<Highlight>> {
     const highlight = await this.repo.findById(id);
     if (!highlight) throw new BadRequestException('Highlight not found');
 
@@ -49,20 +62,25 @@ export class HighlightsService {
 
     const result = await this.repo.update({ id }, dto);
 
-    return result;
+    return {
+      success: true,
+      message: `Highlight ${result.slug} updated successfully`,
+      data: result,
+    };
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<ServiceResult<Highlight>> {
     const highlight = await this.repo.findById(id);
     if (!highlight) throw new BadRequestException('Highlight not found');
     if (highlight.products.length > 0)
       throw new BadRequestException('Highlight has products');
 
-    await this.repo.delete({ id });
+    const deletedHighlight = await this.repo.delete({ id });
 
     return {
       success: true,
       message: `${highlight.name} deleted successfully`,
+      data: deletedHighlight,
     };
   }
 }

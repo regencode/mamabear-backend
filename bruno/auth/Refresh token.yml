@@ -6,17 +6,13 @@ info:
 http:
   method: POST
   url: "{{baseUrl}}/api/auth/refresh"
+  body:
+    type: json
+    data: |-
+      {
+        "refreshToken": "{{refreshToken}}"
+      }
   auth: inherit
-
-body:
-  json: |
-    {
-      "refreshToken": "{{refreshToken}}"
-    }
-
-headers:
-  - name: Content-Type
-    value: application/json
 
 runtime:
   scripts:
