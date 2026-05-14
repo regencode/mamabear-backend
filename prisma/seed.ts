@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "../src/generated/prisma/client";
+import { PrismaClient, Product } from "../src/generated/prisma/client";
 import { products, users, categories, highlights } from "./data";
 
 const prisma = new PrismaClient({
@@ -88,7 +88,7 @@ async function main() {
     console.log(`Inserted ${highlights.length} highlights.`);
 
     console.log("Inserting product data...");
-    const createdProducts = [];
+    const createdProducts: Product[] = [];
     const allVariantIds: number[] = [];
 
     for (const { images, variants, ...productData } of products) {

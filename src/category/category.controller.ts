@@ -15,7 +15,6 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 import { Roles } from '@/auth/decorators/roles.decorator';
-import { Role } from '@/generated/prisma';
 
 @Controller('categories')
 export class CategoryController {
@@ -54,10 +53,5 @@ export class CategoryController {
   @Get(':slug')
   findOne(@Param('slug') slug: string) {
     return this.categoryService.getCategoryBySlug(slug);
-  }
-
-  @Get(':slug/product')
-  findProduct(@Param('slug') slug: string) {
-    return this.categoryService.getProductByCategory(slug);
   }
 }

@@ -1,29 +1,37 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryRepository } from './category.repository';
+import { ServiceResult } from '@/common/ServiceResult';
+import { Category } from '@/generated/prisma';
 import slugify from 'slugify';
 
 @Injectable()
 export class CategoryService {
   constructor(private readonly repo: CategoryRepository) {}
 
-  async getAllCategory() {
-    const result = this.repo.findAll();
-
-    if (result === null) {
-      return [];
-    }
-
-    return result;
+  async getAllCategory(): Promise<ServiceResult<Category[]>> {
+    const result = await this.repo.findAll();
+    return {
+      success: true,
+      message: `Found ${result.length} categories`,
+      data: result ?? [],
+    };
   }
 
-  getCategoryBySlug(slug: string) {
-    const result = this.repo.findBySlug(slug);
 
-    if (result === null) {
-      return null;
-    }
+  async getCategoryById(id: number): Promise<ServiceResult<Category>> {
+    const result = await this.repo.findById(id);
+    if (!result) throw new NotFoundException(`Category with id ${id} not found`);
+    return {
+      success: true,
+      message: `Category with id ${id} found`,
+      data: result,
+    };
+  }
+  async getCategoryBySlug(slug: string): Promise<ServiceResult<Category>> {
+    const result = await this.repo.findBySlug(slug);
+    if (!result) throw new NotFoundException(`Category with slug ${slug} not found`);
     return {
       success: true,
       message: `Category with slug ${slug} found`,
@@ -31,9 +39,8 @@ export class CategoryService {
     };
   }
 
-  async createCategory(userId: string, dto: CreateCategoryDto) {
+  async createCategory(userId: string, dto: CreateCategoryDto): Promise<ServiceResult<Category>> {
     const generatedSlug = slugify(dto.name, { lower: true, strict: true });
-
     const resolvedCategory = await this.repo.findBySlug(generatedSlug);
     if (resolvedCategory) throw new BadRequestException('Category already exists');
 
@@ -51,17 +58,12 @@ export class CategoryService {
     };
   }
 
-  async getProductByCategory(slug: string) {
-    return this.repo.findProductByCategory(slug);
-  }
-
   async updateCategory(
     userId: string,
     categoryId: number,
     dto: UpdateCategoryDto,
-  ) {
+  ): Promise<ServiceResult<Category>> {
     const resolvedCategory = await this.repo.findById(categoryId);
-
     if (!resolvedCategory) throw new BadRequestException('Category not found');
 
     if (dto.name) {
@@ -80,7 +82,7 @@ export class CategoryService {
     };
   }
 
-  async deleteCategory(userId: string, categoryId: number) {
+  async deleteCategory(userId: string, categoryId: number): Promise<ServiceResult<Category>> {
     const category = await this.repo.findById(categoryId);
     if (!category) throw new BadRequestException('Category not found');
     if (category.products.length > 0)
