@@ -1,6 +1,6 @@
 import { Prisma } from '@/generated/prisma';
 import { PrismaService } from '@/prisma/prisma.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class CategoryRepository {
@@ -30,7 +30,7 @@ export class CategoryRepository {
   }
 
   findBySlug(slug: string) {
-    return this.prisma.category.findUnique({ where: { slug } });
+    return this.prisma.category.findUnique({ where: { slug }, include: { products: true } });
   }
 
   findById(id: number) {
@@ -38,14 +38,6 @@ export class CategoryRepository {
       where: { id },
       include: {
         products: true,
-      },
-    });
-  }
-
-  findProductByCategory(slug: string) {
-    return this.prisma.category.findUnique({
-      where: {
-        slug,
       },
     });
   }

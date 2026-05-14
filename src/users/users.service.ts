@@ -2,7 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PinoLogger } from 'pino-nestjs';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UsersRepository } from './users.repository';
+import { UsersRepository, USER_SELECT } from './users.repository';
+import { ServiceResult } from '@/common/ServiceResult';
+import { Prisma } from '@/generated/prisma';
+
+type UserPublic = Prisma.UserGetPayload<{ select: typeof USER_SELECT }>;
 
 @Injectable()
 export class UsersService {
@@ -13,7 +17,7 @@ export class UsersService {
     this.logger.setContext(UsersService.name);
   }
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<ServiceResult<UserPublic>> {
     try {
       const result = await this.usersRepository.create(createUserDto);
       this.logger.info({
@@ -24,7 +28,11 @@ export class UsersService {
         userId: result.id,
         status: 'success',
       });
-      return result;
+      return {
+        success: true,
+        message: 'User created successfully',
+        data: result,
+      };
     } catch (error: any) {
       this.logger.error({
         level: 'error',
@@ -38,7 +46,7 @@ export class UsersService {
     }
   }
 
-  async findAll() {
+  async findAll(): Promise<ServiceResult<UserPublic[]>> {
     try {
       const result = await this.usersRepository.findAll();
       this.logger.info({
@@ -48,7 +56,11 @@ export class UsersService {
         count: result.length,
         status: 'success',
       });
-      return result;
+      return {
+        success: true,
+        message: `Found ${result.length} users`,
+        data: result,
+      };
     } catch (error: any) {
       this.logger.error({
         level: 'error',
@@ -61,7 +73,7 @@ export class UsersService {
     }
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<ServiceResult<UserPublic>> {
     try {
       const user = await this.usersRepository.findById(id);
       if (!user) {
@@ -81,7 +93,11 @@ export class UsersService {
         userId: id,
         status: 'success',
       });
-      return user;
+      return {
+        success: true,
+        message: `Found user with id ${id}`,
+        data: user,
+      };
     } catch (error: any) {
       if (error instanceof NotFoundException) throw error;
       this.logger.error({
@@ -96,7 +112,7 @@ export class UsersService {
     }
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<ServiceResult<UserPublic>> {
     try {
       const result = await this.usersRepository.update(id, updateUserDto);
       this.logger.info({
@@ -106,7 +122,11 @@ export class UsersService {
         userId: id,
         status: 'success',
       });
-      return result;
+      return {
+        success: true,
+        message: 'User updated successfully',
+        data: result,
+      };
     } catch (error: any) {
       this.logger.error({
         level: 'error',
@@ -120,7 +140,7 @@ export class UsersService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<ServiceResult<UserPublic>> {
     try {
       const result = await this.usersRepository.delete(id);
       this.logger.info({
@@ -130,7 +150,11 @@ export class UsersService {
         userId: id,
         status: 'success',
       });
-      return result;
+      return {
+        success: true,
+        message: 'User deleted successfully',
+        data: result,
+      };
     } catch (error: any) {
       this.logger.error({
         level: 'error',
