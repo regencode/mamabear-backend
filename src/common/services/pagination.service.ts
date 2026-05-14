@@ -14,12 +14,18 @@ interface ICursorPaginationOptions {
 export class CursorPaginationService {
   async paginate<T extends Record<string, any>>(
     model: { findMany: Function },
-    paginationDto: CursorPaginationRequestDto,
+    paginationDto?: CursorPaginationRequestDto,
     args: any = {},
     options?: ICursorPaginationOptions,
   ): Promise<CursorPaginationResponseDto<T>> {
-    const { cursor, limit } = paginationDto
-    const safeLimit = limit ?? 10
+    let cursor: number | undefined  = 0;
+    let limit: number | undefined = 10;
+    if(paginationDto) {
+        cursor = paginationDto.cursor;     
+        limit = paginationDto.limit;
+    }
+    const safeCursor = cursor ?? 0;
+    const safeLimit = limit ?? 10;
     const cursorField = options?.cursorField ?? 'id'
     const orderDirection = options?.orderDirection ?? 'asc'
 
@@ -28,7 +34,7 @@ export class CursorPaginationService {
     }
 
     const prismaCursor =
-      cursor !== undefined ? { [cursorField]: cursor } : undefined
+      cursor !== undefined ? { [cursorField]: safeCursor } : undefined
 
     // ✅ FIXED: Hanya pass argument yang valid untuk Prisma
     // Hapus cursorField dan orderDirection - bukan argument Prisma!

@@ -20,6 +20,12 @@ export class ReviewsRepository {
     });
   }
 
+  async findProductBySlug(productSlug: string) {
+      return this.prisma.product.findUnique({
+          where: { slug: productSlug },
+      });
+  }
+
   async findByProductId(productId: number): Promise<Review[]> {
     return this.prisma.review.findMany({
       where: { productId },

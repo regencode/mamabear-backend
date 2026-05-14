@@ -9,7 +9,6 @@ import slugify from 'slugify';
 export class VariantService {
   constructor(
       private readonly repo: VariantRepository,
-      private readonly productRepository: ProductsRepository,
   ) {}
 
   private generateSku(productSlug: string, variantValue: string): string {
@@ -77,7 +76,7 @@ export class VariantService {
   }
 
   async getProductVariantBySlug(productSlug: string) {
-    const resolvedProduct = await this.productRepository.findBySlug(productSlug);
+    const resolvedProduct = await this.repo.findProductBySlug(productSlug);
     if(!resolvedProduct) {
         return new NotFoundException(`Cannot find product with slug ${productSlug}`);
     }
