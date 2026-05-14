@@ -41,8 +41,6 @@ request:
       value: ""
     - name: highlightId
       value: ""
-    - name: phase
-      value: ""
 bundled: false
 extensions:
   bruno:

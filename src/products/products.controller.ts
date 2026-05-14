@@ -83,7 +83,7 @@ export class ProductsController {
 
   @UseGuards(new JwtAuthGuard())
   @Roles([Role.ADMIN])
-  @Post(':id/variant/:variantId/discount')
+  @Post(':id/variants/:variantId/discount')
   createDiscount(
       @Param('variantId') variantId: number,
       @Body() dto: CreateDiscountDto,
@@ -91,6 +91,20 @@ export class ProductsController {
       // admin only
     dto.variantId = variantId;
     this.discountsService.create(dto);
+  }
+
+  @UseGuards(new JwtAuthGuard())
+  @Roles([Role.ADMIN])
+  @Get(':id')
+  getProductById(
+    @Req() req,
+    @Param('id') id: number,
+    @Body() dto: CreateVariantDto,
+  ) {
+      // admin only
+    console.log('DTO : ', dto);
+    dto.productId = id;
+    return this.productsService.findOne(id);
   }
 
   @UseGuards(new JwtAuthGuard())
@@ -104,7 +118,7 @@ export class ProductsController {
       // admin only
     console.log('DTO : ', dto);
     dto.productId = id;
-    return this.variantService.createVariant(req.user.id, dto);
+    return this.variantService.createVariant(id, dto);
   }
 
   @UseGuards(new JwtAuthGuard())

@@ -11,7 +11,8 @@ http:
     data: |-
       {
         "name": "Best Seller (Updated)",
-        "description": "Updated best sellers description"
+        "description": "Updated best sellers description",
+        "slug": "best-seller-updated-v2"
       }
   auth:
     type: bearer

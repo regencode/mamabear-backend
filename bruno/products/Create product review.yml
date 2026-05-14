@@ -10,7 +10,6 @@ http:
     type: json
     data: |-
       {
-        "productId": "{{productId}}",
         "title": "Great product!",
         "reviewerId": "{{userId}}",
         "description": "My baby loves this formula. Highly recommended!",

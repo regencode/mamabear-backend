@@ -19,6 +19,7 @@ runtime:
   scripts:
     - type: after-response
       code: |-
+        bru.deleteVar('phase');
         const body = res.getBody();
         if (body && body.data) {
           bru.setVar('jwtToken', body.data.accessToken || '');
