@@ -58,7 +58,7 @@ export class ProductsService {
     }
   }
 
-  async findAll(paginationDto: CursorPaginationRequestDto) {
+  async findAll(paginationDto?: CursorPaginationRequestDto) {
     try {
         const result = await this.paginationService.paginate({
             findMany: this.productsRepository.findAll

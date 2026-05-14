@@ -49,4 +49,8 @@ export class VariantRepository {
     findProductVariantsByProductId(productId: number) {
         return this.prisma.productVariant.findMany({ where: { productId } });
     }
+
+    findProductBySlug(productSlug: string) {
+        return this.prisma.product.findUnique({ where: { slug: productSlug } });
+    }
 }
