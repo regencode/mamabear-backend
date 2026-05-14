@@ -33,7 +33,7 @@ export class ProductsRepository {
     })
   }
 
-  findAll() {
+  findMany() {
     return this.prisma.product.findMany({ include: PRODUCT_INCLUDE });
   }
 

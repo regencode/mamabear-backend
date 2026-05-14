@@ -11,6 +11,7 @@ import { CursorPaginationRequestDto } from '@/common/dto/request/pagination.requ
 import { CursorPaginationService } from '@/common/services/pagination.service';
 import { CreateVariantDto } from '@/variant/dto/create-variant.dto';
 import slugify from 'slugify';
+import { Product } from '@/generated/prisma';
 
 @Injectable()
 export class ProductsService {
@@ -60,9 +61,8 @@ export class ProductsService {
 
   async findAll(paginationDto?: CursorPaginationRequestDto) {
     try {
-        const result = await this.paginationService.paginate({
-            findMany: this.productsRepository.findAll
-        },
+        const result = await this.paginationService.paginate<Product>(
+        this.productsRepository,
         paginationDto,
         {},
         )
