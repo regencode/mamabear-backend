@@ -1,0 +1,46 @@
+info:
+  name: Create product
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/products"
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
+
+body:
+  json: |
+    {
+      "name": "S-26 Procal Gold 3",
+      "description": "Growing-up formula for children aged 1-3 years.",
+      "ingredients": "Skim milk powder, vegetable oils, lactose, whey protein concentrate",
+      "usageInstructions": "Mix 1 scoop with 200ml warm water. Stir until dissolved.",
+      "weightG": 900,
+      "priceIdr": 185000,
+      "stock": 50,
+      "sku": "S26-PROCAL-3-900",
+      "isActive": true
+    }
+
+headers:
+  - name: Content-Type
+    value: application/json
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const body = res.getBody();
+        if (body && body.data) {
+          bru.setVar('productId', body.data.id || '');
+          bru.setVar('productSlug', body.data.slug || '');
+        }
+        bru.setNextRequest('Create category');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

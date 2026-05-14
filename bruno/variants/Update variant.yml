@@ -1,0 +1,35 @@
+info:
+  name: Update variant
+  type: http
+  seq: 1
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/variants/{{variantId}}"
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
+
+body:
+  json: |
+    {
+      "name": "Updated Variant",
+      "priceIdr": 150000,
+      "stock": 30
+    }
+
+headers:
+  - name: Content-Type
+    value: application/json
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        bru.setNextRequest('Upvote review');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

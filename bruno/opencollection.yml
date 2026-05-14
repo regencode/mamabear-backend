@@ -1,0 +1,51 @@
+opencollection: 1.0.0
+
+info:
+  name: mamabear-backend
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ""
+      port: ""
+      auth:
+        username: ""
+        password: ""
+      bypassProxy: ""
+
+request:
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
+  variables:
+    - name: baseUrl
+      value: http://localhost:3000
+    - name: jwtToken
+      value: ""
+    - name: refreshToken
+      value: ""
+    - name: productSlug
+      value: ""
+    - name: productId
+      value: ""
+    - name: variantId
+      value: ""
+    - name: reviewId
+      value: ""
+    - name: categorySlug
+      value: ""
+    - name: categoryId
+      value: ""
+    - name: userId
+      value: ""
+    - name: highlightId
+      value: ""
+    - name: phase
+      value: ""
+bundled: false
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git

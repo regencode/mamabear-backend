@@ -1,0 +1,26 @@
+info:
+  name: Get product reviews
+  type: http
+  seq: 4
+
+http:
+  method: GET
+  url: "{{baseUrl}}/products/{{productSlug}}/reviews"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const phase = bru.getVar('phase');
+        if (phase === 'read-created') {
+          bru.setNextRequest('Get product reviews (Admin)');
+        } else {
+          bru.setNextRequest('Get category by slug');
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

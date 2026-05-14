@@ -1,0 +1,42 @@
+info:
+  name: Create variant
+  type: http
+  seq: 7
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/products/{{productId}}/variants"
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
+
+body:
+  json: |
+    {
+      "name": "Vanilla 400g",
+      "priceIdr": 120000,
+      "weightG": 400,
+      "sku": "VARIANT-VAN-400",
+      "stock": 25,
+      "sortOrder": 1
+    }
+
+headers:
+  - name: Content-Type
+    value: application/json
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const body = res.getBody();
+        if (body && body.data) {
+          bru.setVar('variantId', body.data.id || '');
+        }
+        bru.setNextRequest('Create product review');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
