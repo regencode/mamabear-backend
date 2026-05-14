@@ -72,10 +72,12 @@ export class CreateProductDto {
   @IsOptional()
   variants?: CreateVariantDto[];
 
+  @ApiPropertyOptional({ example: 's-26-procal-gold-3' })
   @IsString()
   @IsOptional()
   slug: string;
 
+  @ApiPropertyOptional({ example: ['formula', 'growing-up', 'toddler'] })
   @IsArray()
   @IsOptional()
   tags?: string[];

@@ -17,6 +17,7 @@ export class CreateHighlightDto {
   @IsOptional()
   isActive?: boolean;
 
+  @ApiPropertyOptional({ example: 'best-seller' })
   @IsString()
   @IsOptional()
   slug?: string;

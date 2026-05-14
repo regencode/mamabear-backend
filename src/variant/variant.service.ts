@@ -80,7 +80,7 @@ export class VariantService {
     if(!resolvedProduct) {
         return new NotFoundException(`Cannot find product with slug ${productSlug}`);
     }
-    return this.repo.findProductById(resolvedProduct.id);
+    return this.repo.findProductVariantsByProductId(resolvedProduct.id);
   }
 
   async deleteVariant(userId: number, variantId: number) {
