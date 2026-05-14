@@ -1,12 +1,16 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateVariantDto } from './dto/create-variant.dto';
 import { UpdateVariantDto } from './dto/update-variant.dto';
 import { VariantRepository } from './variant.repository';
+import { ProductsRepository } from '@/products/products.repository';
 import slugify from 'slugify';
 
 @Injectable()
 export class VariantService {
-  constructor(private readonly repo: VariantRepository) {}
+  constructor(
+      private readonly repo: VariantRepository,
+      private readonly productRepository: ProductsRepository,
+  ) {}
 
   private generateSku(productSlug: string, variantValue: string): string {
     const base = `${productSlug}-${variantValue}`;
@@ -70,6 +74,14 @@ export class VariantService {
 
   getProductVariant(productId: number) {
     return this.repo.findProductVariantsByProductId(productId);
+  }
+
+  async getProductVariantBySlug(productSlug: string) {
+    const resolvedProduct = await this.productRepository.findBySlug(productSlug);
+    if(!resolvedProduct) {
+        return new NotFoundException(`Cannot find product with slug ${productSlug}`);
+    }
+    return this.repo.findProductById(resolvedProduct.id);
   }
 
   async deleteVariant(userId: number, variantId: number) {

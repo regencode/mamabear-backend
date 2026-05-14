@@ -1,6 +1,6 @@
 import { Prisma } from '@/generated/prisma';
 import { PrismaService } from '@/prisma/prisma.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateVariantDto } from './dto/update-variant.dto';
 import { CreateVariantDto } from './dto/create-variant.dto';
 
@@ -46,9 +46,7 @@ export class VariantRepository {
         });
     }
 
-
     findProductVariantsByProductId(productId: number) {
         return this.prisma.productVariant.findMany({ where: { productId } });
     }
-
 }

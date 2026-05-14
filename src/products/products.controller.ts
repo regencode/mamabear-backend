@@ -40,9 +40,70 @@ export class ProductsController {
     return this.productsService.findAll(paginationDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
+  @Get(':slug')
+  findOneBySlug(@Param('slug') slug: string) {
+    return this.productsService.findBySlug(slug);
+  }
+
+  @Get(':slug/variants')
+  getProductVariantBySlug(@Param('slug') slug: string) {
+    return this.variantService.getProductVariantBySlug(slug);
+  }
+
+  @Get(':slug/reviews')
+  findAllReviewsOfProductBySlug(
+    @Param('slug') slug: string,
+    @Body() paginationDto: CursorPaginationRequestDto,
+  ) {
+    return this.reviewsService.findReviewsOfProductBySlug(slug, paginationDto);
+  }
+
+  @UseGuards(new JwtAuthGuard())
+  @Post(':slug/reviews')
+  createReviewForProduct(
+    @Param('slug') slug: string,
+    @Body() dto: CreateReviewDto,
+  ) {
+    return this.reviewsService.createReviewForProductWithSlug(slug, dto);
+  }
+
+  @UseGuards(new JwtAuthGuard())
+  @Patch(':slug/reviews/:reviewId/upvote')
+  upvoteReviewOfProduct(@Param('reviewId') reviewId: number) {
+    return this.reviewsService.upvoteReviewWithId(reviewId);
+  }
+
+  @UseGuards(new JwtAuthGuard())
+  @Roles([Role.ADMIN])
+  @Delete(':id/reviews/:reviewId')
+  removeReview(@Param('reviewId') reviewId: number) {
+    return this.reviewsService.remove(reviewId);
+  }
+
+  @UseGuards(new JwtAuthGuard())
+  @Roles([Role.ADMIN])
+  @Post(':id/variant/:variantId/discount')
+  createDiscount(
+      @Param('variantId') variantId: number,
+      @Body() dto: CreateDiscountDto,
+  ) {
+      // admin only
+    dto.variantId = variantId;
+    this.discountsService.create(dto);
+  }
+
+  @UseGuards(new JwtAuthGuard())
+  @Roles([Role.ADMIN])
+  @Post(':id/variants')
+  createProductVariant(
+    @Req() req,
+    @Param('id') id: number,
+    @Body() dto: CreateVariantDto,
+  ) {
+      // admin only
+    console.log('DTO : ', dto);
+    dto.productId = id;
+    return this.variantService.createVariant(req.user.id, dto);
   }
 
   @UseGuards(new JwtAuthGuard())
@@ -69,6 +130,8 @@ export class ProductsController {
     return this.productsService.remove(+id);
   }
 
+  @UseGuards(new JwtAuthGuard())
+  @Roles([Role.ADMIN])
   @Get(':id/reviews')
   findAllReviewsOfProduct(
     @Param('id') productId: number,
@@ -78,54 +141,11 @@ export class ProductsController {
   }
 
   @UseGuards(new JwtAuthGuard())
-  @Post(':id/reviews')
-  createReviewForProduct(
-    @Param('id') productId: number,
-    @Body() dto: CreateReviewDto,
-  ) {
-    dto.productId = productId;
-    return this.reviewsService.createReviewForProduct(dto);
-  }
-
-  @UseGuards(new JwtAuthGuard())
-  @Patch(':id/reviews/:reviewId/upvote')
-  upvoteReviewOfProduct(@Param('reviewId') reviewId: number) {
-    return this.reviewsService.upvoteReviewWithId(reviewId);
-  }
-
-  @UseGuards(new JwtAuthGuard())
   @Roles([Role.ADMIN])
-  @Delete(':id/reviews/:reviewId')
-  removeReview(@Param('reviewId') reviewId: number) {
-    return this.reviewsService.remove(reviewId);
-  }
-
-  @UseGuards(new JwtAuthGuard())
-  @Roles([Role.ADMIN])
-  @Post(':id/variant/:variantId/discount')
-  createDiscount(
-    @Param('variantId') variantId: number,
-    @Body() dto: CreateDiscountDto,
-  ) {
-    dto.variantId = variantId;
-    this.discountsService.create(dto);
-  }
-
-  @UseGuards(new JwtAuthGuard())
-  @Roles([Role.ADMIN])
-  @Post(':id/variants')
-  createProductVariant(
-    @Req() req,
-    @Param('id') id: number,
-    @Body() dto: CreateVariantDto,
-  ) {
-    console.log('DTO : ', dto);
-    dto.productId = id;
-    return this.variantService.createVariant(req.user.id, dto);
-  }
-
   @Get(':id/variants')
   getProductVariant(@Param('id') id: number) {
     return this.variantService.getProductVariant(id);
   }
+
+
 }
