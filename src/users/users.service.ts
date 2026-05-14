@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PinoLogger } from 'pino-nestjs';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -15,6 +15,8 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     try {
+      const resolvedUser = await this.usersRepository.findByEmail(createUserDto.email);
+      if(resolvedUser) throw new BadRequestException(`User with email ${createUserDto.email} already exists`);
       const result = await this.usersRepository.create(createUserDto);
       this.logger.info({
         level: 'info',

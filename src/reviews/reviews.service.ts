@@ -38,7 +38,7 @@ export class ReviewsService {
     paginationDto?: CursorPaginationRequestDto,
   ) {
     const resolvedProduct = await this.reviewsRepository.findProductBySlug(productSlug);
-    if(!resolvedProduct) return new NotFoundException(`Cannot find product with slug ${productSlug}`);
+    if(!resolvedProduct) throw new NotFoundException(`Cannot find product with slug ${productSlug}`);
     return this.paginationService.paginate<Review>(
       this.reviewsRepository,
       paginationDto,
@@ -57,9 +57,9 @@ export class ReviewsService {
   }
   async createReviewForProductWithSlug(slug: string, dto: CreateReviewDto) {
     const resolvedProduct = await this.reviewsRepository.findProductBySlug(slug);  
-    if(!resolvedProduct) return new NotFoundException(`Cannot find product with slug ${slug}`);
+    if(!resolvedProduct) throw new NotFoundException(`Cannot find product with slug ${slug}`);
     dto.productId = resolvedProduct.id;
-    return this.reviewsRepository.create(dto)
+    return this.reviewsRepository.createReviewForProduct(dto);
   }
 
   async upvoteReviewWithId(id: number) {

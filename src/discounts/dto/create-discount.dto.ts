@@ -4,8 +4,8 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 export class CreateDiscountDto {
     @ApiProperty({ example: 1 })
     @IsNumber()
-    @IsNotEmpty()
-    variantId: number 
+    @IsOptional()
+    variantId?: number 
 
     @ApiPropertyOptional({ example: true })
     @IsBoolean()

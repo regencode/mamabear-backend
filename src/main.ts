@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { RequestMethod, ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { TransformInterceptor } from './common/interceptors/transformer.interceptor';
 import { HttpExceptionFilter } from './common/filters/exceptions.filter';
 import { Logger } from 'pino-nestjs';
@@ -11,43 +11,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
   app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
-
-  app.setGlobalPrefix('api', {
-    exclude: [
-      {
-        path: '/',
-        method: RequestMethod.GET,
-      },
-      {
-        path: 'products',
-        method: RequestMethod.GET,
-      },
-      {
-        path: 'products/:slug',
-        method: RequestMethod.GET,
-      },
-      {
-        path: 'products/:slug/reviews',
-        method: RequestMethod.GET,
-      },
-      {
-        path: 'products/:slug/variants',
-        method: RequestMethod.GET,
-      },
-      {
-        path: 'categories',
-        method: RequestMethod.GET,
-      },
-      {
-        path: 'categories/:slug',
-        method: RequestMethod.GET,
-      },
-      {
-        path: 'categories/:slug/product',
-        method: RequestMethod.GET,
-      },
-    ],
-  });
 
   app.enableCors({
     origin: process.env.CORS_ORIGIN,
