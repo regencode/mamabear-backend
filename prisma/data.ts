@@ -1,3 +1,8 @@
+import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
+
+
+
 const PLACEHOLDER_HASH =
   "$2b$10$placeholderhashplaceholderhashplaceholderha";
 
@@ -14,7 +19,7 @@ function slugify(text: string): string {
 export const users = [
   {
     email: "admin@mamabear.id",
-    hashedPassword: PLACEHOLDER_HASH,
+    hashedPassword: "$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK", // password is "admin"
     name: "Admin MamaBear",
     phone: "081200001111",
     role: "ADMIN" as const,
@@ -54,10 +59,51 @@ export const users = [
   },
 ];
 
+export const categories = [
+  {
+    name: "Food",
+    slug: slugify("Food"),
+    description: "Makanan & camilan untuk ibu menyusui",
+    isActive: true,
+    sortOrder: 1,
+  },
+  {
+    name: "Drink",
+    slug: slugify("Drink"),
+    description: "Minuman pelancar & peningkat ASI",
+    isActive: true,
+    sortOrder: 2,
+  },
+  {
+    name: "Other",
+    slug: slugify("Other"),
+    description: "Produk lainnya",
+    isActive: true,
+    sortOrder: 3,
+  },
+];
+
+export const highlights = [
+  {
+    name: "New Additions",
+    slug: slugify("New Additions"),
+    description: "Produk terbaru dari MamaBear",
+    isActive: true,
+  },
+  {
+    name: "Recommended",
+    slug: slugify("Recommended"),
+    description: "Rekomendasi terbaik untuk Mama",
+    isActive: true,
+  },
+];
+
 export const products = [
   {
     name: "MamaBear AlmonMix Isi 6 Sachet - Minuman Serbuk dengan Almond - Kaya Nutrisi Untuk Ibu Menyusui BPOM HALAL",
     slug: slugify("MamaBear AlmonMix Isi 6 Sachet"),
+    categoryId: 2,
+    highlightId: 2,
     description: `MamaBear AlmonMix Isi 6 Sachet
 Minuman Almond Kaya Nutrisi dengan Daun Katuk & Daun Kelor.
 
@@ -95,11 +141,17 @@ Keunggulan Mamabear AlmonMix:
 Efektif meningkatkan produksi dan nutrisi ASI.
 Efektif membantu ASI cepat keluar.
 Meningkatkan mood untuk membantu mengurangi risiko baby blues.`,
-    price_idr: 80000,
-    weight_g: 180,
-    sku: "AL.MMBR",
-    stock: 100,
     isActive: true,
+    variants: [
+      {
+        name: "INTERNAL_DEFAULT",
+        priceIdr: 80000,
+        weightG: 180,
+        sku: "AL.MMBR",
+        stock: 100,
+        sortOrder: 0,
+      },
+    ],
     images: [
       {
         imageUrl: `${IMAGE_BASE_URL}/AlmonMix/AlmonMix-01.jpg`,
@@ -131,6 +183,8 @@ Meningkatkan mood untuk membantu mengurangi risiko baby blues.`,
   {
     name: "MamaBear ZoyaMix Rasa Cokelat Isi 10 Sachet - Sereal Kaya Nutrisi untuk Ibu Menyusui Halal BPOM",
     slug: slugify("MamaBear ZoyaMix Rasa Cokelat Isi 10 Sachet"),
+    categoryId: 1,
+    highlightId: 1,
     description: `MamaBear ZoyaMix Rasa Cokelat Isi 10 Sachet
 Sereal Kaya Nutrisi untuk Ibu Menyusui.
 
@@ -162,11 +216,17 @@ Kaya Kandungan Omega 3.
 Sumber Zat Besi.
 
 *Catatan: mengandung produk turunan sapi.`,
-    price_idr: 80000,
-    weight_g: 300,
-    sku: "ZM.MMBR",
-    stock: 100,
     isActive: true,
+    variants: [
+      {
+        name: "INTERNAL_DEFAULT",
+        priceIdr: 80000,
+        weightG: 300,
+        sku: "ZM.MMBR",
+        stock: 100,
+        sortOrder: 0,
+      },
+    ],
     images: [
       {
         imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-01.jpg`,
@@ -208,6 +268,8 @@ Sumber Zat Besi.
   {
     name: "MamaBear Teh Pelancar ASI Isi 20 Sachet - ASI Booster Pelancar Peningkat Produksi ASI BPOM dan Halal",
     slug: slugify("MamaBear Teh Pelancar ASI Isi 20 Sachet"),
+    categoryId: 2,
+    highlightId: 2,
     description: `MamaBear Teh Pelancar ASI Isi 20 Sachet
 ASI Booster & Immunity Tea.
 
@@ -245,11 +307,17 @@ Meningkatkan lemak ASI & BB bayi (melalui ASI).
 Mempercepat pemulihan & meningkatkan daya tahan tubuh (Habbatussauda).
 
 *Catatan: tidak untuk ibu hamil.`,
-    price_idr: 65000,
-    weight_g: 60,
-    sku: "TPA.MMBR",
-    stock: 100,
     isActive: true,
+    variants: [
+      {
+        name: "INTERNAL_DEFAULT",
+        priceIdr: 65000,
+        weightG: 60,
+        sku: "TPA.MMBR",
+        stock: 100,
+        sortOrder: 0,
+      },
+    ],
     images: [
       {
         imageUrl: `${IMAGE_BASE_URL}/Teh/Lactation-Tea-01.jpg`,
@@ -271,6 +339,8 @@ Mempercepat pemulihan & meningkatkan daya tahan tubuh (Habbatussauda).
   {
     name: "MamaBear Kukis Almond Oat - Camilan Kaya Nutrisi untuk Ibu Menyusui Halal BPOM",
     slug: slugify("MamaBear Kukis Almond Oat"),
+    categoryId: 1,
+    highlightId: 1,
     description: `MamaBear Kukis Almon Oat
 Memberi segala kebaikan untuk Mama selama masa menyusui dengan :
 
@@ -309,11 +379,17 @@ CATATAN PEMESANAN:
 SYARAT PENGAJUAN KOMPLAIN
 Jika ada komplain dimohon untuk cek kembali syarat & ketentuannya di BANNER TOKO
 Penilaian yang Mama berikan sangat berharga bagi kami`,
-    price_idr: 80000,
-    weight_g: 150,
-    sku: "KU.MMBR",
-    stock: 100,
     isActive: true,
+    variants: [
+      {
+        name: "INTERNAL_DEFAULT",
+        priceIdr: 80000,
+        weightG: 150,
+        sku: "KU.MMBR",
+        stock: 100,
+        sortOrder: 0,
+      },
+    ],
     images: [
       {
         imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Cover-Kukis-Almond-Oat.png`,
@@ -355,6 +431,8 @@ Penilaian yang Mama berikan sangat berharga bagi kami`,
   {
     name: "MamaBear ASI Booster 30 Kapsul - Pelancar ASI Fenugreek Free Halal BPOM",
     slug: slugify("MamaBear ASI Booster 30 Kapsul"),
+    categoryId: 3,
+    highlightId: 2,
     description: `MAMABEAR KAPSUL ASI BOOSTER
 
 Kapsul Pelancar ASI pertama dengan Triple Benefit dalam 1 kapsul:
@@ -388,11 +466,17 @@ CATATAN PEMESANAN:
 (Apabila ada kesalahan input alamat, bisa dibatalkan dulu pemesanan sebelumnya lalu bisa order ulang)
 
 *Baca label sebelum membeli`,
-    price_idr: 100000,
-    weight_g: 30,
-    sku: "CP.AB30",
-    stock: 100,
     isActive: true,
+    variants: [
+      {
+        name: "INTERNAL_DEFAULT",
+        priceIdr: 100000,
+        weightG: 30,
+        sku: "CP.AB30",
+        stock: 100,
+        sortOrder: 0,
+      },
+    ],
     images: [
       {
         imageUrl: `${IMAGE_BASE_URL}/Kapsul/Kapsul-01.jpg`,

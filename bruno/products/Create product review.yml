@@ -1,0 +1,37 @@
+info:
+  name: Create product review
+  type: http
+  seq: 6
+
+http:
+  method: POST
+  url: "{{baseUrl}}/products/{{productSlug}}/reviews"
+  body:
+    type: json
+    data: |-
+      {
+        "title": "Great product!",
+        "reviewerId": "{{userId}}",
+        "description": "My baby loves this formula. Highly recommended!",
+        "rating": 5,
+        "imageUrls": ["https://example.com/review-img1.jpg", "https://example.com/review-img2.jpg"]
+      }
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const body = res.getBody();
+        if (body && body.data) {
+          bru.setVar('reviewId', body.data.id || '');
+        }
+        bru.setNextRequest('Create discount');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

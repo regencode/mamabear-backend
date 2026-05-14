@@ -13,6 +13,8 @@ import { MailService } from './mail.service';
 import { JwtService } from '@nestjs/jwt';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { CreateUserDto } from '@/users/dto/create-user.dto';
+import { Role } from '@/generated/prisma';
 
 @Injectable()
 export class AuthService {

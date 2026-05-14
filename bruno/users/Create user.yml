@@ -1,0 +1,36 @@
+info:
+  name: Create user
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/users"
+  body:
+    type: json
+    data: |-
+      {
+        "email": "user@email.com",
+        "password": "password123",
+        "name": "John Doe",
+        "phone": "081234567890"
+      }
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const body = res.getBody();
+        if (body && body.data) {
+          bru.setVar('userId', body.data.id || '');
+        }
+        bru.setNextRequest('Create variant');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,36 @@
+info:
+  name: Create highlight
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/highlights"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Best Seller",
+        "description": "Products that are our best sellers",
+        "isActive": true,
+        "slug": "best-seller"
+      }
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const body = res.getBody();
+        if (body && body.data) {
+          bru.setVar('highlightId', body.data.id || '');
+        }
+        bru.setNextRequest('Create user');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

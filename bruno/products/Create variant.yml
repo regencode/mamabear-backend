@@ -1,0 +1,38 @@
+info:
+  name: Create variant
+  type: http
+  seq: 7
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/products/{{productId}}/variants"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "S-26 Procal Gold 3 - 900g",
+        "priceIdr": 185000,
+        "weightG": 900,
+        "sku": "S26-PROCAL-3-900",
+        "stock": 50,
+        "sortOrder": 0
+      }
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const body = res.getBody();
+        if (body && body.data) {
+          bru.setVar('variantId', body.data.id || '');
+        }
+        bru.setNextRequest('Create product review');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

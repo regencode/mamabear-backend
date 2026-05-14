@@ -1,0 +1,31 @@
+info:
+  name: Update variant
+  type: http
+  seq: 1
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/products/variants/{{variantId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "S-26 Procal Gold 3 - 900g (Updated)",
+        "priceIdr": 195000,
+        "stock": 75
+      }
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        bru.setNextRequest('Upvote review');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

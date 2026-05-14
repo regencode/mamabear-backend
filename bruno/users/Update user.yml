@@ -1,0 +1,29 @@
+info:
+  name: Update user
+  type: http
+  seq: 4
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/api/users/{{userId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "John Doe (Updated)"
+      }
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        bru.setNextRequest('Update variant');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

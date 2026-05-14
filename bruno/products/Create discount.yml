@@ -1,0 +1,33 @@
+info:
+  name: Create discount
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/products/{{productId}}/variants/{{variantId}}/discount"
+  body:
+    type: json
+    data: |-
+      {
+        "isPercent": false,
+        "amount": 1032,
+        "startedAt": "2026-01-01T00:00:00.000Z",
+        "endsAt": "2026-12-31T23:59:59.000Z"
+      }
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        bru.setVar('phase', 'read-created');
+        bru.setNextRequest('Get one product');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

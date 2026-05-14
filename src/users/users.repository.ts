@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-const USER_SELECT = {
+export const USER_SELECT = {
   id: true,
   email: true,
   name: true,
@@ -33,6 +33,13 @@ export class UsersRepository {
   findById(id: string) {
     return this.prisma.user.findUnique({
       where: { id },
+      select: USER_SELECT,
+    });
+  }
+
+  findByEmail(email: string) {
+    return this.prisma.user.findUnique({
+      where: { email },
       select: USER_SELECT,
     });
   }

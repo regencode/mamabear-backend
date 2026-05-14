@@ -1,0 +1,51 @@
+info:
+  name: Create product
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/products"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "S-26 Procal Gold 3",
+        "description": "Growing-up formula for children aged 1-3 years.",
+        "ingredients": "Growing-up formula for children aged 1-3 years.",
+        "usageInstructions": "Growing-up formula for children aged 1-3 years.",
+        "weightG": 900,
+        "priceIdr": 185000,
+        "stock": 50,
+        "sku": "S26-PROCAL-3-900",
+        "isActive": true,
+        "slug": "s-26-procal-gold-3",
+        "tags": ["formula", "growing-up", "toddler"],
+        "images": [
+          {
+            "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/AlmonMix/AlmonMix-01.jpg",
+            "sortOrder": 1,
+            "altText": "MamaBear AlmonMix 01"
+          }
+        ]
+      }
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const body = res.getBody();
+        if (body && body.data) {
+          bru.setVar('productId', body.data.id || '');
+          bru.setVar('productSlug', body.data.slug || '');
+        }
+        bru.setNextRequest('Create category');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

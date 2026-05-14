@@ -1,0 +1,31 @@
+info:
+  name: Update highlight
+  type: http
+  seq: 4
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/api/highlights/{{highlightId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Best Seller (Updated)",
+        "description": "Updated best sellers description",
+        "slug": "best-seller-updated-v2"
+      }
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        bru.setNextRequest('Update user');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

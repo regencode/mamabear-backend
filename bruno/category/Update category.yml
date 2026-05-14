@@ -1,0 +1,30 @@
+info:
+  name: Update category
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/categories/{{categoryId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Growing-up Formula (Updated)",
+        "description": "Formula untuk anak usia 1-3 tahun - Updated",
+        "slug": "growing-up-formula-updated-v2"
+      }
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: bru.setNextRequest('Update highlight');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
