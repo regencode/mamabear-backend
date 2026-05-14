@@ -1,7 +1,7 @@
 info:
   name: Update category
   type: http
-  seq: 5
+  seq: 4
 
 http:
   method: PUT
@@ -21,8 +21,7 @@ http:
 runtime:
   scripts:
     - type: after-response
-      code: |-
-        bru.setNextRequest('Update highlight');
+      code: bru.setNextRequest('Update highlight');
 
 settings:
   encodeUrl: true

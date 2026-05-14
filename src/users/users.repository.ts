@@ -37,6 +37,13 @@ export class UsersRepository {
     });
   }
 
+  findByEmail(email: string) {
+    return this.prisma.user.findUnique({
+      where: { email },
+      select: USER_SELECT,
+    });
+  }
+
   update(id: string, data: UpdateUserDto) {
     const updateData: Record<string, unknown> = { ...data };
     if ('password' in data && data.password !== undefined) {

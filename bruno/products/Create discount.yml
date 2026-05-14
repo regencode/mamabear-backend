@@ -5,14 +5,13 @@ info:
 
 http:
   method: POST
-  url: "{{baseUrl}}/api/products/{{productId}}/variant/{{variantId}}/discount"
+  url: "{{baseUrl}}/api/products/{{productId}}/variants/{{variantId}}/discount"
   body:
     type: json
     data: |-
       {
-        "variantId": "{{variantId}}",
-        "isPercent": true,
-        "amount": 10,
+        "isPercent": false,
+        "amount": 1032,
         "startedAt": "2026-01-01T00:00:00.000Z",
         "endsAt": "2026-12-31T23:59:59.000Z"
       }

@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/api/highlights/{{highlightId}}"
+  url: "{{baseUrl}}/highlights/{{highlightId}}"
   auth: inherit
 
 runtime:

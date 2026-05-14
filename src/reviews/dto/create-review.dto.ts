@@ -5,14 +5,15 @@ import {
   Min,
   Max,
   IsArray,
+  IsOptional,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateReviewDto {
   @ApiProperty({ example: 1 })
   @IsNumber()
-  @IsNotEmpty()
-  productId: number;
+  @IsOptional()
+  productId?: number;
 
   @ApiProperty({ example: 'Great product!' })
   @IsString()
