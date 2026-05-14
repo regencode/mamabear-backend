@@ -16,9 +16,4 @@ export class CategoryController {
   findOne(@Param('slug') slug: string) {
     return this.categoryService.getCategoryBySlug(slug);
   }
-
-  @Get(':slug/product')
-  findProduct(@Param('slug') slug: string) {
-    return this.categoryService.getProductByCategory(slug);
-  }
 }
