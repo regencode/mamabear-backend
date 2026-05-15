@@ -18,7 +18,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       success: false,
       statusCode: status,
       message: typeof exceptionResponse === 'string'
-          ? exceptionResponse 
+          ? [exceptionResponse]
           : (exceptionResponse as any).message || exception.message,
 
       data: null,
