@@ -14,6 +14,7 @@ import { CreateVariantDto } from '@/variant/dto/create-variant.dto';
 import { ServiceResult } from '@/common/ServiceResult';
 import slugify from 'slugify';
 import { Product } from '@/generated/prisma';
+import { CloudinaryService } from '@/cloudinary/cloudinary.service';
 
 @Injectable()
 export class ProductsService {
@@ -21,23 +22,41 @@ export class ProductsService {
     private readonly productsRepository: ProductsRepository,
     private readonly logger: PinoLogger,
     private readonly paginationService: CursorPaginationService,
+    private readonly cloudinary: CloudinaryService,
   ) {
     this.logger.setContext(ProductsService.name);
   }
 
-  async create(dto: CreateProductDto): Promise<ServiceResult<Product>> {
+  async create(
+    dto: CreateProductDto,
+    files: Express.Multer.File[],
+  ): Promise<ServiceResult<Product>> {
     try {
       if (!dto.variants) dto.variants = [];
       const defaultVariant: CreateVariantDto = {
-        name: "INTERNAL_DEFAULT",
+        name: 'INTERNAL_DEFAULT',
         priceIdr: dto.priceIdr,
         weightG: dto.weightG,
         stock: dto.stock,
         sku: dto.sku,
         sortOrder: 0,
       };
+
       dto.variants.push(defaultVariant);
-      const result = await this.productsRepository.create(dto);
+      const imageUrls = await this.cloudinary.uploadMultiple(files);
+
+      const generatedSlug = slugify(dto.name, { lower: true, strict: true });
+
+      const result = await this.productsRepository.create({
+        ...dto,
+        slug: generatedSlug,
+        images: imageUrls.map((url, index) => ({
+          imageUrl: url,
+          sortOrder: 0,
+          altText: `${dto.name} product image ${index + 1}`,
+        })),
+      });
+
       if (!result) throw new BadRequestException('Cannot create product');
       this.logger.info({
         level: 'info',
@@ -65,7 +84,9 @@ export class ProductsService {
     }
   }
 
-  async findAll(paginationDto?: CursorPaginationRequestDto): Promise<ServiceResult<CursorPaginationResponseDto<Product>>> {
+  async findAll(
+    paginationDto?: CursorPaginationRequestDto,
+  ): Promise<ServiceResult<CursorPaginationResponseDto<Product>>> {
     try {
       const result = await this.paginationService.paginate<Product>(
         this.productsRepository,
@@ -173,15 +194,39 @@ export class ProductsService {
     }
   }
 
-  async update(id: number, dto: UpdateProductDto): Promise<ServiceResult<Product>> {
+  async update(
+    id: number,
+    dto: UpdateProductDto,
+    files: Express.Multer.File[],
+  ): Promise<ServiceResult<Product>> {
     try {
       if (dto.name) {
         const generatedSlug = slugify(dto.name, { lower: true, strict: true });
-        const resolvedProduct = await this.productsRepository.findBySlug(generatedSlug);
-        if (resolvedProduct) throw new BadRequestException(`Product with slug ${generatedSlug} already exists`);
+        const resolvedProduct =
+          await this.productsRepository.findBySlug(generatedSlug);
+        if (resolvedProduct)
+          throw new BadRequestException(
+            `Product with slug ${generatedSlug} already exists`,
+          );
         dto.slug = generatedSlug;
       }
-      const result = await this.productsRepository.update(id, dto);
+
+      let images = dto.images;
+
+      if (files?.length) {
+        const imageUrls = await this.cloudinary.uploadMultiple(files);
+
+        images = imageUrls.map((url, index) => ({
+          imageUrl: url,
+          sortOrder: index,
+          altText: `${dto.name ?? 'Product'} product image ${index + 1}`,
+        }));
+      }
+
+      const result = await this.productsRepository.update(id, {
+        ...dto,
+        images,
+      });
       this.logger.info({
         level: 'info',
         message: 'Product updated successfully',

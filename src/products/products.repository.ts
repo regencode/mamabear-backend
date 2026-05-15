@@ -15,22 +15,35 @@ export class ProductsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   create(data: CreateProductDto) {
-    data.slug = slugify(data.name, { lower: true, strict: true });
     return this.prisma.$transaction(async (tx) => {
-        const { images, variants, weightG, priceIdr, stock, sku, ...productData } = data;
-        const product = await tx.product.create({ data: productData, include: PRODUCT_INCLUDE })
-        if(variants?.length) {
-            await tx.productVariant.createMany({
-                data: variants.map(v => ({...v, productId: product.id }))
-            })
-        }
-        if(images?.length) {
-            await tx.productImage.createMany({
-                data: images.map(img => ({...img, productId: product.id }))
-            })
-        }
-        return tx.product.findUnique({ where: { id: product.id }, include: PRODUCT_INCLUDE })
-    })
+      const {
+        images,
+        variants,
+        weightG,
+        priceIdr,
+        stock,
+        sku,
+        ...productData
+      } = data;
+      const product = await tx.product.create({
+        data: productData,
+        include: PRODUCT_INCLUDE,
+      });
+      if (variants?.length) {
+        await tx.productVariant.createMany({
+          data: variants.map((v) => ({ ...v, productId: product.id })),
+        });
+      }
+      if (images?.length) {
+        await tx.productImage.createMany({
+          data: images.map((img) => ({ ...img, productId: product.id })),
+        });
+      }
+      return tx.product.findUnique({
+        where: { id: product.id },
+        include: PRODUCT_INCLUDE,
+      });
+    });
   }
 
   findMany() {
@@ -45,21 +58,33 @@ export class ProductsRepository {
   }
 
   findBySlug(slug: string) {
-      return this.prisma.product.findUnique({
-          where: { slug },
-          include: PRODUCT_INCLUDE,
-      });
+    return this.prisma.product.findUnique({
+      where: { slug },
+      include: PRODUCT_INCLUDE,
+    });
   }
 
-
-
   update(id: number, data: UpdateProductDto) {
-    const { images, variants, weightG, priceIdr, stock, sku, ...productData } = data;
+    const { images, variants, weightG, priceIdr, stock, sku, ...productData } =
+      data;
+
     return this.prisma.product.update({
       where: { id },
       data: {
         ...productData,
+        ...(images?.length && {
+          images: {
+            createMany: {
+              data: images.map((img) => ({
+                imageUrl: img.imageUrl,
+                sortOrder: img.sortOrder,
+                altText: img.altText,
+              })),
+            },
+          },
+        }),
       },
+
       include: PRODUCT_INCLUDE,
     });
   }
@@ -70,5 +95,4 @@ export class ProductsRepository {
       include: PRODUCT_INCLUDE,
     });
   }
-
 }

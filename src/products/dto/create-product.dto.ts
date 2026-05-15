@@ -33,15 +33,18 @@ export class CreateProductDto {
 
   // put in default variant
   @ApiProperty({ example: 900 })
+  @Type(() => Number)
   @IsNumber()
   @IsNotEmpty()
   weightG: number;
 
   @ApiProperty({ example: 185000 })
+  @Type(() => Number)
   @IsNumber()
   priceIdr: number;
 
   @ApiPropertyOptional({ example: 50 })
+  @Type(() => Number)
   @IsNumber()
   @IsOptional()
   @Min(0)
@@ -82,4 +85,3 @@ export class CreateProductDto {
   @IsOptional()
   tags?: string[];
 }
-

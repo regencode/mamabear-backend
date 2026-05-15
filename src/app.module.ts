@@ -17,6 +17,7 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { HighlightsModule } from './highlights/highlights.module';
 import { DiscountsModule } from './discounts/discounts.module';
 import { VariantModule } from './variant/variant.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { VariantModule } from './variant/variant.module';
     ReviewsModule,
     DiscountsModule,
     VariantModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

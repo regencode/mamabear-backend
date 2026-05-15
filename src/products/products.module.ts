@@ -6,9 +6,10 @@ import { ProductsAdminController } from './products-admin.controller';
 import { ReviewsModule } from '@/reviews/reviews.module';
 import { DiscountsModule } from '@/discounts/discounts.module';
 import { VariantModule } from '@/variant/variant.module';
+import { CloudinaryModule } from '@/cloudinary/cloudinary.module';
 
 @Module({
-  imports: [ReviewsModule, DiscountsModule, VariantModule],
+  imports: [ReviewsModule, DiscountsModule, VariantModule, CloudinaryModule],
   controllers: [ProductsController, ProductsAdminController],
   providers: [ProductsService, ProductsRepository],
 })

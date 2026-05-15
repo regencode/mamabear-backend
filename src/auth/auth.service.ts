@@ -535,4 +535,16 @@ export class AuthService {
       throw error;
     }
   }
+
+  async createAdmin(dto: RegisterUserDto) {
+    const hashed = await bcrypt.hash(dto.password, 10);
+    const user = await this.repo.create({
+      name: dto.name,
+      email: dto.email,
+      hashedPassword: hashed,
+      phone: dto.phone,
+      role: Role.ADMIN,
+      isVerified: true,
+    });
+  }
 }
