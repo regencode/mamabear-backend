@@ -11,9 +11,4 @@ export class CreateCategoryDto {
   @IsString()
   @IsNotEmpty()
   description: string;
-
-  @ApiProperty({ example: 'https://example.com/images/growing-up-formula.jpg' })
-  @IsString()
-  @IsNotEmpty()
-  imageUrl: string;
 }

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateVariantDto } from './dto/create-variant.dto';
 import { UpdateVariantDto } from './dto/update-variant.dto';
 import { VariantRepository } from './variant.repository';
@@ -8,9 +12,7 @@ import slugify from 'slugify';
 
 @Injectable()
 export class VariantService {
-  constructor(
-      private readonly repo: VariantRepository,
-  ) {}
+  constructor(private readonly repo: VariantRepository) {}
 
   private generateSku(productSlug: string, variantValue: string): string {
     const base = `${productSlug}-${variantValue}`;
@@ -45,7 +47,10 @@ export class VariantService {
     };
   }
 
-  async createVariant(userId: number, dto: CreateVariantDto): Promise<ServiceResult<ProductVariant>> {
+  async createVariant(
+    userId: number,
+    dto: CreateVariantDto,
+  ): Promise<ServiceResult<ProductVariant>> {
     if (!dto.productId) {
       throw new BadRequestException('Product Id must be set!');
     }
@@ -66,7 +71,9 @@ export class VariantService {
     };
   }
 
-  async getProductVariant(productId: number): Promise<ServiceResult<ProductVariant[]>> {
+  async getProductVariant(
+    productId: number,
+  ): Promise<ServiceResult<ProductVariant[]>> {
     const result = await this.repo.findProductVariantsByProductId(productId);
     return {
       success: true,
@@ -75,12 +82,18 @@ export class VariantService {
     };
   }
 
-  async getProductVariantBySlug(productSlug: string): Promise<ServiceResult<ProductVariant[]>> {
+  async getProductVariantBySlug(
+    productSlug: string,
+  ): Promise<ServiceResult<ProductVariant[]>> {
     const resolvedProduct = await this.repo.findProductBySlug(productSlug);
-    if(!resolvedProduct) {
-        throw new NotFoundException(`Cannot find product with slug ${productSlug}`);
+    if (!resolvedProduct) {
+      throw new NotFoundException(
+        `Cannot find product with slug ${productSlug}`,
+      );
     }
-    const result = await this.repo.findProductVariantsByProductId(resolvedProduct.id);
+    const result = await this.repo.findProductVariantsByProductId(
+      resolvedProduct.id,
+    );
     return {
       success: true,
       message: `Found ${result.length} variants for product ${productSlug}`,
@@ -88,7 +101,10 @@ export class VariantService {
     };
   }
 
-  async deleteVariant(userId: number, variantId: number): Promise<ServiceResult<ProductVariant>> {
+  async deleteVariant(
+    userId: number,
+    variantId: number,
+  ): Promise<ServiceResult<ProductVariant>> {
     const variant = await this.repo.findOne(variantId);
     if (!variant) throw new BadRequestException('variant not found');
     const deleted = await this.repo.delete({ id: variantId });
