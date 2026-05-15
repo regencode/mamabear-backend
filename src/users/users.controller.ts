@@ -15,7 +15,7 @@ import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 
 @ApiTags('users')
-@Controller('users')
+@Controller('api/users')
 @UseGuards(new JwtAuthGuard())
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

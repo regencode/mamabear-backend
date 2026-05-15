@@ -5,7 +5,7 @@ info:
 
 http:
   method: PATCH
-  url: "{{baseUrl}}/api/products/{{productSlug}}/reviews/{{reviewId}}/upvote"
+  url: "{{baseUrl}}/products/{{productSlug}}/reviews/{{reviewId}}/upvote"
   auth:
     type: bearer
     token: "{{jwtToken}}"

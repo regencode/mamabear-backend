@@ -1,7 +1,7 @@
 info:
   name: Delete category
   type: http
-  seq: 6
+  seq: 5
 
 http:
   method: DELETE
@@ -13,8 +13,7 @@ http:
 runtime:
   scripts:
     - type: after-response
-      code: |-
-        bru.setNextRequest('Delete highlight');
+      code: bru.setNextRequest('Delete highlight');
 
 settings:
   encodeUrl: true

@@ -11,8 +11,7 @@ http:
 runtime:
   scripts:
     - type: after-response
-      code: |-
-        bru.setNextRequest('Get products by category');
+      code: bru.setNextRequest('Get user');
 
 settings:
   encodeUrl: true

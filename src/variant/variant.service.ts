@@ -77,8 +77,8 @@ export class VariantService {
 
   async getProductVariantBySlug(productSlug: string): Promise<ServiceResult<ProductVariant[]>> {
     const resolvedProduct = await this.repo.findProductBySlug(productSlug);
-    if (!resolvedProduct) {
-      throw new NotFoundException(`Cannot find product with slug ${productSlug}`);
+    if(!resolvedProduct) {
+        throw new NotFoundException(`Cannot find product with slug ${productSlug}`);
     }
     const result = await this.repo.findProductVariantsByProductId(resolvedProduct.id);
     return {

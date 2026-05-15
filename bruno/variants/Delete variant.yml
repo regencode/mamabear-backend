@@ -5,7 +5,7 @@ info:
 
 http:
   method: DELETE
-  url: "{{baseUrl}}/api/variants/{{variantId}}"
+  url: "{{baseUrl}}/api/products/variants/{{variantId}}"
   auth:
     type: bearer
     token: "{{jwtToken}}"
