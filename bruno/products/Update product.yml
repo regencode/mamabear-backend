@@ -31,3 +31,174 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (200)"
+    request:
+      url: "{{baseUrl}}/api/products/6"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Updated Test Capture Product",
+            "description": "Updated description",
+            "slug": "test-capture-product-updated",
+            "priceIdr": 55000,
+            "stock": 60
+          }
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": [
+              "Product updated successfully"
+            ],
+            "data": {
+              "id": 6,
+              "name": "Updated Test Capture Product",
+              "slug": "updated-test-capture-product",
+              "isActive": true,
+              "categoryId": null,
+              "highlightId": null,
+              "tags": [
+                "test",
+                "capture"
+              ],
+              "description": "Updated description",
+              "ingredients": "Test ingredients",
+              "usageInstructions": "Test usage instructions",
+              "createdAt": "2026-05-16T09:43:11.658Z",
+              "updatedAt": "2026-05-16T09:43:11.750Z",
+              "category": null,
+              "images": [
+                {
+                  "id": 27,
+                  "productId": 6,
+                  "variantId": null,
+                  "imageUrl": "https://example.com/test.jpg",
+                  "sortOrder": 1,
+                  "altText": "Test image"
+                }
+              ],
+              "variants": [
+                {
+                  "id": 6,
+                  "productId": 6,
+                  "name": "INTERNAL_DEFAULT",
+                  "priceIdr": "50000",
+                  "weightG": 100,
+                  "sku": "TEST.CAPTURE",
+                  "stock": 50,
+                  "sortOrder": 0,
+                  "createdAt": "2026-05-16T09:43:11.664Z",
+                  "updatedAt": "2026-05-16T09:43:11.664Z"
+                },
+                {
+                  "id": 7,
+                  "productId": 6,
+                  "name": "Test Capture Variant",
+                  "priceIdr": "50000",
+                  "weightG": 100,
+                  "sku": "TEST.CAPTURE.VAR",
+                  "stock": 50,
+                  "sortOrder": 0,
+                  "createdAt": "2026-05-16T09:43:11.717Z",
+                  "updatedAt": "2026-05-16T09:43:11.717Z"
+                }
+              ]
+            },
+            "timestamp": "2026-05-16T09:43:11.754Z"
+          }
+  - name: "Slug Already Exists (500)"
+    request:
+      url: "{{baseUrl}}/api/products/1"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "slug": "mamabear-zoyamix-rasa-cokelat-isi-10-sachet"
+          }
+    response:
+      status: 500
+      statusText: "Internal Server Error"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 500,
+            "message": [
+              "Internal server error"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.101Z"
+          }
+  - name: "Not Found (500)"
+    request:
+      url: "{{baseUrl}}/api/products/999999"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Test"
+          }
+    response:
+      status: 500
+      statusText: "Internal Server Error"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 500,
+            "message": [
+              "Internal server error"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.117Z"
+          }
+  - name: "Unauthorized (401)"
+    request:
+      url: "{{baseUrl}}/api/products/1"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Test"
+          }
+    response:
+      status: 401
+      statusText: "Unauthorized"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 401,
+            "message": [
+              "Unauthorized"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.119Z"
+          }

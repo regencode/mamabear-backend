@@ -23,3 +23,116 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (200)"
+    request:
+      url: "{{baseUrl}}/highlights"
+      method: GET
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": [
+              "Found 2 highlights"
+            ],
+            "data": [
+              {
+                "id": 1,
+                "name": "New Additions",
+                "slug": "new-additions",
+                "description": "Produk terbaru dari MamaBear",
+                "isActive": true,
+                "products": [
+                  {
+                    "id": 2,
+                    "name": "MamaBear ZoyaMix Rasa Cokelat Isi 10 Sachet - Sereal Kaya Nutrisi untuk Ibu Menyusui Halal BPOM",
+                    "slug": "mamabear-zoyamix-rasa-cokelat-isi-10-sachet",
+                    "isActive": true,
+                    "categoryId": 1,
+                    "highlightId": 1,
+                    "tags": [],
+                    "description": "MamaBear ZoyaMix Rasa Cokelat Isi 10 Sachet\nSereal Kaya Nutrisi untuk Ibu Menyusui.\n\n\nMAKRO & MIKRO NUTRISI LENGKAP\nSUMBER PROTEIN & ZAT BESI\nTINGGI KALSIUM\nVIT A, B6, B12, KOLIN, SENG, ZAT BESI\n\n\nCara penyajian:\nSeduh 1 sachet ZoyaMix dengan 150 ml air hangat.\nDapat ditambahkan es batu jika ingin disajikan dingin.\n\n\nIngredients:\nDaun Katuk\nKedelai\nDaun Kelor\nEkstrak Ragi\nRolled Oat\n\n\nKeunggulan Mamabear ZoyaMix:\nMelancarkan ASI.\nMengentalkan ASI.\nTinggi Kalsium & Zinc.\nKaya Kandungan Omega 3.\nSumber Zat Besi.\n\n*Catatan: mengandung produk turunan sapi.",
+                    "ingredients": null,
+                    "usageInstructions": null,
+                    "createdAt": "2026-05-16T09:43:11.179Z",
+                    "updatedAt": "2026-05-16T09:43:11.179Z"
+                  },
+                  {
+                    "id": 4,
+                    "name": "MamaBear Kukis Almond Oat - Camilan Kaya Nutrisi untuk Ibu Menyusui Halal BPOM",
+                    "slug": "mamabear-kukis-almond-oat",
+                    "isActive": true,
+                    "categoryId": 1,
+                    "highlightId": 1,
+                    "tags": [],
+                    "description": "MamaBear Kukis Almon Oat\nMemberi segala kebaikan untuk Mama selama masa menyusui dengan :\n\n✅ SUPERFOOD meningkatkan produksi & nutrisi ASI\n✅ MAKRO & MIKRONUTRISI lengkap untuk Mama\n✅ VIT B6, Omega3 & Zat Besi\n✅ ANTIOXIDANT Selenium\n✅ Tinggi Serat Pangan untuk kesehatan saluran pencernaan\n\n\nKeunggulan lainnya :\n⭐ Brand Choice 2022\n⭐Terjamin Mutu & Sesuai Standard Keamanan Pangan\n\n- BPOM MD : 236213003799\n- HALAL MUI : 07200046370418\n\n⭐ Rasa ENAK\n⭐ Tanpa tambahan bahan pengawet\n⭐ Ukuran sekali lahap bebas remahan\n⭐ Packaging ziplock, memudahkan penyimpanan\n⭐ Aman dikonsumsi ibu hamil & menyusui, anak-anak, dewasa, & orang tua.\n\n\n*Varian Cookies and Cream & Coklat Chip mengandung produk turunan susu sapi.\n*Varian Choconut BEBAS produk turunan susu sapi & TANPA TELUR\n\n\nCATATAN PEMESANAN:\n- EstimASI pengiriman produk 3-4 hari kerja\n- Bila pemesanan sudah di checkout maka tidak bisa ganti alamat\n(Apabila ada kesalahan input alamat, bisa dibatalkan dulu pemesanan sebelumnya lalu bisa order ulang)\n\n*Baca label sebelum membeli\n\nSYARAT PENGAJUAN KOMPLAIN\nJika ada komplain dimohon untuk cek kembali syarat & ketentuannya di BANNER TOKO\nPenilaian yang Mama berikan sangat berharga bagi kami",
+                    "ingredients": null,
+                    "usageInstructions": null,
+                    "createdAt": "2026-05-16T09:43:11.196Z",
+                    "updatedAt": "2026-05-16T09:43:11.196Z"
+                  }
+                ]
+              },
+              {
+                "id": 2,
+                "name": "Recommended",
+                "slug": "recommended",
+                "description": "Rekomendasi terbaik untuk Mama",
+                "isActive": true,
+                "products": [
+                  {
+                    "id": 1,
+                    "name": "MamaBear AlmonMix Isi 6 Sachet - Minuman Serbuk dengan Almond - Kaya Nutrisi Untuk Ibu Menyusui BPOM HALAL",
+                    "slug": "mamabear-almonmix-isi-6-sachet",
+                    "isActive": true,
+                    "categoryId": 2,
+                    "highlightId": 2,
+                    "tags": [],
+                    "description": "MamaBear AlmonMix Isi 6 Sachet\nMinuman Almond Kaya Nutrisi dengan Daun Katuk & Daun Kelor.\n\n\nLACTOSE FREE\nTINGGI VITAMIN A, B1, B2, B6, B9 (ASAM FOLAT), B12\nTINGGI VITAMIN C & ZAT BESI\nTINGGI SERAT PANGAN\nMAKRO & MIKRO NUTRISI LENGKAP\n\n\nHadir dalam 7 varian rasa:\nCokelat\nChoco Hazelnut\nCoffee Latte\nStrawberry\nVanilla\nMatcha\nCaramel\n\n\nCara penyajian:\nSeduh 1 sachet MamaBear AlmonMix dengan 200 ml air hangat.\nDapat ditambahkan es batu jika ingin disajikan dingin.\n\n\nIngredients:\nDaun Katuk\nDaun Kelor\nAlmond\nEkstrak Ragi\n\n\nKeunggulan Mamabear AlmonMix:\nEfektif meningkatkan produksi dan nutrisi ASI.\nEfektif membantu ASI cepat keluar.\nMeningkatkan mood untuk membantu mengurangi risiko baby blues.",
+                    "ingredients": null,
+                    "usageInstructions": null,
+                    "createdAt": "2026-05-16T09:43:11.156Z",
+                    "updatedAt": "2026-05-16T09:43:11.156Z"
+                  },
+                  {
+                    "id": 3,
+                    "name": "MamaBear Teh Pelancar ASI Isi 20 Sachet - ASI Booster Pelancar Peningkat Produksi ASI BPOM dan Halal",
+                    "slug": "mamabear-teh-pelancar-asi-isi-20-sachet",
+                    "isActive": true,
+                    "categoryId": 2,
+                    "highlightId": 2,
+                    "tags": [],
+                    "description": "MamaBear Teh Pelancar ASI Isi 20 Sachet\nASI Booster & Immunity Tea.\n\n\nIndividual sachet praktis & higienis.\nKantong teh bebas klorin, biodegradable, dan food grade.\nAroma harum menenangkan, relaksASI ala busui.\nTanpa tambahan bahan pengawet.\nRasa manis alami.\nHerbal kaya antioksidan.\n\n\nHadir dalam 3 varian rasa:\nStrawberry\nBlueberry\n\n\nCara penyajian (1 box isi 20 sachet x @3gr (60gr)):\nSeduh dengan 200-300 ml air mendidih/panas, biarkan selama min 10 menit/kuning keemasan.\nDapat ditambahkan madu/gula/lemon, atau bisa juga disajikan dingin.\nKonsumsi MamaBear Teh Pelancar ASI 3-4x sehari.\n\n\nIngredients:\nFenugreek\nHabbatussauda\nKunir\nFennel\n\n\nKeunggulan Mamabear Teh Pelancar ASI:\nMemperlancar aliran ASI.\nMeningkatkan produksi & nutrisi ASI.\nMeningkatkan lemak ASI & BB bayi (melalui ASI).\nMempercepat pemulihan & meningkatkan daya tahan tubuh (Habbatussauda).\n\n*Catatan: tidak untuk ibu hamil.",
+                    "ingredients": null,
+                    "usageInstructions": null,
+                    "createdAt": "2026-05-16T09:43:11.188Z",
+                    "updatedAt": "2026-05-16T09:43:11.188Z"
+                  },
+                  {
+                    "id": 5,
+                    "name": "MamaBear ASI Booster 30 Kapsul - Pelancar ASI Fenugreek Free Halal BPOM",
+                    "slug": "mamabear-asi-booster-30-kapsul",
+                    "isActive": true,
+                    "categoryId": 3,
+                    "highlightId": 2,
+                    "tags": [],
+                    "description": "MAMABEAR KAPSUL ASI BOOSTER\n\nKapsul Pelancar ASI pertama dengan Triple Benefit dalam 1 kapsul:\nMeningkatkan produksi dan nutrisi ASI\nMembantu meredakan peradangan pada penyumbatan kelenjar ASI (Mastitis)\nMembantu meredakan nyeri pasca melahirkan\n\nKeunggulan lainnya :\nTerjamin Mutu & Sesuai Standard Keamanan Pangan\n- POM TR243057401\n- HALAL MUI : ID00110000288610422\n\nKombinasi herbal & SUPERFOOD dari ekstrak daun katuk, ekstrak daun kelor, ekstrak jahe merah dan serbuk almond\nFish Allergen Free\nFenugreek Free\n17 Nutrisi Makro & Mikro\nEkstrak Jahe untuk antioksida yang membantu menjaga daya tahan tubuh Ibu selama menyusui\nMudah dikonsumsi tidak memerlukan penyeduhan\n\n\nANJURAN PEMAKAIAN untuk manfaat maksimal :\n- Konsumsi MamaBear Kapsul Pelancar ASI 2-3x sehari.\n*1 kapsul setelah makan\nCatatan : Tidak untuk Ibu hamil\n\n\n\nCATATAN PEMESANAN:\n- Estimasi pengiriman produk 3-4 hari kerja\n- Bila pemesanan sudah di checkout maka tidak bisa ganti alamat\n(Apabila ada kesalahan input alamat, bisa dibatalkan dulu pemesanan sebelumnya lalu bisa order ulang)\n\n*Baca label sebelum membeli",
+                    "ingredients": null,
+                    "usageInstructions": null,
+                    "createdAt": "2026-05-16T09:43:11.205Z",
+                    "updatedAt": "2026-05-16T09:43:11.205Z"
+                  }
+                ]
+              }
+            ],
+            "timestamp": "2026-05-16T09:43:11.597Z"
+          }

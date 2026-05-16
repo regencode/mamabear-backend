@@ -20,7 +20,7 @@ request:
     token: "{{jwtToken}}"
   variables:
     - name: baseUrl
-      value: http://localhost:3000
+      value: '"http://localhost:3000"'
     - name: jwtToken
       value: ""
     - name: refreshToken

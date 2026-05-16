@@ -31,3 +31,100 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (201)"
+    request:
+      url: "{{baseUrl}}/api/products/6/variants/7/discount"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "isPercent": false,
+            "amount": 5000,
+            "startedAt": "2026-01-01T00:00:00.000Z",
+            "endsAt": "2026-12-31T23:59:59.000Z"
+          }
+    response:
+      status: 201
+      statusText: "Created"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 201,
+            "message": [
+              "Discount created successfully"
+            ],
+            "data": {
+              "id": 4,
+              "variantId": 7,
+              "amount": "5000",
+              "isPercent": false,
+              "startedAt": "2026-01-01T00:00:00.000Z",
+              "endsAt": "2026-12-31T23:59:59.000Z"
+            },
+            "timestamp": "2026-05-16T09:43:11.743Z"
+          }
+  - name: "Unauthorized (401)"
+    request:
+      url: "{{baseUrl}}/api/products/1/variants/1/discount"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "amount": ""
+          }
+    response:
+      status: 401
+      statusText: "Unauthorized"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 401,
+            "message": [
+              "Unauthorized"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.150Z"
+          }
+  - name: "Validation Error (400)"
+    request:
+      url: "{{baseUrl}}/api/products/1/variants/1/discount"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "amount": "",
+            "endsAt": "not-a-date"
+          }
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "endsAt must be a valid ISO 8601 date string"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.152Z"
+          }

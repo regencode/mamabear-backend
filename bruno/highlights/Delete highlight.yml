@@ -21,3 +21,99 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (200)"
+    request:
+      url: "{{baseUrl}}/api/highlights/3"
+      method: DELETE
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": [
+              "Updated Test Highlight deleted successfully"
+            ],
+            "data": {
+              "id": 3,
+              "name": "Updated Test Highlight",
+              "slug": "updated-test-highlight",
+              "description": "Updated description",
+              "isActive": true
+            },
+            "timestamp": "2026-05-16T09:43:11.831Z"
+          }
+  - name: "Not Found (400)"
+    request:
+      url: "{{baseUrl}}/api/highlights/999999"
+      method: DELETE
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "Highlight not found"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.229Z"
+          }
+  - name: "Unauthorized (401)"
+    request:
+      url: "{{baseUrl}}/api/highlights/1"
+      method: DELETE
+    response:
+      status: 401
+      statusText: "Unauthorized"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 401,
+            "message": [
+              "Unauthorized"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.230Z"
+          }
+  - name: "Highlight Has Products (400)"
+    request:
+      url: "{{baseUrl}}/api/highlights/1"
+      method: DELETE
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "Highlight has products"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.233Z"
+          }

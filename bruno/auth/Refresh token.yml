@@ -29,3 +29,63 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (201)"
+    request:
+      url: "{{baseUrl}}/api/auth/refresh"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NDU5NGRlNS05OTdlLTRlMWQtYTU1MS1jMmQ0MzNhMzE4MmUiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc4OTI0NTkxLCJleHAiOjE3Nzk1MjkzOTF9._T6u9LRG0cjGRP272lv_aKeBxF5MZO8NqgCrweWBCLY"
+          }
+    response:
+      status: 201
+      statusText: "Created"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 201,
+            "message": [
+              "No message specified"
+            ],
+            "data": {
+              "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NDU5NGRlNS05OTdlLTRlMWQtYTU1MS1jMmQ0MzNhMzE4MmUiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc4OTI0NTkxLCJleHAiOjE3Nzg5MjU0OTF9.d0jGnMrBdYDjHXcyYPgkcQPun3n76iVl6xkElu6ykcI"
+            },
+            "timestamp": "2026-05-16T09:43:11.888Z"
+          }
+  - name: "Invalid Refresh Token (500)"
+    request:
+      url: "{{baseUrl}}/api/auth/refresh"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "refreshToken": "invalid-token-xyz"
+          }
+    response:
+      status: 500
+      statusText: "Internal Server Error"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 500,
+            "message": [
+              "Internal server error"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.058Z"
+          }

@@ -49,3 +49,224 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (201)"
+    request:
+      url: "{{baseUrl}}/api/products"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Test Capture Product",
+            "description": "A test product created by capture script",
+            "ingredients": "Test ingredients",
+            "usageInstructions": "Test usage instructions",
+            "weightG": 100,
+            "priceIdr": 50000,
+            "stock": 50,
+            "sku": "TEST.CAPTURE",
+            "isActive": true,
+            "slug": "test-capture-product",
+            "tags": [
+              "test",
+              "capture"
+            ],
+            "images": [
+              {
+                "imageUrl": "https://example.com/test.jpg",
+                "sortOrder": 1,
+                "altText": "Test image"
+              }
+            ]
+          }
+    response:
+      status: 201
+      statusText: "Created"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 201,
+            "message": [
+              "Product Test Capture Product created successfully"
+            ],
+            "data": {
+              "id": 6,
+              "name": "Test Capture Product",
+              "slug": "test-capture-product",
+              "isActive": true,
+              "categoryId": null,
+              "highlightId": null,
+              "tags": [
+                "test",
+                "capture"
+              ],
+              "description": "A test product created by capture script",
+              "ingredients": "Test ingredients",
+              "usageInstructions": "Test usage instructions",
+              "createdAt": "2026-05-16T09:43:11.658Z",
+              "updatedAt": "2026-05-16T09:43:11.658Z",
+              "category": null,
+              "images": [
+                {
+                  "id": 27,
+                  "productId": 6,
+                  "variantId": null,
+                  "imageUrl": "https://example.com/test.jpg",
+                  "sortOrder": 1,
+                  "altText": "Test image"
+                }
+              ],
+              "variants": [
+                {
+                  "id": 6,
+                  "productId": 6,
+                  "name": "INTERNAL_DEFAULT",
+                  "priceIdr": "50000",
+                  "weightG": 100,
+                  "sku": "TEST.CAPTURE",
+                  "stock": 50,
+                  "sortOrder": 0,
+                  "createdAt": "2026-05-16T09:43:11.664Z",
+                  "updatedAt": "2026-05-16T09:43:11.664Z"
+                }
+              ]
+            },
+            "timestamp": "2026-05-16T09:43:11.675Z"
+          }
+  - name: "Unauthorized (401)"
+    request:
+      url: "{{baseUrl}}/api/products"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Test"
+          }
+    response:
+      status: 401
+      statusText: "Unauthorized"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 401,
+            "message": [
+              "Unauthorized"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.069Z"
+          }
+  - name: "Validation Error (400)"
+    request:
+      url: "{{baseUrl}}/api/products"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "",
+            "weightG": ""
+          }
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "name should not be empty",
+              "description must be a string",
+              "ingredients must be a string",
+              "usageInstructions must be a string",
+              "weightG should not be empty",
+              "weightG must be a number conforming to the specified constraints",
+              "priceIdr must be a number conforming to the specified constraints"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.072Z"
+          }
+  - name: "Slug Already Exists (201)"
+    request:
+      url: "{{baseUrl}}/api/products"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Duplicate Slug Product",
+            "description": "Duplicate slug test",
+            "ingredients": "Test",
+            "usageInstructions": "Test",
+            "weightG": 100,
+            "priceIdr": 50000,
+            "stock": 10,
+            "sku": "TEST.DUP.SLUG",
+            "slug": "mamabear-almonmix-isi-6-sachet",
+            "tags": [],
+            "images": []
+          }
+    response:
+      status: 201
+      statusText: "Created"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 201,
+            "message": [
+              "Product Duplicate Slug Product created successfully"
+            ],
+            "data": {
+              "id": 7,
+              "name": "Duplicate Slug Product",
+              "slug": "duplicate-slug-product",
+              "isActive": true,
+              "categoryId": null,
+              "highlightId": null,
+              "tags": [],
+              "description": "Duplicate slug test",
+              "ingredients": "Test",
+              "usageInstructions": "Test",
+              "createdAt": "2026-05-16T09:43:12.076Z",
+              "updatedAt": "2026-05-16T09:43:12.076Z",
+              "category": null,
+              "images": [],
+              "variants": [
+                {
+                  "id": 8,
+                  "productId": 7,
+                  "name": "INTERNAL_DEFAULT",
+                  "priceIdr": "50000",
+                  "weightG": 100,
+                  "sku": "TEST.DUP.SLUG",
+                  "stock": 10,
+                  "sortOrder": 0,
+                  "createdAt": "2026-05-16T09:43:12.078Z",
+                  "updatedAt": "2026-05-16T09:43:12.078Z"
+                }
+              ]
+            },
+            "timestamp": "2026-05-16T09:43:12.084Z"
+          }

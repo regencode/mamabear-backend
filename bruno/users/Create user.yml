@@ -34,3 +34,138 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (201)"
+    request:
+      url: "{{baseUrl}}/api/users"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "email": "test-capture@example.com",
+            "password": "password123",
+            "name": "Test Capture User",
+            "phone": "081234567890"
+          }
+    response:
+      status: 201
+      statusText: "Created"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 201,
+            "message": [
+              "User created successfully"
+            ],
+            "data": {
+              "id": "fbf8fb32-effd-4374-8689-a3d598540aa1",
+              "email": "test-capture@example.com",
+              "name": "Test Capture User",
+              "phone": "081234567890",
+              "role": "USER",
+              "isVerified": false,
+              "createdAt": "2026-05-16T09:43:11.701Z",
+              "updatedAt": "2026-05-16T09:43:11.701Z"
+            },
+            "timestamp": "2026-05-16T09:43:11.704Z"
+          }
+  - name: "Unauthorized (401)"
+    request:
+      url: "{{baseUrl}}/api/users"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "email": "test@test.com"
+          }
+    response:
+      status: 401
+      statusText: "Unauthorized"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 401,
+            "message": [
+              "Unauthorized"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.241Z"
+          }
+  - name: "Validation Error (400)"
+    request:
+      url: "{{baseUrl}}/api/users"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "email": "",
+            "password": "",
+            "name": "",
+            "phone": ""
+          }
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "email should not be empty",
+              "password should not be empty",
+              "name should not be empty",
+              "phone should not be empty"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.243Z"
+          }
+  - name: "Email Already Exists (400)"
+    request:
+      url: "{{baseUrl}}/api/users"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "email": "admin@mamabear.id",
+            "password": "password123",
+            "name": "Duplicate User",
+            "phone": "081234567890"
+          }
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "User with email admin@mamabear.id already exists"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.246Z"
+          }

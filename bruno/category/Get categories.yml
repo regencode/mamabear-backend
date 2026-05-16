@@ -24,3 +24,61 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (200)"
+    request:
+      url: "{{baseUrl}}/categories"
+      method: GET
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": [
+              "Found 3 categories"
+            ],
+            "data": [
+              {
+                "id": 1,
+                "name": "Food",
+                "slug": "food",
+                "description": "Makanan & camilan untuk ibu menyusui",
+                "imageUrl": null,
+                "isActive": true,
+                "sortOrder": 1,
+                "createdAt": "2026-05-16T09:43:11.126Z",
+                "updatedAt": "2026-05-16T09:43:11.126Z"
+              },
+              {
+                "id": 2,
+                "name": "Drink",
+                "slug": "drink",
+                "description": "Minuman pelancar & peningkat ASI",
+                "imageUrl": null,
+                "isActive": true,
+                "sortOrder": 2,
+                "createdAt": "2026-05-16T09:43:11.131Z",
+                "updatedAt": "2026-05-16T09:43:11.131Z"
+              },
+              {
+                "id": 3,
+                "name": "Other",
+                "slug": "other",
+                "description": "Produk lainnya",
+                "imageUrl": null,
+                "isActive": true,
+                "sortOrder": 3,
+                "createdAt": "2026-05-16T09:43:11.136Z",
+                "updatedAt": "2026-05-16T09:43:11.136Z"
+              }
+            ],
+            "timestamp": "2026-05-16T09:43:11.592Z"
+          }

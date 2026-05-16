@@ -32,3 +32,125 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (201)"
+    request:
+      url: "{{baseUrl}}/api/auth/login"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "email": "admin@mamabear.id",
+            "password": "admin"
+          }
+    response:
+      status: 201
+      statusText: "Created"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 201,
+            "message": [
+              "No message specified"
+            ],
+            "data": {
+              "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NDU5NGRlNS05OTdlLTRlMWQtYTU1MS1jMmQ0MzNhMzE4MmUiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc4OTI0NTkxLCJleHAiOjE3Nzg5MjU0OTF9.d0jGnMrBdYDjHXcyYPgkcQPun3n76iVl6xkElu6ykcI",
+              "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NDU5NGRlNS05OTdlLTRlMWQtYTU1MS1jMmQ0MzNhMzE4MmUiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc4OTI0NTkxLCJleHAiOjE3Nzk1MjkzOTF9._T6u9LRG0cjGRP272lv_aKeBxF5MZO8NqgCrweWBCLY"
+            },
+            "timestamp": "2026-05-16T09:43:11.571Z"
+          }
+  - name: "Invalid Password (400)"
+    request:
+      url: "{{baseUrl}}/api/auth/login"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "email": "admin@mamabear.id",
+            "password": "wrongpassword"
+          }
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "Invalid password"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.048Z"
+          }
+  - name: "Email Not Found (400)"
+    request:
+      url: "{{baseUrl}}/api/auth/login"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "email": "nonexistent@email.com",
+            "password": "password123"
+          }
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "Email not found"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.051Z"
+          }
+  - name: "Validation Error (400)"
+    request:
+      url: "{{baseUrl}}/api/auth/login"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "email": "not-an-email",
+            "password": ""
+          }
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "email must be an email",
+              "password should not be empty"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.054Z"
+          }

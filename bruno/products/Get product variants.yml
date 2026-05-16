@@ -24,3 +24,62 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (200)"
+    request:
+      url: "{{baseUrl}}/products/mamabear-almonmix-isi-6-sachet/variants"
+      method: GET
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": [
+              "Found 1 variants for product mamabear-almonmix-isi-6-sachet"
+            ],
+            "data": [
+              {
+                "id": 1,
+                "productId": 1,
+                "name": "INTERNAL_DEFAULT",
+                "priceIdr": "80000",
+                "weightG": 180,
+                "sku": "AL.MMBR",
+                "stock": 100,
+                "sortOrder": 0,
+                "createdAt": "2026-05-16T09:43:11.162Z",
+                "updatedAt": "2026-05-16T09:43:11.162Z"
+              }
+            ],
+            "timestamp": "2026-05-16T09:43:11.615Z"
+          }
+  - name: "Not Found (404)"
+    request:
+      url: "{{baseUrl}}/products/nonexistent-product-xyz/variants"
+      method: GET
+    response:
+      status: 404
+      statusText: "Not Found"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 404,
+            "message": [
+              "Cannot find product with slug nonexistent-product-xyz"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.063Z"
+          }

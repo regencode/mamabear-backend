@@ -34,3 +34,129 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (201)"
+    request:
+      url: "{{baseUrl}}/api/highlights"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Test Capture Highlight",
+            "description": "A test highlight for capture script",
+            "isActive": true,
+            "slug": "test-capture-highlight"
+          }
+    response:
+      status: 201
+      statusText: "Created"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 201,
+            "message": [
+              "Created highlight test-capture-highlight"
+            ],
+            "data": {
+              "id": 3,
+              "name": "Test Capture Highlight",
+              "slug": "test-capture-highlight",
+              "description": "A test highlight for capture script",
+              "isActive": true,
+              "products": []
+            },
+            "timestamp": "2026-05-16T09:43:11.695Z"
+          }
+  - name: "Unauthorized (401)"
+    request:
+      url: "{{baseUrl}}/api/highlights"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Test"
+          }
+    response:
+      status: 401
+      statusText: "Unauthorized"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 401,
+            "message": [
+              "Unauthorized"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.216Z"
+          }
+  - name: "Validation Error (400)"
+    request:
+      url: "{{baseUrl}}/api/highlights"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": ""
+          }
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "name should not be empty"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.218Z"
+          }
+  - name: "Highlight Already Exists (400)"
+    request:
+      url: "{{baseUrl}}/api/highlights"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "New Additions",
+            "description": "Duplicate test",
+            "slug": "new-additions"
+          }
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "Highlight already exists"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.222Z"
+          }

@@ -18,3 +18,89 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (200)"
+    request:
+      url: "{{baseUrl}}/categories/food"
+      method: GET
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": [
+              "Category with slug food found"
+            ],
+            "data": {
+              "id": 1,
+              "name": "Food",
+              "slug": "food",
+              "description": "Makanan & camilan untuk ibu menyusui",
+              "imageUrl": null,
+              "isActive": true,
+              "sortOrder": 1,
+              "createdAt": "2026-05-16T09:43:11.126Z",
+              "updatedAt": "2026-05-16T09:43:11.126Z",
+              "products": [
+                {
+                  "id": 2,
+                  "name": "MamaBear ZoyaMix Rasa Cokelat Isi 10 Sachet - Sereal Kaya Nutrisi untuk Ibu Menyusui Halal BPOM",
+                  "slug": "mamabear-zoyamix-rasa-cokelat-isi-10-sachet",
+                  "isActive": true,
+                  "categoryId": 1,
+                  "highlightId": 1,
+                  "tags": [],
+                  "description": "MamaBear ZoyaMix Rasa Cokelat Isi 10 Sachet\nSereal Kaya Nutrisi untuk Ibu Menyusui.\n\n\nMAKRO & MIKRO NUTRISI LENGKAP\nSUMBER PROTEIN & ZAT BESI\nTINGGI KALSIUM\nVIT A, B6, B12, KOLIN, SENG, ZAT BESI\n\n\nCara penyajian:\nSeduh 1 sachet ZoyaMix dengan 150 ml air hangat.\nDapat ditambahkan es batu jika ingin disajikan dingin.\n\n\nIngredients:\nDaun Katuk\nKedelai\nDaun Kelor\nEkstrak Ragi\nRolled Oat\n\n\nKeunggulan Mamabear ZoyaMix:\nMelancarkan ASI.\nMengentalkan ASI.\nTinggi Kalsium & Zinc.\nKaya Kandungan Omega 3.\nSumber Zat Besi.\n\n*Catatan: mengandung produk turunan sapi.",
+                  "ingredients": null,
+                  "usageInstructions": null,
+                  "createdAt": "2026-05-16T09:43:11.179Z",
+                  "updatedAt": "2026-05-16T09:43:11.179Z"
+                },
+                {
+                  "id": 4,
+                  "name": "MamaBear Kukis Almond Oat - Camilan Kaya Nutrisi untuk Ibu Menyusui Halal BPOM",
+                  "slug": "mamabear-kukis-almond-oat",
+                  "isActive": true,
+                  "categoryId": 1,
+                  "highlightId": 1,
+                  "tags": [],
+                  "description": "MamaBear Kukis Almon Oat\nMemberi segala kebaikan untuk Mama selama masa menyusui dengan :\n\n✅ SUPERFOOD meningkatkan produksi & nutrisi ASI\n✅ MAKRO & MIKRONUTRISI lengkap untuk Mama\n✅ VIT B6, Omega3 & Zat Besi\n✅ ANTIOXIDANT Selenium\n✅ Tinggi Serat Pangan untuk kesehatan saluran pencernaan\n\n\nKeunggulan lainnya :\n⭐ Brand Choice 2022\n⭐Terjamin Mutu & Sesuai Standard Keamanan Pangan\n\n- BPOM MD : 236213003799\n- HALAL MUI : 07200046370418\n\n⭐ Rasa ENAK\n⭐ Tanpa tambahan bahan pengawet\n⭐ Ukuran sekali lahap bebas remahan\n⭐ Packaging ziplock, memudahkan penyimpanan\n⭐ Aman dikonsumsi ibu hamil & menyusui, anak-anak, dewasa, & orang tua.\n\n\n*Varian Cookies and Cream & Coklat Chip mengandung produk turunan susu sapi.\n*Varian Choconut BEBAS produk turunan susu sapi & TANPA TELUR\n\n\nCATATAN PEMESANAN:\n- EstimASI pengiriman produk 3-4 hari kerja\n- Bila pemesanan sudah di checkout maka tidak bisa ganti alamat\n(Apabila ada kesalahan input alamat, bisa dibatalkan dulu pemesanan sebelumnya lalu bisa order ulang)\n\n*Baca label sebelum membeli\n\nSYARAT PENGAJUAN KOMPLAIN\nJika ada komplain dimohon untuk cek kembali syarat & ketentuannya di BANNER TOKO\nPenilaian yang Mama berikan sangat berharga bagi kami",
+                  "ingredients": null,
+                  "usageInstructions": null,
+                  "createdAt": "2026-05-16T09:43:11.196Z",
+                  "updatedAt": "2026-05-16T09:43:11.196Z"
+                }
+              ]
+            },
+            "timestamp": "2026-05-16T09:43:11.628Z"
+          }
+  - name: "Not Found (404)"
+    request:
+      url: "{{baseUrl}}/categories/nonexistent-category-xyz"
+      method: GET
+    response:
+      status: 404
+      statusText: "Not Found"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 404,
+            "message": [
+              "Category with slug nonexistent-category-xyz not found"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.179Z"
+          }
