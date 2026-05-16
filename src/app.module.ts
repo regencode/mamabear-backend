@@ -18,6 +18,7 @@ import { HighlightsModule } from './highlights/highlights.module';
 import { DiscountsModule } from './discounts/discounts.module';
 import { VariantModule } from './variant/variant.module';
 import { SearchModule } from './search/search.module';
+import { EmbeddingsModule } from './embeddings/embeddings.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { SearchModule } from './search/search.module';
     DiscountsModule,
     VariantModule,
     SearchModule,
+    EmbeddingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

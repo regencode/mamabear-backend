@@ -2,7 +2,9 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { EmbeddingsService } from '@/embeddings/embeddings.service';
 import slugify from 'slugify';
+import { Product } from '@/generated/prisma';
 
 
 export const PRODUCT_INCLUDE = {
@@ -13,13 +15,22 @@ export const PRODUCT_INCLUDE = {
 
 @Injectable()
 export class ProductsRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+     private readonly prisma: PrismaService,
+     private readonly embedService: EmbeddingsService,
+  ) {}
 
   create(data: CreateProductDto) {
     data.slug = slugify(data.name, { lower: true, strict: true });
     return this.prisma.$transaction(async (tx) => {
         const { images, variants, weightG, priceIdr, stock, sku, ...productData } = data;
-        const product = await tx.product.create({ data: productData, include: PRODUCT_INCLUDE })
+        const product = await tx.product.create({ data: { ...productData }, include: PRODUCT_INCLUDE })
+        const embed = await this.embedService.generateEmbeddingsFromProduct(product);
+        tx.$executeRaw`
+            UPDATE "Product" 
+            SET embedding = ${this.embedService.embeddingArrayToString(embed)}::vector
+            WHERE id = ${product.id}
+        `;
         if(variants?.length) {
             await tx.productVariant.createMany({
                 data: variants.map(v => ({...v, productId: product.id }))
@@ -51,8 +62,15 @@ export class ProductsRepository {
           include: PRODUCT_INCLUDE,
       });
   }
-
-
+  async findRelated(id: number) {
+    return (await this.prisma.$queryRaw`
+        SELECT *, 1 - (embedding <=> (SELECT embedding FROM "Product" WHERE id = ${id})) AS similarity
+        FROM "Product"
+        WHERE id != ${id} AND embedding IS NOT NULL
+        ORDER BY similarity DESC
+        LIMIT 5
+    ` as Product[])
+}
 
   update(id: number, data: UpdateProductDto) {
     const { images, variants, weightG, priceIdr, stock, sku, ...productData } = data;

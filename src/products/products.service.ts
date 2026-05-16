@@ -24,6 +24,16 @@ export class ProductsService {
   ) {
     this.logger.setContext(ProductsService.name);
   }
+  async findRelatedProducts(slug: string): Promise<ServiceResult<Product[]>> {
+      const resolvedProduct = await this.productsRepository.findBySlug(slug);
+      if(!resolvedProduct) throw new BadRequestException(`Cannot find product with slug ${slug}`);
+      const result = await this.productsRepository.findRelated(resolvedProduct.id);
+      return {
+          success: true,
+          message: `Returned ${result.length} products that are similar to ${slug}`,
+          data: result
+      }
+  }
 
   async create(dto: CreateProductDto): Promise<ServiceResult<Product>> {
     try {

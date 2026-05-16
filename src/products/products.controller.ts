@@ -48,6 +48,11 @@ export class ProductsController {
     return this.productsService.findBySlug(slug);
   }
 
+  @Get(':slug/related')
+  findRelatedProductsBySlug(@Param('slug') slug: string) {
+    return this.productsService.findRelated(slug);
+  }
+
   @Get(':slug/variants')
   getProductVariantBySlug(@Param('slug') slug: string) {
     return this.variantService.getProductVariantBySlug(slug);

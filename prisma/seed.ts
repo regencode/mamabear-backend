@@ -2,6 +2,7 @@ import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, Product } from "../src/generated/prisma/client";
 import { products, users, categories, highlights } from "./data";
+import { EmbeddingsService } from "@/embeddings/embeddings.service";
 
 const prisma = new PrismaClient({
     adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
@@ -62,6 +63,7 @@ function randomDate(daysAgo: number, daysAhead: number): Date {
 }
 
 async function main() {
+    const embedService = new EmbeddingsService();
     console.log("Seeding database...");
 
     console.log("Deleting existing data and resetting sequences...");
@@ -93,7 +95,13 @@ async function main() {
 
     for (const { images, variants, ...productData } of products) {
         const product = await prisma.$transaction(async (tx) => {
-            const p = await tx.product.create({ data: productData });
+            const p = await tx.product.create({ data: {...productData } });
+            const embed = await embedService.generateEmbeddingsFromProduct(p);
+            await tx.$executeRaw`
+                UPDATE "Product" 
+                SET embedding = ${embedService.embeddingArrayToString(embed)}::vector
+                WHERE id = ${p.id}
+            `;
             if (variants?.length) {
                 await tx.productVariant.createMany({
                     data: variants.map((v) => ({ ...v, productId: p.id })),

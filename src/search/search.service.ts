@@ -4,6 +4,7 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { Product } from '@/generated/prisma';
 import { SearchAutocompleteOptionsDto } from './dto/search-autocomplete-options.dto';
 import { ServiceResult } from '@/common/ServiceResult';
+import { Sql } from '@prisma/client-runtime-utils';
 
 @Injectable()
 export class SearchService {
@@ -30,45 +31,45 @@ export class SearchService {
         })
         return {
             success: true,
-            message: `Found ${uniqueProducts.length} products with word matching query "${query}"`,
+            message: `Found ${uniqueProducts.length} products matching query '${query.q}' with full text search`,
             data: uniqueProducts
         };
     }
     async getFuzzyAutocompleteResults(query: SearchRequestDto, options?: SearchAutocompleteOptionsDto) {
         const defaultOptions: SearchAutocompleteOptionsDto = {
             limit: 3,
-            minChars: 3
+            minChars: 3,
+            similarityThreshold: 0.02,
         }
         const limit = options?.limit || defaultOptions.limit!;
         const minChars = options?.minChars! || defaultOptions.minChars!;
-
-        if(query.q && query.q?.trim().length < minChars) return [];
-        const matchedProducts = [
-            ...await this.matchProductsByTags(query, true),
-            ...await this.matchProductsByName(query, true),
-            ...await this.matchProductsBySlug(query, true),
-            ...await this.matchProductsByVariantSku(query, true),
-        ]
-        var seen = {};
-        var uniqueProducts: Product[] = [];
-        // filter to only unique products and limit returns
-        for(const product of matchedProducts) {
-            if(uniqueProducts.length >= limit) break;
-            if(!seen[product.id]) {
-                seen[product.id] = true;
-                uniqueProducts.push(product);
+        const similarityThreshold = options?.similarityThreshold! || defaultOptions.similarityThreshold!;
+        if(query.q && query.q?.trim().length < minChars) {
+            return {
+                success: true,
+                message: `Query should be at least ${minChars} chars long to activate fuzzy searching`,
+                data: []
             }
-        }
+        } 
+        var matchedProducts: (Product & { sml: number })[] = await this.prisma.$queryRaw`SELECT name, similarity(name, ${query.q}) as sml FROM "Product" ORDER BY sml DESC`;
+        var i = 0;
+        matchedProducts = matchedProducts.filter(p => {
+            if(p.sml >= similarityThreshold && i < limit) {
+                i++; return true;
+            }
+            return false;
+        })
         return {
             success: true,
-            message: `Found ${uniqueProducts.length} products with fuzzy matching query "${query}"`,
-            data: uniqueProducts
+            message: `Found ${i} products matching query '${query.q}' with fuzzy search`,
+            data: matchedProducts
         };
     }
-    matchProductsByName(query: SearchRequestDto, fuzzySearch: boolean = false) {
+
+    async matchProductsByName(query: SearchRequestDto) {
         return this.prisma.product.findMany({
             where: {
-                name: fuzzySearch ? { contains: query.q } : { search: query.q },
+                name: { contains: query.q, mode: 'insensitive' },
             },
             orderBy: {
                 _relevance: {
@@ -76,13 +77,14 @@ export class SearchService {
                     search: query.q,
                     sort: "desc",
                 },
-            }
+             }
         })
     }
-    matchProductsByDescription(query: SearchRequestDto, fuzzySearch: boolean = false) {
+
+    matchProductsByDescription(query: SearchRequestDto) {
         return this.prisma.product.findMany({
             where: {
-                description: fuzzySearch ? { contains: query.q } : { search: query.q },
+                description: { contains: query.q, mode: 'insensitive' },
             },
             orderBy: {
                 _relevance: {
@@ -93,7 +95,8 @@ export class SearchService {
             }
         })
     }
-    matchProductsByTags(query: SearchRequestDto, fuzzySearch: boolean = false) {
+
+    matchProductsByTags(query: SearchRequestDto) {
         return this.prisma.product.findMany({
             where: {
                 tags: { has: query.q },
@@ -107,10 +110,11 @@ export class SearchService {
             }
         })
     }
-    matchProductsBySlug(query: SearchRequestDto, fuzzySearch: boolean = false) {
+
+    matchProductsBySlug(query: SearchRequestDto) {
         return this.prisma.product.findMany({
             where: {
-                slug: fuzzySearch ? { contains: query.q } : { search: query.q },
+                slug: { contains: query.q, mode: 'insensitive' },
             },
             orderBy: {
                 _relevance: {
@@ -121,10 +125,11 @@ export class SearchService {
             }
         })
     }
-    async matchProductsByVariantSku(query: SearchRequestDto, fuzzySearch: boolean = false) {
+
+    async matchProductsByVariantSku(query: SearchRequestDto) {
         const matchedVariants = await this.prisma.productVariant.findMany({
             where: {
-                sku: fuzzySearch ? { contains: query.q } : { search: query.q },
+                sku: { contains: query.q, mode: 'insensitive' },
             },
             select: { product: true }, 
             orderBy: {

@@ -1,7 +1,7 @@
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
-  previewFeatures = ["fullTextSearchPostgres"]
+  previewFeatures = ["postgresqlExtensions", "fullTextSearchPostgres"]
 }
 
 datasource db {
@@ -48,6 +48,8 @@ model Product {
     description        String?                                                                      
     ingredients        String?                                                                      
     usageInstructions  String?                                                                      
+    embedding          Unsupported("vector(1024)")?
+
     createdAt          DateTime          @default(now())                                            
     updatedAt          DateTime?         @updatedAt                                                 
 }
