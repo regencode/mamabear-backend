@@ -4,7 +4,8 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import slugify from 'slugify';
 
-const PRODUCT_INCLUDE = {
+
+export const PRODUCT_INCLUDE = {
   category: true,
   images: true,
   variants: true,

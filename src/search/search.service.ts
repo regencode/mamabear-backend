@@ -2,6 +2,8 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { SearchRequestDto } from './dto/search-request.dto';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Product } from '@/generated/prisma';
+import { SearchAutocompleteOptionsDto } from './dto/search-autocomplete-options.dto';
+import { ServiceResult } from '@/common/ServiceResult';
 
 @Injectable()
 export class SearchService {
@@ -10,7 +12,7 @@ export class SearchService {
         // TODO: implement embedding
         throw new ForbiddenException("Related products not yet implemented");
     }
-    async findProductsMatchingQuery(query: SearchRequestDto) {
+    async findProductsMatchingQuery(query: SearchRequestDto): Promise<ServiceResult<Product[]>> {
         const matchedProducts = [
             ...await this.matchProductsByTags(query),
             ...await this.matchProductsByName(query),
@@ -26,9 +28,21 @@ export class SearchService {
                 uniqueProducts.push(product);
             }
         })
-        return uniqueProducts;
+        return {
+            success: true,
+            message: `Found ${uniqueProducts.length} products with word matching query "${query}"`,
+            data: uniqueProducts
+        };
     }
-    async getFuzzyAutocompleteResults(query: SearchRequestDto, limit: number) {
+    async getFuzzyAutocompleteResults(query: SearchRequestDto, options?: SearchAutocompleteOptionsDto) {
+        const defaultOptions: SearchAutocompleteOptionsDto = {
+            limit: 3,
+            minChars: 3
+        }
+        const limit = options?.limit || defaultOptions.limit!;
+        const minChars = options?.minChars! || defaultOptions.minChars!;
+
+        if(query.q && query.q?.trim().length < minChars) return [];
         const matchedProducts = [
             ...await this.matchProductsByTags(query, true),
             ...await this.matchProductsByName(query, true),
@@ -37,7 +51,6 @@ export class SearchService {
         ]
         var seen = {};
         var uniqueProducts: Product[] = [];
-
         // filter to only unique products and limit returns
         for(const product of matchedProducts) {
             if(uniqueProducts.length >= limit) break;
@@ -46,7 +59,11 @@ export class SearchService {
                 uniqueProducts.push(product);
             }
         }
-        return uniqueProducts;
+        return {
+            success: true,
+            message: `Found ${uniqueProducts.length} products with fuzzy matching query "${query}"`,
+            data: uniqueProducts
+        };
     }
     matchProductsByName(query: SearchRequestDto, fuzzySearch: boolean = false) {
         return this.prisma.product.findMany({

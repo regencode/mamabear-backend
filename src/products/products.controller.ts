@@ -17,6 +17,7 @@ import { VariantService } from '@/variant/variant.service';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 import { SearchRequestDto } from '@/search/dto/search-request.dto';
 import { SearchService } from '@/search/search.service';
+import { SearchAutocompleteOptionsDto } from '@/search/dto/search-autocomplete-options.dto';
 
 @ApiTags('products')
 @Controller('products')
@@ -36,6 +37,10 @@ export class ProductsController {
   @Get('search')
   searchForProducts(@Query() query: SearchRequestDto) {
       return this.searchService.findProductsMatchingQuery(query);
+  }
+  @Get('search/suggestions')
+  suggestAutocomplete(@Query() query: SearchRequestDto, @Query() options?: SearchAutocompleteOptionsDto) {
+      return this.searchService.getFuzzyAutocompleteResults(query, options);
   }
 
   @Get(':slug')
