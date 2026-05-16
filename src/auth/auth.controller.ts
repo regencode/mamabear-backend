@@ -17,6 +17,7 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { JwtPayload } from '@/types/JwtPayload';
+import { RefreshGuard } from './guard/refresh.guard';
 
 @UseGuards(ThrottlerGuard)
 @ApiTags('auth')
@@ -59,6 +60,7 @@ export class AuthController {
     },
   })
   @Post('/refresh')
+  @UseGuards(RefreshGuard)
   refresh(@Body() dto: RefreshTokenDto) {
     return this.authService.refreshToken(dto.refreshToken);
   }
