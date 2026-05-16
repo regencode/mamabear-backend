@@ -1,5 +1,5 @@
 export class AddToCartDto {
   productId: number;
-  variantId?: number;
+  variantId: number;
   quantity?: number = 1;
 }

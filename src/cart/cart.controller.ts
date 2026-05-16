@@ -25,7 +25,15 @@ export class CartController {
     return this.cartService.getCart(userId, sessionId);
   }
   
- 
+  // Get Cart Totals
+  @Get('totals')
+  async getCartTotals(@Req() req: any) {
+    const userId = req.user?.id; // from auth (if logged in)
+    const sessionId = req.cookies?.sessionId;
+
+    return this.cartService.getCartTotals(userId, sessionId);
+  }
+
   // Merge Guest Cart → User Cart (for internal use)
   @Post('merge')
   async mergeCart(@Req() req: any) {
@@ -36,7 +44,7 @@ export class CartController {
   }
 
   // Add to Cart
-  @Post('/items')
+  @Post('items')
   async addToCart(@Body() dto: AddToCartDto, @Req() req: any) {
     const userId = req.user?.id;
     const sessionId = req.cookies?.sessionId;
@@ -45,7 +53,7 @@ export class CartController {
   }
 
   // Update Quantity
-  @Patch('/items/:id')
+  @Patch('/items/:itemId')
   async updateItem(
     @Param('itemId') itemId: string,
     @Body('quantity') quantity: number,
@@ -54,11 +62,11 @@ export class CartController {
   }
 
   // Remove Item
-  @Delete('/items/:id')
+  @Delete('/items/:itemId')
   async removeItem(@Param('itemId') itemId: string) {
     return this.cartService.removeItem(itemId);
   }
-  
+   
   // Clear Cart
   @Delete()
   async clearCart(@Req() req: any) {
@@ -68,4 +76,5 @@ export class CartController {
     const cart = await this.cartService.getOrCreateCart(userId, sessionId);
     return this.cartService.clearCart(cart.id);
   }
+  
 }
