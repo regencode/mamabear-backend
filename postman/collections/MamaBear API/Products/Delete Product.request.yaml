@@ -1,6 +1,0 @@
-$kind: http-request
-url: "{{baseUrl}}/products/{{productId}}"
-method: DELETE
-pathVariables:
-  id: "{{productId}}"
-order: 5000

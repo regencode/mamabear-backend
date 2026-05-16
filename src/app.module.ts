@@ -17,6 +17,9 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { HighlightsModule } from './highlights/highlights.module';
 import { DiscountsModule } from './discounts/discounts.module';
 import { VariantModule } from './variant/variant.module';
+import { CartModule } from './cart/cart.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { SchedulerModule } from './scheduler/scheduler.module';
 
 @Module({
   imports: [
@@ -43,6 +46,9 @@ import { VariantModule } from './variant/variant.module';
     ReviewsModule,
     DiscountsModule,
     VariantModule,
+    CartModule,
+    ScheduleModule.forRoot(),
+    SchedulerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
