@@ -216,6 +216,25 @@ exports.Prisma.ReviewScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.CartScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  sessionId: 'sessionId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  expiresAt: 'expiresAt'
+};
+
+exports.Prisma.CartItemScalarFieldEnum = {
+  id: 'id',
+  cartId: 'cartId',
+  productId: 'productId',
+  variantId: 'variantId',
+  quantity: 'quantity',
+  price: 'price',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -243,7 +262,9 @@ exports.Prisma.ModelName = {
   ProductVariant: 'ProductVariant',
   Highlight: 'Highlight',
   Category: 'Category',
-  Review: 'Review'
+  Review: 'Review',
+  Cart: 'Cart',
+  CartItem: 'CartItem'
 };
 
 /**
