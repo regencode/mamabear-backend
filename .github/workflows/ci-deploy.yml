@@ -61,7 +61,7 @@ jobs:
         pg_ctl -D $pgdata start
 
         echo "creating user..."
-        psql --host "$pghost" --username="postgres" --dbname="postgres" --command="create user $PGUSERNAME password '$PGPASSWORD'" --command="\du"
+        psql --host "$pghost" --username="postgres" --dbname="postgres" --command="create user $PGUSERNAME password '$PGPASSWORD' SUPERUSER" --command="\du"
 
         echo "creating database..."
 
