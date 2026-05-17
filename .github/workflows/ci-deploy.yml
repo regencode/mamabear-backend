@@ -25,6 +25,7 @@ jobs:
       JWT_ACCESS_SECRET: blablabla
       JWT_REFRESH_SECRET: blablablablablabla
     steps:
+
     - name: Add PostgreSQL binaries to PATH
       shell: bash
       run: |
@@ -33,7 +34,7 @@ jobs:
           elif [ "$RUNNER_OS" == "Linux" ]; then
             echo "$(pg_config --bindir)" >> $GITHUB_PATH
           fi
-          o
+
     - name: Install pgvector
       run: |
         sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
