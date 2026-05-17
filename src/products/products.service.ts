@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { PinoLogger } from 'pino-nestjs';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -14,6 +15,7 @@ import { CreateVariantDto } from '@/variant/dto/create-variant.dto';
 import { ServiceResult } from '@/common/ServiceResult';
 import slugify from 'slugify';
 import { Product } from '@/generated/prisma';
+import { FilterProductsDto } from './dto/filter-products.dto';
 
 @Injectable()
 export class ProductsService {
@@ -23,6 +25,12 @@ export class ProductsService {
     private readonly paginationService: CursorPaginationService,
   ) {
     this.logger.setContext(ProductsService.name);
+  }
+
+  async findProductsWithFilter(query: FilterProductsDto) {
+      if(query.minPrice && query.maxPrice && query.minPrice > query.maxPrice) 
+          throw new UnprocessableEntityException("Min price must be large than max price");
+      return this.productsRepository.findByFilter(query);
   }
   async findRelatedProducts(slug: string): Promise<ServiceResult<Product[]>> {
       const resolvedProduct = await this.productsRepository.findBySlug(slug);

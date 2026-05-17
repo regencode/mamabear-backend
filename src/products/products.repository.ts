@@ -5,6 +5,8 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { EmbeddingsService } from '@/embeddings/embeddings.service';
 import slugify from 'slugify';
 import { Product } from '@/generated/prisma';
+import { FilterProductsDto } from './dto/filter-products.dto';
+import { argv0 } from 'process';
 
 
 export const PRODUCT_INCLUDE = {
@@ -47,6 +49,34 @@ export class ProductsRepository {
 
   findMany() {
     return this.prisma.product.findMany({ include: PRODUCT_INCLUDE });
+  }
+
+  findByFilter(query: FilterProductsDto) {
+      return this.prisma.product.findMany({
+          where: { AND: {
+          ...query.categories && query.categories.length > 0
+          ? { category: { slug: { in: query.categories } } }
+          : {},
+          ...query.highlights && query.highlights.length > 0  
+          ? { highlight: { slug: { in: query.highlights } } }
+          : {},
+          ...typeof query.inStock === 'boolean' && query.inStock
+          ? { variants: { some: { stock: { gte: 1 } } } }
+          : {},
+          ...query.minPrice && query.maxPrice
+          ? { variants: { some: { priceIdr: { gte: query.minPrice, lte: query.maxPrice } }}}
+          : {},
+          }},
+          include: {
+              variants: { 
+                  where: { AND: {
+                    ...typeof query.inStock === 'boolean' && query.inStock
+                    ? { stock: { gte: 1 } } 
+                    : {}
+                  }}
+              },
+          },
+      });
   }
 
   findById(id: number) {
