@@ -10,7 +10,9 @@ export class CloudinaryService {
     });
   }
 
-  async uploadFile(file: Express.Multer.File): Promise<string> {
+  async uploadFile(
+    file: Express.Multer.File,
+  ): Promise<{ imageUrl: string; publicId: string }> {
     try {
       return new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
@@ -21,7 +23,10 @@ export class CloudinaryService {
             if (err) {
               reject(err);
             } else {
-              resolve(result?.secure_url as string);
+              resolve({
+                imageUrl: result!.secure_url,
+                publicId: result!.public_id,
+              });
             }
           },
         );
@@ -29,6 +34,24 @@ export class CloudinaryService {
       });
     } catch (error) {
       throw new InternalServerErrorException('Upload ke Cloudinary gagal');
+    }
+  }
+
+  async deleteFile(publicId: string) {
+    try {
+      const result = await cloudinary.uploader.destroy(publicId);
+
+      if (result.result !== 'ok') {
+        throw new InternalServerErrorException(
+          'Gagal menghapus file dari Cloudinary',
+        );
+      }
+
+      return result;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Gagal menghapus file dari Cloudinary',
+      );
     }
   }
 
