@@ -24,6 +24,7 @@ jobs:
       CORS_ORIGIN: "*"
       JWT_ACCESS_SECRET: blablabla
       JWT_REFRESH_SECRET: blablablablablabla
+      OPENROUTER_API_KEY:  ${{ secrets.OPENROUTER_API_KEY }}
     steps:
 
     - name: Add PostgreSQL binaries to PATH
