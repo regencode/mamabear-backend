@@ -7,9 +7,13 @@ import {
   Body,
   Req,
   Param,
+  UseGuards,
 } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { AddToCartDto } from './dto/add-to-cart-dto';
+import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
+import { dot } from 'node:test/reporters';
+import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 
 
 @Controller('cart')
@@ -35,6 +39,7 @@ export class CartController {
   }
 
   // Merge Guest Cart → User Cart (for internal use)
+  // @(UseGuards(new JwtAuthGuard()))
   @Post('merge')
   async mergeCart(@Req() req: any) {
     const userId = req.user?.id;
@@ -44,6 +49,7 @@ export class CartController {
   }
 
   // Add to Cart
+  // @(UseGuards(new JwtAuthGuard()))
   @Post('items')
   async addToCart(@Body() dto: AddToCartDto, @Req() req: any) {
     const userId = req.user?.id;
@@ -53,15 +59,17 @@ export class CartController {
   }
 
   // Update Quantity
+  // @(UseGuards(new JwtAuthGuard()))
   @Patch('/items/:itemId')
   async updateItem(
     @Param('itemId') itemId: string,
-    @Body('quantity') quantity: number,
+    @Body() dto: UpdateCartItemDto,
   ) {
-    return this.cartService.updateItemQuantity(itemId, quantity);
+    return this.cartService.updateItemQuantity(itemId, dto.quantity);
   }
 
   // Remove Item
+  // @(UseGuards(new JwtAuthGuard()))
   @Delete('/items/:itemId')
   async removeItem(@Param('itemId') itemId: string) {
     return this.cartService.removeItem(itemId);
@@ -69,6 +77,7 @@ export class CartController {
    
   // Clear Cart
   @Delete()
+  // @(UseGuards(new JwtAuthGuard()))
   async clearCart(@Req() req: any) {
     const userId = req.user?.id;
     const sessionId = req.cookies?.sessionId;

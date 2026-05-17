@@ -1,206 +1,139 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '@/prisma/prisma.service';
 import { AddToCartDto } from './dto/add-to-cart-dto';
+import { CartRepository } from './cart.repository';
+import { PrismaService } from '@/prisma/prisma.service';
 
 @Injectable()
 export class CartService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly cartRepo: CartRepository,
+    private readonly prisma: PrismaService,
+  ) {}
 
   // Get or Create Cart
   async getOrCreateCart(userId?: string, sessionId?: string) {
-    let cart: Awaited<ReturnType<typeof this.prisma.cart.findFirst>> = null;
+    let cart: Awaited<ReturnType<typeof this.cartRepo.findCartByUser>> = null;
 
     if (userId) {
-      cart = await this.prisma.cart.findFirst({
-        where: { userId },
-        include: { items: true },
-      });
+      cart = await this.cartRepo.findCartByUser(userId);
     }
 
     if (!cart && sessionId) {
-      cart = await this.prisma.cart.findFirst({
-        where: { sessionId },
-        include: { items: true },
-      });
+      cart = await this.cartRepo.findCartBySession(sessionId);
     }
 
     if (cart) return cart;
 
     const data: {
-      userId: string | null;
-      sessionId: string | null;
-      expiresAt?: Date | null;
-    } = {
-      userId: userId ?? null,
-      sessionId: sessionId ?? null,
-    };
+      userId?: string | null;
+      sessionId?: string | null;
+      expiresAt?: Date;
+    } = {};
 
+    if (userId) data.userId = userId;
     if (sessionId) {
+      data.sessionId = sessionId;
       data.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
     }
 
-    return this.prisma.cart.create({ data });
+    return this.cartRepo.createCart(data);
   }
 
    // Add Item to Cart
-   async addToCart(dto: AddToCartDto, userId?: string, sessionId?: string) {
-     const cart = await this.getOrCreateCart(userId, sessionId);
+async addToCart(dto: AddToCartDto, userId?: string, sessionId?: string) {
+    const cart = await this.getOrCreateCart(userId, sessionId);
 
-     // Variants are required for pricing - products don't have base prices
-     if (!dto.variantId) {
-       throw new BadRequestException('Variant ID is required for pricing');
-     }
-
-     const variant = await this.prisma.productVariant.findUnique({
-       where: { id: dto.variantId },
-       include: { product: true }, // Include product to validate it exists
-     });
-
-     if (!variant) {
-       throw new NotFoundException('Variant not found');
-     }
-
-     // Check stock availability
-     const requestedQuantity = dto.quantity ?? 1;
-     if (requestedQuantity > variant.stock) {
-       throw new BadRequestException(
-         `Insufficient stock. Available: ${variant.stock}, Requested: ${requestedQuantity}`
-       );
-     }
-
-     return this.prisma.cartItem.upsert({
-       where: {
-         cartId_productId_variantId: {
-           cartId: cart.id,
-           productId: variant.productId,
-           variantId: variant.id,
-         },
-       },
-       update: {
-         quantity: {
-           increment: requestedQuantity,
-         },
-       },
-       create: {
-         cartId: cart.id,
-         productId: variant.productId,
-         variantId: variant.id,
-         quantity: requestedQuantity,
-         price: variant.priceIdr,
-       },
-     });
-   }
-
-// Update Quantity
-    async updateItemQuantity(itemId: string, quantity: number) {
-      if (quantity <= 0) {
-        return this.removeItem(itemId);
-      }
-
-      // Get cart item with variant to check stock
-      const cartItem = await this.prisma.cartItem.findUnique({
-        where: { id: itemId },
-        include: { variant: true },
-      });
-
-      if (!cartItem) {
-        throw new NotFoundException('Cart item not found');
-      }
-
-      // Check stock availability (only if variant exists)
-      if (cartItem.variant && quantity > cartItem.variant.stock) {
-        throw new BadRequestException(
-          `Insufficient stock. Available: ${cartItem.variant.stock}, Requested: ${quantity}`
-        );
-      }
-
-      return this.prisma.cartItem.update({
-        where: { id: itemId },
-        data: { quantity },
-      });
+    // Variants are required for pricing - products don't have base prices
+    if (!dto.variantId) {
+      throw new BadRequestException('Variant ID is required for pricing');
     }
 
-  // Remove Item
-  async removeItem(itemId: string) {
-    return this.prisma.cartItem.delete({
-      where: { id: itemId },
+    const variant = await this.prisma.productVariant.findUnique({
+      where: { id: dto.variantId },
+      include: { product: true }, // Include product to validate it exists
     });
+
+    if (!variant) {
+      throw new NotFoundException('Variant not found');
+    }
+
+    // Check stock availability
+    const requestedQuantity = dto.quantity ?? 1;
+    if (requestedQuantity > variant.stock) {
+      throw new BadRequestException(
+        `Insufficient stock. Available: ${variant.stock}, Requested: ${requestedQuantity}`
+      );
+    }
+
+    return this.cartRepo.upsertCartItem({
+      cartId: cart.id,
+      productId: variant.productId,
+      variantId: variant.id,
+      quantity: requestedQuantity,
+      price: variant.priceIdr,
+      increment: true,
+    });
+  }
+
+// Update Quantity
+async updateItemQuantity(itemId: string, quantity: number) {
+    if (quantity <= 0) {
+      return this.removeItem(itemId);
+    }
+
+    const cartItem = await this.cartRepo.findCartItemById(id);
+
+    if (!cartItem) {
+      throw new NotFoundException('Cart item not found');
+    }
+
+    if (cartItem.variant && quantity > cartItem.variant.stock) {
+      throw new BadRequestException(
+        `Insufficient stock. Available: ${cartItem.variant.stock}, Requested: ${quantity}`
+      );
+    }
+
+    return this.cartRepo.updateCartItemQuantity(itemId, quantity);
+  }
+
+  // Remove Item
+  async removeItem(itemsId: string) {
+    return this.cartRepo.deleteCartItem(itemsId);
   }
 
   // Clear Cart
   async clearCart(cartId: string) {
-    return this.prisma.cartItem.deleteMany({
-      where: { cartId },
-    });
+    return this.cartRepo.deleteCartItems(cartId);
   }
 
   // Get Full Cart (with relations)
   async getCart(userId?: string, sessionId?: string) {
-    const where = userId ? { userId } : { sessionId };
-
-    return this.prisma.cart.findFirst({
-      where,
-      include: {
-        items: {
-          include: {
-            product: true,
-            variant: true,
-          },
-        },
-      },
-    });
+    return this.cartRepo.findCartWithItems(userId, sessionId);
   }
 
   // Merge Guest Cart → User Cart
   async mergeCart(userId: string, sessionId: string) {
-    const guestCart = await this.prisma.cart.findFirst({
-      where: { sessionId },
-      include: { items: true },
-    });
+    const guestCart = await this.cartRepo.findCartBySession(sessionId);
 
     if (!guestCart) return null;
 
     const userCart = await this.getOrCreateCart(userId);
 
     for (const item of guestCart.items) {
-      const where = item.variantId !== null && item.variantId !== undefined
-        ? {
-            cartId_productId_variantId: {
-              cartId: userCart.id,
-              productId: item.productId,
-              variantId: item.variantId,
-            },
-          }
-        : {
-            cartId_productId_variantId: {
-              cartId: userCart.id,
-              productId: item.productId,
-              variantId: null as unknown as number,
-            },
-          };
-
-      await this.prisma.cartItem.upsert({
-        where,
-        update: {
-          quantity: { increment: item.quantity },
-        },
-        create: {
-          cartId: userCart.id,
-          productId: item.productId,
-          variantId: item.variantId,
-          quantity: item.quantity,
-          price: item.price,
-        },
+      await this.cartRepo.upsertCartItem({
+        cartId: userCart.id,
+        productId: item.productId,
+        variantId: item.variantId,
+        quantity: item.quantity,
+        price: item.price,
+        increment: true,
       });
     }
 
-     // delete guest cart
-     await this.prisma.cart.delete({
-       where: { id: guestCart.id },
-     });
+    await this.cartRepo.deleteCart(guestCart.id);
 
-     return userCart;
-   }
+    return userCart;
+  }
 
 // Get Cart Totals
     async getCartTotals(userId?: string, sessionId?: string) {
@@ -229,12 +162,6 @@ export class CartService {
 
   // Cleanup Expired Carts (for cron)
   async cleanupExpiredCarts() {
-    return this.prisma.cart.deleteMany({
-      where: {
-        expiresAt: {
-          lt: new Date(),
-        },
-      },
-    });
+    return this.cartRepo.deleteExpiredCarts();
   }
 }
