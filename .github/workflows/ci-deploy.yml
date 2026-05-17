@@ -63,11 +63,13 @@ jobs:
     - name: Install pgvector extension
       shell: bash
       run: |
+        export runner_temp="/tmp"
+        sudo apt-get install -y postgresql-server-dev-all
         cd $runner_temp
         git clone --branch v0.8.2 https://github.com/pgvector/pgvector.git
         cd pgvector
         make
-        make install
+        sudo make install
 
     - name: Checkout repository
       uses: actions/checkout@v4
