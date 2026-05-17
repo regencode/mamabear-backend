@@ -42,7 +42,7 @@ export class ProductsController {
 
   @Get('filter')
   filterProducts(@Query() query: FilterProductsDto) {
-      return this.searchService.findProductsWithFilter(query);
+      return this.productsService.findProductsWithFilter(query);
   }
   @Get('search/suggestions')
   suggestAutocomplete(@Query() query: SearchRequestDto, @Query() options?: SearchAutocompleteOptionsDto) {

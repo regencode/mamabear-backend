@@ -16,6 +16,7 @@ import { ServiceResult } from '@/common/ServiceResult';
 import slugify from 'slugify';
 import { Product } from '@/generated/prisma';
 import { FilterProductsDto } from './dto/filter-products.dto';
+import { FilterPaginationMetaDto, FilterPaginationResponseDto } from './dto/filter-pagination-meta.dto';
 
 @Injectable()
 export class ProductsService {
@@ -27,10 +28,15 @@ export class ProductsService {
     this.logger.setContext(ProductsService.name);
   }
 
-  async findProductsWithFilter(query: FilterProductsDto) {
+  async findProductsWithFilter(query: FilterProductsDto): Promise<FilterPaginationResponseDto<Product>> {
       if(query.minPrice && query.maxPrice && query.minPrice > query.maxPrice) 
           throw new UnprocessableEntityException("Min price must be large than max price");
-      return this.productsRepository.findByFilter(query);
+      const { items, nextCursor } = await this.productsRepository.findByFilter(query);
+      const limit = query.limit ?? 10;
+      return new FilterPaginationResponseDto<Product>(
+        items,
+        new FilterPaginationMetaDto(limit, nextCursor),
+      );
   }
   async findRelatedProducts(slug: string): Promise<ServiceResult<Product[]>> {
       const resolvedProduct = await this.productsRepository.findBySlug(slug);
