@@ -33,6 +33,12 @@ jobs:
           elif [ "$RUNNER_OS" == "Linux" ]; then
             echo "$(pg_config --bindir)" >> $GITHUB_PATH
           fi
+          o
+    - name: Install pgvector
+      run: |
+        sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+        sudo apt-get install postgresql-16-pgvector
+
     - name: Initialize and start PostgreSQL
       shell: bash
       run: |
@@ -59,17 +65,6 @@ jobs:
         echo "creating database..."
 
         createdb --owner="$PGUSERNAME" --username="postgres" "$PGDATABASE"
-
-    - name: Install pgvector extension
-      shell: bash
-      run: |
-        export runner_temp="/tmp"
-        sudo apt-get install -y postgresql-server-dev-all
-        cd $runner_temp
-        git clone --branch v0.8.2 https://github.com/pgvector/pgvector.git
-        cd pgvector
-        make
-        sudo make install
 
     - name: Checkout repository
       uses: actions/checkout@v4
