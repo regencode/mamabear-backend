@@ -20,7 +20,7 @@ import { JwtPayload } from '@/types/JwtPayload';
 
 @UseGuards(ThrottlerGuard)
 @ApiTags('auth')
-@Controller('api/auth')
+@Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

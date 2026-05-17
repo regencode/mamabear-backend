@@ -26,7 +26,7 @@ import { UpdateVariantDto } from '@/variant/dto/update-variant.dto';
 import { VariantService } from '@/variant/variant.service';
 
 @ApiTags('products (admin)')
-@Controller('api/products')
+@Controller('admin/products')
 @UseGuards(new JwtAuthGuard())
 @Roles([Role.ADMIN])
 export class ProductsAdminController {

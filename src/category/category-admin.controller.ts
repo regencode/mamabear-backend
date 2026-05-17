@@ -17,7 +17,7 @@ import { Roles } from '@/auth/decorators/roles.decorator';
 import { Role } from '@/generated/prisma';
 
 @ApiTags('categories (admin)')
-@Controller('api/categories')
+@Controller('admin/categories')
 @UseGuards(JwtAuthGuard)
 @Roles([Role.ADMIN])
 export class CategoryAdminController {
