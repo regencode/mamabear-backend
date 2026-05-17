@@ -25,6 +25,23 @@ export class VariantRepository {
         weightG: dto.weightG,
         sku: dto.sku,
         stock: dto.stock,
+        images: dto.images?.length
+          ? {
+              create: dto.images.map((image) => ({
+                imageUrl: image.imageUrl,
+                publicId: image.publicId,
+                width: image.width,
+                height: image.height,
+                fileSize: image.fileSize,
+                format: image.format,
+                altText: image.altText,
+                sortOrder: image.sortOrder,
+              })),
+            }
+          : undefined,
+      },
+      include: {
+        images: true,
       },
     });
   }
@@ -42,12 +59,34 @@ export class VariantRepository {
         sku: dto.sku,
         stock: dto.stock,
         product: { connect: { id: dto.productId } },
+        images: dto.images?.length
+          ? {
+              create: dto.images.map((image) => ({
+                imageUrl: image.imageUrl,
+                publicId: image.publicId,
+                width: image.width,
+                height: image.height,
+                fileSize: image.fileSize,
+                format: image.format,
+                altText: image.altText,
+                sortOrder: image.sortOrder,
+              })),
+            }
+          : undefined,
+      },
+      include: {
+        images: true,
       },
     });
   }
 
   findProductVariantsByProductId(productId: number) {
-    return this.prisma.productVariant.findMany({ where: { productId } });
+    return this.prisma.productVariant.findMany({
+      where: { productId: productId },
+      include: {
+        images: true,
+      },
+    });
   }
 
   findProductBySlug(productSlug: string) {

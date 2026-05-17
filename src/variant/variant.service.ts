@@ -9,10 +9,14 @@ import { VariantRepository } from './variant.repository';
 import { ServiceResult } from '@/common/ServiceResult';
 import { ProductVariant } from '@/generated/prisma';
 import slugify from 'slugify';
+import { CloudinaryService } from '@/cloudinary/cloudinary.service';
 
 @Injectable()
 export class VariantService {
-  constructor(private readonly repo: VariantRepository) {}
+  constructor(
+    private readonly repo: VariantRepository,
+    private readonly cloudinary: CloudinaryService,
+  ) {}
 
   private generateSku(productSlug: string, variantValue: string): string {
     const base = `${productSlug}-${variantValue}`;
@@ -26,6 +30,7 @@ export class VariantService {
     userId: number,
     variantId: number,
     dto: UpdateVariantDto,
+    files: Express.Multer.File[],
   ): Promise<ServiceResult<ProductVariant>> {
     const variant = await this.repo.findOne(variantId);
     if (!variant) throw new BadRequestException('Variant not found');
@@ -38,7 +43,25 @@ export class VariantService {
       dto.sku = newSku;
     }
 
-    const result = await this.repo.update(variantId, dto);
+    const images = files?.length
+      ? await Promise.all(files.map((file) => this.cloudinary.uploadFile(file)))
+      : [];
+
+    const result = await this.repo.update(variantId, {
+      ...dto,
+      images: images.length
+        ? images.map((image) => ({
+            imageUrl: image.imageUrl,
+            publicId: image.publicId,
+            width: image.width,
+            height: image.height,
+            fileSize: image.fileSize,
+            format: image.format,
+            sortOrder: 0,
+            altText: image.altText,
+          }))
+        : undefined,
+    });
 
     return {
       success: true,
@@ -50,10 +73,12 @@ export class VariantService {
   async createVariant(
     userId: number,
     dto: CreateVariantDto,
+    files: Express.Multer.File[],
   ): Promise<ServiceResult<ProductVariant>> {
     if (!dto.productId) {
       throw new BadRequestException('Product Id must be set!');
     }
+
     const product = await this.repo.findProductById(dto.productId);
     if (!product) throw new BadRequestException('Product not found');
 
@@ -62,7 +87,21 @@ export class VariantService {
       dto.sku = newSku;
     }
 
-    const result = await this.repo.createProductVariant(dto);
+    const images = await this.cloudinary.uploadMultiple(files);
+
+    const result = await this.repo.createProductVariant({
+      ...dto,
+      images: images.map((image, index) => ({
+        imageUrl: image.imageUrl,
+        publicId: image.publicId,
+        width: image.width,
+        height: image.height,
+        fileSize: image.fileSize,
+        format: image.format,
+        altText: image.altText,
+        sortOrder: index,
+      })),
+    });
 
     return {
       success: true,
@@ -86,6 +125,7 @@ export class VariantService {
     productSlug: string,
   ): Promise<ServiceResult<ProductVariant[]>> {
     const resolvedProduct = await this.repo.findProductBySlug(productSlug);
+
     if (!resolvedProduct) {
       throw new NotFoundException(
         `Cannot find product with slug ${productSlug}`,
@@ -94,6 +134,7 @@ export class VariantService {
     const result = await this.repo.findProductVariantsByProductId(
       resolvedProduct.id,
     );
+
     return {
       success: true,
       message: `Found ${result.length} variants for product ${productSlug}`,

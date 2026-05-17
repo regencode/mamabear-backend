@@ -43,17 +43,22 @@ export class ProductsService {
       };
 
       dto.variants.push(defaultVariant);
-      const imageUrls = await this.cloudinary.uploadMultiple(files);
+      const images = await this.cloudinary.uploadMultiple(files);
 
       const generatedSlug = slugify(dto.name, { lower: true, strict: true });
 
       const result = await this.productsRepository.create({
         ...dto,
         slug: generatedSlug,
-        images: imageUrls.map((url, index) => ({
-          imageUrl: url,
+        images: images.map((image) => ({
+          imageUrl: image.imageUrl,
+          publicId: image.publicId,
+          width: image.width,
+          height: image.height,
+          fileSize: image.fileSize,
+          format: image.format,
           sortOrder: 0,
-          altText: `${dto.name} product image ${index + 1}`,
+          altText: image.altText,
         })),
       });
 
@@ -211,21 +216,22 @@ export class ProductsService {
         dto.slug = generatedSlug;
       }
 
-      let images = dto.images;
-
-      if (files?.length) {
-        const imageUrls = await this.cloudinary.uploadMultiple(files);
-
-        images = imageUrls.map((url, index) => ({
-          imageUrl: url,
-          sortOrder: index,
-          altText: `${dto.name ?? 'Product'} product image ${index + 1}`,
-        }));
-      }
+      const images = await Promise.all(
+        files.map((file) => this.cloudinary.uploadFile(file)),
+      );
 
       const result = await this.productsRepository.update(id, {
         ...dto,
-        images,
+        images: images.map((image) => ({
+          imageUrl: image.imageUrl,
+          publicId: image.publicId,
+          width: image.width,
+          height: image.height,
+          fileSize: image.fileSize,
+          format: image.format,
+          sortOrder: 0,
+          altText: image.altText,
+        })),
       });
       this.logger.info({
         level: 'info',

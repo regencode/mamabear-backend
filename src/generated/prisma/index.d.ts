@@ -4238,6 +4238,9 @@ export namespace Prisma {
     productId: number | null
     variantId: number | null
     sortOrder: number | null
+    width: number | null
+    height: number | null
+    fileSize: number | null
   }
 
   export type ProductImageSumAggregateOutputType = {
@@ -4245,6 +4248,9 @@ export namespace Prisma {
     productId: number | null
     variantId: number | null
     sortOrder: number | null
+    width: number | null
+    height: number | null
+    fileSize: number | null
   }
 
   export type ProductImageMinAggregateOutputType = {
@@ -4255,6 +4261,10 @@ export namespace Prisma {
     imageUrl: string | null
     sortOrder: number | null
     altText: string | null
+    width: number | null
+    height: number | null
+    fileSize: number | null
+    format: string | null
   }
 
   export type ProductImageMaxAggregateOutputType = {
@@ -4265,6 +4275,10 @@ export namespace Prisma {
     imageUrl: string | null
     sortOrder: number | null
     altText: string | null
+    width: number | null
+    height: number | null
+    fileSize: number | null
+    format: string | null
   }
 
   export type ProductImageCountAggregateOutputType = {
@@ -4275,6 +4289,10 @@ export namespace Prisma {
     imageUrl: number
     sortOrder: number
     altText: number
+    width: number
+    height: number
+    fileSize: number
+    format: number
     _all: number
   }
 
@@ -4284,6 +4302,9 @@ export namespace Prisma {
     productId?: true
     variantId?: true
     sortOrder?: true
+    width?: true
+    height?: true
+    fileSize?: true
   }
 
   export type ProductImageSumAggregateInputType = {
@@ -4291,6 +4312,9 @@ export namespace Prisma {
     productId?: true
     variantId?: true
     sortOrder?: true
+    width?: true
+    height?: true
+    fileSize?: true
   }
 
   export type ProductImageMinAggregateInputType = {
@@ -4301,6 +4325,10 @@ export namespace Prisma {
     imageUrl?: true
     sortOrder?: true
     altText?: true
+    width?: true
+    height?: true
+    fileSize?: true
+    format?: true
   }
 
   export type ProductImageMaxAggregateInputType = {
@@ -4311,6 +4339,10 @@ export namespace Prisma {
     imageUrl?: true
     sortOrder?: true
     altText?: true
+    width?: true
+    height?: true
+    fileSize?: true
+    format?: true
   }
 
   export type ProductImageCountAggregateInputType = {
@@ -4321,6 +4353,10 @@ export namespace Prisma {
     imageUrl?: true
     sortOrder?: true
     altText?: true
+    width?: true
+    height?: true
+    fileSize?: true
+    format?: true
     _all?: true
   }
 
@@ -4418,6 +4454,10 @@ export namespace Prisma {
     imageUrl: string
     sortOrder: number
     altText: string | null
+    width: number | null
+    height: number | null
+    fileSize: number | null
+    format: string | null
     _count: ProductImageCountAggregateOutputType | null
     _avg: ProductImageAvgAggregateOutputType | null
     _sum: ProductImageSumAggregateOutputType | null
@@ -4447,6 +4487,10 @@ export namespace Prisma {
     imageUrl?: boolean
     sortOrder?: boolean
     altText?: boolean
+    width?: boolean
+    height?: boolean
+    fileSize?: boolean
+    format?: boolean
     product?: boolean | ProductImage$productArgs<ExtArgs>
     variant?: boolean | ProductImage$variantArgs<ExtArgs>
   }, ExtArgs["result"]["productImage"]>
@@ -4459,6 +4503,10 @@ export namespace Prisma {
     imageUrl?: boolean
     sortOrder?: boolean
     altText?: boolean
+    width?: boolean
+    height?: boolean
+    fileSize?: boolean
+    format?: boolean
     product?: boolean | ProductImage$productArgs<ExtArgs>
     variant?: boolean | ProductImage$variantArgs<ExtArgs>
   }, ExtArgs["result"]["productImage"]>
@@ -4471,6 +4519,10 @@ export namespace Prisma {
     imageUrl?: boolean
     sortOrder?: boolean
     altText?: boolean
+    width?: boolean
+    height?: boolean
+    fileSize?: boolean
+    format?: boolean
     product?: boolean | ProductImage$productArgs<ExtArgs>
     variant?: boolean | ProductImage$variantArgs<ExtArgs>
   }, ExtArgs["result"]["productImage"]>
@@ -4483,9 +4535,13 @@ export namespace Prisma {
     imageUrl?: boolean
     sortOrder?: boolean
     altText?: boolean
+    width?: boolean
+    height?: boolean
+    fileSize?: boolean
+    format?: boolean
   }
 
-  export type ProductImageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "publicId" | "variantId" | "imageUrl" | "sortOrder" | "altText", ExtArgs["result"]["productImage"]>
+  export type ProductImageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "publicId" | "variantId" | "imageUrl" | "sortOrder" | "altText" | "width" | "height" | "fileSize" | "format", ExtArgs["result"]["productImage"]>
   export type ProductImageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductImage$productArgs<ExtArgs>
     variant?: boolean | ProductImage$variantArgs<ExtArgs>
@@ -4513,6 +4569,10 @@ export namespace Prisma {
       imageUrl: string
       sortOrder: number
       altText: string | null
+      width: number | null
+      height: number | null
+      fileSize: number | null
+      format: string | null
     }, ExtArgs["result"]["productImage"]>
     composites: {}
   }
@@ -4945,6 +5005,10 @@ export namespace Prisma {
     readonly imageUrl: FieldRef<"ProductImage", 'String'>
     readonly sortOrder: FieldRef<"ProductImage", 'Int'>
     readonly altText: FieldRef<"ProductImage", 'String'>
+    readonly width: FieldRef<"ProductImage", 'Int'>
+    readonly height: FieldRef<"ProductImage", 'Int'>
+    readonly fileSize: FieldRef<"ProductImage", 'Int'>
+    readonly format: FieldRef<"ProductImage", 'String'>
   }
     
 
@@ -8879,11 +8943,17 @@ export namespace Prisma {
   export type CategoryAvgAggregateOutputType = {
     id: number | null
     sortOrder: number | null
+    width: number | null
+    height: number | null
+    fileSize: number | null
   }
 
   export type CategorySumAggregateOutputType = {
     id: number | null
     sortOrder: number | null
+    width: number | null
+    height: number | null
+    fileSize: number | null
   }
 
   export type CategoryMinAggregateOutputType = {
@@ -8891,11 +8961,17 @@ export namespace Prisma {
     name: string | null
     slug: string | null
     description: string | null
-    imageUrl: string | null
     isActive: boolean | null
     sortOrder: number | null
     createdAt: Date | null
     updatedAt: Date | null
+    imageUrl: string | null
+    publicId: string | null
+    altText: string | null
+    width: number | null
+    height: number | null
+    fileSize: number | null
+    format: string | null
   }
 
   export type CategoryMaxAggregateOutputType = {
@@ -8903,11 +8979,17 @@ export namespace Prisma {
     name: string | null
     slug: string | null
     description: string | null
-    imageUrl: string | null
     isActive: boolean | null
     sortOrder: number | null
     createdAt: Date | null
     updatedAt: Date | null
+    imageUrl: string | null
+    publicId: string | null
+    altText: string | null
+    width: number | null
+    height: number | null
+    fileSize: number | null
+    format: string | null
   }
 
   export type CategoryCountAggregateOutputType = {
@@ -8915,11 +8997,17 @@ export namespace Prisma {
     name: number
     slug: number
     description: number
-    imageUrl: number
     isActive: number
     sortOrder: number
     createdAt: number
     updatedAt: number
+    imageUrl: number
+    publicId: number
+    altText: number
+    width: number
+    height: number
+    fileSize: number
+    format: number
     _all: number
   }
 
@@ -8927,11 +9015,17 @@ export namespace Prisma {
   export type CategoryAvgAggregateInputType = {
     id?: true
     sortOrder?: true
+    width?: true
+    height?: true
+    fileSize?: true
   }
 
   export type CategorySumAggregateInputType = {
     id?: true
     sortOrder?: true
+    width?: true
+    height?: true
+    fileSize?: true
   }
 
   export type CategoryMinAggregateInputType = {
@@ -8939,11 +9033,17 @@ export namespace Prisma {
     name?: true
     slug?: true
     description?: true
-    imageUrl?: true
     isActive?: true
     sortOrder?: true
     createdAt?: true
     updatedAt?: true
+    imageUrl?: true
+    publicId?: true
+    altText?: true
+    width?: true
+    height?: true
+    fileSize?: true
+    format?: true
   }
 
   export type CategoryMaxAggregateInputType = {
@@ -8951,11 +9051,17 @@ export namespace Prisma {
     name?: true
     slug?: true
     description?: true
-    imageUrl?: true
     isActive?: true
     sortOrder?: true
     createdAt?: true
     updatedAt?: true
+    imageUrl?: true
+    publicId?: true
+    altText?: true
+    width?: true
+    height?: true
+    fileSize?: true
+    format?: true
   }
 
   export type CategoryCountAggregateInputType = {
@@ -8963,11 +9069,17 @@ export namespace Prisma {
     name?: true
     slug?: true
     description?: true
-    imageUrl?: true
     isActive?: true
     sortOrder?: true
     createdAt?: true
     updatedAt?: true
+    imageUrl?: true
+    publicId?: true
+    altText?: true
+    width?: true
+    height?: true
+    fileSize?: true
+    format?: true
     _all?: true
   }
 
@@ -9062,11 +9174,17 @@ export namespace Prisma {
     name: string
     slug: string
     description: string | null
-    imageUrl: string | null
     isActive: boolean
     sortOrder: number
     createdAt: Date
     updatedAt: Date
+    imageUrl: string | null
+    publicId: string
+    altText: string | null
+    width: number | null
+    height: number | null
+    fileSize: number | null
+    format: string | null
     _count: CategoryCountAggregateOutputType | null
     _avg: CategoryAvgAggregateOutputType | null
     _sum: CategorySumAggregateOutputType | null
@@ -9093,11 +9211,17 @@ export namespace Prisma {
     name?: boolean
     slug?: boolean
     description?: boolean
-    imageUrl?: boolean
     isActive?: boolean
     sortOrder?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    imageUrl?: boolean
+    publicId?: boolean
+    altText?: boolean
+    width?: boolean
+    height?: boolean
+    fileSize?: boolean
+    format?: boolean
     products?: boolean | Category$productsArgs<ExtArgs>
     _count?: boolean | CategoryCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["category"]>
@@ -9107,11 +9231,17 @@ export namespace Prisma {
     name?: boolean
     slug?: boolean
     description?: boolean
-    imageUrl?: boolean
     isActive?: boolean
     sortOrder?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    imageUrl?: boolean
+    publicId?: boolean
+    altText?: boolean
+    width?: boolean
+    height?: boolean
+    fileSize?: boolean
+    format?: boolean
   }, ExtArgs["result"]["category"]>
 
   export type CategorySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9119,11 +9249,17 @@ export namespace Prisma {
     name?: boolean
     slug?: boolean
     description?: boolean
-    imageUrl?: boolean
     isActive?: boolean
     sortOrder?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    imageUrl?: boolean
+    publicId?: boolean
+    altText?: boolean
+    width?: boolean
+    height?: boolean
+    fileSize?: boolean
+    format?: boolean
   }, ExtArgs["result"]["category"]>
 
   export type CategorySelectScalar = {
@@ -9131,14 +9267,20 @@ export namespace Prisma {
     name?: boolean
     slug?: boolean
     description?: boolean
-    imageUrl?: boolean
     isActive?: boolean
     sortOrder?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    imageUrl?: boolean
+    publicId?: boolean
+    altText?: boolean
+    width?: boolean
+    height?: boolean
+    fileSize?: boolean
+    format?: boolean
   }
 
-  export type CategoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "description" | "imageUrl" | "isActive" | "sortOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["category"]>
+  export type CategoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "description" | "isActive" | "sortOrder" | "createdAt" | "updatedAt" | "imageUrl" | "publicId" | "altText" | "width" | "height" | "fileSize" | "format", ExtArgs["result"]["category"]>
   export type CategoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     products?: boolean | Category$productsArgs<ExtArgs>
     _count?: boolean | CategoryCountOutputTypeDefaultArgs<ExtArgs>
@@ -9156,11 +9298,17 @@ export namespace Prisma {
       name: string
       slug: string
       description: string | null
-      imageUrl: string | null
       isActive: boolean
       sortOrder: number
       createdAt: Date
       updatedAt: Date
+      imageUrl: string | null
+      publicId: string
+      altText: string | null
+      width: number | null
+      height: number | null
+      fileSize: number | null
+      format: string | null
     }, ExtArgs["result"]["category"]>
     composites: {}
   }
@@ -9589,11 +9737,17 @@ export namespace Prisma {
     readonly name: FieldRef<"Category", 'String'>
     readonly slug: FieldRef<"Category", 'String'>
     readonly description: FieldRef<"Category", 'String'>
-    readonly imageUrl: FieldRef<"Category", 'String'>
     readonly isActive: FieldRef<"Category", 'Boolean'>
     readonly sortOrder: FieldRef<"Category", 'Int'>
     readonly createdAt: FieldRef<"Category", 'DateTime'>
     readonly updatedAt: FieldRef<"Category", 'DateTime'>
+    readonly imageUrl: FieldRef<"Category", 'String'>
+    readonly publicId: FieldRef<"Category", 'String'>
+    readonly altText: FieldRef<"Category", 'String'>
+    readonly width: FieldRef<"Category", 'Int'>
+    readonly height: FieldRef<"Category", 'Int'>
+    readonly fileSize: FieldRef<"Category", 'Int'>
+    readonly format: FieldRef<"Category", 'String'>
   }
     
 
@@ -11254,7 +11408,11 @@ export namespace Prisma {
     variantId: 'variantId',
     imageUrl: 'imageUrl',
     sortOrder: 'sortOrder',
-    altText: 'altText'
+    altText: 'altText',
+    width: 'width',
+    height: 'height',
+    fileSize: 'fileSize',
+    format: 'format'
   };
 
   export type ProductImageScalarFieldEnum = (typeof ProductImageScalarFieldEnum)[keyof typeof ProductImageScalarFieldEnum]
@@ -11304,11 +11462,17 @@ export namespace Prisma {
     name: 'name',
     slug: 'slug',
     description: 'description',
-    imageUrl: 'imageUrl',
     isActive: 'isActive',
     sortOrder: 'sortOrder',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    imageUrl: 'imageUrl',
+    publicId: 'publicId',
+    altText: 'altText',
+    width: 'width',
+    height: 'height',
+    fileSize: 'fileSize',
+    format: 'format'
   };
 
   export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
@@ -11672,6 +11836,10 @@ export namespace Prisma {
     imageUrl?: StringFilter<"ProductImage"> | string
     sortOrder?: IntFilter<"ProductImage"> | number
     altText?: StringNullableFilter<"ProductImage"> | string | null
+    width?: IntNullableFilter<"ProductImage"> | number | null
+    height?: IntNullableFilter<"ProductImage"> | number | null
+    fileSize?: IntNullableFilter<"ProductImage"> | number | null
+    format?: StringNullableFilter<"ProductImage"> | string | null
     product?: XOR<ProductNullableScalarRelationFilter, ProductWhereInput> | null
     variant?: XOR<ProductVariantNullableScalarRelationFilter, ProductVariantWhereInput> | null
   }
@@ -11684,6 +11852,10 @@ export namespace Prisma {
     imageUrl?: SortOrder
     sortOrder?: SortOrder
     altText?: SortOrderInput | SortOrder
+    width?: SortOrderInput | SortOrder
+    height?: SortOrderInput | SortOrder
+    fileSize?: SortOrderInput | SortOrder
+    format?: SortOrderInput | SortOrder
     product?: ProductOrderByWithRelationInput
     variant?: ProductVariantOrderByWithRelationInput
   }
@@ -11699,6 +11871,10 @@ export namespace Prisma {
     imageUrl?: StringFilter<"ProductImage"> | string
     sortOrder?: IntFilter<"ProductImage"> | number
     altText?: StringNullableFilter<"ProductImage"> | string | null
+    width?: IntNullableFilter<"ProductImage"> | number | null
+    height?: IntNullableFilter<"ProductImage"> | number | null
+    fileSize?: IntNullableFilter<"ProductImage"> | number | null
+    format?: StringNullableFilter<"ProductImage"> | string | null
     product?: XOR<ProductNullableScalarRelationFilter, ProductWhereInput> | null
     variant?: XOR<ProductVariantNullableScalarRelationFilter, ProductVariantWhereInput> | null
   }, "id" | "publicId">
@@ -11711,6 +11887,10 @@ export namespace Prisma {
     imageUrl?: SortOrder
     sortOrder?: SortOrder
     altText?: SortOrderInput | SortOrder
+    width?: SortOrderInput | SortOrder
+    height?: SortOrderInput | SortOrder
+    fileSize?: SortOrderInput | SortOrder
+    format?: SortOrderInput | SortOrder
     _count?: ProductImageCountOrderByAggregateInput
     _avg?: ProductImageAvgOrderByAggregateInput
     _max?: ProductImageMaxOrderByAggregateInput
@@ -11729,6 +11909,10 @@ export namespace Prisma {
     imageUrl?: StringWithAggregatesFilter<"ProductImage"> | string
     sortOrder?: IntWithAggregatesFilter<"ProductImage"> | number
     altText?: StringNullableWithAggregatesFilter<"ProductImage"> | string | null
+    width?: IntNullableWithAggregatesFilter<"ProductImage"> | number | null
+    height?: IntNullableWithAggregatesFilter<"ProductImage"> | number | null
+    fileSize?: IntNullableWithAggregatesFilter<"ProductImage"> | number | null
+    format?: StringNullableWithAggregatesFilter<"ProductImage"> | string | null
   }
 
   export type DiscountWhereInput = {
@@ -11946,11 +12130,17 @@ export namespace Prisma {
     name?: StringFilter<"Category"> | string
     slug?: StringFilter<"Category"> | string
     description?: StringNullableFilter<"Category"> | string | null
-    imageUrl?: StringNullableFilter<"Category"> | string | null
     isActive?: BoolFilter<"Category"> | boolean
     sortOrder?: IntFilter<"Category"> | number
     createdAt?: DateTimeFilter<"Category"> | Date | string
     updatedAt?: DateTimeFilter<"Category"> | Date | string
+    imageUrl?: StringNullableFilter<"Category"> | string | null
+    publicId?: StringFilter<"Category"> | string
+    altText?: StringNullableFilter<"Category"> | string | null
+    width?: IntNullableFilter<"Category"> | number | null
+    height?: IntNullableFilter<"Category"> | number | null
+    fileSize?: IntNullableFilter<"Category"> | number | null
+    format?: StringNullableFilter<"Category"> | string | null
     products?: ProductListRelationFilter
   }
 
@@ -11959,40 +12149,58 @@ export namespace Prisma {
     name?: SortOrder
     slug?: SortOrder
     description?: SortOrderInput | SortOrder
-    imageUrl?: SortOrderInput | SortOrder
     isActive?: SortOrder
     sortOrder?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    imageUrl?: SortOrderInput | SortOrder
+    publicId?: SortOrder
+    altText?: SortOrderInput | SortOrder
+    width?: SortOrderInput | SortOrder
+    height?: SortOrderInput | SortOrder
+    fileSize?: SortOrderInput | SortOrder
+    format?: SortOrderInput | SortOrder
     products?: ProductOrderByRelationAggregateInput
   }
 
   export type CategoryWhereUniqueInput = Prisma.AtLeast<{
     id?: number
     slug?: string
+    publicId?: string
     AND?: CategoryWhereInput | CategoryWhereInput[]
     OR?: CategoryWhereInput[]
     NOT?: CategoryWhereInput | CategoryWhereInput[]
     name?: StringFilter<"Category"> | string
     description?: StringNullableFilter<"Category"> | string | null
-    imageUrl?: StringNullableFilter<"Category"> | string | null
     isActive?: BoolFilter<"Category"> | boolean
     sortOrder?: IntFilter<"Category"> | number
     createdAt?: DateTimeFilter<"Category"> | Date | string
     updatedAt?: DateTimeFilter<"Category"> | Date | string
+    imageUrl?: StringNullableFilter<"Category"> | string | null
+    altText?: StringNullableFilter<"Category"> | string | null
+    width?: IntNullableFilter<"Category"> | number | null
+    height?: IntNullableFilter<"Category"> | number | null
+    fileSize?: IntNullableFilter<"Category"> | number | null
+    format?: StringNullableFilter<"Category"> | string | null
     products?: ProductListRelationFilter
-  }, "id" | "slug">
+  }, "id" | "slug" | "publicId">
 
   export type CategoryOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
     description?: SortOrderInput | SortOrder
-    imageUrl?: SortOrderInput | SortOrder
     isActive?: SortOrder
     sortOrder?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    imageUrl?: SortOrderInput | SortOrder
+    publicId?: SortOrder
+    altText?: SortOrderInput | SortOrder
+    width?: SortOrderInput | SortOrder
+    height?: SortOrderInput | SortOrder
+    fileSize?: SortOrderInput | SortOrder
+    format?: SortOrderInput | SortOrder
     _count?: CategoryCountOrderByAggregateInput
     _avg?: CategoryAvgOrderByAggregateInput
     _max?: CategoryMaxOrderByAggregateInput
@@ -12008,11 +12216,17 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"Category"> | string
     slug?: StringWithAggregatesFilter<"Category"> | string
     description?: StringNullableWithAggregatesFilter<"Category"> | string | null
-    imageUrl?: StringNullableWithAggregatesFilter<"Category"> | string | null
     isActive?: BoolWithAggregatesFilter<"Category"> | boolean
     sortOrder?: IntWithAggregatesFilter<"Category"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Category"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Category"> | Date | string
+    imageUrl?: StringNullableWithAggregatesFilter<"Category"> | string | null
+    publicId?: StringWithAggregatesFilter<"Category"> | string
+    altText?: StringNullableWithAggregatesFilter<"Category"> | string | null
+    width?: IntNullableWithAggregatesFilter<"Category"> | number | null
+    height?: IntNullableWithAggregatesFilter<"Category"> | number | null
+    fileSize?: IntNullableWithAggregatesFilter<"Category"> | number | null
+    format?: StringNullableWithAggregatesFilter<"Category"> | string | null
   }
 
   export type ReviewWhereInput = {
@@ -12342,6 +12556,10 @@ export namespace Prisma {
     imageUrl?: string
     sortOrder: number
     altText?: string | null
+    width?: number | null
+    height?: number | null
+    fileSize?: number | null
+    format?: string | null
     product?: ProductCreateNestedOneWithoutImagesInput
     variant?: ProductVariantCreateNestedOneWithoutImagesInput
   }
@@ -12354,6 +12572,10 @@ export namespace Prisma {
     imageUrl?: string
     sortOrder: number
     altText?: string | null
+    width?: number | null
+    height?: number | null
+    fileSize?: number | null
+    format?: string | null
   }
 
   export type ProductImageUpdateInput = {
@@ -12361,6 +12583,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     sortOrder?: IntFieldUpdateOperationsInput | number
     altText?: NullableStringFieldUpdateOperationsInput | string | null
+    width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
     product?: ProductUpdateOneWithoutImagesNestedInput
     variant?: ProductVariantUpdateOneWithoutImagesNestedInput
   }
@@ -12373,6 +12599,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     sortOrder?: IntFieldUpdateOperationsInput | number
     altText?: NullableStringFieldUpdateOperationsInput | string | null
+    width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProductImageCreateManyInput = {
@@ -12383,6 +12613,10 @@ export namespace Prisma {
     imageUrl?: string
     sortOrder: number
     altText?: string | null
+    width?: number | null
+    height?: number | null
+    fileSize?: number | null
+    format?: string | null
   }
 
   export type ProductImageUpdateManyMutationInput = {
@@ -12390,6 +12624,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     sortOrder?: IntFieldUpdateOperationsInput | number
     altText?: NullableStringFieldUpdateOperationsInput | string | null
+    width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProductImageUncheckedUpdateManyInput = {
@@ -12400,6 +12638,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     sortOrder?: IntFieldUpdateOperationsInput | number
     altText?: NullableStringFieldUpdateOperationsInput | string | null
+    width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type DiscountCreateInput = {
@@ -12617,11 +12859,17 @@ export namespace Prisma {
     name: string
     slug: string
     description?: string | null
-    imageUrl?: string | null
     isActive?: boolean
     sortOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    imageUrl?: string | null
+    publicId: string
+    altText?: string | null
+    width?: number | null
+    height?: number | null
+    fileSize?: number | null
+    format?: string | null
     products?: ProductCreateNestedManyWithoutCategoryInput
   }
 
@@ -12630,11 +12878,17 @@ export namespace Prisma {
     name: string
     slug: string
     description?: string | null
-    imageUrl?: string | null
     isActive?: boolean
     sortOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    imageUrl?: string | null
+    publicId: string
+    altText?: string | null
+    width?: number | null
+    height?: number | null
+    fileSize?: number | null
+    format?: string | null
     products?: ProductUncheckedCreateNestedManyWithoutCategoryInput
   }
 
@@ -12642,11 +12896,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publicId?: StringFieldUpdateOperationsInput | string
+    altText?: NullableStringFieldUpdateOperationsInput | string | null
+    width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
     products?: ProductUpdateManyWithoutCategoryNestedInput
   }
 
@@ -12655,11 +12915,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publicId?: StringFieldUpdateOperationsInput | string
+    altText?: NullableStringFieldUpdateOperationsInput | string | null
+    width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
     products?: ProductUncheckedUpdateManyWithoutCategoryNestedInput
   }
 
@@ -12668,22 +12934,34 @@ export namespace Prisma {
     name: string
     slug: string
     description?: string | null
-    imageUrl?: string | null
     isActive?: boolean
     sortOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    imageUrl?: string | null
+    publicId: string
+    altText?: string | null
+    width?: number | null
+    height?: number | null
+    fileSize?: number | null
+    format?: string | null
   }
 
   export type CategoryUpdateManyMutationInput = {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publicId?: StringFieldUpdateOperationsInput | string
+    altText?: NullableStringFieldUpdateOperationsInput | string | null
+    width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CategoryUncheckedUpdateManyInput = {
@@ -12691,11 +12969,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publicId?: StringFieldUpdateOperationsInput | string
+    altText?: NullableStringFieldUpdateOperationsInput | string | null
+    width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ReviewCreateInput = {
@@ -13184,6 +13468,10 @@ export namespace Prisma {
     imageUrl?: SortOrder
     sortOrder?: SortOrder
     altText?: SortOrder
+    width?: SortOrder
+    height?: SortOrder
+    fileSize?: SortOrder
+    format?: SortOrder
   }
 
   export type ProductImageAvgOrderByAggregateInput = {
@@ -13191,6 +13479,9 @@ export namespace Prisma {
     productId?: SortOrder
     variantId?: SortOrder
     sortOrder?: SortOrder
+    width?: SortOrder
+    height?: SortOrder
+    fileSize?: SortOrder
   }
 
   export type ProductImageMaxOrderByAggregateInput = {
@@ -13201,6 +13492,10 @@ export namespace Prisma {
     imageUrl?: SortOrder
     sortOrder?: SortOrder
     altText?: SortOrder
+    width?: SortOrder
+    height?: SortOrder
+    fileSize?: SortOrder
+    format?: SortOrder
   }
 
   export type ProductImageMinOrderByAggregateInput = {
@@ -13211,6 +13506,10 @@ export namespace Prisma {
     imageUrl?: SortOrder
     sortOrder?: SortOrder
     altText?: SortOrder
+    width?: SortOrder
+    height?: SortOrder
+    fileSize?: SortOrder
+    format?: SortOrder
   }
 
   export type ProductImageSumOrderByAggregateInput = {
@@ -13218,6 +13517,9 @@ export namespace Prisma {
     productId?: SortOrder
     variantId?: SortOrder
     sortOrder?: SortOrder
+    width?: SortOrder
+    height?: SortOrder
+    fileSize?: SortOrder
   }
 
   export type DecimalFilter<$PrismaModel = never> = {
@@ -13405,16 +13707,25 @@ export namespace Prisma {
     name?: SortOrder
     slug?: SortOrder
     description?: SortOrder
-    imageUrl?: SortOrder
     isActive?: SortOrder
     sortOrder?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    imageUrl?: SortOrder
+    publicId?: SortOrder
+    altText?: SortOrder
+    width?: SortOrder
+    height?: SortOrder
+    fileSize?: SortOrder
+    format?: SortOrder
   }
 
   export type CategoryAvgOrderByAggregateInput = {
     id?: SortOrder
     sortOrder?: SortOrder
+    width?: SortOrder
+    height?: SortOrder
+    fileSize?: SortOrder
   }
 
   export type CategoryMaxOrderByAggregateInput = {
@@ -13422,11 +13733,17 @@ export namespace Prisma {
     name?: SortOrder
     slug?: SortOrder
     description?: SortOrder
-    imageUrl?: SortOrder
     isActive?: SortOrder
     sortOrder?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    imageUrl?: SortOrder
+    publicId?: SortOrder
+    altText?: SortOrder
+    width?: SortOrder
+    height?: SortOrder
+    fileSize?: SortOrder
+    format?: SortOrder
   }
 
   export type CategoryMinOrderByAggregateInput = {
@@ -13434,16 +13751,25 @@ export namespace Prisma {
     name?: SortOrder
     slug?: SortOrder
     description?: SortOrder
-    imageUrl?: SortOrder
     isActive?: SortOrder
     sortOrder?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    imageUrl?: SortOrder
+    publicId?: SortOrder
+    altText?: SortOrder
+    width?: SortOrder
+    height?: SortOrder
+    fileSize?: SortOrder
+    format?: SortOrder
   }
 
   export type CategorySumOrderByAggregateInput = {
     id?: SortOrder
     sortOrder?: SortOrder
+    width?: SortOrder
+    height?: SortOrder
+    fileSize?: SortOrder
   }
 
   export type FloatFilter<$PrismaModel = never> = {
@@ -14398,11 +14724,17 @@ export namespace Prisma {
     name: string
     slug: string
     description?: string | null
-    imageUrl?: string | null
     isActive?: boolean
     sortOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    imageUrl?: string | null
+    publicId: string
+    altText?: string | null
+    width?: number | null
+    height?: number | null
+    fileSize?: number | null
+    format?: string | null
   }
 
   export type CategoryUncheckedCreateWithoutProductsInput = {
@@ -14410,11 +14742,17 @@ export namespace Prisma {
     name: string
     slug: string
     description?: string | null
-    imageUrl?: string | null
     isActive?: boolean
     sortOrder?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    imageUrl?: string | null
+    publicId: string
+    altText?: string | null
+    width?: number | null
+    height?: number | null
+    fileSize?: number | null
+    format?: string | null
   }
 
   export type CategoryCreateOrConnectWithoutProductsInput = {
@@ -14447,6 +14785,10 @@ export namespace Prisma {
     imageUrl?: string
     sortOrder: number
     altText?: string | null
+    width?: number | null
+    height?: number | null
+    fileSize?: number | null
+    format?: string | null
     variant?: ProductVariantCreateNestedOneWithoutImagesInput
   }
 
@@ -14457,6 +14799,10 @@ export namespace Prisma {
     imageUrl?: string
     sortOrder: number
     altText?: string | null
+    width?: number | null
+    height?: number | null
+    fileSize?: number | null
+    format?: string | null
   }
 
   export type ProductImageCreateOrConnectWithoutProductInput = {
@@ -14552,11 +14898,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publicId?: StringFieldUpdateOperationsInput | string
+    altText?: NullableStringFieldUpdateOperationsInput | string | null
+    width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CategoryUncheckedUpdateWithoutProductsInput = {
@@ -14564,11 +14916,17 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     sortOrder?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publicId?: StringFieldUpdateOperationsInput | string
+    altText?: NullableStringFieldUpdateOperationsInput | string | null
+    width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type HighlightUpsertWithoutProductsInput = {
@@ -14624,6 +14982,10 @@ export namespace Prisma {
     imageUrl?: StringFilter<"ProductImage"> | string
     sortOrder?: IntFilter<"ProductImage"> | number
     altText?: StringNullableFilter<"ProductImage"> | string | null
+    width?: IntNullableFilter<"ProductImage"> | number | null
+    height?: IntNullableFilter<"ProductImage"> | number | null
+    fileSize?: IntNullableFilter<"ProductImage"> | number | null
+    format?: StringNullableFilter<"ProductImage"> | string | null
   }
 
   export type ProductVariantUpsertWithWhereUniqueWithoutProductInput = {
@@ -14939,6 +15301,10 @@ export namespace Prisma {
     imageUrl?: string
     sortOrder: number
     altText?: string | null
+    width?: number | null
+    height?: number | null
+    fileSize?: number | null
+    format?: string | null
     product?: ProductCreateNestedOneWithoutImagesInput
   }
 
@@ -14949,6 +15315,10 @@ export namespace Prisma {
     imageUrl?: string
     sortOrder: number
     altText?: string | null
+    width?: number | null
+    height?: number | null
+    fileSize?: number | null
+    format?: string | null
   }
 
   export type ProductImageCreateOrConnectWithoutVariantInput = {
@@ -15423,6 +15793,10 @@ export namespace Prisma {
     imageUrl?: string
     sortOrder: number
     altText?: string | null
+    width?: number | null
+    height?: number | null
+    fileSize?: number | null
+    format?: string | null
   }
 
   export type ProductVariantCreateManyProductInput = {
@@ -15453,6 +15827,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     sortOrder?: IntFieldUpdateOperationsInput | number
     altText?: NullableStringFieldUpdateOperationsInput | string | null
+    width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
     variant?: ProductVariantUpdateOneWithoutImagesNestedInput
   }
 
@@ -15463,6 +15841,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     sortOrder?: IntFieldUpdateOperationsInput | number
     altText?: NullableStringFieldUpdateOperationsInput | string | null
+    width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProductImageUncheckedUpdateManyWithoutProductInput = {
@@ -15472,6 +15854,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     sortOrder?: IntFieldUpdateOperationsInput | number
     altText?: NullableStringFieldUpdateOperationsInput | string | null
+    width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProductVariantUpdateWithoutProductInput = {
@@ -15552,6 +15938,10 @@ export namespace Prisma {
     imageUrl?: string
     sortOrder: number
     altText?: string | null
+    width?: number | null
+    height?: number | null
+    fileSize?: number | null
+    format?: string | null
   }
 
   export type ProductImageUpdateWithoutVariantInput = {
@@ -15559,6 +15949,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     sortOrder?: IntFieldUpdateOperationsInput | number
     altText?: NullableStringFieldUpdateOperationsInput | string | null
+    width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
     product?: ProductUpdateOneWithoutImagesNestedInput
   }
 
@@ -15569,6 +15963,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     sortOrder?: IntFieldUpdateOperationsInput | number
     altText?: NullableStringFieldUpdateOperationsInput | string | null
+    width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProductImageUncheckedUpdateManyWithoutVariantInput = {
@@ -15578,6 +15976,10 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     sortOrder?: IntFieldUpdateOperationsInput | number
     altText?: NullableStringFieldUpdateOperationsInput | string | null
+    width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    format?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProductCreateManyHighlightInput = {

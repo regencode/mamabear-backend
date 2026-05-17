@@ -4,6 +4,7 @@ import { VariantRepository } from './variant.repository';
 import { CloudinaryModule } from '@/cloudinary/cloudinary.module';
 
 @Module({
+  imports: [CloudinaryModule],
   providers: [VariantService, VariantRepository],
   exports: [VariantService, VariantRepository],
 })

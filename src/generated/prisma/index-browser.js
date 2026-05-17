@@ -160,7 +160,11 @@ exports.Prisma.ProductImageScalarFieldEnum = {
   variantId: 'variantId',
   imageUrl: 'imageUrl',
   sortOrder: 'sortOrder',
-  altText: 'altText'
+  altText: 'altText',
+  width: 'width',
+  height: 'height',
+  fileSize: 'fileSize',
+  format: 'format'
 };
 
 exports.Prisma.DiscountScalarFieldEnum = {
@@ -198,11 +202,17 @@ exports.Prisma.CategoryScalarFieldEnum = {
   name: 'name',
   slug: 'slug',
   description: 'description',
-  imageUrl: 'imageUrl',
   isActive: 'isActive',
   sortOrder: 'sortOrder',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  imageUrl: 'imageUrl',
+  publicId: 'publicId',
+  altText: 'altText',
+  width: 'width',
+  height: 'height',
+  fileSize: 'fileSize',
+  format: 'format'
 };
 
 exports.Prisma.ReviewScalarFieldEnum = {

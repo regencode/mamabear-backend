@@ -54,7 +54,9 @@ export class CategoryService {
     file: Express.Multer.File,
   ): Promise<ServiceResult<Category>> {
     const generatedSlug = slugify(dto.name, { lower: true, strict: true });
+
     const resolvedCategory = await this.repo.findBySlug(generatedSlug);
+
     if (resolvedCategory)
       throw new BadRequestException('Category already exists');
 
@@ -62,13 +64,20 @@ export class CategoryService {
       throw new BadRequestException('file needed');
     }
 
-    const imageUrl = await this.cloudinary.uploadFile(file);
+    const { imageUrl, publicId, width, height, fileSize, format, altText } =
+      await this.cloudinary.uploadFile(file);
 
     const result = await this.repo.create({
       name: dto.name,
       slug: generatedSlug,
       description: dto.description,
       imageUrl,
+      publicId,
+      width,
+      height,
+      fileSize,
+      format,
+      altText,
     });
 
     return {
@@ -97,13 +106,20 @@ export class CategoryService {
       dto.slug = generatedSlug;
     }
 
-    const imageUrl = await this.cloudinary.uploadFile(file);
+    const { imageUrl, publicId, width, height, fileSize, format, altText } =
+      await this.cloudinary.uploadFile(file);
 
     const category = await this.repo.update(
       { id: categoryId },
       {
         ...dto,
         imageUrl,
+        publicId,
+        width,
+        height,
+        fileSize,
+        format,
+        altText,
       },
     );
 

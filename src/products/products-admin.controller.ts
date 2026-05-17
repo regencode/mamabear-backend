@@ -99,13 +99,28 @@ export class ProductsAdminController {
   }
 
   @Post(':id/variants')
+  @UseInterceptors(
+    FilesInterceptor('images', 10, {
+      storage: memoryStorage(),
+      limits: {
+        fileSize: 40 * 1024 * 1024,
+      },
+      fileFilter(req, file, callback) {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|webp)$/)) {
+          return callback(new BadRequestException('Invalid file type'), false);
+        }
+        callback(null, true);
+      },
+    }),
+  )
   createProductVariant(
     @Req() req,
     @Param('id') id: number,
     @Body() dto: CreateVariantDto,
+    @UploadedFiles() files: Express.Multer.File[],
   ) {
     dto.productId = id;
-    return this.variantService.createVariant(req.user.id, dto);
+    return this.variantService.createVariant(req.user.id, dto, files);
   }
 
   @Get(':id/variants')
@@ -136,12 +151,27 @@ export class ProductsAdminController {
   }
 
   @Put('variants/:id')
+  @UseInterceptors(
+    FilesInterceptor('images', 10, {
+      storage: memoryStorage(),
+      limits: {
+        fileSize: 40 * 1024 * 1024,
+      },
+      fileFilter(req, file, callback) {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|webp)$/)) {
+          return callback(new BadRequestException('Invalid file type'), false);
+        }
+        callback(null, true);
+      },
+    }),
+  )
   updateVariant(
     @Req() req,
     @Param('id') id: number,
     @Body() dto: UpdateVariantDto,
+    @UploadedFiles() files: Express.Multer.File[],
   ) {
-    return this.variantService.updateVariant(req.user.id, id, dto);
+    return this.variantService.updateVariant(req.user.id, id, dto, files);
   }
 
   @Delete('variants/:id')

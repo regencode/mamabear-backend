@@ -8,23 +8,13 @@ export class UploadRepository {
 
   create(data: Prisma.ProductImageCreateInput) {
     return this.prisma.productImage.create({
-      data: {
-        imageUrl: data.imageUrl,
-        altText: data.altText,
-        publicId: data.publicId,
-        sortOrder: data.sortOrder,
-      },
+      data,
     });
   }
 
   createMany(data: Prisma.ProductImageCreateManyInput[]) {
     return this.prisma.productImage.createMany({
-      data: data.map((item) => ({
-        imageUrl: item.imageUrl,
-        altText: item.altText,
-        publicId: item.publicId,
-        sortOrder: item.sortOrder,
-      })),
+      data,
     });
   }
 

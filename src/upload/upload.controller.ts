@@ -27,6 +27,11 @@ import { Role } from '@/generated/prisma';
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 
+  @Get('signature')
+  getUploadSignature() {
+    return this.uploadService.getUploadSignature();
+  }
+
   @Post('image')
   @UseInterceptors(
     FileInterceptor('image', {
@@ -42,8 +47,11 @@ export class UploadController {
       },
     }),
   )
-  uploadSingleImage(@UploadedFile() file: Express.Multer.File) {
-    return this.uploadService.uploadImage(file);
+  uploadSingleImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() dto: CreateUploadDto,
+  ) {
+    return this.uploadService.uploadImage(file, dto);
   }
 
   @Post('images')
@@ -61,8 +69,11 @@ export class UploadController {
       },
     }),
   )
-  uploadMultipleImages(@UploadedFiles() files: Express.Multer.File[]) {
-    return this.uploadService.uploadImages(files);
+  uploadMultipleImages(
+    @UploadedFiles() files: Express.Multer.File[],
+    @Body() dto: CreateUploadDto,
+  ) {
+    return this.uploadService.uploadImages(files, dto);
   }
 
   @Delete('image/:id')

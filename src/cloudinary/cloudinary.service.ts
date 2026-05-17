@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { v2 as cloudinary } from 'cloudinary';
 @Injectable()
 export class CloudinaryService {
@@ -10,15 +14,24 @@ export class CloudinaryService {
     });
   }
 
-  async uploadFile(
-    file: Express.Multer.File,
-  ): Promise<{ imageUrl: string; publicId: string }> {
+  async uploadFile(file: Express.Multer.File): Promise<{
+    imageUrl: string;
+    publicId: string;
+    width: number;
+    height: number;
+    fileSize: number;
+    format: string;
+    altText: string;
+  }> {
     try {
       return new Promise((resolve, reject) => {
+        const altText = file.originalname.split('.').slice(0, -1).join('.');
         const stream = cloudinary.uploader.upload_stream(
           {
             folder: 'products',
+            transformation: [{ quality: 'auto' }, { fetch_format: 'auto' }],
           },
+
           (err, result) => {
             if (err) {
               reject(err);
@@ -26,6 +39,11 @@ export class CloudinaryService {
               resolve({
                 imageUrl: result!.secure_url,
                 publicId: result!.public_id,
+                width: result!.width,
+                height: result!.height,
+                fileSize: result!.bytes,
+                format: result!.format,
+                altText: altText,
               });
             }
           },
@@ -35,6 +53,10 @@ export class CloudinaryService {
     } catch (error) {
       throw new InternalServerErrorException('Upload ke Cloudinary gagal');
     }
+  }
+
+  async uploadMultiple(files: Express.Multer.File[]) {
+    return Promise.all(files.map((file) => this.uploadFile(file)));
   }
 
   async deleteFile(publicId: string) {
@@ -55,7 +77,52 @@ export class CloudinaryService {
     }
   }
 
-  async uploadMultiple(files: Express.Multer.File[]) {
-    return Promise.all(files.map((file) => this.uploadFile(file)));
+  async generateUploadSignature() {
+    const timestamp = Math.round(Date.now() / 1000);
+    const folder = 'products';
+
+    const signature = cloudinary.utils.api_sign_request(
+      {
+        timestamp,
+        folder,
+      },
+      process.env.CLOUDINARY_API_SECRET!,
+    );
+
+    return {
+      timestamp,
+      signature,
+      apiKey: process.env.CLOUDINARY_API_KEY,
+      cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+      folder,
+    };
+  }
+
+  private async validateDimensions(image: {
+    publicId: string;
+    width: number;
+    height: number;
+  }) {
+    const MIN_WIDTH = 300;
+    const MIN_HEIGHT = 300;
+
+    const Max_WIDTH = 5000;
+    const Max_HEIGHT = 5000;
+
+    if (image.width < MIN_WIDTH || image.height < MIN_HEIGHT) {
+      await this.deleteFile(image.publicId);
+
+      throw new BadRequestException(
+        `Image dimensions must be at least ${MIN_WIDTH}x${MIN_HEIGHT}px`,
+      );
+    }
+
+    if (image.width > Max_WIDTH || image.height > Max_HEIGHT) {
+      await this.deleteFile(image.publicId);
+
+      throw new BadRequestException(
+        `Image dimensions must be less than ${Max_WIDTH}x${Max_HEIGHT}px`,
+      );
+    }
   }
 }

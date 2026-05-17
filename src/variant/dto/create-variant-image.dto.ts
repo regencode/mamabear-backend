@@ -1,7 +1,7 @@
 import { IsInt, IsOptional, IsString, IsNotEmpty } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export class CreateProductImageDto {
+export class CreateVariantImageDto {
   @ApiProperty({
     example:
       'https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/AlmonMix/AlmonMix-01.jpg',

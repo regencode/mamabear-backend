@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UploadRepository } from './upload.repository';
 import { CloudinaryService } from '@/cloudinary/cloudinary.service';
+import { CreateUploadDto } from './dto/create-upload.dto';
 
 @Injectable()
 export class UploadService {
@@ -8,20 +9,25 @@ export class UploadService {
     private readonly repo: UploadRepository,
     private readonly cloudinary: CloudinaryService,
   ) {}
-  async uploadImage(file: Express.Multer.File) {
+  async uploadImage(file: Express.Multer.File, dto: CreateUploadDto) {
     if (!file) {
       throw new BadRequestException('file needed');
     }
 
-    const { imageUrl, publicId } = await this.cloudinary.uploadFile(file);
-
-    const altText = file.originalname.split('.').slice(0, -1).join('.');
+    const { imageUrl, publicId, width, height, fileSize, format, altText } =
+      await this.cloudinary.uploadFile(file);
 
     const result = await this.repo.create({
       imageUrl: imageUrl,
       altText: altText,
       publicId,
-      sortOrder: 0,
+      width,
+      height,
+      fileSize,
+      format,
+      ...(dto.productId ? { product: { connect: { id: dto.productId } } } : {}),
+      ...(dto.variantId ? { variant: { connect: { id: dto.variantId } } } : {}),
+      sortOrder: dto.sortOrder ?? 0,
     });
 
     return {
@@ -29,13 +35,13 @@ export class UploadService {
       message: 'Image uploaded successfully',
       data: {
         id: result.id,
-        altText: altText,
+        altText: result.altText,
         imageUrl: result.imageUrl,
       },
     };
   }
 
-  async uploadImages(files: Express.Multer.File[]) {
+  async uploadImages(files: Express.Multer.File[], dto: CreateUploadDto) {
     if (!files || files.length === 0) {
       throw new BadRequestException('At least one file is required');
     }
@@ -44,16 +50,22 @@ export class UploadService {
       files.map((file) => this.cloudinary.uploadFile(file)),
     );
 
-    const altText = files.map((file) =>
-      file.originalname.split('.').slice(0, -1).join('.'),
-    );
-
     const result = await this.repo.createMany(
-      images.map((image, index) => ({
+      images.map((image) => ({
         imageUrl: image.imageUrl,
-        altText: altText[index],
+        altText: image.altText,
         publicId: image.publicId,
-        sortOrder: 0,
+        width: image.width,
+        height: image.height,
+        fileSize: image.fileSize,
+        format: image.format,
+        ...(dto.productId
+          ? { product: { connect: { id: dto.productId } } }
+          : {}),
+        ...(dto.variantId
+          ? { variant: { connect: { id: dto.variantId } } }
+          : {}),
+        sortOrder: dto.sortOrder ?? 0,
       })),
     );
 
@@ -63,6 +75,7 @@ export class UploadService {
       data: result,
     };
   }
+
   async deleteImage(imageId: number) {
     const image = await this.repo.findById(imageId);
 
@@ -77,6 +90,14 @@ export class UploadService {
     return {
       success: true,
       message: `Image with ${image.altText} deleted successfully`,
+    };
+  }
+
+  getUploadSignature() {
+    return {
+      success: true,
+      message: 'Upload signature generated successfully',
+      data: this.cloudinary.generateUploadSignature(),
     };
   }
 

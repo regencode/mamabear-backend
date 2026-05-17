@@ -47,7 +47,12 @@ export class ProductsRepository {
   }
 
   findMany() {
-    return this.prisma.product.findMany({ include: PRODUCT_INCLUDE });
+    return this.prisma.product.findMany({
+      include: {
+        ...PRODUCT_INCLUDE,
+        variants: { include: { images: true } },
+      },
+    });
   }
 
   findById(id: number) {
@@ -77,6 +82,11 @@ export class ProductsRepository {
             createMany: {
               data: images.map((img) => ({
                 imageUrl: img.imageUrl,
+                publicId: img.publicId,
+                width: img.width,
+                height: img.height,
+                fileSize: img.fileSize,
+                format: img.format,
                 sortOrder: img.sortOrder,
                 altText: img.altText,
               })),
