@@ -13,8 +13,7 @@ import { MailService } from './mail.service';
 import { JwtService } from '@nestjs/jwt';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
-import { CreateUserDto } from '@/users/dto/create-user.dto';
-import { Role } from '@/generated/prisma';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -27,7 +26,7 @@ export class AuthService {
     this.logger.setContext(AuthService.name);
   }
 
-  async login(dto: LoginUserDto) {
+  async login(dto: LoginUserDto, res: Response) {
     try {
       const user = await this.repo.findEmail(dto.email);
 
@@ -99,9 +98,23 @@ export class AuthService {
         status: 'success',
       });
 
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.REFRESHTOKEN_ENV === 'REFRESHTOKEN_ENV',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
+      res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: process.env.REFRESHTOKEN_ENV === 'REFRESHTOKEN_ENV',
+        sameSite: 'lax',
+        maxAge: 15 * 60 * 1000,
+      });
+
       return {
-        accessToken,
-        refreshToken,
+        success: true,
+        message: 'Login successful',
       };
     } catch (error: any) {
       if (
@@ -253,7 +266,7 @@ export class AuthService {
     }
   }
 
-  async refreshToken(refreshToken: string) {
+  async refreshToken(refreshToken: string, res: Response) {
     try {
       const payload = await this.jwtService.verifyAsync(refreshToken, {
         secret: process.env.JWT_REFRESH_SECRET,
@@ -317,9 +330,38 @@ export class AuthService {
         role: user.role,
       };
 
+      const newRefreshToken = await this.jwtService.signAsync(newPayload, {
+        secret: process.env.JWT_REFRESH_SECRET,
+        expiresIn: '7d',
+      });
+
       const newAccessToken = await this.jwtService.signAsync(newPayload, {
         secret: process.env.JWT_ACCESS_SECRET,
         expiresIn: '15m',
+      });
+
+      const hashedRefreshToken = await bcrypt.hash(newRefreshToken, 10);
+
+      await this.repo.update(
+        { id: user.id },
+        {
+          refreshToken: hashedRefreshToken,
+          refreshTokenExpiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        },
+      );
+
+      res.cookie('refreshToken', newRefreshToken, {
+        httpOnly: true,
+        secure: process.env.REFRESHTOKEN_ENV === 'REFRESHTOKEN_ENV',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
+      res.cookie('accessToken', newAccessToken, {
+        httpOnly: true,
+        secure: process.env.REFRESHTOKEN_ENV === 'REFRESHTOKEN_ENV',
+        sameSite: 'lax',
+        maxAge: 15 * 60 * 1000,
       });
 
       this.logger.info({
@@ -331,7 +373,8 @@ export class AuthService {
       });
 
       return {
-        accessToken: newAccessToken,
+        success: true,
+        message: 'Token refreshed successfully',
       };
     } catch (error: any) {
       if (
@@ -351,7 +394,7 @@ export class AuthService {
     }
   }
 
-  async logout(userId: string) {
+  async logout(userId: string, res: Response) {
     try {
       const user = await this.repo.findUserById(userId);
 
@@ -365,6 +408,9 @@ export class AuthService {
         });
         throw new BadRequestException('User not found');
       }
+
+      res.clearCookie('refreshToken');
+      res.clearCookie('accessToken');
 
       await this.repo.update(
         { id: user.id },
@@ -383,6 +429,7 @@ export class AuthService {
       });
 
       return {
+        success: true,
         message: 'Logout success',
       };
     } catch (error: any) {

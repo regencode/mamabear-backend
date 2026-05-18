@@ -7,6 +7,7 @@ import {
   Param,
   Req,
   UseGuards,
+  Res,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -18,6 +19,7 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { JwtPayload } from '@/types/JwtPayload';
 import { RefreshGuard } from './guard/refresh.guard';
+import { Request, Response } from 'express';
 
 @UseGuards(ThrottlerGuard)
 @ApiTags('auth')
@@ -27,18 +29,18 @@ export class AuthController {
 
   @Throttle({
     default: {
-      limit: 10,
+      limit: 50,
       ttl: 300_000,
     },
   })
   @Post('/login')
-  login(@Body() dto: LoginUserDto) {
-    return this.authService.login(dto);
+  login(@Body() dto: LoginUserDto, @Res({ passthrough: true }) res: Response) {
+    return this.authService.login(dto, res);
   }
 
   @Throttle({
     default: {
-      limit: 5,
+      limit: 50,
       ttl: 300_000,
     },
   })
@@ -49,25 +51,29 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('/logout')
-  logout(@Req() req: JwtPayload) {
-    return this.authService.logout(req.sub);
+  logout(@Req() req: JwtPayload, @Res({ passthrough: true }) res: Response) {
+    return this.authService.logout(req.sub, res);
   }
 
   @Throttle({
     default: {
-      limit: 10,
+      limit: 50,
       ttl: 300_000,
     },
   })
   @Post('/refresh')
   @UseGuards(RefreshGuard)
-  refresh(@Body() dto: RefreshTokenDto) {
-    return this.authService.refreshToken(dto.refreshToken);
+  async refresh(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const refreshToken = req.cookies['refreshToken'];
+    return this.authService.refreshToken(refreshToken, res);
   }
 
   @Throttle({
     default: {
-      limit: 5,
+      limit: 50,
       ttl: 300_000,
     },
   })
@@ -78,7 +84,7 @@ export class AuthController {
 
   @Throttle({
     default: {
-      limit: 5,
+      limit: 50,
       ttl: 300_000,
     },
   })
@@ -89,7 +95,7 @@ export class AuthController {
 
   @Throttle({
     default: {
-      limit: 5,
+      limit: 50,
       ttl: 300_000,
     },
   })

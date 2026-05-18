@@ -1,38 +1,57 @@
 import 'dotenv/config';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Request } from 'express';
 
 @Injectable()
-export class RefreshJwtStrategy extends PassportStrategy(Strategy) {
+export class RefreshJwtStrategy extends PassportStrategy(
+  Strategy,
+  'refresh-jwt',
+) {
   constructor(private readonly prisma: PrismaService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: (req: Request) => {
+        const token = req?.cookies?.['refreshToken'] ?? null;
+        console.log('=== REFRESH STRATEGY ===');
+        console.log('cookies:', req?.cookies);
+        console.log('token:', token);
+        return req?.cookies?.['refreshToken'] ?? null;
+      },
       secretOrKey: process.env.JWT_REFRESH_SECRET!,
       passReqToCallback: true,
+      ignoreExpiration: false,
     });
   }
-    
+
   async validate(req: Request, payload: any) {
-    const refreshToken = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
-    const resolvedUser = await this.prisma.user.findUnique({
-        where: { id: payload.sub, email: payload.email, refreshToken: refreshToken }
+    const refreshToken = req?.cookies?.['refreshToken'];
+
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token not found');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.sub },
     });
-    if(!resolvedUser) {
-        // invalidate user tokens
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
     }
-    else {
-        if(resolvedUser.refreshTokenExpiry && new Date()  > resolvedUser.refreshTokenExpiry) {
-            // invalidate user tokens and 
-        }
-        console.log('Refresh token validated for user:', payload.sub);
-        return {
-          sub: payload.sub,
-          email: payload.email,
-          role: payload.role,
-        };
+
+    if (!user.refreshToken) {
+      throw new UnauthorizedException('Refresh token not stored');
     }
+
+    if (user.refreshTokenExpiry && new Date() > user.refreshTokenExpiry) {
+      throw new UnauthorizedException('Refresh token expired');
+    }
+
+    return {
+      sub: payload.sub,
+      email: payload.email,
+      role: payload.role,
+    };
   }
 }
