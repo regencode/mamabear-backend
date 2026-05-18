@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { PinoLogger } from 'pino-nestjs';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -15,6 +16,8 @@ import { ServiceResult } from '@/common/ServiceResult';
 import slugify from 'slugify';
 import { Product } from '@/generated/prisma';
 import { CloudinaryService } from '@/cloudinary/cloudinary.service';
+import { FilterProductsDto } from './dto/filter-products.dto';
+import { FilterPaginationMetaDto, FilterPaginationResponseDto } from './dto/filter-pagination-meta.dto';
 
 @Injectable()
 export class ProductsService {
@@ -27,6 +30,26 @@ export class ProductsService {
     this.logger.setContext(ProductsService.name);
   }
 
+  async findProductsWithFilter(query: FilterProductsDto): Promise<FilterPaginationResponseDto<Product>> {
+      if(query.minPrice && query.maxPrice && query.minPrice > query.maxPrice) 
+          throw new UnprocessableEntityException("Min price must be large than max price");
+      const { items, nextCursor } = await this.productsRepository.findByFilter(query);
+      const limit = query.limit ?? 10;
+      return new FilterPaginationResponseDto<Product>(
+        items,
+        new FilterPaginationMetaDto(limit, nextCursor),
+      );
+  }
+  async findRelatedProducts(slug: string): Promise<ServiceResult<Product[]>> {
+      const resolvedProduct = await this.productsRepository.findBySlug(slug);
+      if(!resolvedProduct) throw new BadRequestException(`Cannot find product with slug ${slug}`);
+      const result = await this.productsRepository.findRelated(resolvedProduct.id);
+      return {
+          success: true,
+          message: `Returned ${result.length} products that are similar to ${slug}`,
+          data: result
+      }
+  }
   async create(
     dto: CreateProductDto,
     files: Express.Multer.File[],

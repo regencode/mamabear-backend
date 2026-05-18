@@ -13,10 +13,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const status = exception.getStatus();
+    const exceptionResponse = exception.getResponse();
     const responseJson: CustomResponse<null> = {
       success: false,
       statusCode: status,
-      message: exception.message || 'No message specified',
+      message: typeof exceptionResponse === 'string'
+          ? [exceptionResponse]
+          : (exceptionResponse as any).message || exception.message,
+
       data: null,
       timestamp: new Date().toISOString(),
     };

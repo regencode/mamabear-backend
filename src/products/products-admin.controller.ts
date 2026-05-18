@@ -32,7 +32,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 
 @ApiTags('products (admin)')
-@Controller('api/products')
+@Controller('admin/products')
 @UseGuards(new JwtAuthGuard())
 @Roles([Role.ADMIN])
 export class ProductsAdminController {

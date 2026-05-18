@@ -4,6 +4,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateVariantDto } from './dto/update-variant.dto';
 import { CreateVariantDto } from './dto/create-variant.dto';
 
+const VARIANT_INCLUDE = {
+    images: true,
+    discount: true,
+}
+
 @Injectable()
 export class VariantRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -13,7 +18,10 @@ export class VariantRepository {
   }
 
   findOne(variantId: number) {
-    return this.prisma.productVariant.findUnique({ where: { id: variantId } });
+      return this.prisma.productVariant.findUnique({ 
+          where: { id: variantId },
+          include: VARIANT_INCLUDE,
+      });
   }
 
   update(variantId: number, dto: UpdateVariantDto) {
@@ -74,22 +82,21 @@ export class VariantRepository {
             }
           : undefined,
       },
-      include: {
-        images: true,
-      },
+      include: VARIANT_INCLUDE
     });
   }
 
   findProductVariantsByProductId(productId: number) {
     return this.prisma.productVariant.findMany({
       where: { productId: productId },
-      include: {
-        images: true,
-      },
+      include: VARIANT_INCLUDE,
     });
   }
 
   findProductBySlug(productSlug: string) {
-    return this.prisma.product.findUnique({ where: { slug: productSlug } });
+    return this.prisma.product.findUnique({ 
+        where: { slug: productSlug },
+        include: VARIANT_INCLUDE,
+    });
   }
 }

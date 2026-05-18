@@ -18,6 +18,8 @@ import { HighlightsModule } from './highlights/highlights.module';
 import { DiscountsModule } from './discounts/discounts.module';
 import { VariantModule } from './variant/variant.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { SearchModule } from './search/search.module';
+import { EmbeddingsModule } from './embeddings/embeddings.module';
 
 @Module({
   imports: [
@@ -45,6 +47,8 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     DiscountsModule,
     VariantModule,
     CloudinaryModule,
+    SearchModule,
+    EmbeddingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

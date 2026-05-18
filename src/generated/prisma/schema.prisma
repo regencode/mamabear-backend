@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  provider        = "prisma-client-js"
+  output          = "../src/generated/prisma"
+  previewFeatures = ["postgresqlExtensions", "fullTextSearchPostgres"]
 }
 
 datasource db {
@@ -32,23 +33,25 @@ model User {
 }
 
 model Product {
-  id                Int              @id @default(autoincrement())
+  id                Int                          @id @default(autoincrement())
   name              String
-  slug              String           @unique
-  isActive          Boolean          @default(true)
+  slug              String                       @unique
+  isActive          Boolean                      @default(true)
   categoryId        Int?
-  category          Category?        @relation(fields: [categoryId], references: [id])
+  category          Category?                    @relation(fields: [categoryId], references: [id])
   highlightId       Int?
-  highlight         Highlight?       @relation(fields: [highlightId], references: [id])
+  highlight         Highlight?                   @relation(fields: [highlightId], references: [id])
   images            ProductImage[]
   variants          ProductVariant[]
   reviews           Review[]
-  tags              String[]         @default([])
+  tags              String[]                     @default([])
   description       String?
   ingredients       String?
   usageInstructions String?
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime?        @updatedAt
+  embedding         Unsupported("vector(1024)")?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
 }
 
 model ProductImage {

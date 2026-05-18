@@ -21,9 +21,9 @@ import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 import { Roles } from '@/auth/decorators/roles.decorator';
 import { Role } from '@/generated/prisma';
 
-@Controller('api/upload')
 @UseGuards(JwtAuthGuard)
 @Roles([Role.ADMIN])
+@Controller('admin/upload')
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 

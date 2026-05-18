@@ -15,6 +15,10 @@ import { CreateReviewDto } from '@/reviews/dto/create-review.dto';
 import { CursorPaginationRequestDto } from '@/common/dto/request/pagination.request.dto';
 import { VariantService } from '@/variant/variant.service';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
+import { SearchRequestDto } from '@/search/dto/search-request.dto';
+import { SearchService } from '@/search/search.service';
+import { SearchAutocompleteOptionsDto } from '@/search/dto/search-autocomplete-options.dto';
+import { FilterProductsDto } from './dto/filter-products.dto';
 
 @ApiTags('products')
 @Controller('products')
@@ -23,6 +27,7 @@ export class ProductsController {
     private readonly productsService: ProductsService,
     private readonly reviewsService: ReviewsService,
     private readonly variantService: VariantService,
+    private readonly searchService: SearchService,
   ) {}
 
   @Get()
@@ -30,9 +35,28 @@ export class ProductsController {
     return this.productsService.findAll(paginationDto);
   }
 
+  @Get('search')
+  searchForProducts(@Query() query: SearchRequestDto) {
+      return this.searchService.findProductsMatchingQuery(query);
+  }
+
+  @Get('filter')
+  filterProducts(@Query() query: FilterProductsDto) {
+      return this.productsService.findProductsWithFilter(query);
+  }
+  @Get('search/suggestions')
+  suggestAutocomplete(@Query() query: SearchRequestDto, @Query() options?: SearchAutocompleteOptionsDto) {
+      return this.searchService.getFuzzyAutocompleteResults(query, options);
+  }
+
   @Get(':slug')
   findOneBySlug(@Param('slug') slug: string) {
     return this.productsService.findBySlug(slug);
+  }
+
+  @Get(':slug/related')
+  findRelatedProductsBySlug(@Param('slug') slug: string) {
+    return this.productsService.findRelatedProducts(slug);
   }
 
   @Get(':slug/variants')

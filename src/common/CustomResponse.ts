@@ -1,7 +1,7 @@
 export class CustomResponse<T> {
   success: boolean;
   statusCode: number;
-  message: string;
+  message: string[];
   data: T;
   timestamp: string;
 }
