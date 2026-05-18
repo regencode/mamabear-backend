@@ -210,13 +210,18 @@ export class ProductsRepository {
       });
   }
   async findRelated(id: number) {
-    return (await this.prisma.$queryRaw`
-        SELECT *, 1 - (embedding <=> (SELECT embedding FROM "Product" WHERE id = ${id})) AS similarity
-        FROM "Product"
-        WHERE id != ${id} AND embedding IS NOT NULL
+    const rows: any[] = await this.prisma.$queryRaw`
+        SELECT id, 1 - (embedding <=> (SELECT embedding FROM "Product" WHERE id = ${id})) AS similarity
+        FROM "Product" p
+        WHERE p.id != ${id} AND embedding IS NOT NULL
         ORDER BY similarity DESC
         LIMIT 5
-    ` as Product[])
+    `
+    const ids = rows.map(row => row.id);
+    return this.prisma.product.findMany({
+        where: { id: { in: ids }},
+        include: PRODUCT_INCLUDE
+    })
   }
 
   update(id: number, data: UpdateProductDto) {
