@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, Product } from "../src/generated/prisma/client";
-import { products, users, categories, highlights } from "./data";
+import { products, users, categories, highlights } from "./data.v2";
 import { EmbeddingsService } from "@/embeddings/embeddings.service";
 
 const prisma = new PrismaClient({
@@ -103,9 +103,20 @@ async function main() {
                 WHERE id = ${p.id}
             `;
             if (variants?.length) {
-                await tx.productVariant.createMany({
-                    data: variants.map((v) => ({ ...v, productId: p.id })),
-                });
+                for (const { images: variantImages, ...variantData } of variants) {
+                    const v = await tx.productVariant.create({
+                        data: { ...variantData, productId: p.id },
+                    });
+                    if (variantImages?.length) {
+                        await tx.productImage.createMany({
+                            data: variantImages.map((img: { imageUrl: string; sortOrder: number; altText?: string }) => ({
+                                ...img,
+                                productId: null,
+                                variantId: v.id,
+                            })),
+                        });
+                    }
+                }
             }
             if (images?.length) {
                 await tx.productImage.createMany({
