@@ -51,10 +51,10 @@ export class SearchService {
                 data: []
             }
         } 
-        var matchedProducts: (Product & { sml: number })[] = await this.prisma.$queryRaw`SELECT name, similarity(name, ${query.q}) as sml FROM "Product" ORDER BY sml DESC`;
+        var matchedProducts: (Product & { similarity: number })[] = await this.prisma.$queryRaw`SELECT name, similarity(name, ${query.q}) as similarity FROM "Product" ORDER BY sml DESC`;
         var i = 0;
         matchedProducts = matchedProducts.filter(p => {
-            if(p.sml >= similarityThreshold && i < limit) {
+            if(p.similarity >= similarityThreshold && i < limit) {
                 i++; return true;
             }
             return false;
