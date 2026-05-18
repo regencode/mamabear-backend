@@ -217,7 +217,7 @@ export class ProductsService {
       }
 
       const images = await Promise.all(
-        files.map((file) => this.cloudinary.uploadFile(file)),
+        files.map( async (file) => this.cloudinary.uploadFile(file)),
       );
 
       const result = await this.productsRepository.update(id, {
