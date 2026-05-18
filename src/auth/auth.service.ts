@@ -14,6 +14,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { Response } from 'express';
+import { ServiceResult } from '@/common/ServiceResult';
 
 @Injectable()
 export class AuthService {
@@ -26,7 +27,7 @@ export class AuthService {
     this.logger.setContext(AuthService.name);
   }
 
-  async login(dto: LoginUserDto, res: Response) {
+  async login(dto: LoginUserDto, res: Response): Promise<ServiceResult<null>> {
     try {
       const user = await this.repo.findEmail(dto.email);
 
@@ -114,7 +115,8 @@ export class AuthService {
 
       return {
         success: true,
-        message: 'Login successful',
+        message: `Login successful`,
+        data: null,
       };
     } catch (error: any) {
       if (
