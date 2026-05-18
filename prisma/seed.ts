@@ -111,7 +111,7 @@ async function main() {
                         await tx.productImage.createMany({
                             data: variantImages.map((img: { imageUrl: string; sortOrder: number; altText?: string }) => ({
                                 ...img,
-                                productId: p.id,
+                                productId: null,
                                 variantId: v.id,
                             })),
                         });
