@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ReviewsRepository } from './reviews.repository';
+import { ReviewsRepository, ReviewSummary } from './reviews.repository';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { CursorPaginationService } from '@/common/services/pagination.service';
 import { CursorPaginationRequestDto } from '@/common/dto/request/pagination.request.dto';
@@ -85,6 +85,17 @@ export class ReviewsService {
     return {
       success: true,
       message: `Review ${id} upvoted successfully`,
+      data: result,
+    };
+  }
+
+  async getReviewSummaryOfProductWithSlug(slug: string): Promise<ServiceResult<ReviewSummary>> {
+    const resolvedProduct = await this.reviewsRepository.findProductBySlug(slug);
+    if (!resolvedProduct) throw new NotFoundException(`Cannot find product with slug ${slug}`);
+    const result = await this.reviewsRepository.getReviewSummary(resolvedProduct.id);
+    return {
+      success: true,
+      message: `Review summary of product ${slug} obtained`,
       data: result,
     };
   }

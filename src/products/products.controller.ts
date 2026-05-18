@@ -71,6 +71,13 @@ export class ProductsController {
   ) {
     return this.reviewsService.findReviewsOfProductBySlug(slug, paginationDto);
   }
+  @Get(':slug/reviews/summsry')
+  getReviewSummaryOfProductWithSlug(
+    @Param('slug') slug: string,
+    @Query() paginationDto: CursorPaginationRequestDto,
+  ) {
+    return this.reviewsService.getReviewSummaryOfProductWithSlug(slug);
+  }
 
   @UseGuards(new JwtAuthGuard())
   @Post(':slug/reviews')
