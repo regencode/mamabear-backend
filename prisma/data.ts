@@ -61,6 +61,7 @@ export const users = [
 
 export const categories = [
   {
+    publicId: "seed/category-food",
     name: "Food",
     slug: slugify("Food"),
     description: "Makanan & camilan untuk ibu menyusui",
@@ -68,6 +69,7 @@ export const categories = [
     sortOrder: 1,
   },
   {
+    publicId: "seed/category-drink",
     name: "Drink",
     slug: slugify("Drink"),
     description: "Minuman pelancar & peningkat ASI",
@@ -75,6 +77,7 @@ export const categories = [
     sortOrder: 2,
   },
   {
+    publicId: "seed/category-other",
     name: "Other",
     slug: slugify("Other"),
     description: "Produk lainnya",
@@ -154,26 +157,31 @@ Meningkatkan mood untuk membantu mengurangi risiko baby blues.`,
     ],
     images: [
       {
+        publicId: "seed/almonmix-01",
         imageUrl: `${IMAGE_BASE_URL}/AlmonMix/AlmonMix-01.jpg`,
         sortOrder: 1,
         altText: "MamaBear AlmonMix 01",
       },
       {
+        publicId: "seed/almonmix-02",
         imageUrl: `${IMAGE_BASE_URL}/AlmonMix/AlmonMix-02.jpg`,
         sortOrder: 2,
         altText: "MamaBear AlmonMix 02",
       },
       {
+        publicId: "seed/almonmix-03",
         imageUrl: `${IMAGE_BASE_URL}/AlmonMix/AlmonMix-03.jpg`,
         sortOrder: 3,
         altText: "MamaBear AlmonMix 03",
       },
       {
+        publicId: "seed/almonmix-04",
         imageUrl: `${IMAGE_BASE_URL}/AlmonMix/AlmonMix-04.jpg`,
         sortOrder: 4,
         altText: "MamaBear AlmonMix 04",
       },
       {
+        publicId: "seed/almonmix-05",
         imageUrl: `${IMAGE_BASE_URL}/AlmonMix/AlmonMix-05.jpg`,
         sortOrder: 5,
         altText: "MamaBear AlmonMix 05",
@@ -229,36 +237,43 @@ Sumber Zat Besi.
     ],
     images: [
       {
+        publicId: "seed/zoyamix-01",
         imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-01.jpg`,
         sortOrder: 1,
         altText: "MamaBear ZoyaMix 01",
       },
       {
+        publicId: "seed/zoyamix-02",
         imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-02.jpg`,
         sortOrder: 2,
         altText: "MamaBear ZoyaMix 02",
       },
       {
+        publicId: "seed/zoyamix-03",
         imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-03.jpg`,
         sortOrder: 3,
         altText: "MamaBear ZoyaMix 03",
       },
       {
+        publicId: "seed/zoyamix-04",
         imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-04.jpg`,
         sortOrder: 4,
         altText: "MamaBear ZoyaMix 04",
       },
       {
+        publicId: "seed/zoyamix-05",
         imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-05.jpg`,
         sortOrder: 5,
         altText: "MamaBear ZoyaMix 05",
       },
       {
+        publicId: "seed/zoyamix-06",
         imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-06.jpg`,
         sortOrder: 6,
         altText: "MamaBear ZoyaMix 06",
       },
       {
+        publicId: "seed/zoyamix-07",
         imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-07.jpg`,
         sortOrder: 7,
         altText: "MamaBear ZoyaMix 07",
@@ -320,16 +335,19 @@ Mempercepat pemulihan & meningkatkan daya tahan tubuh (Habbatussauda).
     ],
     images: [
       {
+        publicId: "seed/lactation-tea-01",
         imageUrl: `${IMAGE_BASE_URL}/Teh/Lactation-Tea-01.jpg`,
         sortOrder: 1,
         altText: "MamaBear Lactation Tea 01",
       },
       {
+        publicId: "seed/lactation-tea-02",
         imageUrl: `${IMAGE_BASE_URL}/Teh/Lactation-Tea-02.jpg`,
         sortOrder: 2,
         altText: "MamaBear Lactation Tea 02",
       },
       {
+        publicId: "seed/lactation-tea-03",
         imageUrl: `${IMAGE_BASE_URL}/Teh/Lactation-Tea-03.jpg`,
         sortOrder: 3,
         altText: "MamaBear Lactation Tea 03",
@@ -392,36 +410,43 @@ Penilaian yang Mama berikan sangat berharga bagi kami`,
     ],
     images: [
       {
+        publicId: "seed/kukis-cover",
         imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Cover-Kukis-Almond-Oat.png`,
         sortOrder: 1,
         altText: "Cover MamaBear Kukis Almond Oat",
       },
       {
+        publicId: "seed/kukis-cream-02",
         imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Almond-Oat-Cookies-Cream-02.jpg`,
         sortOrder: 2,
         altText: "Almond Oat Cookies Cream 02",
       },
       {
+        publicId: "seed/kukis-cream-03",
         imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Almond-Oat-Cookies-Cream-03.jpg`,
         sortOrder: 3,
         altText: "Almond Oat Cookies Cream 03",
       },
       {
+        publicId: "seed/kukis-cream-04",
         imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Almond-Oat-Cookies-Cream-04.jpg`,
         sortOrder: 4,
         altText: "Almond Oat Cookies Cream 04",
       },
       {
+        publicId: "seed/kukis-chocochip-03",
         imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Almond-Oat-Choco-Chip-03.jpg`,
         sortOrder: 5,
         altText: "Almond Oat Choco Chip 03",
       },
       {
+        publicId: "seed/kukis-choconut-02",
         imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Kookie-Bites-Choco-Nut-02.jpg`,
         sortOrder: 6,
         altText: "Kookie Bites Choco Nut 02",
       },
       {
+        publicId: "seed/kukis-choconut-04",
         imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Kookie-Bites-Choco-Nut-04.jpg`,
         sortOrder: 7,
         altText: "Kookie Bites Choco Nut 04",
@@ -479,21 +504,25 @@ CATATAN PEMESANAN:
     ],
     images: [
       {
+        publicId: "seed/kapsul-01",
         imageUrl: `${IMAGE_BASE_URL}/Kapsul/Kapsul-01.jpg`,
         sortOrder: 1,
         altText: "MamaBear Kapsul 01",
       },
       {
+        publicId: "seed/kapsul-02",
         imageUrl: `${IMAGE_BASE_URL}/Kapsul/Kapsul-02.jpg`,
         sortOrder: 2,
         altText: "MamaBear Kapsul 02",
       },
       {
+        publicId: "seed/kapsul-03",
         imageUrl: `${IMAGE_BASE_URL}/Kapsul/Kapsul-03.jpg`,
         sortOrder: 3,
         altText: "MamaBear Kapsul 03",
       },
       {
+        publicId: "seed/kapsul-04",
         imageUrl: `${IMAGE_BASE_URL}/Kapsul/Kapsul-04.jpg`,
         sortOrder: 4,
         altText: "MamaBear Kapsul 04",

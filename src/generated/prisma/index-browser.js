@@ -156,10 +156,15 @@ exports.Prisma.ProductScalarFieldEnum = {
 exports.Prisma.ProductImageScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
+  publicId: 'publicId',
   variantId: 'variantId',
   imageUrl: 'imageUrl',
   sortOrder: 'sortOrder',
-  altText: 'altText'
+  altText: 'altText',
+  width: 'width',
+  height: 'height',
+  fileSize: 'fileSize',
+  format: 'format'
 };
 
 exports.Prisma.DiscountScalarFieldEnum = {
@@ -197,11 +202,17 @@ exports.Prisma.CategoryScalarFieldEnum = {
   name: 'name',
   slug: 'slug',
   description: 'description',
-  imageUrl: 'imageUrl',
   isActive: 'isActive',
   sortOrder: 'sortOrder',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  imageUrl: 'imageUrl',
+  publicId: 'publicId',
+  altText: 'altText',
+  width: 'width',
+  height: 'height',
+  fileSize: 'fileSize',
+  format: 'format'
 };
 
 exports.Prisma.ReviewScalarFieldEnum = {
@@ -252,8 +263,10 @@ exports.Prisma.ProductOrderByRelevanceFieldEnum = {
 };
 
 exports.Prisma.ProductImageOrderByRelevanceFieldEnum = {
+  publicId: 'publicId',
   imageUrl: 'imageUrl',
-  altText: 'altText'
+  altText: 'altText',
+  format: 'format'
 };
 
 exports.Prisma.ProductVariantOrderByRelevanceFieldEnum = {
@@ -271,7 +284,10 @@ exports.Prisma.CategoryOrderByRelevanceFieldEnum = {
   name: 'name',
   slug: 'slug',
   description: 'description',
-  imageUrl: 'imageUrl'
+  imageUrl: 'imageUrl',
+  publicId: 'publicId',
+  altText: 'altText',
+  format: 'format'
 };
 
 exports.Prisma.ReviewOrderByRelevanceFieldEnum = {

@@ -27,7 +27,6 @@ export class ProductsRepository {
   ) {}
 
   create(data: CreateProductDto) {
-    data.slug = slugify(data.name, { lower: true, strict: true });
     return this.prisma.$transaction(async (tx) => {
         const { images, variants, weightG, priceIdr, stock, sku, ...productData } = data;
         const product = await tx.product.create({ data: { ...productData }, include: PRODUCT_INCLUDE })
@@ -204,10 +203,10 @@ export class ProductsRepository {
   }
 
   findBySlug(slug: string) {
-      return this.prisma.product.findUnique({
-          where: { slug },
-          include: PRODUCT_INCLUDE,
-      });
+    return this.prisma.product.findUnique({
+      where: { slug },
+      include: PRODUCT_INCLUDE,
+    });
   }
   async findRelated(id: number) {
     const rows: any[] = await this.prisma.$queryRaw`
@@ -225,12 +224,31 @@ export class ProductsRepository {
   }
 
   update(id: number, data: UpdateProductDto) {
-    const { images, variants, weightG, priceIdr, stock, sku, ...productData } = data;
+    const { images, variants, weightG, priceIdr, stock, sku, ...productData } =
+      data;
+
     return this.prisma.product.update({
       where: { id },
       data: {
         ...productData,
+        ...(images?.length && {
+          images: {
+            createMany: {
+              data: images.map((img) => ({
+                imageUrl: img.imageUrl,
+                publicId: img.publicId,
+                width: img.width,
+                height: img.height,
+                fileSize: img.fileSize,
+                format: img.format,
+                sortOrder: img.sortOrder,
+                altText: img.altText,
+              })),
+            },
+          },
+        }),
       },
+
       include: PRODUCT_INCLUDE,
     });
   }
@@ -241,5 +259,4 @@ export class ProductsRepository {
       include: PRODUCT_INCLUDE,
     });
   }
-
 }
