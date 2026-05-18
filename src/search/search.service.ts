@@ -51,17 +51,16 @@ export class SearchService {
                 data: []
             }
         } 
-        var matchedProducts: (Product & { similarity: number })[] = await this.prisma.$queryRaw`SELECT name, similarity(name, ${query.q}) as similarity FROM "Product" ORDER BY sml DESC`;
-        var i = 0;
-        matchedProducts = matchedProducts.filter(p => {
-            if(p.similarity >= similarityThreshold && i < limit) {
-                i++; return true;
-            }
-            return false;
-        })
+        var matchedProducts: (Product & { similarity: number })[] = await this.prisma.$queryRaw`
+        SELECT name, similarity(name, ${query.q}) AS similarity
+        FROM "Product"
+        WHERE similarity(name, ${query.q}) >= ${similarityThreshold}
+        ORDER BY similarity DESC
+        LIMIT ${limit}
+        `;
         return {
             success: true,
-            message: `Found ${i} products matching query '${query.q}' with fuzzy search`,
+            message: `Found ${matchedProducts.length} products matching query '${query.q}' with fuzzy search`,
             data: matchedProducts
         };
     }
