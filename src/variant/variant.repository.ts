@@ -66,7 +66,6 @@ export class VariantRepository {
     findProductBySlug(productSlug: string) {
         return this.prisma.product.findUnique({ 
             where: { slug: productSlug },
-            include: VARIANT_INCLUDE,
         });
     }
 }
