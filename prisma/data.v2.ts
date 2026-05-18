@@ -16,6 +16,10 @@ function slugify(text: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
+function genPublicId(): string {
+  return crypto.randomUUID();
+}
+
 export const users = [
   {
     email: "admin@mamabear.id",
@@ -66,6 +70,7 @@ export const categories = [
     description: "Makanan & minuman untuk ibu menyusui",
     isActive: true,
     sortOrder: 1,
+    publicId: genPublicId(),
   },
   {
     name: "ASI Booster",
@@ -73,6 +78,7 @@ export const categories = [
     description: "Produk pelancar & peningkat ASI",
     isActive: true,
     sortOrder: 2,
+    publicId: genPublicId(),
   },
 ];
 

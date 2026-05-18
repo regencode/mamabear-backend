@@ -1,4 +1,5 @@
 import "dotenv/config";
+import * as crypto from "crypto";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, Product } from "../src/generated/prisma/client";
 import { products, users, categories, highlights } from "./data.v2";
@@ -111,6 +112,7 @@ async function main() {
                         await tx.productImage.createMany({
                             data: variantImages.map((img: { imageUrl: string; sortOrder: number; altText?: string }) => ({
                                 ...img,
+                                publicId: crypto.randomUUID(),
                                 productId: null,
                                 variantId: v.id,
                             })),
@@ -120,7 +122,7 @@ async function main() {
             }
             if (images?.length) {
                 await tx.productImage.createMany({
-                    data: images.map((img) => ({ ...img, productId: p.id })),
+                    data: images.map((img) => ({ ...img, publicId: crypto.randomUUID(), productId: p.id })),
                 });
             }
             return p;
