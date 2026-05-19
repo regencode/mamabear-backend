@@ -96,7 +96,6 @@ model ProductVariant {
     weightG    Int                                                                       
     sku        String?                                                                   
     stock      Int            @default(0)                                                
-    numSales   Int            @default(0)
     sortOrder  Int            @default(0)
 
     createdAt  DateTime       @default(now())                                            
