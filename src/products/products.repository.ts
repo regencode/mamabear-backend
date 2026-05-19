@@ -85,7 +85,7 @@ export class ProductsRepository {
         originalPrice: priceMap.get(product.id)?.originalPrice,
         discountPercent: priceMap.get(product.id)?.discountPercent,
         rating: reviewsMap.get(product.id)?.avg,
-        ratingCount: reviewsMap.get(product.id)?.count,
+        reviewsCount: reviewsMap.get(product.id)?.count,
     }));
   }
   private getDiscountPercent(priceIdr: Decimal, discount: Discount) {

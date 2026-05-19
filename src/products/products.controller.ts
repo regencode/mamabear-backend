@@ -71,7 +71,7 @@ export class ProductsController {
   ) {
     return this.reviewsService.findReviewsOfProductBySlug(slug, paginationDto);
   }
-  @Get(':slug/reviews/summsry')
+  @Get(':slug/reviews/summary')
   getReviewSummaryOfProductWithSlug(
     @Param('slug') slug: string,
     @Query() paginationDto: CursorPaginationRequestDto,
