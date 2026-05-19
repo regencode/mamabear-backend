@@ -36,8 +36,6 @@ export class CursorPaginationService {
     const prismaCursor =
       cursor !== undefined ? { [cursorField]: safeCursor } : undefined
 
-    // ✅ FIXED: Hanya pass argument yang valid untuk Prisma
-    // Hapus cursorField dan orderDirection - bukan argument Prisma!
     const items: T[] = await model.findMany({
       ...args,
       take: safeLimit + 1,
