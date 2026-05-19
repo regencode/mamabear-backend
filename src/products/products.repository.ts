@@ -28,6 +28,40 @@ export class ProductsRepository {
      private readonly embedService: EmbeddingsService,
   ) {}
 
+   async insertAdditionalInformation(products: Product[] | Product) {
+    products = Array.isArray(products) ? products : [products];
+    const ids = products.map(p => p.id);
+    const reviews = await this.prisma.review.groupBy({
+        by: ["productId"],
+        where: { productId: { in: ids }},
+        _avg: { rating: true },
+        _count: { rating: true },
+    })
+    const reviewsMap = new Map(
+        reviews.map(r => [r.productId, { avg: r._avg.rating, count: r._count.rating }])
+    );
+    const defaultPrices = await this.prisma.productVariant.findMany({
+        select: { productId: true, priceIdr: true, discount: true },
+        where: { productId: { in: ids }, sortOrder: 0 },
+    })
+    const priceMap = new Map(
+        defaultPrices.map(p => [p.productId, { 
+            originalPrice: p.priceIdr,
+            price: this.getDiscountedPrice(p.priceIdr, p.discount as Discount),
+            discountPercent: this.getDiscountPercent(p.priceIdr, p.discount as Discount),
+        }])
+    );
+    return products.map(product => ({
+        ...product,
+        currentPrice: priceMap.get(product.id)?.price,
+        originalPrice: priceMap.get(product.id)?.originalPrice,
+        discountPercent: priceMap.get(product.id)?.discountPercent,
+        rating: reviewsMap.get(product.id)?.avg,
+        reviewsCount: reviewsMap.get(product.id)?.count,
+    }));
+  }
+
+
   create(data: CreateProductDto) {
     return this.prisma.$transaction(async (tx) => {
         const { images, variants, weightG, priceIdr, stock, sku, ...productData } = data;
@@ -58,35 +92,7 @@ export class ProductsRepository {
     const products = await this.prisma.product.findMany({ 
         ...other, 
     });
-    const ids = products.map(p => p.id);
-    const reviews = await this.prisma.review.groupBy({
-        by: ["productId"],
-        where: { productId: { in: ids }},
-        _avg: { rating: true },
-        _count: { rating: true },
-    })
-    const reviewsMap = new Map(
-        reviews.map(r => [r.productId, { avg: r._avg.rating, count: r._count.rating }])
-    );
-    const defaultPrices = await this.prisma.productVariant.findMany({
-        select: { productId: true, priceIdr: true, discount: true },
-        where: { productId: { in: ids }, sortOrder: 0 },
-    })
-    const priceMap = new Map(
-        defaultPrices.map(p => [p.productId, { 
-            originalPrice: p.priceIdr,
-            price: this.getDiscountedPrice(p.priceIdr, p.discount as Discount),
-            discountPercent: this.getDiscountPercent(p.priceIdr, p.discount as Discount),
-        }])
-    );
-    return products.map(product => ({
-        ...product,
-        currentPrice: priceMap.get(product.id)?.price,
-        originalPrice: priceMap.get(product.id)?.originalPrice,
-        discountPercent: priceMap.get(product.id)?.discountPercent,
-        rating: reviewsMap.get(product.id)?.avg,
-        reviewsCount: reviewsMap.get(product.id)?.count,
-    }));
+    return this.insertAdditionalInformation(products);
   }
   private getDiscountPercent(priceIdr: Decimal, discount: Discount) {
       if(!discount) return 0;
@@ -237,21 +243,23 @@ export class ProductsRepository {
       (a, b) => orderMap.get(a.id)! - orderMap.get(b.id)!,
     );
 
-    return { items: sortedProducts, nextCursor };
+    return { items: this.insertAdditionalInformation(sortedProducts), nextCursor };
   }
 
-  findById(id: number) {
-    return this.prisma.product.findUnique({
+  async findById(id: number) {
+    const products = await this.prisma.product.findUnique({
       where: { id },
       include: PRODUCT_INCLUDE,
     });
+    return this.insertAdditionalInformation(products as Product);
   }
 
-  findBySlug(slug: string) {
-    return this.prisma.product.findUnique({
+  async findBySlug(slug: string) {
+    const products = await this.prisma.product.findUnique({
       where: { slug },
       include: PRODUCT_INCLUDE,
     });
+    return this.insertAdditionalInformation(products as Product);
   }
   async findRelated(id: number) {
     const rows: any[] = await this.prisma.$queryRaw`
@@ -262,10 +270,11 @@ export class ProductsRepository {
         LIMIT 5
     `
     const ids = rows.map(row => row.id);
-    return this.prisma.product.findMany({
+    const result = await this.prisma.product.findMany({
         where: { id: { in: ids }},
         include: PRODUCT_INCLUDE
     })
+    return this.insertAdditionalInformation(result);
   }
 
   update(id: number, data: UpdateProductDto) {
