@@ -30,6 +30,7 @@ model User {
   resetTokenExpiry        DateTime?
   refreshToken            String?
   refreshTokenExpiry      DateTime?
+  carts                   Cart[]
 }
 
 model Product {
@@ -52,6 +53,7 @@ model Product {
 
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
+  cartItems         CartItem[]
 }
 
 model ProductImage {
@@ -96,9 +98,9 @@ model ProductVariant {
   sku       String?
   stock     Int            @default(0)
   sortOrder Int            @default(0)
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
+  cartItems CartItem[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime?      @updatedAt
 }
 
 model Highlight {
@@ -145,4 +147,54 @@ model Review {
   imageUrls   String[] @default([])
 
   createdAt DateTime @default(now())
+}
+
+model Cart {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  // user (nullable for guest)
+  userId String? @db.Uuid
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // guest session
+  sessionId String? @unique
+
+  // timestamps
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  expiresAt DateTime?
+
+  // relations
+  items CartItem[]
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([expiresAt])
+}
+
+model CartItem {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  // relations
+  cartId String @db.Uuid
+  cart   Cart   @relation(fields: [cartId], references: [id], onDelete: Cascade)
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+
+  variantId Int?
+  variant   ProductVariant? @relation(fields: [variantId], references: [id])
+
+  // business fields
+  quantity Int @default(1)
+
+  // snapshot price
+  price Decimal @db.Decimal(10, 2)
+
+  createdAt DateTime @default(now())
+
+  // prevent duplicate items
+  @@unique([cartId, productId, variantId])
+  @@index([cartId])
+  @@index([productId])
 }

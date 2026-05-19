@@ -20,6 +20,9 @@ import { VariantModule } from './variant/variant.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { SearchModule } from './search/search.module';
 import { EmbeddingsModule } from './embeddings/embeddings.module';
+import { CartModule } from './cart/cart.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { SchedulerModule } from './scheduler/scheduler.module';
 
 @Module({
   imports: [
@@ -49,6 +52,9 @@ import { EmbeddingsModule } from './embeddings/embeddings.module';
     CloudinaryModule,
     SearchModule,
     EmbeddingsModule,
+    CartModule,
+    ScheduleModule.forRoot(),
+    SchedulerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
