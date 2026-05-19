@@ -1,7 +1,9 @@
 import "dotenv/config";
+import * as crypto from "crypto";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, Product } from "../src/generated/prisma/client";
-import { products, users, categories, highlights } from "./data";
+import { products, users, categories, highlights } from "./data.v2";
+import { EmbeddingsService } from "@/embeddings/embeddings.service";
 
 const prisma = new PrismaClient({
     adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
@@ -62,6 +64,7 @@ function randomDate(daysAgo: number, daysAhead: number): Date {
 }
 
 async function main() {
+    const embedService = new EmbeddingsService();
     console.log("Seeding database...");
 
     console.log("Deleting existing data and resetting sequences...");
@@ -93,15 +96,33 @@ async function main() {
 
     for (const { images, variants, ...productData } of products) {
         const product = await prisma.$transaction(async (tx) => {
-            const p = await tx.product.create({ data: productData });
+            const p = await tx.product.create({ data: {...productData } });
+            const embed = await embedService.generateEmbeddingsFromProduct(p);
+            await tx.$executeRaw`
+                UPDATE "Product" 
+                SET embedding = ${embedService.embeddingArrayToString(embed)}::vector
+                WHERE id = ${p.id}
+            `;
             if (variants?.length) {
-                await tx.productVariant.createMany({
-                    data: variants.map((v) => ({ ...v, productId: p.id })),
-                });
+                for (const { images: variantImages, ...variantData } of variants) {
+                    const v = await tx.productVariant.create({
+                        data: { ...variantData, productId: p.id },
+                    });
+                    if (variantImages?.length) {
+                        await tx.productImage.createMany({
+                            data: variantImages.map((img: { imageUrl: string; sortOrder: number; altText?: string }) => ({
+                                ...img,
+                                publicId: crypto.randomUUID(),
+                                productId: null,
+                                variantId: v.id,
+                            })),
+                        });
+                    }
+                }
             }
             if (images?.length) {
                 await tx.productImage.createMany({
-                    data: images.map((img) => ({ ...img, productId: p.id })),
+                    data: images.map((img) => ({ ...img, publicId: crypto.randomUUID(), productId: p.id })),
                 });
             }
             return p;

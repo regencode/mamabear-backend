@@ -24,7 +24,9 @@ jobs:
       CORS_ORIGIN: "*"
       JWT_ACCESS_SECRET: blablabla
       JWT_REFRESH_SECRET: blablablablablabla
+      OPENROUTER_API_KEY:  ${{ secrets.OPENROUTER_API_KEY }}
     steps:
+
     - name: Add PostgreSQL binaries to PATH
       shell: bash
       run: |
@@ -33,6 +35,12 @@ jobs:
           elif [ "$RUNNER_OS" == "Linux" ]; then
             echo "$(pg_config --bindir)" >> $GITHUB_PATH
           fi
+
+    - name: Install pgvector
+      run: |
+        sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+        sudo apt-get install postgresql-16-pgvector
+
     - name: Initialize and start PostgreSQL
       shell: bash
       run: |
@@ -54,10 +62,22 @@ jobs:
         pg_ctl -D $pgdata start
 
         echo "creating user..."
-        psql --host "$pghost" --username="postgres" --dbname="postgres" --command="create user $PGUSERNAME password '$PGPASSWORD'" --command="\du"
+        psql --host "$pghost" --username="postgres" --dbname="postgres" --command="create user $PGUSERNAME password '$PGPASSWORD' SUPERUSER" --command="\du"
 
         echo "creating database..."
+
         createdb --owner="$PGUSERNAME" --username="postgres" "$PGDATABASE"
+
+    - name: Install pgvector extension
+      shell: bash
+      run: |
+        export runner_temp="/tmp"
+        sudo apt-get install -y postgresql-server-dev-all
+        cd $runner_temp
+        git clone --branch v0.8.2 https://github.com/pgvector/pgvector.git
+        cd pgvector
+        make
+        sudo make install
 
     - name: Checkout repository
       uses: actions/checkout@v4

@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { PinoLogger } from 'pino-nestjs';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -14,6 +15,9 @@ import { CreateVariantDto } from '@/variant/dto/create-variant.dto';
 import { ServiceResult } from '@/common/ServiceResult';
 import slugify from 'slugify';
 import { Product } from '@/generated/prisma';
+import { CloudinaryService } from '@/cloudinary/cloudinary.service';
+import { FilterProductsDto } from './dto/filter-products.dto';
+import { FilterPaginationMetaDto, FilterPaginationResponseDto } from './dto/filter-pagination-meta.dto';
 
 @Injectable()
 export class ProductsService {
@@ -21,23 +25,71 @@ export class ProductsService {
     private readonly productsRepository: ProductsRepository,
     private readonly logger: PinoLogger,
     private readonly paginationService: CursorPaginationService,
+    private readonly cloudinary: CloudinaryService,
   ) {
     this.logger.setContext(ProductsService.name);
   }
 
-  async create(dto: CreateProductDto): Promise<ServiceResult<Product>> {
+  async findProductsWithFilter(query: FilterProductsDto): Promise<ServiceResult<FilterPaginationResponseDto<Product>>> {
+      if(query.minPrice && query.maxPrice && query.minPrice > query.maxPrice) 
+          throw new UnprocessableEntityException("Min price must be large than max price");
+      const { items, nextCursor } = await this.productsRepository.findByFilter(query);
+      const limit = query.limit ?? 10;
+      const result = new FilterPaginationResponseDto<Product>(
+        items,
+        new FilterPaginationMetaDto(limit, nextCursor),
+      );
+      return {
+          success: true,
+          message: `Returned ${items.length} products with the selected filters`,
+          data: result,
+      }
+  }
+  async findRelatedProducts(slug: string): Promise<ServiceResult<Product[]>> {
+      const resolvedProduct = await this.productsRepository.findBySlug(slug);
+      if(!resolvedProduct) throw new BadRequestException(`Cannot find product with slug ${slug}`);
+      const result = await this.productsRepository.findRelated(resolvedProduct.id);
+      return {
+          success: true,
+          message: `Returned ${result.length} products that are similar to ${slug}`,
+          data: result
+      }
+  }
+  async create(
+    dto: CreateProductDto,
+    files: Express.Multer.File[],
+  ): Promise<ServiceResult<Product>> {
     try {
       if (!dto.variants) dto.variants = [];
       const defaultVariant: CreateVariantDto = {
-        name: "INTERNAL_DEFAULT",
+        name: 'INTERNAL_DEFAULT',
         priceIdr: dto.priceIdr,
         weightG: dto.weightG,
         stock: dto.stock,
         sku: dto.sku,
         sortOrder: 0,
       };
+
       dto.variants.push(defaultVariant);
-      const result = await this.productsRepository.create(dto);
+      const images = await this.cloudinary.uploadMultiple(files);
+
+      const generatedSlug = slugify(dto.name, { lower: true, strict: true });
+
+      const result = await this.productsRepository.create({
+        ...dto,
+        slug: generatedSlug,
+        images: images.map((image) => ({
+          imageUrl: image.imageUrl,
+          publicId: image.publicId,
+          width: image.width,
+          height: image.height,
+          fileSize: image.fileSize,
+          format: image.format,
+          sortOrder: 0,
+          altText: image.altText,
+        })),
+      });
+
       if (!result) throw new BadRequestException('Cannot create product');
       this.logger.info({
         level: 'info',
@@ -65,7 +117,9 @@ export class ProductsService {
     }
   }
 
-  async findAll(paginationDto?: CursorPaginationRequestDto): Promise<ServiceResult<CursorPaginationResponseDto<Product>>> {
+  async findAll(
+    paginationDto?: CursorPaginationRequestDto,
+  ): Promise<ServiceResult<CursorPaginationResponseDto<Product>>> {
     try {
       const result = await this.paginationService.paginate<Product>(
         this.productsRepository,
@@ -173,15 +227,40 @@ export class ProductsService {
     }
   }
 
-  async update(id: number, dto: UpdateProductDto): Promise<ServiceResult<Product>> {
+  async update(
+    id: number,
+    dto: UpdateProductDto,
+    files: Express.Multer.File[],
+  ): Promise<ServiceResult<Product>> {
     try {
       if (dto.name) {
         const generatedSlug = slugify(dto.name, { lower: true, strict: true });
-        const resolvedProduct = await this.productsRepository.findBySlug(generatedSlug);
-        if (resolvedProduct) throw new BadRequestException(`Product with slug ${generatedSlug} already exists`);
+        const resolvedProduct =
+          await this.productsRepository.findBySlug(generatedSlug);
+        if (resolvedProduct)
+          throw new BadRequestException(
+            `Product with slug ${generatedSlug} already exists`,
+          );
         dto.slug = generatedSlug;
       }
-      const result = await this.productsRepository.update(id, dto);
+
+      const images = await Promise.all(
+        files.map( async (file) => this.cloudinary.uploadFile(file)),
+      );
+
+      const result = await this.productsRepository.update(id, {
+        ...dto,
+        images: images.map((image) => ({
+          imageUrl: image.imageUrl,
+          publicId: image.publicId,
+          width: image.width,
+          height: image.height,
+          fileSize: image.fileSize,
+          format: image.format,
+          sortOrder: 0,
+          altText: image.altText,
+        })),
+      });
       this.logger.info({
         level: 'info',
         message: 'Product updated successfully',

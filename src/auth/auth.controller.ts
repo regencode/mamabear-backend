@@ -20,7 +20,7 @@ import { JwtPayload } from '@/types/JwtPayload';
 
 @UseGuards(ThrottlerGuard)
 @ApiTags('auth')
-@Controller('api/auth')
+@Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -94,5 +94,10 @@ export class AuthController {
   @Get('/verify-email/:token')
   verifyEmail(@Param('token') token: string) {
     return this.authService.verifyEmail(token);
+  }
+
+  @Post('create-admin')
+  createAdmin(@Body() dto: RegisterUserDto) {
+    return this.authService.createAdmin(dto);
   }
 }

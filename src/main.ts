@@ -11,9 +11,14 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
   app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.setGlobalPrefix('/api');
 
   app.enableCors({
-    origin: process.env.CORS_ORIGIN,
+    origin: [
+        process.env.CORS_ORIGIN,
+        /^http:\/\/localhost:\d+$/,
+        'null',
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -23,7 +28,6 @@ async function bootstrap() {
     new ValidationPipe({
       transform: true,
       whitelist: true,
-      forbidNonWhitelisted: true,
     }),
   );
   const config = new DocumentBuilder()

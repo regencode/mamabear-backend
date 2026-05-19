@@ -17,6 +17,9 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { HighlightsModule } from './highlights/highlights.module';
 import { DiscountsModule } from './discounts/discounts.module';
 import { VariantModule } from './variant/variant.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { SearchModule } from './search/search.module';
+import { EmbeddingsModule } from './embeddings/embeddings.module';
 import { CartModule } from './cart/cart.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SchedulerModule } from './scheduler/scheduler.module';
@@ -46,6 +49,9 @@ import { SchedulerModule } from './scheduler/scheduler.module';
     ReviewsModule,
     DiscountsModule,
     VariantModule,
+    CloudinaryModule,
+    SearchModule,
+    EmbeddingsModule,
     CartModule,
     ScheduleModule.forRoot(),
     SchedulerModule,
