@@ -9,12 +9,16 @@ enum SortDirection {
 
 export class FilterProductsDto {
     @ApiPropertyOptional({ description: "Include category (returns all categories if not selected)" })
+    @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
     @IsArray()
+    @IsString({ each: true })
     @IsOptional()
     categories?: string[];
 
     @ApiPropertyOptional({ description: "Include highlight (returns all highlights if not selected)" })
+    @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
     @IsArray()
+    @IsString({ each: true })
     @IsOptional()
     highlights?: string[];
 

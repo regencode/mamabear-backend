@@ -30,15 +30,20 @@ export class ProductsService {
     this.logger.setContext(ProductsService.name);
   }
 
-  async findProductsWithFilter(query: FilterProductsDto): Promise<FilterPaginationResponseDto<Product>> {
+  async findProductsWithFilter(query: FilterProductsDto): Promise<ServiceResult<FilterPaginationResponseDto<Product>>> {
       if(query.minPrice && query.maxPrice && query.minPrice > query.maxPrice) 
           throw new UnprocessableEntityException("Min price must be large than max price");
       const { items, nextCursor } = await this.productsRepository.findByFilter(query);
       const limit = query.limit ?? 10;
-      return new FilterPaginationResponseDto<Product>(
+      const result = new FilterPaginationResponseDto<Product>(
         items,
         new FilterPaginationMetaDto(limit, nextCursor),
       );
+      return {
+          success: true,
+          message: `Returned ${items.length} products with the selected filters`,
+          data: result,
+      }
   }
   async findRelatedProducts(slug: string): Promise<ServiceResult<Product[]>> {
       const resolvedProduct = await this.productsRepository.findBySlug(slug);
