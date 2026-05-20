@@ -90,11 +90,13 @@ export class ProductsRepository {
   private buildCursorCondition(sortConfig: SortConfig, decoded: Record<string, any>): string {
     const conditions: string[] = [];
     if (sortConfig.cursorKeys.includes('minPrice') && decoded.minPrice !== undefined) {
-      const dir = sortConfig.orderByClause.includes('ASC') ? '>' : '<';
+      const dir = sortConfig.orderByClause.includes('ASC') ? '>=' : '<=';
       conditions.push(`(MIN(pv."priceIdr"), p.id) ${dir} (${decoded.minPrice}, ${decoded.id})`);
     } else if (sortConfig.cursorKeys.includes('createdAt') && decoded.createdAt !== undefined) {
-      const dir = sortConfig.orderByClause.includes('ASC') ? '>' : '<';
+      const dir = sortConfig.orderByClause.includes('ASC') ? '>=' : '<=';
       conditions.push(`(p."createdAt", p.id) ${dir} ('${decoded.createdAt}'::timestamp, ${decoded.id})`);
+    } else {
+      conditions.push(`p.id >= ${decoded.id}`);
     }
     return conditions.length > 0 ? `HAVING ${conditions.join(' AND ')}` : '';
   }
@@ -103,6 +105,7 @@ export class ProductsRepository {
     const limit = query.limit ?? 10;
     const sortConfig = this.getSortConfig(query);
     const decodedCursor = query.cursor ? this.decodeCursor(query.cursor) : null;
+
 
     const needsVariantJoin =
       query.priceAscending !== undefined ||
