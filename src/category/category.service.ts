@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryRepository } from './category.repository';
@@ -19,10 +23,10 @@ export class CategoryService {
     };
   }
 
-
   async getCategoryById(id: number): Promise<ServiceResult<Category>> {
     const result = await this.repo.findById(id);
-    if (!result) throw new NotFoundException(`Category with id ${id} not found`);
+    if (!result)
+      throw new NotFoundException(`Category with id ${id} not found`);
     return {
       success: true,
       message: `Category with id ${id} found`,
@@ -31,7 +35,8 @@ export class CategoryService {
   }
   async getCategoryBySlug(slug: string): Promise<ServiceResult<Category>> {
     const result = await this.repo.findBySlug(slug);
-    if (!result) throw new NotFoundException(`Category with slug ${slug} not found`);
+    if (!result)
+      throw new NotFoundException(`Category with slug ${slug} not found`);
     return {
       success: true,
       message: `Category with slug ${slug} found`,
@@ -39,10 +44,14 @@ export class CategoryService {
     };
   }
 
-  async createCategory(userId: string, dto: CreateCategoryDto): Promise<ServiceResult<Category>> {
+  async createCategory(
+    userId: string,
+    dto: CreateCategoryDto,
+  ): Promise<ServiceResult<Category>> {
     const generatedSlug = slugify(dto.name, { lower: true, strict: true });
     const resolvedCategory = await this.repo.findBySlug(generatedSlug);
-    if (resolvedCategory) throw new BadRequestException('Category already exists');
+    if (resolvedCategory)
+      throw new BadRequestException('Category already exists');
 
     const result = await this.repo.create({
       name: dto.name,
@@ -69,7 +78,10 @@ export class CategoryService {
     if (dto.name) {
       const generatedSlug = slugify(dto.name, { lower: true, strict: true });
       const category = await this.repo.findBySlug(generatedSlug);
-      if (category) throw new BadRequestException('Name update generates a slug that already exists');
+      if (category)
+        throw new BadRequestException(
+          'Name update generates a slug that already exists',
+        );
       dto.slug = generatedSlug;
     }
 
@@ -82,7 +94,10 @@ export class CategoryService {
     };
   }
 
-  async deleteCategory(userId: string, categoryId: number): Promise<ServiceResult<Category>> {
+  async deleteCategory(
+    userId: string,
+    categoryId: number,
+  ): Promise<ServiceResult<Category>> {
     const category = await this.repo.findById(categoryId);
     if (!category) throw new BadRequestException('Category not found');
     if (category.products.length > 0)

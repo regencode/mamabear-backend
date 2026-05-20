@@ -137,7 +137,7 @@ export class AuthService {
     }
   }
 
-  async register(dto: RegisterUserDto) {
+  async register(dto: RegisterUserDto): Promise<ServiceResult<null>> {
     try {
       const emailIsExist = await this.repo.findEmail(dto.email);
       if (emailIsExist) {
@@ -180,7 +180,9 @@ export class AuthService {
       });
 
       return {
-        message: 'Register success, check your email to verify',
+        success: true,
+        message: `Register success, check your email to verify`,
+        data: null,
       };
     } catch (error: any) {
       if (
@@ -201,7 +203,7 @@ export class AuthService {
     }
   }
 
-  async verifyEmail(token: string) {
+  async verifyEmail(token: string): Promise<ServiceResult<null>> {
     try {
       const user = await this.repo.findUserByVerificationToken(token);
 
@@ -248,7 +250,9 @@ export class AuthService {
       });
 
       return {
-        message: 'Email verified successfully',
+        success: true,
+        message: `Email verified successfully`,
+        data: null,
       };
     } catch (error: any) {
       if (
@@ -268,7 +272,10 @@ export class AuthService {
     }
   }
 
-  async refreshToken(refreshToken: string, res: Response) {
+  async refreshToken(
+    refreshToken: string,
+    res: Response,
+  ): Promise<ServiceResult<null>> {
     try {
       const payload = await this.jwtService.verifyAsync(refreshToken, {
         secret: process.env.JWT_REFRESH_SECRET,
@@ -376,7 +383,8 @@ export class AuthService {
 
       return {
         success: true,
-        message: 'Token refreshed successfully',
+        message: `Token refreshed successfully`,
+        data: null,
       };
     } catch (error: any) {
       if (
@@ -396,7 +404,7 @@ export class AuthService {
     }
   }
 
-  async logout(userId: string, res: Response) {
+  async logout(userId: string, res: Response): Promise<ServiceResult<null>> {
     try {
       const user = await this.repo.findUserById(userId);
 
@@ -432,7 +440,8 @@ export class AuthService {
 
       return {
         success: true,
-        message: 'Logout success',
+        message: `Logout success`,
+        data: null,
       };
     } catch (error: any) {
       if (
@@ -453,7 +462,7 @@ export class AuthService {
     }
   }
 
-  async forgotPassword(dto: ForgotPasswordDto) {
+  async forgotPassword(dto: ForgotPasswordDto): Promise<ServiceResult<null>> {
     try {
       const user = await this.repo.findEmail(dto.email);
 
@@ -492,7 +501,9 @@ export class AuthService {
       });
 
       return {
-        message: 'Check your email to reset password',
+        success: true,
+        message: `Check your email to reset password`,
+        data: null,
       };
     } catch (error: any) {
       if (
@@ -513,7 +524,10 @@ export class AuthService {
     }
   }
 
-  async resetPassword(token: string, dto: ResetPasswordDto) {
+  async resetPassword(
+    token: string,
+    dto: ResetPasswordDto,
+  ): Promise<ServiceResult<null>> {
     try {
       const user = await this.repo.findUserByResetToken(token);
 
@@ -565,7 +579,9 @@ export class AuthService {
       });
 
       return {
-        message: 'Password reset success',
+        success: true,
+        message: `Password reset success`,
+        data: null,
       };
     } catch (error: any) {
       if (
