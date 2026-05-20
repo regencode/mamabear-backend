@@ -28,8 +28,30 @@ export class ProductsRepository {
      private readonly embedService: EmbeddingsService,
   ) {}
 
-   async insertAdditionalInformation(products: Product[] | Product) {
-    products = Array.isArray(products) ? products : [products];
+   async enrichOne(product: Product) {
+       const defaultPrice = await this.prisma.productVariant.findUnique({
+           select: { productId: true, priceIdr: true, discount: true },
+           where: { variantCompositeIdentifier: {
+               productId: product.id,
+               sortOrder: 0,
+           }},
+       })
+       const reviews = await this.prisma.review.aggregate({
+           where: { productId: product.id },
+           _avg: { rating: true },
+           _count: { rating: true },
+       })
+       return {
+           ...product,
+           currentPrice: this.getDiscountedPrice(defaultPrice?.priceIdr!, defaultPrice?.discount as Discount),
+           originalPrice: defaultPrice?.priceIdr,
+           discountPercent: this.getDiscountPercent(defaultPrice?.priceIdr!, defaultPrice?.discount as Discount),
+           rating: reviews._avg.rating,
+           reviewsCount: reviews._count.rating
+       }
+   }
+
+   async enrichMany(products: Product[]) {
     const ids = products.map(p => p.id);
     const reviews = await this.prisma.review.groupBy({
         by: ["productId"],
@@ -92,7 +114,7 @@ export class ProductsRepository {
     const products = await this.prisma.product.findMany({ 
         ...other, 
     });
-    return this.insertAdditionalInformation(products);
+    return this.enrichMany(products);
   }
   private getDiscountPercent(priceIdr: Decimal, discount: Discount) {
       if(!discount) return 0;
@@ -243,7 +265,7 @@ export class ProductsRepository {
       (a, b) => orderMap.get(a.id)! - orderMap.get(b.id)!,
     );
 
-    return { items: this.insertAdditionalInformation(sortedProducts), nextCursor };
+    return { items: this.enrichMany(sortedProducts), nextCursor };
   }
 
   async findById(id: number) {
@@ -251,7 +273,7 @@ export class ProductsRepository {
       where: { id },
       include: PRODUCT_INCLUDE,
     });
-    return this.insertAdditionalInformation(products as Product);
+    return this.enrichOne(products as Product);
   }
 
   async findBySlug(slug: string) {
@@ -259,7 +281,7 @@ export class ProductsRepository {
       where: { slug },
       include: PRODUCT_INCLUDE,
     });
-    return this.insertAdditionalInformation(products as Product);
+    return this.enrichOne(products as Product);
   }
   async findRelated(id: number) {
     const rows: any[] = await this.prisma.$queryRaw`
@@ -274,7 +296,7 @@ export class ProductsRepository {
         where: { id: { in: ids }},
         include: PRODUCT_INCLUDE
     })
-    return this.insertAdditionalInformation(result);
+    return this.enrichMany(result);
   }
 
   update(id: number, data: UpdateProductDto) {

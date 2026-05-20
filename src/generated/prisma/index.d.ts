@@ -12094,6 +12094,7 @@ export namespace Prisma {
 
   export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    variantCompositeIdentifier?: ProductVariantVariantCompositeIdentifierCompoundUniqueInput
     AND?: ProductVariantWhereInput | ProductVariantWhereInput[]
     OR?: ProductVariantWhereInput[]
     NOT?: ProductVariantWhereInput | ProductVariantWhereInput[]
@@ -12109,7 +12110,7 @@ export namespace Prisma {
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
     images?: ProductImageListRelationFilter
     discount?: XOR<DiscountNullableScalarRelationFilter, DiscountWhereInput> | null
-  }, "id">
+  }, "id" | "variantCompositeIdentifier">
 
   export type ProductVariantOrderByWithAggregationInput = {
     id?: SortOrder
@@ -13714,6 +13715,11 @@ export namespace Prisma {
     fields: ProductVariantOrderByRelevanceFieldEnum | ProductVariantOrderByRelevanceFieldEnum[]
     sort: SortOrder
     search: string
+  }
+
+  export type ProductVariantVariantCompositeIdentifierCompoundUniqueInput = {
+    productId: number
+    sortOrder: number
   }
 
   export type ProductVariantCountOrderByAggregateInput = {
