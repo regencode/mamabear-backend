@@ -265,7 +265,7 @@ export class ProductsRepository {
       (a, b) => orderMap.get(a.id)! - orderMap.get(b.id)!,
     );
 
-    return { items: this.enrichMany(sortedProducts), nextCursor };
+    return { items: await this.enrichMany(sortedProducts), nextCursor };
   }
 
   async findById(id: number) {
