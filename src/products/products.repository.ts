@@ -13,7 +13,7 @@ export const PRODUCT_INCLUDE = {
   category: true,
   images: true,
   variants: true,
-  highlights: true,
+  highlight: true,
 };
 
 type SortConfig = {
@@ -124,7 +124,7 @@ export class ProductsRepository {
   private getDiscountPercent(priceIdr: Decimal, discount: Discount) {
       if(!discount) return 0;
       if(discount.isPercent) return discount.amount;
-      else return new Decimal(discount.amount).div(priceIdr);
+      else return new Decimal(discount.amount).div(priceIdr).mul(100);
   }
   private getDiscountedPrice(priceIdr: Decimal, discount: Discount) {
       if(!discount) return priceIdr;
