@@ -29,7 +29,8 @@ model User {
     resetToken               String?                                                                 
     resetTokenExpiry         DateTime?                                                               
     refreshToken             String?                                                                 
-    refreshTokenExpiry       DateTime?                                                               
+    refreshTokenExpiry       DateTime?   
+    carts                   Cart[]                                                            
 }
 
 model Product {
@@ -49,7 +50,7 @@ model Product {
     ingredients        String?                                                                      
     usageInstructions  String?                                                                      
     embedding          Unsupported("vector(1024)")?
-
+    cartItems          CartItem[]
     createdAt          DateTime          @default(now())                                            
     updatedAt          DateTime?         @updatedAt                                                 
 }
@@ -97,7 +98,7 @@ model ProductVariant {
     sku        String?                                                                   
     stock      Int            @default(0)                                                
     sortOrder  Int            @default(0)
-
+    cartItems  CartItem[]
     createdAt  DateTime       @default(now())                                            
     updatedAt  DateTime?      @updatedAt                                                 
     @@unique([productId, sortOrder], name: "variantCompositeIdentifier")
@@ -147,4 +148,36 @@ model Review {
     imageUrls      String[]  @default([])
 
     createdAt      DateTime  @default(now())                                            
+}
+
+model Cart {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String?    @db.Uuid
+  sessionId String?    @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  expiresAt DateTime?
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([expiresAt])
+}
+
+model CartItem {
+  id        String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cartId    String          @db.Uuid
+  productId Int
+  variantId Int?
+  quantity  Int             @default(1)
+  price     Decimal         @db.Decimal(10, 2)
+  createdAt DateTime        @default(now())
+  cart      Cart            @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product         @relation(fields: [productId], references: [id])
+  variant   ProductVariant? @relation(fields: [variantId], references: [id])
+
+  @@unique([cartId, productId, variantId])
+  @@index([cartId])
+  @@index([productId])
 }
