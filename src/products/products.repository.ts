@@ -7,6 +7,7 @@ import slugify from 'slugify';
 import { Discount, Product } from '@/generated/prisma';
 import { FilterProductsDto } from './dto/filter-products.dto';
 import { Decimal } from '@prisma/client-runtime-utils';
+import { PinoLogger } from 'pino-nestjs';
 
 
 export const PRODUCT_INCLUDE = {
@@ -26,6 +27,7 @@ export class ProductsRepository {
   constructor(
      private readonly prisma: PrismaService,
      private readonly embedService: EmbeddingsService,
+     private readonly logger: PinoLogger,
   ) {}
 
    async enrichOne(product: Product) {
@@ -176,7 +178,7 @@ export class ProductsRepository {
     } else {
       conditions.push(`p.id >= ${decoded.id}`);
     }
-    return conditions.length > 0 ? `HAVING ${conditions.join(' AND ')}` : '';
+    return conditions.length > 0 ? `AND ${conditions.join(' AND ')}` : '';
   }
 
   async findByFilter(query: FilterProductsDto) {
@@ -237,11 +239,12 @@ export class ProductsRepository {
       ${variantJoin}
       ${whereParts.join(' ')}
       GROUP BY p.id
-      ${havingParts.length > 0 ? `HAVING 1=1 ${havingParts.join(' ')}` : ''}
+      HAVING 1=1 ${havingParts.length > 0 ? `${havingParts.join(' ')}` : ''}
       ${cursorCondition}
       ORDER BY ${sortConfig.orderByClause}
       LIMIT ${limit + 1}
     `;
+    this.logger.info(`rawQuery: ${rawQuery}`) 
 
     const rows: any[] = await this.prisma.$queryRawUnsafe(rawQuery);
 
