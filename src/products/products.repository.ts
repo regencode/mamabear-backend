@@ -4,14 +4,16 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { EmbeddingsService } from '@/embeddings/embeddings.service';
 import slugify from 'slugify';
-import { Product } from '@/generated/prisma';
+import { Discount, Product } from '@/generated/prisma';
 import { FilterProductsDto } from './dto/filter-products.dto';
+import { Decimal } from '@prisma/client-runtime-utils';
 
 
 export const PRODUCT_INCLUDE = {
   category: true,
   images: true,
   variants: true,
+  highlight: true,
 };
 
 type SortConfig = {
@@ -25,6 +27,67 @@ export class ProductsRepository {
      private readonly prisma: PrismaService,
      private readonly embedService: EmbeddingsService,
   ) {}
+
+   async enrichOne(product: Product) {
+       const defaultPrice = await this.prisma.productVariant.findUnique({
+           select: { productId: true, priceIdr: true, discount: true },
+           where: { variantCompositeIdentifier: {
+               productId: product.id,
+               sortOrder: 0,
+           }},
+       })
+       const reviews = await this.prisma.review.aggregate({
+           where: { productId: product.id },
+           _avg: { rating: true },
+           _count: { rating: true },
+       })
+       const topReview = await this.prisma.review.findFirst({
+           where: { productId: product.id },
+           orderBy: { numUpvotes: "desc"  },
+       })
+       return {
+           ...product,
+           currentPrice: this.getDiscountedPrice(defaultPrice?.priceIdr!, defaultPrice?.discount as Discount),
+           originalPrice: defaultPrice?.priceIdr,
+           discountPercent: this.getDiscountPercent(defaultPrice?.priceIdr!, defaultPrice?.discount as Discount),
+           rating: reviews._avg.rating,
+           reviewsCount: reviews._count.rating,
+           topReview: topReview
+       }
+   }
+
+   async enrichMany(products: Product[]) {
+    const ids = products.map(p => p.id);
+    const reviews = await this.prisma.review.groupBy({
+        by: ["productId"],
+        where: { productId: { in: ids }},
+        _avg: { rating: true },
+        _count: { rating: true },
+    })
+    const reviewsMap = new Map(
+        reviews.map(r => [r.productId, { avg: r._avg.rating, count: r._count.rating }])
+    );
+    const defaultPrices = await this.prisma.productVariant.findMany({
+        select: { productId: true, priceIdr: true, discount: true },
+        where: { productId: { in: ids }, sortOrder: 0 },
+    })
+    const priceMap = new Map(
+        defaultPrices.map(p => [p.productId, { 
+            originalPrice: p.priceIdr,
+            price: this.getDiscountedPrice(p.priceIdr, p.discount as Discount),
+            discountPercent: this.getDiscountPercent(p.priceIdr, p.discount as Discount),
+        }])
+    );
+    return products.map(product => ({
+        ...product,
+        currentPrice: priceMap.get(product.id)?.price,
+        originalPrice: priceMap.get(product.id)?.originalPrice,
+        discountPercent: priceMap.get(product.id)?.discountPercent,
+        rating: reviewsMap.get(product.id)?.avg,
+        reviewsCount: reviewsMap.get(product.id)?.count,
+    }));
+  }
+
 
   create(data: CreateProductDto) {
     return this.prisma.$transaction(async (tx) => {
@@ -50,8 +113,23 @@ export class ProductsRepository {
     })
   }
 
-  findMany(args?: any) {
-    return this.prisma.product.findMany({ ...args, include: PRODUCT_INCLUDE });
+
+  async findMany(args?: any) {
+    const { select, include, ...other } = args;
+    const products = await this.prisma.product.findMany({ 
+        ...other, 
+    });
+    return this.enrichMany(products);
+  }
+  private getDiscountPercent(priceIdr: Decimal, discount: Discount) {
+      if(!discount) return 0;
+      if(discount.isPercent) return discount.amount;
+      else return new Decimal(discount.amount).div(priceIdr).mul(100);
+  }
+  private getDiscountedPrice(priceIdr: Decimal, discount: Discount) {
+      if(!discount) return priceIdr;
+      if(discount.isPercent) return priceIdr.mul(Decimal(100).minus(discount.amount)).div(100);
+      else return priceIdr.minus(discount.amount);
   }
 
   private getSortConfig(query: FilterProductsDto): SortConfig {
@@ -195,21 +273,23 @@ export class ProductsRepository {
       (a, b) => orderMap.get(a.id)! - orderMap.get(b.id)!,
     );
 
-    return { items: sortedProducts, nextCursor };
+    return { items: await this.enrichMany(sortedProducts), nextCursor };
   }
 
-  findById(id: number) {
-    return this.prisma.product.findUnique({
+  async findById(id: number) {
+    const products = await this.prisma.product.findUnique({
       where: { id },
       include: PRODUCT_INCLUDE,
     });
+    return this.enrichOne(products as Product);
   }
 
-  findBySlug(slug: string) {
-    return this.prisma.product.findUnique({
+  async findBySlug(slug: string) {
+    const products = await this.prisma.product.findUnique({
       where: { slug },
       include: PRODUCT_INCLUDE,
     });
+    return this.enrichOne(products as Product);
   }
   async findRelated(id: number) {
     const rows: any[] = await this.prisma.$queryRaw`
@@ -220,10 +300,11 @@ export class ProductsRepository {
         LIMIT 5
     `
     const ids = rows.map(row => row.id);
-    return this.prisma.product.findMany({
+    const result = await this.prisma.product.findMany({
         where: { id: { in: ids }},
         include: PRODUCT_INCLUDE
     })
+    return this.enrichMany(result);
   }
 
   update(id: number, data: UpdateProductDto) {
