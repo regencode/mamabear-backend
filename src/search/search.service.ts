@@ -66,13 +66,6 @@ export class SearchService {
             where: {
                 name: { contains: query.q, mode: 'insensitive' },
             },
-            orderBy: {
-                _relevance: {
-                    fields: ["name"],
-                    search: query.q,
-                    sort: "desc",
-                },
-             }
         })
     }
 
@@ -81,13 +74,6 @@ export class SearchService {
             where: {
                 description: { contains: query.q, mode: 'insensitive' },
             },
-            orderBy: {
-                _relevance: {
-                    fields: ["description"],
-                    search: query.q,
-                    sort: "desc",
-                },
-            }
         })
     }
 
@@ -96,13 +82,6 @@ export class SearchService {
             where: {
                 tags: { has: query.q },
             },
-            orderBy: {
-                _relevance: {
-                    fields: ["tags"],
-                    search: query.q,
-                    sort: "desc",
-                },
-            }
         })
     }
 
@@ -111,13 +90,6 @@ export class SearchService {
             where: {
                 slug: { contains: query.q, mode: 'insensitive' },
             },
-            orderBy: {
-                _relevance: {
-                    fields: ["slug"],
-                    search: query.q,
-                    sort: "desc",
-                },
-            }
         })
     }
 
@@ -127,13 +99,6 @@ export class SearchService {
                 sku: { contains: query.q, mode: 'insensitive' },
             },
             select: { product: true }, 
-            orderBy: {
-                _relevance: {
-                    fields: ["sku"],
-                    search: query.q,
-                    sort: "desc",
-                },
-            }
         })
         var seen = {};
         var uniqueProducts: Product[] = [];
