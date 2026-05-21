@@ -20,6 +20,7 @@ import { VariantModule } from './variant/variant.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { SearchModule } from './search/search.module';
 import { EmbeddingsModule } from './embeddings/embeddings.module';
+import { ProductUtilsModule } from './product-utils/product-utils.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { EmbeddingsModule } from './embeddings/embeddings.module';
     CloudinaryModule,
     SearchModule,
     EmbeddingsModule,
+    ProductUtilsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

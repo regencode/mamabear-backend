@@ -5,10 +5,15 @@ import { Product } from '@/generated/prisma';
 import { SearchAutocompleteOptionsDto } from './dto/search-autocomplete-options.dto';
 import { ServiceResult } from '@/common/ServiceResult';
 import { Sql } from '@prisma/client-runtime-utils';
+import { ProductsRepository } from '@/products/products.repository';
+import { ProductUtils } from '@/product-utils/product-utils';
 
 @Injectable()
 export class SearchService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly productUtils: ProductUtils,
+    ) {}
     async findProductsMatchingQuery(query: SearchRequestDto): Promise<ServiceResult<Product[]>> {
         const matchedProducts = [
             ...await this.matchProductsByTags(query),
@@ -28,7 +33,7 @@ export class SearchService {
         return {
             success: true,
             message: `Found ${uniqueProducts.length} products matching query '${query.q}' with full text search`,
-            data: uniqueProducts
+            data: await this.productUtils.enrichMany(uniqueProducts)
         };
     }
     async getFuzzyAutocompleteResults(query: SearchRequestDto, options?: SearchAutocompleteOptionsDto) {
