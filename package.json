@@ -54,6 +54,7 @@
     "readdirp": "^5.0.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "sharp": "^0.34.5",
     "slugify": "^1.6.9",
     "uuid": "^14.0.0"
   },
