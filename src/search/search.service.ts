@@ -5,7 +5,7 @@ import { Product } from '@/generated/prisma';
 import { SearchAutocompleteOptionsDto } from './dto/search-autocomplete-options.dto';
 import { ServiceResult } from '@/common/ServiceResult';
 import { Sql } from '@prisma/client-runtime-utils';
-import { ProductsRepository } from '@/products/products.repository';
+import { PRODUCT_INCLUDE, ProductsRepository } from '@/products/products.repository';
 import { ProductUtils } from '@/product-utils/product-utils';
 
 @Injectable()
@@ -71,6 +71,7 @@ export class SearchService {
             where: {
                 name: { contains: query.q, mode: 'insensitive' },
             },
+            include: PRODUCT_INCLUDE,
         })
     }
 
@@ -79,6 +80,7 @@ export class SearchService {
             where: {
                 description: { contains: query.q, mode: 'insensitive' },
             },
+            include: PRODUCT_INCLUDE,
         })
     }
 
@@ -87,6 +89,7 @@ export class SearchService {
             where: {
                 tags: { has: query.q },
             },
+            include: PRODUCT_INCLUDE,
         })
     }
 
@@ -95,6 +98,7 @@ export class SearchService {
             where: {
                 slug: { contains: query.q, mode: 'insensitive' },
             },
+            include: PRODUCT_INCLUDE,
         })
     }
 
@@ -103,7 +107,7 @@ export class SearchService {
             where: {
                 sku: { contains: query.q, mode: 'insensitive' },
             },
-            select: { product: true }, 
+            select: { product: { include: PRODUCT_INCLUDE } }, 
         })
         var seen = {};
         var uniqueProducts: Product[] = [];
