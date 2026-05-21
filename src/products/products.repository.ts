@@ -41,13 +41,18 @@ export class ProductsRepository {
            _avg: { rating: true },
            _count: { rating: true },
        })
+       const topReview = await this.prisma.review.findFirst({
+           where: { productId: product.id },
+           orderBy: { numUpvotes: "desc"  },
+       })
        return {
            ...product,
            currentPrice: this.getDiscountedPrice(defaultPrice?.priceIdr!, defaultPrice?.discount as Discount),
            originalPrice: defaultPrice?.priceIdr,
            discountPercent: this.getDiscountPercent(defaultPrice?.priceIdr!, defaultPrice?.discount as Discount),
            rating: reviews._avg.rating,
-           reviewsCount: reviews._count.rating
+           reviewsCount: reviews._count.rating,
+           topReview: topReview
        }
    }
 

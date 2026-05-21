@@ -38,6 +38,7 @@ export class ReviewsRepository {
   async findByProductId(productId: number): Promise<Review[]> {
     return this.prisma.review.findMany({
       where: { productId },
+      orderBy: { numUpvotes: "desc" }
     });
   }
 
