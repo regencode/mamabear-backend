@@ -9,10 +9,6 @@ import { Sql } from '@prisma/client-runtime-utils';
 @Injectable()
 export class SearchService {
     constructor(private readonly prisma: PrismaService) {}
-    async findRelatedProducts(product: Product) {
-        // TODO: implement embedding
-        throw new ForbiddenException("Related products not yet implemented");
-    }
     async findProductsMatchingQuery(query: SearchRequestDto): Promise<ServiceResult<Product[]>> {
         const matchedProducts = [
             ...await this.matchProductsByTags(query),
