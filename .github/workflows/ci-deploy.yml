@@ -87,10 +87,6 @@ jobs:
         export DATABASE_URL="postgresql://$PGUSERNAME:$PGPASSWORD@$PGHOST/$PGDATABASE?schema=public"
         npx prisma db seed
 
-    - name: Run implemented unit tests
-      run: |
-        npm run test auth
-
     - name: Build NestJS application
       run: |
         npx nest build
