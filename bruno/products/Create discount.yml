@@ -5,7 +5,7 @@ info:
 
 http:
   method: POST
-  url: "{{baseUrl}}/api/products/{{productId}}/variants/{{variantId}}/discount"
+  url: "{{baseUrl}}/api/admin/products/{{productId}}/variants/{{variantId}}/discount"
   body:
     type: json
     data: |-
@@ -15,16 +15,13 @@ http:
         "startedAt": "2026-01-01T00:00:00.000Z",
         "endsAt": "2026-12-31T23:59:59.000Z"
       }
-  auth:
-    type: bearer
-    token: "{{jwtToken}}"
+  auth: inherit
 
 runtime:
   scripts:
     - type: after-response
       code: |-
-        bru.setVar('phase', 'read-created');
-        bru.setNextRequest('Get one product');
+        bru.setNextRequest('Add to cart');
 
 settings:
   encodeUrl: true
@@ -35,7 +32,7 @@ settings:
 examples:
   - name: "Success (201)"
     request:
-      url: "{{baseUrl}}/api/products/6/variants/7/discount"
+      url: "{{baseUrl}}/api/admin/products/1/variants/1/discount"
       method: POST
       body:
         type: json
@@ -62,18 +59,18 @@ examples:
               "Discount created successfully"
             ],
             "data": {
-              "id": 4,
-              "variantId": 7,
+              "id": 1,
+              "variantId": 1,
               "amount": "5000",
               "isPercent": false,
               "startedAt": "2026-01-01T00:00:00.000Z",
               "endsAt": "2026-12-31T23:59:59.000Z"
             },
-            "timestamp": "2026-05-16T09:43:11.743Z"
+            "timestamp": "2026-05-25T14:30:00.000Z"
           }
   - name: "Unauthorized (401)"
     request:
-      url: "{{baseUrl}}/api/products/1/variants/1/discount"
+      url: "{{baseUrl}}/api/admin/products/1/variants/1/discount"
       method: POST
       body:
         type: json
@@ -97,11 +94,11 @@ examples:
               "Unauthorized"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.150Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }
   - name: "Validation Error (400)"
     request:
-      url: "{{baseUrl}}/api/products/1/variants/1/discount"
+      url: "{{baseUrl}}/api/admin/products/1/variants/1/discount"
       method: POST
       body:
         type: json
@@ -126,5 +123,5 @@ examples:
               "endsAt must be a valid ISO 8601 date string"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.152Z"
+            "timestamp": "2026-05-25T14:24:28.235Z"
           }

@@ -36,7 +36,13 @@ export class CreateReviewDto {
   @Max(5)
   rating: number;
 
-  @ApiPropertyOptional({ example: ['https://example.com/review-img1.jpg', 'https://example.com/review-img2.jpg'] })
+  @ApiPropertyOptional({
+    example: [
+      'https://example.com/review-img1.jpg',
+      'https://example.com/review-img2.jpg',
+    ],
+  })
   @IsArray()
-  imageUrls: string[];
+  @IsOptional()
+  imageUrls?: string[];
 }

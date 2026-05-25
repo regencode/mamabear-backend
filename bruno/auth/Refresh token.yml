@@ -6,23 +6,7 @@ info:
 http:
   method: POST
   url: "{{baseUrl}}/api/auth/refresh"
-  body:
-    type: json
-    data: |-
-      {
-        "refreshToken": "{{refreshToken}}"
-      }
   auth: inherit
-
-runtime:
-  scripts:
-    - type: after-response
-      code: |-
-        const body = res.getBody();
-        if (body && body.data) {
-          bru.setVar('jwtToken', body.data.accessToken || '');
-          bru.setVar('refreshToken', body.data.refreshToken || '');
-        }
 
 settings:
   encodeUrl: true
@@ -35,18 +19,16 @@ examples:
     request:
       url: "{{baseUrl}}/api/auth/refresh"
       method: POST
-      body:
-        type: json
-        data: |-
-          {
-            "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NDU5NGRlNS05OTdlLTRlMWQtYTU1MS1jMmQ0MzNhMzE4MmUiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc4OTI0NTkxLCJleHAiOjE3Nzk1MjkzOTF9._T6u9LRG0cjGRP272lv_aKeBxF5MZO8NqgCrweWBCLY"
-          }
     response:
       status: 201
       statusText: "Created"
       headers:
         - name: Content-Type
           value: "application/json; charset=utf-8"
+        - name: Set-Cookie
+          value: "accessToken=eyJhbGci...; Path=/; HttpOnly; Secure; SameSite=Strict"
+        - name: Set-Cookie
+          value: "refreshToken=eyJhbGci...; Path=/; HttpOnly; Secure; SameSite=Strict"
       body:
         type: json
         data: |-
@@ -56,21 +38,13 @@ examples:
             "message": [
               "No message specified"
             ],
-            "data": {
-              "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NDU5NGRlNS05OTdlLTRlMWQtYTU1MS1jMmQ0MzNhMzE4MmUiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc4OTI0NTkxLCJleHAiOjE3Nzg5MjU0OTF9.d0jGnMrBdYDjHXcyYPgkcQPun3n76iVl6xkElu6ykcI"
-            },
+            "data": null,
             "timestamp": "2026-05-16T09:43:11.888Z"
           }
   - name: "Invalid Refresh Token (500)"
     request:
       url: "{{baseUrl}}/api/auth/refresh"
       method: POST
-      body:
-        type: json
-        data: |-
-          {
-            "refreshToken": "invalid-token-xyz"
-          }
     response:
       status: 500
       statusText: "Internal Server Error"

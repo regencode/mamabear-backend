@@ -5,16 +5,14 @@ info:
 
 http:
   method: PATCH
-  url: "{{baseUrl}}/api/users/{{userId}}"
+  url: "{{baseUrl}}/api/admin/users/{{userId}}"
   body:
     type: json
     data: |-
       {
         "name": "John Doe (Updated)"
       }
-  auth:
-    type: bearer
-    token: "{{jwtToken}}"
+  auth: inherit
 
 runtime:
   scripts:
@@ -31,7 +29,7 @@ settings:
 examples:
   - name: "Success (200)"
     request:
-      url: "{{baseUrl}}/api/users/fbf8fb32-effd-4374-8689-a3d598540aa1"
+      url: "{{baseUrl}}/api/admin/users/fbf8fb32-effd-4374-8689-a3d598540aa1"
       method: PATCH
       body:
         type: json
@@ -61,14 +59,14 @@ examples:
               "phone": "081234567890",
               "role": "USER",
               "isVerified": false,
-              "createdAt": "2026-05-16T09:43:11.701Z",
-              "updatedAt": "2026-05-16T09:43:11.776Z"
+              "createdAt": "2026-05-25T14:30:00.000Z",
+              "updatedAt": "2026-05-25T14:31:00.000Z"
             },
-            "timestamp": "2026-05-16T09:43:11.780Z"
+            "timestamp": "2026-05-25T14:31:00.000Z"
           }
   - name: "Not Found (500)"
     request:
-      url: "{{baseUrl}}/api/users/00000000-0000-0000-0000-000000000000"
+      url: "{{baseUrl}}/api/admin/users/00000000-0000-0000-0000-000000000000"
       method: PATCH
       body:
         type: json
@@ -92,11 +90,11 @@ examples:
               "Internal server error"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.258Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }
   - name: "Unauthorized (401)"
     request:
-      url: "{{baseUrl}}/api/users/42bf8a9e-9e84-4e55-8bbb-a4c20e4769e8"
+      url: "{{baseUrl}}/api/admin/users/53ff9709-69e4-4aba-a02b-4955381f5a1c"
       method: PATCH
       body:
         type: json
@@ -120,5 +118,5 @@ examples:
               "Unauthorized"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.260Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }

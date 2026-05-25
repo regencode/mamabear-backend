@@ -5,21 +5,14 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/api/products/{{productId}}/variants"
-  auth:
-    type: bearer
-    token: "{{jwtToken}}"
+  url: "{{baseUrl}}/api/admin/products/{{productId}}/variants"
+  auth: inherit
 
 runtime:
   scripts:
     - type: after-response
       code: |-
-        const phase = bru.getVar('phase');
-        if (phase === 'read-created') {
-          bru.setNextRequest('Get product reviews');
-        } else {
-          bru.setNextRequest('Get product reviews (Admin)');
-        }
+        bru.setNextRequest('Get product reviews (Admin)');
 
 settings:
   encodeUrl: true
@@ -30,7 +23,7 @@ settings:
 examples:
   - name: "Success (200)"
     request:
-      url: "{{baseUrl}}/api/products/1/variants"
+      url: "{{baseUrl}}/api/admin/products/1/variants"
       method: GET
     response:
       status: 200
@@ -54,18 +47,20 @@ examples:
                 "name": "INTERNAL_DEFAULT",
                 "priceIdr": "80000",
                 "weightG": 180,
-                "sku": "AL.MMBR",
+                "sku": "ALMMBR01",
                 "stock": 100,
                 "sortOrder": 0,
-                "createdAt": "2026-05-16T09:43:11.162Z",
-                "updatedAt": "2026-05-16T09:43:11.162Z"
+                "createdAt": "2026-05-25T14:23:12.881Z",
+                "updatedAt": "2026-05-25T14:23:12.881Z",
+                "images": [],
+                "discount": null
               }
             ],
-            "timestamp": "2026-05-16T09:43:11.642Z"
+            "timestamp": "2026-05-25T14:24:08.521Z"
           }
   - name: "Unauthorized (401)"
     request:
-      url: "{{baseUrl}}/api/products/1/variants"
+      url: "{{baseUrl}}/api/admin/products/1/variants"
       method: GET
     response:
       status: 401
@@ -83,5 +78,5 @@ examples:
               "Unauthorized"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.066Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }

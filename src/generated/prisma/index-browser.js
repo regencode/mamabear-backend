@@ -264,6 +264,26 @@ exports.Prisma.OrderScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.OrderItemScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  productId: 'productId',
+  variantId: 'variantId',
+  productName: 'productName',
+  variantName: 'variantName',
+  price: 'price',
+  quantity: 'quantity'
+};
+
+exports.Prisma.OrderStatusHistoryScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -354,6 +374,17 @@ exports.Prisma.OrderOrderByRelevanceFieldEnum = {
   paymentMethod: 'paymentMethod',
   notes: 'notes'
 };
+
+exports.Prisma.OrderItemOrderByRelevanceFieldEnum = {
+  orderId: 'orderId',
+  productName: 'productName',
+  variantName: 'variantName'
+};
+
+exports.Prisma.OrderStatusHistoryOrderByRelevanceFieldEnum = {
+  orderId: 'orderId',
+  notes: 'notes'
+};
 exports.Role = exports.$Enums.Role = {
   USER: 'USER',
   ADMIN: 'ADMIN',
@@ -386,7 +417,9 @@ exports.Prisma.ModelName = {
   Review: 'Review',
   Cart: 'Cart',
   CartItem: 'CartItem',
-  Order: 'Order'
+  Order: 'Order',
+  OrderItem: 'OrderItem',
+  OrderStatusHistory: 'OrderStatusHistory'
 };
 
 /**

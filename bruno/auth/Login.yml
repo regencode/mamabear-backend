@@ -20,11 +20,6 @@ runtime:
     - type: after-response
       code: |-
         bru.deleteVar('phase');
-        const body = res.getBody();
-        if (body && body.data) {
-          bru.setVar('jwtToken', body.data.accessToken || '');
-          bru.setVar('refreshToken', body.data.refreshToken || '');
-        }
         bru.setNextRequest('Get products (Pagination)');
 
 settings:
@@ -51,6 +46,10 @@ examples:
       headers:
         - name: Content-Type
           value: "application/json; charset=utf-8"
+        - name: Set-Cookie
+          value: "accessToken=eyJhbGci...; Path=/; HttpOnly; Secure; SameSite=Strict"
+        - name: Set-Cookie
+          value: "refreshToken=eyJhbGci...; Path=/; HttpOnly; Secure; SameSite=Strict"
       body:
         type: json
         data: |-
@@ -58,13 +57,10 @@ examples:
             "success": true,
             "statusCode": 201,
             "message": [
-              "No message specified"
+              "Login successful"
             ],
-            "data": {
-              "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NDU5NGRlNS05OTdlLTRlMWQtYTU1MS1jMmQ0MzNhMzE4MmUiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc4OTI0NTkxLCJleHAiOjE3Nzg5MjU0OTF9.d0jGnMrBdYDjHXcyYPgkcQPun3n76iVl6xkElu6ykcI",
-              "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NDU5NGRlNS05OTdlLTRlMWQtYTU1MS1jMmQ0MzNhMzE4MmUiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc4OTI0NTkxLCJleHAiOjE3Nzk1MjkzOTF9._T6u9LRG0cjGRP272lv_aKeBxF5MZO8NqgCrweWBCLY"
-            },
-            "timestamp": "2026-05-16T09:43:11.571Z"
+            "data": null,
+            "timestamp": "2026-05-25T14:19:53.645Z"
           }
   - name: "Invalid Password (400)"
     request:
@@ -93,7 +89,7 @@ examples:
               "Invalid password"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.048Z"
+            "timestamp": "2026-05-25T14:24:28.207Z"
           }
   - name: "Email Not Found (400)"
     request:
@@ -122,7 +118,7 @@ examples:
               "Email not found"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.051Z"
+            "timestamp": "2026-05-25T14:24:28.217Z"
           }
   - name: "Validation Error (400)"
     request:
@@ -152,5 +148,5 @@ examples:
               "password should not be empty"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.054Z"
+            "timestamp": "2026-05-25T14:24:28.225Z"
           }

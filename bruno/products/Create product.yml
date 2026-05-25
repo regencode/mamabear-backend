@@ -5,33 +5,44 @@ info:
 
 http:
   method: POST
-  url: "{{baseUrl}}/api/products"
+  url: "{{baseUrl}}/api/admin/products"
   body:
-    type: json
-    data: |-
-      {
-        "name": "S-26 Procal Gold 3",
-        "description": "Growing-up formula for children aged 1-3 years.",
-        "ingredients": "Growing-up formula for children aged 1-3 years.",
-        "usageInstructions": "Growing-up formula for children aged 1-3 years.",
-        "weightG": 900,
-        "priceIdr": 185000,
-        "stock": 50,
-        "sku": "S26-PROCAL-3-900",
-        "isActive": true,
-        "slug": "s-26-procal-gold-3",
-        "tags": ["formula", "growing-up", "toddler"],
-        "images": [
-          {
-            "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/AlmonMix/AlmonMix-01.jpg",
-            "sortOrder": 1,
-            "altText": "MamaBear AlmonMix 01"
-          }
-        ]
-      }
-  auth:
-    type: bearer
-    token: "{{jwtToken}}"
+    type: multipartForm
+    data:
+      - name: name
+        type: text
+        value: MamaBear AlmonMix Isi 6 Sachet
+      - name: description
+        type: text
+        value: Minuman Serbuk dengan Almond
+      - name: ingredients
+        type: text
+        value: Daun Katuk, Daun Kelor, Almond
+      - name: usageInstructions
+        type: text
+        value: Seduh 1 sachet dengan 200 ml air hangat
+      - name: weightG
+        type: text
+        value: "180"
+      - name: priceIdr
+        type: text
+        value: "80000"
+      - name: stock
+        type: text
+        value: "100"
+      - name: sku
+        type: text
+        value: ALMMBR01
+      - name: slug
+        type: text
+        value: mamabear-almonmix-isi-6-sachet
+      - name: "tags[0]"
+        type: text
+        value: formula
+      - name: "tags[1]"
+        type: text
+        value: lactation
+  auth: inherit
 
 runtime:
   scripts:
@@ -53,33 +64,26 @@ settings:
 examples:
   - name: "Success (201)"
     request:
-      url: "{{baseUrl}}/api/products"
+      url: "{{baseUrl}}/api/admin/products"
       method: POST
       body:
         type: json
         data: |-
           {
-            "name": "Test Capture Product",
-            "description": "A test product created by capture script",
-            "ingredients": "Test ingredients",
-            "usageInstructions": "Test usage instructions",
-            "weightG": 100,
-            "priceIdr": 50000,
-            "stock": 50,
-            "sku": "TEST.CAPTURE",
+            "name": "MamaBear AlmonMix Isi 6 Sachet",
+            "description": "Minuman Serbuk dengan Almond",
+            "ingredients": "Daun Katuk, Daun Kelor, Almond",
+            "usageInstructions": "Seduh 1 sachet",
+            "weightG": 180,
+            "priceIdr": 80000,
+            "stock": 100,
+            "sku": "ALMMBR01",
             "isActive": true,
-            "slug": "test-capture-product",
             "tags": [
-              "test",
-              "capture"
+              "formula",
+              "lactation"
             ],
-            "images": [
-              {
-                "imageUrl": "https://example.com/test.jpg",
-                "sortOrder": 1,
-                "altText": "Test image"
-              }
-            ]
+            "images": []
           }
     response:
       status: 201
@@ -94,55 +98,46 @@ examples:
             "success": true,
             "statusCode": 201,
             "message": [
-              "Product Test Capture Product created successfully"
+              "Product MamaBear AlmonMix Isi 6 Sachet created successfully"
             ],
             "data": {
-              "id": 6,
-              "name": "Test Capture Product",
-              "slug": "test-capture-product",
+              "id": 1,
+              "name": "MamaBear AlmonMix Isi 6 Sachet",
+              "slug": "mamabear-almonmix-isi-6-sachet",
               "isActive": true,
               "categoryId": null,
               "highlightId": null,
               "tags": [
-                "test",
-                "capture"
+                "formula",
+                "lactation"
               ],
-              "description": "A test product created by capture script",
-              "ingredients": "Test ingredients",
-              "usageInstructions": "Test usage instructions",
-              "createdAt": "2026-05-16T09:43:11.658Z",
-              "updatedAt": "2026-05-16T09:43:11.658Z",
+              "description": "Minuman Serbuk dengan Almond",
+              "ingredients": "Daun Katuk, Daun Kelor, Almond",
+              "usageInstructions": "Seduh 1 sachet",
+              "createdAt": "2026-05-25T14:23:11.448Z",
+              "updatedAt": "2026-05-25T14:23:11.448Z",
               "category": null,
-              "images": [
-                {
-                  "id": 27,
-                  "productId": 6,
-                  "variantId": null,
-                  "imageUrl": "https://example.com/test.jpg",
-                  "sortOrder": 1,
-                  "altText": "Test image"
-                }
-              ],
+              "images": [],
               "variants": [
                 {
-                  "id": 6,
-                  "productId": 6,
+                  "id": 1,
+                  "productId": 1,
                   "name": "INTERNAL_DEFAULT",
-                  "priceIdr": "50000",
-                  "weightG": 100,
-                  "sku": "TEST.CAPTURE",
-                  "stock": 50,
+                  "priceIdr": "80000",
+                  "weightG": 180,
+                  "sku": "ALMMBR01",
+                  "stock": 100,
                   "sortOrder": 0,
-                  "createdAt": "2026-05-16T09:43:11.664Z",
-                  "updatedAt": "2026-05-16T09:43:11.664Z"
+                  "createdAt": "2026-05-25T14:23:12.881Z",
+                  "updatedAt": "2026-05-25T14:23:12.881Z"
                 }
               ]
             },
-            "timestamp": "2026-05-16T09:43:11.675Z"
+            "timestamp": "2026-05-25T14:23:11.500Z"
           }
   - name: "Unauthorized (401)"
     request:
-      url: "{{baseUrl}}/api/products"
+      url: "{{baseUrl}}/api/admin/products"
       method: POST
       body:
         type: json
@@ -166,11 +161,11 @@ examples:
               "Unauthorized"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.069Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }
   - name: "Validation Error (400)"
     request:
-      url: "{{baseUrl}}/api/products"
+      url: "{{baseUrl}}/api/admin/products"
       method: POST
       body:
         type: json
@@ -201,72 +196,5 @@ examples:
               "priceIdr must be a number conforming to the specified constraints"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.072Z"
-          }
-  - name: "Slug Already Exists (201)"
-    request:
-      url: "{{baseUrl}}/api/products"
-      method: POST
-      body:
-        type: json
-        data: |-
-          {
-            "name": "Duplicate Slug Product",
-            "description": "Duplicate slug test",
-            "ingredients": "Test",
-            "usageInstructions": "Test",
-            "weightG": 100,
-            "priceIdr": 50000,
-            "stock": 10,
-            "sku": "TEST.DUP.SLUG",
-            "slug": "mamabear-almonmix-isi-6-sachet",
-            "tags": [],
-            "images": []
-          }
-    response:
-      status: 201
-      statusText: "Created"
-      headers:
-        - name: Content-Type
-          value: "application/json; charset=utf-8"
-      body:
-        type: json
-        data: |-
-          {
-            "success": true,
-            "statusCode": 201,
-            "message": [
-              "Product Duplicate Slug Product created successfully"
-            ],
-            "data": {
-              "id": 7,
-              "name": "Duplicate Slug Product",
-              "slug": "duplicate-slug-product",
-              "isActive": true,
-              "categoryId": null,
-              "highlightId": null,
-              "tags": [],
-              "description": "Duplicate slug test",
-              "ingredients": "Test",
-              "usageInstructions": "Test",
-              "createdAt": "2026-05-16T09:43:12.076Z",
-              "updatedAt": "2026-05-16T09:43:12.076Z",
-              "category": null,
-              "images": [],
-              "variants": [
-                {
-                  "id": 8,
-                  "productId": 7,
-                  "name": "INTERNAL_DEFAULT",
-                  "priceIdr": "50000",
-                  "weightG": 100,
-                  "sku": "TEST.DUP.SLUG",
-                  "stock": 10,
-                  "sortOrder": 0,
-                  "createdAt": "2026-05-16T09:43:12.078Z",
-                  "updatedAt": "2026-05-16T09:43:12.078Z"
-                }
-              ]
-            },
-            "timestamp": "2026-05-16T09:43:12.084Z"
+            "timestamp": "2026-05-25T14:24:28.235Z"
           }
