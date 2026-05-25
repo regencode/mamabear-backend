@@ -15,6 +15,7 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { Response } from 'express';
 import { ServiceResult } from '@/common/ServiceResult';
+import { Role } from '@/generated/prisma';
 
 @Injectable()
 export class AuthService {
