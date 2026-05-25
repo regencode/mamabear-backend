@@ -30,7 +30,6 @@ model User {
     resetToken               String?                                                                 
     resetTokenExpiry         DateTime?                                                               
     refreshToken             String?                                                                 
-    refreshTokenExpiry       DateTime?   
     carts                    Cart[]                                                            
     orders                   Order[]
 }

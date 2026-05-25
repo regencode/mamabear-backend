@@ -239,7 +239,6 @@ export class CartController {
         userId,
         sessionId,
       );
-
       if (createdSessionId) {
         res.cookie('sessionId', createdSessionId, {
           httpOnly: true,
@@ -247,9 +246,7 @@ export class CartController {
           sameSite: 'lax',
         });
       }
-
       const result = await this.cartService.clearCart(cart.id);
-
       this.logger.info({
         level: 'info',
         message: 'Cart cleared successfully',
