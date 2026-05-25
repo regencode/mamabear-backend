@@ -246,6 +246,24 @@ exports.Prisma.CartItemScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.OrderScalarFieldEnum = {
+  id: 'id',
+  orderNumber: 'orderNumber',
+  userId: 'userId',
+  status: 'status',
+  subtotalIdr: 'subtotalIdr',
+  shippingCostIdr: 'shippingCostIdr',
+  taxIdr: 'taxIdr',
+  shippingMethod: 'shippingMethod',
+  trackingNumber: 'trackingNumber',
+  paymentMethod: 'paymentMethod',
+  paymentStatus: 'paymentStatus',
+  pendingExpiresAt: 'pendingExpiresAt',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -326,9 +344,35 @@ exports.Prisma.CartItemOrderByRelevanceFieldEnum = {
   id: 'id',
   cartId: 'cartId'
 };
+
+exports.Prisma.OrderOrderByRelevanceFieldEnum = {
+  id: 'id',
+  orderNumber: 'orderNumber',
+  userId: 'userId',
+  shippingMethod: 'shippingMethod',
+  trackingNumber: 'trackingNumber',
+  paymentMethod: 'paymentMethod',
+  notes: 'notes'
+};
 exports.Role = exports.$Enums.Role = {
   USER: 'USER',
-  ADMIN: 'ADMIN'
+  ADMIN: 'ADMIN',
+  SUPERADMIN: 'SUPERADMIN'
+};
+
+exports.OrderStatus = exports.$Enums.OrderStatus = {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  SHIPPED: 'SHIPPED',
+  RECEIVED: 'RECEIVED',
+  FAILED: 'FAILED'
+};
+
+exports.PaymentStatus = exports.$Enums.PaymentStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  REFUNDED: 'REFUNDED',
+  CANCELLED: 'CANCELLED'
 };
 
 exports.Prisma.ModelName = {
@@ -341,7 +385,8 @@ exports.Prisma.ModelName = {
   Category: 'Category',
   Review: 'Review',
   Cart: 'Cart',
-  CartItem: 'CartItem'
+  CartItem: 'CartItem',
+  Order: 'Order'
 };
 
 /**
