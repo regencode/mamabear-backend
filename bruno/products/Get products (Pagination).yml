@@ -24,3 +24,471 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (200)"
+    request:
+      url: "{{baseUrl}}/products?limit=10&cursor=1"
+      method: GET
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": [
+              "Retrieved 5 products"
+            ],
+            "data": {
+              "success": true,
+              "data": [
+                {
+                  "id": 1,
+                  "name": "MamaBear AlmonMix Isi 6 Sachet - Minuman Serbuk dengan Almond - Kaya Nutrisi Untuk Ibu Menyusui BPOM HALAL",
+                  "slug": "mamabear-almonmix-isi-6-sachet",
+                  "isActive": true,
+                  "categoryId": 2,
+                  "highlightId": 2,
+                  "tags": [],
+                  "description": "MamaBear AlmonMix Isi 6 Sachet\nMinuman Almond Kaya Nutrisi dengan Daun Katuk & Daun Kelor.\n\n\nLACTOSE FREE\nTINGGI VITAMIN A, B1, B2, B6, B9 (ASAM FOLAT), B12\nTINGGI VITAMIN C & ZAT BESI\nTINGGI SERAT PANGAN\nMAKRO & MIKRO NUTRISI LENGKAP\n\n\nHadir dalam 7 varian rasa:\nCokelat\nChoco Hazelnut\nCoffee Latte\nStrawberry\nVanilla\nMatcha\nCaramel\n\n\nCara penyajian:\nSeduh 1 sachet MamaBear AlmonMix dengan 200 ml air hangat.\nDapat ditambahkan es batu jika ingin disajikan dingin.\n\n\nIngredients:\nDaun Katuk\nDaun Kelor\nAlmond\nEkstrak Ragi\n\n\nKeunggulan Mamabear AlmonMix:\nEfektif meningkatkan produksi dan nutrisi ASI.\nEfektif membantu ASI cepat keluar.\nMeningkatkan mood untuk membantu mengurangi risiko baby blues.",
+                  "ingredients": null,
+                  "usageInstructions": null,
+                  "createdAt": "2026-05-16T09:43:11.156Z",
+                  "updatedAt": "2026-05-16T09:43:11.156Z",
+                  "category": {
+                    "id": 2,
+                    "name": "Drink",
+                    "slug": "drink",
+                    "description": "Minuman pelancar & peningkat ASI",
+                    "imageUrl": null,
+                    "isActive": true,
+                    "sortOrder": 2,
+                    "createdAt": "2026-05-16T09:43:11.131Z",
+                    "updatedAt": "2026-05-16T09:43:11.131Z"
+                  },
+                  "images": [
+                    {
+                      "id": 1,
+                      "productId": 1,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/AlmonMix/AlmonMix-01.jpg",
+                      "sortOrder": 1,
+                      "altText": "MamaBear AlmonMix 01"
+                    },
+                    {
+                      "id": 2,
+                      "productId": 1,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/AlmonMix/AlmonMix-02.jpg",
+                      "sortOrder": 2,
+                      "altText": "MamaBear AlmonMix 02"
+                    },
+                    {
+                      "id": 3,
+                      "productId": 1,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/AlmonMix/AlmonMix-03.jpg",
+                      "sortOrder": 3,
+                      "altText": "MamaBear AlmonMix 03"
+                    },
+                    {
+                      "id": 4,
+                      "productId": 1,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/AlmonMix/AlmonMix-04.jpg",
+                      "sortOrder": 4,
+                      "altText": "MamaBear AlmonMix 04"
+                    },
+                    {
+                      "id": 5,
+                      "productId": 1,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/AlmonMix/AlmonMix-05.jpg",
+                      "sortOrder": 5,
+                      "altText": "MamaBear AlmonMix 05"
+                    }
+                  ],
+                  "variants": [
+                    {
+                      "id": 1,
+                      "productId": 1,
+                      "name": "INTERNAL_DEFAULT",
+                      "priceIdr": "80000",
+                      "weightG": 180,
+                      "sku": "AL.MMBR",
+                      "stock": 100,
+                      "sortOrder": 0,
+                      "createdAt": "2026-05-16T09:43:11.162Z",
+                      "updatedAt": "2026-05-16T09:43:11.162Z"
+                    }
+                  ]
+                },
+                {
+                  "id": 2,
+                  "name": "MamaBear ZoyaMix Rasa Cokelat Isi 10 Sachet - Sereal Kaya Nutrisi untuk Ibu Menyusui Halal BPOM",
+                  "slug": "mamabear-zoyamix-rasa-cokelat-isi-10-sachet",
+                  "isActive": true,
+                  "categoryId": 1,
+                  "highlightId": 1,
+                  "tags": [],
+                  "description": "MamaBear ZoyaMix Rasa Cokelat Isi 10 Sachet\nSereal Kaya Nutrisi untuk Ibu Menyusui.\n\n\nMAKRO & MIKRO NUTRISI LENGKAP\nSUMBER PROTEIN & ZAT BESI\nTINGGI KALSIUM\nVIT A, B6, B12, KOLIN, SENG, ZAT BESI\n\n\nCara penyajian:\nSeduh 1 sachet ZoyaMix dengan 150 ml air hangat.\nDapat ditambahkan es batu jika ingin disajikan dingin.\n\n\nIngredients:\nDaun Katuk\nKedelai\nDaun Kelor\nEkstrak Ragi\nRolled Oat\n\n\nKeunggulan Mamabear ZoyaMix:\nMelancarkan ASI.\nMengentalkan ASI.\nTinggi Kalsium & Zinc.\nKaya Kandungan Omega 3.\nSumber Zat Besi.\n\n*Catatan: mengandung produk turunan sapi.",
+                  "ingredients": null,
+                  "usageInstructions": null,
+                  "createdAt": "2026-05-16T09:43:11.179Z",
+                  "updatedAt": "2026-05-16T09:43:11.179Z",
+                  "category": {
+                    "id": 1,
+                    "name": "Food",
+                    "slug": "food",
+                    "description": "Makanan & camilan untuk ibu menyusui",
+                    "imageUrl": null,
+                    "isActive": true,
+                    "sortOrder": 1,
+                    "createdAt": "2026-05-16T09:43:11.126Z",
+                    "updatedAt": "2026-05-16T09:43:11.126Z"
+                  },
+                  "images": [
+                    {
+                      "id": 6,
+                      "productId": 2,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/ZoyaMix/ZoyaMix-01.jpg",
+                      "sortOrder": 1,
+                      "altText": "MamaBear ZoyaMix 01"
+                    },
+                    {
+                      "id": 7,
+                      "productId": 2,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/ZoyaMix/ZoyaMix-02.jpg",
+                      "sortOrder": 2,
+                      "altText": "MamaBear ZoyaMix 02"
+                    },
+                    {
+                      "id": 8,
+                      "productId": 2,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/ZoyaMix/ZoyaMix-03.jpg",
+                      "sortOrder": 3,
+                      "altText": "MamaBear ZoyaMix 03"
+                    },
+                    {
+                      "id": 9,
+                      "productId": 2,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/ZoyaMix/ZoyaMix-04.jpg",
+                      "sortOrder": 4,
+                      "altText": "MamaBear ZoyaMix 04"
+                    },
+                    {
+                      "id": 10,
+                      "productId": 2,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/ZoyaMix/ZoyaMix-05.jpg",
+                      "sortOrder": 5,
+                      "altText": "MamaBear ZoyaMix 05"
+                    },
+                    {
+                      "id": 11,
+                      "productId": 2,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/ZoyaMix/ZoyaMix-06.jpg",
+                      "sortOrder": 6,
+                      "altText": "MamaBear ZoyaMix 06"
+                    },
+                    {
+                      "id": 12,
+                      "productId": 2,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/ZoyaMix/ZoyaMix-07.jpg",
+                      "sortOrder": 7,
+                      "altText": "MamaBear ZoyaMix 07"
+                    }
+                  ],
+                  "variants": [
+                    {
+                      "id": 2,
+                      "productId": 2,
+                      "name": "INTERNAL_DEFAULT",
+                      "priceIdr": "80000",
+                      "weightG": 300,
+                      "sku": "ZM.MMBR",
+                      "stock": 100,
+                      "sortOrder": 0,
+                      "createdAt": "2026-05-16T09:43:11.181Z",
+                      "updatedAt": "2026-05-16T09:43:11.181Z"
+                    }
+                  ]
+                },
+                {
+                  "id": 3,
+                  "name": "MamaBear Teh Pelancar ASI Isi 20 Sachet - ASI Booster Pelancar Peningkat Produksi ASI BPOM dan Halal",
+                  "slug": "mamabear-teh-pelancar-asi-isi-20-sachet",
+                  "isActive": true,
+                  "categoryId": 2,
+                  "highlightId": 2,
+                  "tags": [],
+                  "description": "MamaBear Teh Pelancar ASI Isi 20 Sachet\nASI Booster & Immunity Tea.\n\n\nIndividual sachet praktis & higienis.\nKantong teh bebas klorin, biodegradable, dan food grade.\nAroma harum menenangkan, relaksASI ala busui.\nTanpa tambahan bahan pengawet.\nRasa manis alami.\nHerbal kaya antioksidan.\n\n\nHadir dalam 3 varian rasa:\nStrawberry\nBlueberry\n\n\nCara penyajian (1 box isi 20 sachet x @3gr (60gr)):\nSeduh dengan 200-300 ml air mendidih/panas, biarkan selama min 10 menit/kuning keemasan.\nDapat ditambahkan madu/gula/lemon, atau bisa juga disajikan dingin.\nKonsumsi MamaBear Teh Pelancar ASI 3-4x sehari.\n\n\nIngredients:\nFenugreek\nHabbatussauda\nKunir\nFennel\n\n\nKeunggulan Mamabear Teh Pelancar ASI:\nMemperlancar aliran ASI.\nMeningkatkan produksi & nutrisi ASI.\nMeningkatkan lemak ASI & BB bayi (melalui ASI).\nMempercepat pemulihan & meningkatkan daya tahan tubuh (Habbatussauda).\n\n*Catatan: tidak untuk ibu hamil.",
+                  "ingredients": null,
+                  "usageInstructions": null,
+                  "createdAt": "2026-05-16T09:43:11.188Z",
+                  "updatedAt": "2026-05-16T09:43:11.188Z",
+                  "category": {
+                    "id": 2,
+                    "name": "Drink",
+                    "slug": "drink",
+                    "description": "Minuman pelancar & peningkat ASI",
+                    "imageUrl": null,
+                    "isActive": true,
+                    "sortOrder": 2,
+                    "createdAt": "2026-05-16T09:43:11.131Z",
+                    "updatedAt": "2026-05-16T09:43:11.131Z"
+                  },
+                  "images": [
+                    {
+                      "id": 13,
+                      "productId": 3,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/Teh/Lactation-Tea-01.jpg",
+                      "sortOrder": 1,
+                      "altText": "MamaBear Lactation Tea 01"
+                    },
+                    {
+                      "id": 14,
+                      "productId": 3,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/Teh/Lactation-Tea-02.jpg",
+                      "sortOrder": 2,
+                      "altText": "MamaBear Lactation Tea 02"
+                    },
+                    {
+                      "id": 15,
+                      "productId": 3,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/Teh/Lactation-Tea-03.jpg",
+                      "sortOrder": 3,
+                      "altText": "MamaBear Lactation Tea 03"
+                    }
+                  ],
+                  "variants": [
+                    {
+                      "id": 3,
+                      "productId": 3,
+                      "name": "INTERNAL_DEFAULT",
+                      "priceIdr": "65000",
+                      "weightG": 60,
+                      "sku": "TPA.MMBR",
+                      "stock": 100,
+                      "sortOrder": 0,
+                      "createdAt": "2026-05-16T09:43:11.189Z",
+                      "updatedAt": "2026-05-16T09:43:11.189Z"
+                    }
+                  ]
+                },
+                {
+                  "id": 4,
+                  "name": "MamaBear Kukis Almond Oat - Camilan Kaya Nutrisi untuk Ibu Menyusui Halal BPOM",
+                  "slug": "mamabear-kukis-almond-oat",
+                  "isActive": true,
+                  "categoryId": 1,
+                  "highlightId": 1,
+                  "tags": [],
+                  "description": "MamaBear Kukis Almon Oat\nMemberi segala kebaikan untuk Mama selama masa menyusui dengan :\n\n✅ SUPERFOOD meningkatkan produksi & nutrisi ASI\n✅ MAKRO & MIKRONUTRISI lengkap untuk Mama\n✅ VIT B6, Omega3 & Zat Besi\n✅ ANTIOXIDANT Selenium\n✅ Tinggi Serat Pangan untuk kesehatan saluran pencernaan\n\n\nKeunggulan lainnya :\n⭐ Brand Choice 2022\n⭐Terjamin Mutu & Sesuai Standard Keamanan Pangan\n\n- BPOM MD : 236213003799\n- HALAL MUI : 07200046370418\n\n⭐ Rasa ENAK\n⭐ Tanpa tambahan bahan pengawet\n⭐ Ukuran sekali lahap bebas remahan\n⭐ Packaging ziplock, memudahkan penyimpanan\n⭐ Aman dikonsumsi ibu hamil & menyusui, anak-anak, dewasa, & orang tua.\n\n\n*Varian Cookies and Cream & Coklat Chip mengandung produk turunan susu sapi.\n*Varian Choconut BEBAS produk turunan susu sapi & TANPA TELUR\n\n\nCATATAN PEMESANAN:\n- EstimASI pengiriman produk 3-4 hari kerja\n- Bila pemesanan sudah di checkout maka tidak bisa ganti alamat\n(Apabila ada kesalahan input alamat, bisa dibatalkan dulu pemesanan sebelumnya lalu bisa order ulang)\n\n*Baca label sebelum membeli\n\nSYARAT PENGAJUAN KOMPLAIN\nJika ada komplain dimohon untuk cek kembali syarat & ketentuannya di BANNER TOKO\nPenilaian yang Mama berikan sangat berharga bagi kami",
+                  "ingredients": null,
+                  "usageInstructions": null,
+                  "createdAt": "2026-05-16T09:43:11.196Z",
+                  "updatedAt": "2026-05-16T09:43:11.196Z",
+                  "category": {
+                    "id": 1,
+                    "name": "Food",
+                    "slug": "food",
+                    "description": "Makanan & camilan untuk ibu menyusui",
+                    "imageUrl": null,
+                    "isActive": true,
+                    "sortOrder": 1,
+                    "createdAt": "2026-05-16T09:43:11.126Z",
+                    "updatedAt": "2026-05-16T09:43:11.126Z"
+                  },
+                  "images": [
+                    {
+                      "id": 16,
+                      "productId": 4,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/Kukis-Almond-Oat/Cover-Kukis-Almond-Oat.png",
+                      "sortOrder": 1,
+                      "altText": "Cover MamaBear Kukis Almond Oat"
+                    },
+                    {
+                      "id": 17,
+                      "productId": 4,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/Kukis-Almond-Oat/Almond-Oat-Cookies-Cream-02.jpg",
+                      "sortOrder": 2,
+                      "altText": "Almond Oat Cookies Cream 02"
+                    },
+                    {
+                      "id": 18,
+                      "productId": 4,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/Kukis-Almond-Oat/Almond-Oat-Cookies-Cream-03.jpg",
+                      "sortOrder": 3,
+                      "altText": "Almond Oat Cookies Cream 03"
+                    },
+                    {
+                      "id": 19,
+                      "productId": 4,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/Kukis-Almond-Oat/Almond-Oat-Cookies-Cream-04.jpg",
+                      "sortOrder": 4,
+                      "altText": "Almond Oat Cookies Cream 04"
+                    },
+                    {
+                      "id": 20,
+                      "productId": 4,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/Kukis-Almond-Oat/Almond-Oat-Choco-Chip-03.jpg",
+                      "sortOrder": 5,
+                      "altText": "Almond Oat Choco Chip 03"
+                    },
+                    {
+                      "id": 21,
+                      "productId": 4,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/Kukis-Almond-Oat/Kookie-Bites-Choco-Nut-02.jpg",
+                      "sortOrder": 6,
+                      "altText": "Kookie Bites Choco Nut 02"
+                    },
+                    {
+                      "id": 22,
+                      "productId": 4,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/Kukis-Almond-Oat/Kookie-Bites-Choco-Nut-04.jpg",
+                      "sortOrder": 7,
+                      "altText": "Kookie Bites Choco Nut 04"
+                    }
+                  ],
+                  "variants": [
+                    {
+                      "id": 4,
+                      "productId": 4,
+                      "name": "INTERNAL_DEFAULT",
+                      "priceIdr": "80000",
+                      "weightG": 150,
+                      "sku": "KU.MMBR",
+                      "stock": 100,
+                      "sortOrder": 0,
+                      "createdAt": "2026-05-16T09:43:11.197Z",
+                      "updatedAt": "2026-05-16T09:43:11.197Z"
+                    }
+                  ]
+                },
+                {
+                  "id": 5,
+                  "name": "MamaBear ASI Booster 30 Kapsul - Pelancar ASI Fenugreek Free Halal BPOM",
+                  "slug": "mamabear-asi-booster-30-kapsul",
+                  "isActive": true,
+                  "categoryId": 3,
+                  "highlightId": 2,
+                  "tags": [],
+                  "description": "MAMABEAR KAPSUL ASI BOOSTER\n\nKapsul Pelancar ASI pertama dengan Triple Benefit dalam 1 kapsul:\nMeningkatkan produksi dan nutrisi ASI\nMembantu meredakan peradangan pada penyumbatan kelenjar ASI (Mastitis)\nMembantu meredakan nyeri pasca melahirkan\n\nKeunggulan lainnya :\nTerjamin Mutu & Sesuai Standard Keamanan Pangan\n- POM TR243057401\n- HALAL MUI : ID00110000288610422\n\nKombinasi herbal & SUPERFOOD dari ekstrak daun katuk, ekstrak daun kelor, ekstrak jahe merah dan serbuk almond\nFish Allergen Free\nFenugreek Free\n17 Nutrisi Makro & Mikro\nEkstrak Jahe untuk antioksida yang membantu menjaga daya tahan tubuh Ibu selama menyusui\nMudah dikonsumsi tidak memerlukan penyeduhan\n\n\nANJURAN PEMAKAIAN untuk manfaat maksimal :\n- Konsumsi MamaBear Kapsul Pelancar ASI 2-3x sehari.\n*1 kapsul setelah makan\nCatatan : Tidak untuk Ibu hamil\n\n\n\nCATATAN PEMESANAN:\n- Estimasi pengiriman produk 3-4 hari kerja\n- Bila pemesanan sudah di checkout maka tidak bisa ganti alamat\n(Apabila ada kesalahan input alamat, bisa dibatalkan dulu pemesanan sebelumnya lalu bisa order ulang)\n\n*Baca label sebelum membeli",
+                  "ingredients": null,
+                  "usageInstructions": null,
+                  "createdAt": "2026-05-16T09:43:11.205Z",
+                  "updatedAt": "2026-05-16T09:43:11.205Z",
+                  "category": {
+                    "id": 3,
+                    "name": "Other",
+                    "slug": "other",
+                    "description": "Produk lainnya",
+                    "imageUrl": null,
+                    "isActive": true,
+                    "sortOrder": 3,
+                    "createdAt": "2026-05-16T09:43:11.136Z",
+                    "updatedAt": "2026-05-16T09:43:11.136Z"
+                  },
+                  "images": [
+                    {
+                      "id": 23,
+                      "productId": 5,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/Kapsul/Kapsul-01.jpg",
+                      "sortOrder": 1,
+                      "altText": "MamaBear Kapsul 01"
+                    },
+                    {
+                      "id": 24,
+                      "productId": 5,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/Kapsul/Kapsul-02.jpg",
+                      "sortOrder": 2,
+                      "altText": "MamaBear Kapsul 02"
+                    },
+                    {
+                      "id": 25,
+                      "productId": 5,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/Kapsul/Kapsul-03.jpg",
+                      "sortOrder": 3,
+                      "altText": "MamaBear Kapsul 03"
+                    },
+                    {
+                      "id": 26,
+                      "productId": 5,
+                      "variantId": null,
+                      "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/Kapsul/Kapsul-04.jpg",
+                      "sortOrder": 4,
+                      "altText": "MamaBear Kapsul 04"
+                    }
+                  ],
+                  "variants": [
+                    {
+                      "id": 5,
+                      "productId": 5,
+                      "name": "INTERNAL_DEFAULT",
+                      "priceIdr": "100000",
+                      "weightG": 30,
+                      "sku": "CP.AB30",
+                      "stock": 100,
+                      "sortOrder": 0,
+                      "createdAt": "2026-05-16T09:43:11.207Z",
+                      "updatedAt": "2026-05-16T09:43:11.207Z"
+                    }
+                  ]
+                }
+              ],
+              "pagination": {
+                "limit": 10,
+                "nextCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "timestamp": "2026-05-16T09:43:11.585Z"
+          }
+  - name: "Validation Error (400)"
+    request:
+      url: "{{baseUrl}}/products?limit=20&cursor=0"
+      method: GET
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "cursor must not be less than 1"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.059Z"
+          }

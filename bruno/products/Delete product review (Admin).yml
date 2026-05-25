@@ -21,3 +21,83 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (200)"
+    request:
+      url: "{{baseUrl}}/api/products/6/reviews/33"
+      method: DELETE
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": [
+              "Review 33 deleted successfully"
+            ],
+            "data": {
+              "id": 33,
+              "title": "Great product!",
+              "reviewerId": "fbf8fb32-effd-4374-8689-a3d598540aa1",
+              "productId": 6,
+              "rating": 5,
+              "numUpvotes": 1,
+              "description": "This is a test review from the capture script.",
+              "imageUrls": [
+                "https://example.com/review-img1.jpg"
+              ],
+              "createdAt": "2026-05-16T09:43:11.728Z"
+            },
+            "timestamp": "2026-05-16T09:43:11.802Z"
+          }
+  - name: "Not Found (500)"
+    request:
+      url: "{{baseUrl}}/api/products/1/reviews/999999"
+      method: DELETE
+    response:
+      status: 500
+      statusText: "Internal Server Error"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 500,
+            "message": [
+              "Internal server error"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.175Z"
+          }
+  - name: "Unauthorized (401)"
+    request:
+      url: "{{baseUrl}}/api/products/1/reviews/2"
+      method: DELETE
+    response:
+      status: 401
+      statusText: "Unauthorized"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 401,
+            "message": [
+              "Unauthorized"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.177Z"
+          }

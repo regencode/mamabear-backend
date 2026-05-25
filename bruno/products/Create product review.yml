@@ -35,3 +35,146 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (201)"
+    request:
+      url: "{{baseUrl}}/products/test-capture-product/reviews"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "title": "Great product!",
+            "reviewerId": "fbf8fb32-effd-4374-8689-a3d598540aa1",
+            "description": "This is a test review from the capture script.",
+            "rating": 5,
+            "imageUrls": [
+              "https://example.com/review-img1.jpg"
+            ]
+          }
+    response:
+      status: 201
+      statusText: "Created"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 201,
+            "message": [
+              "Review created successfully"
+            ],
+            "data": {
+              "id": 33,
+              "title": "Great product!",
+              "reviewerId": "fbf8fb32-effd-4374-8689-a3d598540aa1",
+              "productId": 6,
+              "rating": 5,
+              "numUpvotes": 0,
+              "description": "This is a test review from the capture script.",
+              "imageUrls": [
+                "https://example.com/review-img1.jpg"
+              ],
+              "createdAt": "2026-05-16T09:43:11.728Z"
+            },
+            "timestamp": "2026-05-16T09:43:11.731Z"
+          }
+  - name: "Unauthorized (401)"
+    request:
+      url: "{{baseUrl}}/products/mamabear-almonmix-isi-6-sachet/reviews"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "title": "Test"
+          }
+    response:
+      status: 401
+      statusText: "Unauthorized"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 401,
+            "message": [
+              "Unauthorized"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.141Z"
+          }
+  - name: "Validation Error (400)"
+    request:
+      url: "{{baseUrl}}/products/mamabear-almonmix-isi-6-sachet/reviews"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "title": "",
+            "reviewerId": "",
+            "description": "",
+            "rating": 0
+          }
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "title should not be empty",
+              "reviewerId should not be empty",
+              "description should not be empty",
+              "rating must not be less than 1",
+              "imageUrls must be an array"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.144Z"
+          }
+  - name: "Not Found (404)"
+    request:
+      url: "{{baseUrl}}/products/nonexistent-slug-xyz/reviews"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "title": "Test Review",
+            "reviewerId": "42bf8a9e-9e84-4e55-8bbb-a4c20e4769e8",
+            "description": "Test description",
+            "rating": 5,
+            "imageUrls": []
+          }
+    response:
+      status: 404
+      statusText: "Not Found"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 404,
+            "message": [
+              "Cannot find product with slug nonexistent-slug-xyz"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.148Z"
+          }

@@ -30,3 +30,100 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (200)"
+    request:
+      url: "{{baseUrl}}/api/users"
+      method: GET
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": [
+              "Found 5 users"
+            ],
+            "data": [
+              {
+                "id": "42bf8a9e-9e84-4e55-8bbb-a4c20e4769e8",
+                "email": "siti.rahayu@email.com",
+                "name": "Siti Rahayu",
+                "phone": "081234567890",
+                "role": "USER",
+                "isVerified": true,
+                "createdAt": "2026-05-16T09:43:11.108Z",
+                "updatedAt": "2026-05-16T09:43:11.108Z"
+              },
+              {
+                "id": "8c587081-a774-4f13-9b11-1c9529df0ffd",
+                "email": "dewi.lestari@email.com",
+                "name": "Dewi Lestari",
+                "phone": "081298765432",
+                "role": "USER",
+                "isVerified": true,
+                "createdAt": "2026-05-16T09:43:11.113Z",
+                "updatedAt": "2026-05-16T09:43:11.113Z"
+              },
+              {
+                "id": "bdae006a-a264-4f05-b4e0-1f828f4b06b7",
+                "email": "rina.wati@email.com",
+                "name": "Rina Wati",
+                "phone": "082112345678",
+                "role": "USER",
+                "isVerified": false,
+                "createdAt": "2026-05-16T09:43:11.117Z",
+                "updatedAt": "2026-05-16T09:43:11.117Z"
+              },
+              {
+                "id": "ae06314b-c63b-44c7-8ee7-8d34a0baff6b",
+                "email": "budi.santoso@email.com",
+                "name": "Budi Santoso",
+                "phone": "085678901234",
+                "role": "USER",
+                "isVerified": true,
+                "createdAt": "2026-05-16T09:43:11.121Z",
+                "updatedAt": "2026-05-16T09:43:11.121Z"
+              },
+              {
+                "id": "74594de5-997e-4e1d-a551-c2d433a3182e",
+                "email": "admin@mamabear.id",
+                "name": "Admin MamaBear",
+                "phone": "081200001111",
+                "role": "ADMIN",
+                "isVerified": true,
+                "createdAt": "2026-05-16T09:43:11.059Z",
+                "updatedAt": "2026-05-16T09:43:11.566Z"
+              }
+            ],
+            "timestamp": "2026-05-16T09:43:11.604Z"
+          }
+  - name: "Unauthorized (401)"
+    request:
+      url: "{{baseUrl}}/api/users"
+      method: GET
+    response:
+      status: 401
+      statusText: "Unauthorized"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 401,
+            "message": [
+              "Unauthorized"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.235Z"
+          }

@@ -21,3 +21,80 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (200)"
+    request:
+      url: "{{baseUrl}}/api/users/42bf8a9e-9e84-4e55-8bbb-a4c20e4769e8"
+      method: GET
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": [
+              "Found user with id 42bf8a9e-9e84-4e55-8bbb-a4c20e4769e8"
+            ],
+            "data": {
+              "id": "42bf8a9e-9e84-4e55-8bbb-a4c20e4769e8",
+              "email": "siti.rahayu@email.com",
+              "name": "Siti Rahayu",
+              "phone": "081234567890",
+              "role": "USER",
+              "isVerified": true,
+              "createdAt": "2026-05-16T09:43:11.108Z",
+              "updatedAt": "2026-05-16T09:43:11.108Z"
+            },
+            "timestamp": "2026-05-16T09:43:11.633Z"
+          }
+  - name: "Not Found (404)"
+    request:
+      url: "{{baseUrl}}/api/users/00000000-0000-0000-0000-000000000000"
+      method: GET
+    response:
+      status: 404
+      statusText: "Not Found"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 404,
+            "message": [
+              "User with id 00000000-0000-0000-0000-000000000000 not found"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.238Z"
+          }
+  - name: "Unauthorized (401)"
+    request:
+      url: "{{baseUrl}}/api/users/42bf8a9e-9e84-4e55-8bbb-a4c20e4769e8"
+      method: GET
+    response:
+      status: 401
+      statusText: "Unauthorized"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 401,
+            "message": [
+              "Unauthorized"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.240Z"
+          }

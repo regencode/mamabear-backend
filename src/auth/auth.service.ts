@@ -13,7 +13,8 @@ import { MailService } from './mail.service';
 import { JwtService } from '@nestjs/jwt';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
-import { CreateUserDto } from '@/users/dto/create-user.dto';
+import { Response } from 'express';
+import { ServiceResult } from '@/common/ServiceResult';
 import { Role } from '@/generated/prisma';
 
 @Injectable()
@@ -27,7 +28,7 @@ export class AuthService {
     this.logger.setContext(AuthService.name);
   }
 
-  async login(dto: LoginUserDto) {
+  async login(dto: LoginUserDto, res: Response): Promise<ServiceResult<null>> {
     try {
       const user = await this.repo.findEmail(dto.email);
 
@@ -99,9 +100,24 @@ export class AuthService {
         status: 'success',
       });
 
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.REFRESHTOKEN_ENV === 'REFRESHTOKEN_ENV',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
+      res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: process.env.REFRESHTOKEN_ENV === 'REFRESHTOKEN_ENV',
+        sameSite: 'lax',
+        maxAge: 15 * 60 * 1000,
+      });
+
       return {
-        accessToken,
-        refreshToken,
+        success: true,
+        message: `Login successful`,
+        data: null,
       };
     } catch (error: any) {
       if (
@@ -122,7 +138,7 @@ export class AuthService {
     }
   }
 
-  async register(dto: RegisterUserDto) {
+  async register(dto: RegisterUserDto): Promise<ServiceResult<null>> {
     try {
       const emailIsExist = await this.repo.findEmail(dto.email);
       if (emailIsExist) {
@@ -165,7 +181,9 @@ export class AuthService {
       });
 
       return {
-        message: 'Register success, check your email to verify',
+        success: true,
+        message: `Register success, check your email to verify`,
+        data: null,
       };
     } catch (error: any) {
       if (
@@ -186,7 +204,7 @@ export class AuthService {
     }
   }
 
-  async verifyEmail(token: string) {
+  async verifyEmail(token: string): Promise<ServiceResult<null>> {
     try {
       const user = await this.repo.findUserByVerificationToken(token);
 
@@ -233,7 +251,9 @@ export class AuthService {
       });
 
       return {
-        message: 'Email verified successfully',
+        success: true,
+        message: `Email verified successfully`,
+        data: null,
       };
     } catch (error: any) {
       if (
@@ -253,7 +273,10 @@ export class AuthService {
     }
   }
 
-  async refreshToken(refreshToken: string) {
+  async refreshToken(
+    refreshToken: string,
+    res: Response,
+  ): Promise<ServiceResult<null>> {
     try {
       const payload = await this.jwtService.verifyAsync(refreshToken, {
         secret: process.env.JWT_REFRESH_SECRET,
@@ -317,9 +340,38 @@ export class AuthService {
         role: user.role,
       };
 
+      const newRefreshToken = await this.jwtService.signAsync(newPayload, {
+        secret: process.env.JWT_REFRESH_SECRET,
+        expiresIn: '7d',
+      });
+
       const newAccessToken = await this.jwtService.signAsync(newPayload, {
         secret: process.env.JWT_ACCESS_SECRET,
         expiresIn: '15m',
+      });
+
+      const hashedRefreshToken = await bcrypt.hash(newRefreshToken, 10);
+
+      await this.repo.update(
+        { id: user.id },
+        {
+          refreshToken: hashedRefreshToken,
+          refreshTokenExpiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        },
+      );
+
+      res.cookie('refreshToken', newRefreshToken, {
+        httpOnly: true,
+        secure: process.env.REFRESHTOKEN_ENV === 'REFRESHTOKEN_ENV',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
+      res.cookie('accessToken', newAccessToken, {
+        httpOnly: true,
+        secure: process.env.REFRESHTOKEN_ENV === 'REFRESHTOKEN_ENV',
+        sameSite: 'lax',
+        maxAge: 15 * 60 * 1000,
       });
 
       this.logger.info({
@@ -331,7 +383,9 @@ export class AuthService {
       });
 
       return {
-        accessToken: newAccessToken,
+        success: true,
+        message: `Token refreshed successfully`,
+        data: null,
       };
     } catch (error: any) {
       if (
@@ -351,7 +405,7 @@ export class AuthService {
     }
   }
 
-  async logout(userId: string) {
+  async logout(userId: string, res: Response): Promise<ServiceResult<null>> {
     try {
       const user = await this.repo.findUserById(userId);
 
@@ -365,6 +419,9 @@ export class AuthService {
         });
         throw new BadRequestException('User not found');
       }
+
+      res.clearCookie('refreshToken');
+      res.clearCookie('accessToken');
 
       await this.repo.update(
         { id: user.id },
@@ -383,7 +440,9 @@ export class AuthService {
       });
 
       return {
-        message: 'Logout success',
+        success: true,
+        message: `Logout success`,
+        data: null,
       };
     } catch (error: any) {
       if (
@@ -404,7 +463,7 @@ export class AuthService {
     }
   }
 
-  async forgotPassword(dto: ForgotPasswordDto) {
+  async forgotPassword(dto: ForgotPasswordDto): Promise<ServiceResult<null>> {
     try {
       const user = await this.repo.findEmail(dto.email);
 
@@ -443,7 +502,9 @@ export class AuthService {
       });
 
       return {
-        message: 'Check your email to reset password',
+        success: true,
+        message: `Check your email to reset password`,
+        data: null,
       };
     } catch (error: any) {
       if (
@@ -464,7 +525,10 @@ export class AuthService {
     }
   }
 
-  async resetPassword(token: string, dto: ResetPasswordDto) {
+  async resetPassword(
+    token: string,
+    dto: ResetPasswordDto,
+  ): Promise<ServiceResult<null>> {
     try {
       const user = await this.repo.findUserByResetToken(token);
 
@@ -516,7 +580,9 @@ export class AuthService {
       });
 
       return {
-        message: 'Password reset success',
+        success: true,
+        message: `Password reset success`,
+        data: null,
       };
     } catch (error: any) {
       if (

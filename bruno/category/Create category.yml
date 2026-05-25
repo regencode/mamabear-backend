@@ -34,3 +34,135 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (201)"
+    request:
+      url: "{{baseUrl}}/api/categories"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Test Capture Category",
+            "description": "A test category for capture script",
+            "imageUrl": "https://example.com/test-category.jpg"
+          }
+    response:
+      status: 201
+      statusText: "Created"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 201,
+            "message": [
+              "Category Test Capture Category created successfully"
+            ],
+            "data": {
+              "id": 4,
+              "name": "Test Capture Category",
+              "slug": "test-capture-category",
+              "description": "A test category for capture script",
+              "imageUrl": "https://example.com/test-category.jpg",
+              "isActive": true,
+              "sortOrder": 0,
+              "createdAt": "2026-05-16T09:43:11.681Z",
+              "updatedAt": "2026-05-16T09:43:11.681Z"
+            },
+            "timestamp": "2026-05-16T09:43:11.684Z"
+          }
+  - name: "Unauthorized (401)"
+    request:
+      url: "{{baseUrl}}/api/categories"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Test"
+          }
+    response:
+      status: 401
+      statusText: "Unauthorized"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 401,
+            "message": [
+              "Unauthorized"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.180Z"
+          }
+  - name: "Validation Error (400)"
+    request:
+      url: "{{baseUrl}}/api/categories"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "",
+            "description": "",
+            "imageUrl": ""
+          }
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "name should not be empty",
+              "description should not be empty",
+              "imageUrl should not be empty"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.183Z"
+          }
+  - name: "Category Already Exists (400)"
+    request:
+      url: "{{baseUrl}}/api/categories"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Food",
+            "description": "Duplicate test",
+            "imageUrl": "https://example.com/test.jpg"
+          }
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "Category already exists"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.187Z"
+          }

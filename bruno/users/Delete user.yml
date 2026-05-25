@@ -21,3 +21,80 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (200)"
+    request:
+      url: "{{baseUrl}}/api/users/fbf8fb32-effd-4374-8689-a3d598540aa1"
+      method: DELETE
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": [
+              "User deleted successfully"
+            ],
+            "data": {
+              "id": "fbf8fb32-effd-4374-8689-a3d598540aa1",
+              "email": "test-capture@example.com",
+              "name": "Updated Capture User",
+              "phone": "081234567890",
+              "role": "USER",
+              "isVerified": false,
+              "createdAt": "2026-05-16T09:43:11.701Z",
+              "updatedAt": "2026-05-16T09:43:11.776Z"
+            },
+            "timestamp": "2026-05-16T09:43:11.837Z"
+          }
+  - name: "Not Found (500)"
+    request:
+      url: "{{baseUrl}}/api/users/00000000-0000-0000-0000-000000000000"
+      method: DELETE
+    response:
+      status: 500
+      statusText: "Internal Server Error"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 500,
+            "message": [
+              "Internal server error"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.270Z"
+          }
+  - name: "Unauthorized (401)"
+    request:
+      url: "{{baseUrl}}/api/users/42bf8a9e-9e84-4e55-8bbb-a4c20e4769e8"
+      method: DELETE
+    response:
+      status: 401
+      statusText: "Unauthorized"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 401,
+            "message": [
+              "Unauthorized"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.272Z"
+          }

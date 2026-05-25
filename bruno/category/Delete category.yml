@@ -20,3 +20,103 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (200)"
+    request:
+      url: "{{baseUrl}}/api/categories/4"
+      method: DELETE
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": [
+              "Updated Test Category deleted successfully"
+            ],
+            "data": {
+              "id": 4,
+              "name": "Updated Test Category",
+              "slug": "updated-test-category",
+              "description": "Updated description",
+              "imageUrl": "https://example.com/test-category.jpg",
+              "isActive": true,
+              "sortOrder": 0,
+              "createdAt": "2026-05-16T09:43:11.681Z",
+              "updatedAt": "2026-05-16T09:43:11.760Z"
+            },
+            "timestamp": "2026-05-16T09:43:11.824Z"
+          }
+  - name: "Not Found (400)"
+    request:
+      url: "{{baseUrl}}/api/categories/999999"
+      method: DELETE
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "Category not found"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.207Z"
+          }
+  - name: "Unauthorized (401)"
+    request:
+      url: "{{baseUrl}}/api/categories/1"
+      method: DELETE
+    response:
+      status: 401
+      statusText: "Unauthorized"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 401,
+            "message": [
+              "Unauthorized"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.209Z"
+          }
+  - name: "Category Has Products (400)"
+    request:
+      url: "{{baseUrl}}/api/categories/1"
+      method: DELETE
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "Category has products"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.212Z"
+          }

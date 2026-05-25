@@ -26,3 +26,102 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (200)"
+    request:
+      url: "{{baseUrl}}/api/products/1/reviews?limit=10&cursor=1"
+      method: GET
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": [
+              "Found 4 reviews"
+            ],
+            "data": {
+              "success": true,
+              "data": [
+                {
+                  "id": 2,
+                  "title": "Sangat puas",
+                  "reviewerId": "8c587081-a774-4f13-9b11-1c9529df0ffd",
+                  "productId": 1,
+                  "rating": 3.6,
+                  "numUpvotes": 26,
+                  "description": "ASI saya meningkat drastis setelah 1 minggu konsumsi. Syukur banget.",
+                  "imageUrls": [],
+                  "createdAt": "2026-05-16T09:43:11.237Z"
+                },
+                {
+                  "id": 3,
+                  "title": "Kualitas oke",
+                  "reviewerId": "ae06314b-c63b-44c7-8ee7-8d34a0baff6b",
+                  "productId": 1,
+                  "rating": 3.4,
+                  "numUpvotes": 39,
+                  "description": "Sudah beberapa kali beli, selalu puas. Bayi saya juga sehat-sehat saja.",
+                  "imageUrls": [],
+                  "createdAt": "2026-05-16T09:43:11.241Z"
+                },
+                {
+                  "id": 4,
+                  "title": "Manfaatnya nyata",
+                  "reviewerId": "8c587081-a774-4f13-9b11-1c9529df0ffd",
+                  "productId": 1,
+                  "rating": 3.5,
+                  "numUpvotes": 26,
+                  "description": "Kualitasnya konsisten, tidak pernah mengecewakan.",
+                  "imageUrls": [],
+                  "createdAt": "2026-05-16T09:43:11.245Z"
+                },
+                {
+                  "id": 5,
+                  "title": "Kualitas oke",
+                  "reviewerId": "bdae006a-a264-4f05-b4e0-1f828f4b06b7",
+                  "productId": 1,
+                  "rating": 3,
+                  "numUpvotes": 8,
+                  "description": "Produk ini benar-benar membantu produksi ASI saya. Sangat recommended!",
+                  "imageUrls": [],
+                  "createdAt": "2026-05-16T09:43:11.249Z"
+                }
+              ],
+              "pagination": {
+                "limit": 10,
+                "nextCursor": null,
+                "hasNextPage": false
+              }
+            },
+            "timestamp": "2026-05-16T09:43:11.647Z"
+          }
+  - name: "Unauthorized (401)"
+    request:
+      url: "{{baseUrl}}/api/products/1/reviews?limit=10&cursor=1"
+      method: GET
+    response:
+      status: 401
+      statusText: "Unauthorized"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 401,
+            "message": [
+              "Unauthorized"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.068Z"
+          }

@@ -28,3 +28,129 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (200)"
+    request:
+      url: "{{baseUrl}}/api/categories/4"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Updated Test Category",
+            "description": "Updated description",
+            "slug": "test-category-updated"
+          }
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": [
+              "Category Updated Test Category updated successfully"
+            ],
+            "data": {
+              "id": 4,
+              "name": "Updated Test Category",
+              "slug": "updated-test-category",
+              "description": "Updated description",
+              "imageUrl": "https://example.com/test-category.jpg",
+              "isActive": true,
+              "sortOrder": 0,
+              "createdAt": "2026-05-16T09:43:11.681Z",
+              "updatedAt": "2026-05-16T09:43:11.760Z"
+            },
+            "timestamp": "2026-05-16T09:43:11.764Z"
+          }
+  - name: "Slug Collision (500)"
+    request:
+      url: "{{baseUrl}}/api/categories/1"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "slug": "drink"
+          }
+    response:
+      status: 500
+      statusText: "Internal Server Error"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 500,
+            "message": [
+              "Internal server error"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.200Z"
+          }
+  - name: "Not Found (400)"
+    request:
+      url: "{{baseUrl}}/api/categories/999999"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Test"
+          }
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "Category not found"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.204Z"
+          }
+  - name: "Unauthorized (401)"
+    request:
+      url: "{{baseUrl}}/api/categories/1"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Test"
+          }
+    response:
+      status: 401
+      statusText: "Unauthorized"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 401,
+            "message": [
+              "Unauthorized"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.205Z"
+          }

@@ -13,3 +13,49 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Not Found (500)"
+    request:
+      url: "{{baseUrl}}/api/products/reviews/999999"
+      method: DELETE
+    response:
+      status: 500
+      statusText: "Internal Server Error"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 500,
+            "message": [
+              "Internal server error"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.291Z"
+          }
+  - name: "Unauthorized (401)"
+    request:
+      url: "{{baseUrl}}/api/products/reviews/2"
+      method: DELETE
+    response:
+      status: 401
+      statusText: "Unauthorized"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 401,
+            "message": [
+              "Unauthorized"
+            ],
+            "data": null,
+            "timestamp": "2026-05-16T09:43:12.292Z"
+          }
