@@ -21,6 +21,8 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { SearchModule } from './search/search.module';
 import { EmbeddingsModule } from './embeddings/embeddings.module';
 import { ProductUtilsModule } from './product-utils/product-utils.module';
+import { CartModule } from './cart/cart.module';
+import { CleanupService } from './scheduler/cleanup.service';
 
 @Module({
   imports: [
@@ -34,6 +36,7 @@ import { ProductUtilsModule } from './product-utils/product-utils.module';
       isGlobal: true,
     }),
     CustomLoggerModule,
+    CartModule,
     MailerModule.forRoot(MailHogOptions),
     PrismaModule,
     ProductsModule,
@@ -53,6 +56,6 @@ import { ProductUtilsModule } from './product-utils/product-utils.module';
     ProductUtilsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, CleanupService],
 })
 export class AppModule {}
