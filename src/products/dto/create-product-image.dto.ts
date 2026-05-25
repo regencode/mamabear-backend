@@ -14,6 +14,25 @@ export class CreateProductImageDto {
   @IsInt()
   sortOrder: number;
 
+  @IsString()
+  publicId: string;
+
+  @IsOptional()
+  @IsInt()
+  width?: number;
+
+  @IsOptional()
+  @IsInt()
+  height?: number;
+
+  @IsOptional()
+  @IsInt()
+  fileSize?: number;
+
+  @IsOptional()
+  @IsString()
+  format?: string;
+
   @ApiPropertyOptional({ example: 'MamaBear AlmonMix 01' })
   @IsString()
   @IsOptional()

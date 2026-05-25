@@ -1,7 +1,9 @@
 import { IsOptional, IsInt, Min, Max } from 'class-validator'
 import { Transform, Type } from 'class-transformer'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 
 export class CursorPaginationRequestDto {
+  @ApiPropertyOptional({ description: "Index of first element" }) 
   @IsOptional()
   @Type(() => Number)
   @Transform(({ value }) =>
@@ -11,6 +13,7 @@ export class CursorPaginationRequestDto {
   @Min(1)
   cursor?: number
 
+  @ApiPropertyOptional({ description: "Number of rows to fetch" }) 
   @IsOptional()
   @Type(() => Number)
   @Transform(({ value }) => {

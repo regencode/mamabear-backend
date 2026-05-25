@@ -9,6 +9,10 @@ import {
   UseGuards,
   Req,
   Query,
+  UseInterceptors,
+  BadRequestException,
+  UploadedFiles,
+  Patch,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
@@ -24,9 +28,11 @@ import { DiscountsService } from '@/discounts/discounts.service';
 import { CreateVariantDto } from '@/variant/dto/create-variant.dto';
 import { UpdateVariantDto } from '@/variant/dto/update-variant.dto';
 import { VariantService } from '@/variant/variant.service';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 
 @ApiTags('products (admin)')
-@Controller('api/products')
+@Controller('admin/products')
 @UseGuards(new JwtAuthGuard())
 @Roles([Role.ADMIN])
 export class ProductsAdminController {
@@ -38,8 +44,25 @@ export class ProductsAdminController {
   ) {}
 
   @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productsService.create(createProductDto);
+  @UseInterceptors(
+    FilesInterceptor('images', 10, {
+      storage: memoryStorage(),
+      limits: {
+        fileSize: 40 * 1024 * 1024,
+      },
+      fileFilter(req, file, callback) {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|webp)$/)) {
+          return callback(new BadRequestException('Invalid file type'), false);
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  create(
+    @UploadedFiles() files: Express.Multer.File[],
+    @Body() dto: CreateProductDto,
+  ) {
+    return this.productsService.create(dto, files);
   }
 
   @Get(':id')
@@ -48,8 +71,26 @@ export class ProductsAdminController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productsService.update(+id, updateProductDto);
+  @UseInterceptors(
+    FilesInterceptor('images', 10, {
+      storage: memoryStorage(),
+      limits: {
+        fileSize: 40 * 1024 * 1024,
+      },
+      fileFilter(req, file, callback) {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|webp)$/)) {
+          return callback(new BadRequestException('Invalid file type'), false);
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  update(
+    @Param('id') id: string,
+    @UploadedFiles() files: Express.Multer.File[],
+    @Body() updateProductDto: UpdateProductDto,
+  ) {
+    return this.productsService.update(+id, updateProductDto, files);
   }
 
   @Delete(':id')
@@ -58,13 +99,28 @@ export class ProductsAdminController {
   }
 
   @Post(':id/variants')
+  @UseInterceptors(
+    FilesInterceptor('images', 10, {
+      storage: memoryStorage(),
+      limits: {
+        fileSize: 40 * 1024 * 1024,
+      },
+      fileFilter(req, file, callback) {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|webp)$/)) {
+          return callback(new BadRequestException('Invalid file type'), false);
+        }
+        callback(null, true);
+      },
+    }),
+  )
   createProductVariant(
     @Req() req,
     @Param('id') id: number,
     @Body() dto: CreateVariantDto,
+    @UploadedFiles() files: Express.Multer.File[],
   ) {
     dto.productId = id;
-    return this.variantService.createVariant(req.user.id, dto);
+    return this.variantService.createVariant(req.user.id, dto, files);
   }
 
   @Get(':id/variants')
@@ -95,12 +151,27 @@ export class ProductsAdminController {
   }
 
   @Put('variants/:id')
+  @UseInterceptors(
+    FilesInterceptor('images', 10, {
+      storage: memoryStorage(),
+      limits: {
+        fileSize: 40 * 1024 * 1024,
+      },
+      fileFilter(req, file, callback) {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|webp)$/)) {
+          return callback(new BadRequestException('Invalid file type'), false);
+        }
+        callback(null, true);
+      },
+    }),
+  )
   updateVariant(
     @Req() req,
     @Param('id') id: number,
     @Body() dto: UpdateVariantDto,
+    @UploadedFiles() files: Express.Multer.File[],
   ) {
-    return this.variantService.updateVariant(req.user.id, id, dto);
+    return this.variantService.updateVariant(req.user.id, id, dto, files);
   }
 
   @Delete('variants/:id')

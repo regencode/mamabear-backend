@@ -8,10 +8,12 @@ import {
 } from 'class-validator';
 import { IsObject } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Discount, ProductImage } from '@/generated/prisma';
+import { Type } from 'class-transformer';
+import { CreateVariantImageDto } from './create-variant-image.dto';
 
 export class CreateVariantDto {
   @ApiPropertyOptional({ example: 1 })
+  @Type(() => Number)
   @IsNumber()
   @IsOptional()
   productId?: number;
@@ -21,17 +23,19 @@ export class CreateVariantDto {
   @IsNotEmpty()
   name: string;
 
-  @ApiPropertyOptional({ example: {} })
+  @ApiPropertyOptional({ example: [] })
   @IsObject()
   @IsOptional()
-  images?: ProductImage;
+  images?: CreateVariantImageDto[];
 
   @ApiProperty({ example: 185000 })
+  @Type(() => Number)
   @IsNumber()
   @IsNotEmpty()
   priceIdr: number;
 
   @ApiProperty({ example: 900 })
+  @Type(() => Number)
   @IsNumber()
   @IsNotEmpty()
   weightG: number;
@@ -42,12 +46,14 @@ export class CreateVariantDto {
   sku?: string;
 
   @ApiPropertyOptional({ example: 50 })
+  @Type(() => Number)
   @IsNumber()
   @Min(0)
   @IsOptional()
   stock?: number;
 
   @ApiPropertyOptional({ example: 0 })
+  @Type(() => Number)
   @IsNumber()
   @Min(0)
   @IsOptional()

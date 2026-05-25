@@ -13,10 +13,13 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
+import { Roles } from '@/auth/decorators/roles.decorator';
+import { Role } from '@/generated/prisma';
 
 @ApiTags('users')
-@Controller('api/users')
+@Controller('admin/users')
 @UseGuards(new JwtAuthGuard())
+@Roles([Role.ADMIN])
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
