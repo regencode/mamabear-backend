@@ -10,10 +10,10 @@ http:
     type: json
     data: |-
       {
-        "email": "user@email.com",
+        "email": "bruno-{{runId}}@test.com",
         "password": "password123",
-        "name": "John Doe",
-        "phone": "081234567890"
+        "name": "Bruno User {{runId}}",
+        "phone": "081299880001"
       }
   auth: inherit
 

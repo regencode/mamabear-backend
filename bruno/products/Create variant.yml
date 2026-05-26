@@ -10,10 +10,10 @@ http:
     type: json
     data: |-
       {
-        "name": "Bruno Test Variant",
+        "name": "Bruno Variant {{runId}}",
         "priceIdr": 50000,
         "weightG": 100,
-        "sku": "BRUNO-VAR-001",
+        "sku": "BRUNO-VAR-{{runId}}",
         "stock": 10,
         "sortOrder": 1
       }

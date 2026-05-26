@@ -10,10 +10,10 @@ http:
     type: json
     data: |-
       {
-        "name": "Best Seller",
-        "description": "Products that are our best sellers",
+        "name": "Bruno Highlight {{runId}}",
+        "description": "Test highlight from Bruno",
         "isActive": true,
-        "slug": "best-seller"
+        "slug": "bruno-highlight-{{runId}}"
       }
   auth:
     type: bearer

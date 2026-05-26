@@ -10,14 +10,14 @@ http:
     type: json
     data: |-
       {
-        "name": "Bruno Test Product",
+        "name": "Bruno Product {{runId}}",
         "description": "Test product from Bruno collection",
         "ingredients": "Test ingredients",
         "usageInstructions": "Test usage instructions",
         "weightG": 100,
         "priceIdr": 50000,
         "stock": 10,
-        "sku": "BRUNO-TEST-001"
+        "sku": "BRUNO-{{runId}}"
       }
   auth:
     type: bearer

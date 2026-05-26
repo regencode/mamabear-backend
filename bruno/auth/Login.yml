@@ -25,6 +25,17 @@ runtime:
           bru.setVar('refreshToken', body.data.refreshToken);
         }
         bru.deleteVar('phase');
+        bru.deleteVar('productSlug');
+        bru.deleteVar('productId');
+        bru.deleteVar('variantId');
+        bru.deleteVar('reviewId');
+        bru.deleteVar('categorySlug');
+        bru.deleteVar('categoryId');
+        bru.deleteVar('userId');
+        bru.deleteVar('highlightId');
+        bru.deleteVar('imageId');
+        bru.deleteVar('cartItemId');
+        bru.setVar('runId', Date.now());
         bru.setNextRequest('Get products (Pagination)');
 
 settings:

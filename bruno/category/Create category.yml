@@ -10,7 +10,7 @@ http:
     type: json
     data: |-
       {
-        "name": "Bruno Test Category",
+        "name": "Bruno Category {{runId}}",
         "description": "Test category from Bruno"
       }
   auth:

@@ -109,7 +109,8 @@ jobs:
         export DATABASE_URL="postgresql://$PGUSERNAME:$PGPASSWORD@$PGHOST/$PGDATABASE?schema=public"
         npx prisma db seed
 
-    - name: Build NestJS application
+    - name: Build NestJS application and do smoke tests
       run: |
         npx nest build
-        npx nest start
+        npx nest start &
+        npm run test:e2e
