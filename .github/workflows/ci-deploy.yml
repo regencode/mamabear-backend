@@ -28,6 +28,7 @@ jobs:
       CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
       CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
       CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+      DATABASE_URL: "postgresql://regencode:pgpasswordregencode@/mamabear?host=/tmp/postgres&schema=public"
     steps:
     - name: Add PostgreSQL binaries to PATH
       shell: bash
@@ -100,13 +101,11 @@ jobs:
 
     - name: Apply migrations and generate Prisma
       run: |
-        export DATABASE_URL="postgresql://$PGUSERNAME:$PGPASSWORD@$PGHOST/$PGDATABASE?schema=public"
         npx prisma migrate deploy
         npx prisma generate
 
     - name: Run seeder
       run : |
-        export DATABASE_URL="postgresql://$PGUSERNAME:$PGPASSWORD@$PGHOST/$PGDATABASE?schema=public"
         npx prisma db seed
 
     - name: Build NestJS application and do smoke tests
