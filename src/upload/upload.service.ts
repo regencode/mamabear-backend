@@ -33,11 +33,7 @@ export class UploadService {
     return {
       success: true,
       message: 'Image uploaded successfully',
-      data: {
-        id: result.id,
-        altText: result.altText,
-        imageUrl: result.imageUrl,
-      },
+      data: result,
     };
   }
 
