@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { CreateProductImageDto } from './create-product-image.dto';
+import { CreateImageDto } from '@/upload/dto/create-image.dto';
 import { CreateVariantDto } from '@/variant/dto/create-variant.dto';
 
 export class CreateProductDto {
@@ -71,12 +71,12 @@ export class CreateProductDto {
   @IsOptional()
   isActive?: boolean;
 
-  @ApiPropertyOptional({ type: [CreateProductImageDto] })
+  @ApiPropertyOptional({ type: [CreateImageDto] })
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateProductImageDto)
+  @Type(() => CreateImageDto)
   @IsOptional()
-  images?: CreateProductImageDto[];
+  images?: CreateImageDto[];
 
   @ApiPropertyOptional({ type: [CreateVariantDto] })
   @IsArray()

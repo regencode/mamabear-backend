@@ -153,11 +153,13 @@ exports.Prisma.ProductScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.ProductImageScalarFieldEnum = {
+exports.Prisma.ImageScalarFieldEnum = {
   id: 'id',
-  productId: 'productId',
   publicId: 'publicId',
+  productId: 'productId',
   variantId: 'variantId',
+  reviewId: 'reviewId',
+  categoryId: 'categoryId',
   imageUrl: 'imageUrl',
   sortOrder: 'sortOrder',
   altText: 'altText',
@@ -205,14 +207,7 @@ exports.Prisma.CategoryScalarFieldEnum = {
   isActive: 'isActive',
   sortOrder: 'sortOrder',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  imageUrl: 'imageUrl',
-  publicId: 'publicId',
-  altText: 'altText',
-  width: 'width',
-  height: 'height',
-  fileSize: 'fileSize',
-  format: 'format'
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.ReviewScalarFieldEnum = {
@@ -223,7 +218,6 @@ exports.Prisma.ReviewScalarFieldEnum = {
   rating: 'rating',
   numUpvotes: 'numUpvotes',
   description: 'description',
-  imageUrls: 'imageUrls',
   createdAt: 'createdAt'
 };
 
@@ -319,7 +313,7 @@ exports.Prisma.ProductOrderByRelevanceFieldEnum = {
   usageInstructions: 'usageInstructions'
 };
 
-exports.Prisma.ProductImageOrderByRelevanceFieldEnum = {
+exports.Prisma.ImageOrderByRelevanceFieldEnum = {
   publicId: 'publicId',
   imageUrl: 'imageUrl',
   altText: 'altText',
@@ -340,18 +334,13 @@ exports.Prisma.HighlightOrderByRelevanceFieldEnum = {
 exports.Prisma.CategoryOrderByRelevanceFieldEnum = {
   name: 'name',
   slug: 'slug',
-  description: 'description',
-  imageUrl: 'imageUrl',
-  publicId: 'publicId',
-  altText: 'altText',
-  format: 'format'
+  description: 'description'
 };
 
 exports.Prisma.ReviewOrderByRelevanceFieldEnum = {
   title: 'title',
   reviewerId: 'reviewerId',
-  description: 'description',
-  imageUrls: 'imageUrls'
+  description: 'description'
 };
 
 exports.Prisma.CartOrderByRelevanceFieldEnum = {
@@ -406,7 +395,7 @@ exports.OrderStatus = exports.$Enums.OrderStatus = {
 exports.Prisma.ModelName = {
   User: 'User',
   Product: 'Product',
-  ProductImage: 'ProductImage',
+  Image: 'Image',
   Discount: 'Discount',
   ProductVariant: 'ProductVariant',
   Highlight: 'Highlight',

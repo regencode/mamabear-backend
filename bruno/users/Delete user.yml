@@ -1,7 +1,7 @@
 info:
   name: Delete user
   type: http
-  seq: 5
+  seq: 58
 
 http:
   method: DELETE

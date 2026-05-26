@@ -1,7 +1,7 @@
 info:
   name: Get images
   type: http
-  seq: 4
+  seq: 39
 
 http:
   method: GET

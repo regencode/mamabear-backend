@@ -1,7 +1,7 @@
 info:
   name: Get cart totals
   type: http
-  seq: 2
+  seq: 17
 
 http:
   method: GET

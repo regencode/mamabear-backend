@@ -51,7 +51,6 @@ export class CategoryService {
   async createCategory(
     userId: string,
     dto: CreateCategoryDto,
-    file: Express.Multer.File,
   ): Promise<ServiceResult<Category>> {
     const generatedSlug = slugify(dto.name, { lower: true, strict: true });
 
@@ -60,25 +59,9 @@ export class CategoryService {
     if (resolvedCategory)
       throw new BadRequestException('Category already exists');
 
-    if (!file) {
-      throw new BadRequestException('file needed');
-    }
+    dto.slug = generatedSlug;
 
-    const { imageUrl, publicId, width, height, fileSize, format, altText } =
-      await this.cloudinary.uploadFile(file);
-
-    const result = await this.repo.create({
-      name: dto.name,
-      slug: generatedSlug,
-      description: dto.description,
-      imageUrl,
-      publicId,
-      width,
-      height,
-      fileSize,
-      format,
-      altText,
-    });
+    const result = await this.repo.create(dto);
 
     return {
       success: true,
@@ -91,7 +74,6 @@ export class CategoryService {
     userId: string,
     categoryId: number,
     dto: UpdateCategoryDto,
-    file: Express.Multer.File,
   ): Promise<ServiceResult<Category>> {
     const resolvedCategory = await this.repo.findById(categoryId);
     if (!resolvedCategory) throw new BadRequestException('Category not found');
@@ -106,22 +88,7 @@ export class CategoryService {
       dto.slug = generatedSlug;
     }
 
-    const { imageUrl, publicId, width, height, fileSize, format, altText } =
-      await this.cloudinary.uploadFile(file);
-
-    const category = await this.repo.update(
-      { id: categoryId },
-      {
-        ...dto,
-        imageUrl,
-        publicId,
-        width,
-        height,
-        fileSize,
-        format,
-        altText,
-      },
-    );
+    const category = await this.repo.update(categoryId, dto);
 
     return {
       success: true,
@@ -138,7 +105,7 @@ export class CategoryService {
     if (!category) throw new BadRequestException('Category not found');
     if (category.products.length > 0)
       throw new BadRequestException('Category has products');
-    const deletedCategory = await this.repo.delete({ id: categoryId });
+    const deletedCategory = await this.repo.delete(categoryId);
 
     return {
       success: true,

@@ -1,7 +1,7 @@
 info:
   name: Clear cart
   type: http
-  seq: 7
+  seq: 31
 
 http:
   method: DELETE

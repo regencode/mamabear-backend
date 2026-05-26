@@ -4,8 +4,12 @@ import {
   IsOptional,
   IsBoolean,
   IsInt,
+  IsArray,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { CreateImageDto } from '@/upload/dto/create-image.dto';
 
 export class CreateCategoryDto {
   @ApiProperty({ example: 'Growing-up Formula' })
@@ -32,4 +36,11 @@ export class CreateCategoryDto {
   @IsInt()
   @IsOptional()
   sortOrder?: number;
+
+  @ApiPropertyOptional({ type: [CreateImageDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateImageDto)
+  @IsOptional()
+  images?: CreateImageDto[];
 }

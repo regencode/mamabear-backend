@@ -1,7 +1,7 @@
 info:
   name: Update highlight
   type: http
-  seq: 4
+  seq: 50
 
 http:
   method: PATCH

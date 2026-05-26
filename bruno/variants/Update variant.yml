@@ -1,23 +1,19 @@
 info:
   name: Update variant
   type: http
-  seq: 1
+  seq: 52
 
 http:
   method: PUT
   url: "{{baseUrl}}/api/admin/products/variants/{{variantId}}"
   body:
-    type: multipart-form
-    data:
-      - name: name
-        type: text
-        value: "MamaBear AlmonMix - Rasa Cokelat (Updated)"
-      - name: priceIdr
-        type: text
-        value: "85000"
-      - name: stock
-        type: text
-        value: "75"
+    type: json
+    data: |-
+      {
+        "name": "Bruno Test Variant (Updated)",
+        "priceIdr": 55000,
+        "stock": 75
+      }
   auth:
     type: bearer
     token: "{{jwtToken}}"
@@ -40,17 +36,13 @@ examples:
       url: "{{baseUrl}}/api/admin/products/variants/7"
       method: PUT
       body:
-        type: multipart-form
-        data:
-          - name: name
-            type: text
-            value: "Updated Test Variant"
-          - name: priceIdr
-            type: text
-            value: "55000"
-          - name: stock
-            type: text
-            value: "60"
+        type: json
+        data: |-
+          {
+            "name": "Bruno Test Variant (Updated)",
+            "priceIdr": 55000,
+            "stock": 75
+          }
     response:
       status: 200
       statusText: "OK"
@@ -85,11 +77,11 @@ examples:
       url: "{{baseUrl}}/api/admin/products/variants/999999"
       method: PUT
       body:
-        type: multipart-form
-        data:
-          - name: name
-            type: text
-            value: Test
+        type: json
+        data: |-
+          {
+            "name": "Test"
+          }
     response:
       status: 400
       statusText: "Bad Request"
@@ -113,11 +105,11 @@ examples:
       url: "{{baseUrl}}/api/admin/products/variants/1"
       method: PUT
       body:
-        type: multipart-form
-        data:
-          - name: name
-            type: text
-            value: Test
+        type: json
+        data: |-
+          {
+            "name": "Test"
+          }
     response:
       status: 401
       statusText: "Unauthorized"

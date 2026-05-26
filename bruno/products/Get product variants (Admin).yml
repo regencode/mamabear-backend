@@ -1,7 +1,7 @@
 info:
   name: Get product variants (Admin)
   type: http
-  seq: 11
+  seq: 35
 
 http:
   method: GET

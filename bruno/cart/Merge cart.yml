@@ -1,7 +1,7 @@
 info:
   name: Merge cart
   type: http
-  seq: 3
+  seq: 28
 
 http:
   method: POST

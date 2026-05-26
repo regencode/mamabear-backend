@@ -6,7 +6,10 @@ import {
   Max,
   IsArray,
   IsOptional,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+import { CreateImageDto } from '@/upload/dto/create-image.dto';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateReviewDto {
@@ -42,7 +45,11 @@ export class CreateReviewDto {
       'https://example.com/review-img2.jpg',
     ],
   })
+
+  @ApiPropertyOptional({ type: [CreateImageDto] })
   @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateImageDto)
   @IsOptional()
-  imageUrls?: string[];
+  images?: CreateImageDto[];
 }

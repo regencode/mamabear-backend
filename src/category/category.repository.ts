@@ -1,24 +1,71 @@
-import { Prisma } from '@/generated/prisma';
 import { PrismaService } from '@/prisma/prisma.service';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @Injectable()
 export class CategoryRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(data: Prisma.CategoryCreateInput) {
-    return this.prisma.category.create({ data });
+  create(dto: CreateCategoryDto) {
+    const { images, ...categoryData } = dto;
+    return this.prisma.category.create({
+      data: {
+        name: categoryData.name,
+        slug: categoryData.slug!,
+        description: categoryData.description,
+        isActive: categoryData.isActive,
+        sortOrder: categoryData.sortOrder,
+        ...(images?.length && {
+          images: {
+            createMany: {
+              data: images.map((img) => ({
+                imageUrl: img.imageUrl,
+                publicId: img.publicId,
+                width: img.width,
+                height: img.height,
+                fileSize: img.fileSize,
+                format: img.format,
+                sortOrder: img.sortOrder,
+                altText: img.altText,
+              })),
+            },
+          },
+        }),
+      },
+      include: { images: true },
+    });
   }
 
-  update(
-    where: Prisma.CategoryWhereUniqueInput,
-    data: Prisma.CategoryUpdateInput,
-  ) {
-    return this.prisma.category.update({ where, data });
+  update(id: number, dto: UpdateCategoryDto) {
+    const { images, ...categoryData } = dto;
+    return this.prisma.category.update({
+      where: { id },
+      data: {
+        ...categoryData,
+        ...(images?.length && {
+          images: {
+            createMany: {
+              data: images.map((img) => ({
+                imageUrl: img.imageUrl,
+                publicId: img.publicId,
+                width: img.width,
+                height: img.height,
+                fileSize: img.fileSize,
+                format: img.format,
+                sortOrder: img.sortOrder,
+                altText: img.altText,
+              })),
+            },
+          },
+        }),
+      },
+      include: { images: true },
+    });
   }
 
-  delete(where: Prisma.CategoryWhereUniqueInput) {
-    return this.prisma.category.delete({ where });
+  delete(id: number) {
+    return this.prisma.category.delete({ where: { id } });
   }
 
   findAll() {

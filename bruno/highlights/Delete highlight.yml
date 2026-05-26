@@ -1,7 +1,7 @@
 info:
   name: Delete highlight
   type: http
-  seq: 5
+  seq: 57
 
 http:
   method: DELETE

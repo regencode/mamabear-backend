@@ -72,12 +72,7 @@ export class ReviewsService {
     const resolvedProduct = await this.reviewsRepository.findProductBySlug(slug);
     if (!resolvedProduct) throw new NotFoundException(`Cannot find product with slug ${slug}`);
     dto.productId = resolvedProduct.id;
-    const result = await this.reviewsRepository.create(dto);
-    return {
-      success: true,
-      message: 'Review created successfully',
-      data: result,
-    };
+    return await this.createReviewForProduct(dto);
   }
 
   async upvoteReviewWithId(id: number): Promise<ServiceResult<Review>> {

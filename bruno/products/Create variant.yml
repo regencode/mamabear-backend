@@ -1,32 +1,22 @@
 info:
   name: Create variant
   type: http
-  seq: 7
+  seq: 43
 
 http:
   method: POST
   url: "{{baseUrl}}/api/admin/products/{{productId}}/variants"
   body:
-    type: multipart-form
-    data:
-      - name: name
-        type: text
-        value: MamaBear AlmonMix - Rasa Cokelat
-      - name: priceIdr
-        type: text
-        value: "80000"
-      - name: weightG
-        type: text
-        value: "180"
-      - name: sku
-        type: text
-        value: ALMMBR01-CHK
-      - name: stock
-        type: text
-        value: "50"
-      - name: sortOrder
-        type: text
-        value: "0"
+    type: json
+    data: |-
+      {
+        "name": "Bruno Test Variant",
+        "priceIdr": 50000,
+        "weightG": 100,
+        "sku": "BRUNO-VAR-001",
+        "stock": 10,
+        "sortOrder": 1
+      }
   auth:
     type: bearer
     token: "{{jwtToken}}"
@@ -53,26 +43,16 @@ examples:
       url: "{{baseUrl}}/api/admin/products/1/variants"
       method: POST
       body:
-        type: multipart-form
-        data:
-          - name: name
-            type: text
-            value: MamaBear AlmonMix - Rasa Cokelat
-          - name: priceIdr
-            type: text
-            value: "80000"
-          - name: weightG
-            type: text
-            value: "180"
-          - name: sku
-            type: text
-            value: ALMMBR01-CHK
-          - name: stock
-            type: text
-            value: "50"
-          - name: sortOrder
-            type: text
-            value: "0"
+        type: json
+        data: |-
+          {
+            "name": "Bruno Test Variant",
+            "priceIdr": 50000,
+            "weightG": 100,
+            "sku": "BRUNO-VAR-001",
+            "stock": 10,
+            "sortOrder": 1
+          }
     response:
       status: 201
       statusText: "Created"
@@ -135,17 +115,13 @@ examples:
       url: "{{baseUrl}}/api/admin/products/1/variants"
       method: POST
       body:
-        type: multipart-form
-        data:
-          - name: name
-            type: text
-            value: ""
-          - name: priceIdr
-            type: text
-            value: ""
-          - name: weightG
-            type: text
-            value: ""
+        type: json
+        data: |-
+          {
+            "name": "",
+            "priceIdr": "",
+            "weightG": ""
+          }
     response:
       status: 400
       statusText: "Bad Request"
@@ -173,26 +149,16 @@ examples:
       url: "{{baseUrl}}/api/admin/products/999999/variants"
       method: POST
       body:
-        type: multipart-form
-        data:
-          - name: name
-            type: text
-            value: Test Variant
-          - name: priceIdr
-            type: text
-            value: "50000"
-          - name: weightG
-            type: text
-            value: "100"
-          - name: sku
-            type: text
-            value: TEST.NOTFOUND
-          - name: stock
-            type: text
-            value: "10"
-          - name: sortOrder
-            type: text
-            value: "0"
+        type: json
+        data: |-
+          {
+            "name": "Test Variant",
+            "priceIdr": 50000,
+            "weightG": 100,
+            "sku": "TEST.NOTFOUND",
+            "stock": 10,
+            "sortOrder": 0
+          }
     response:
       status: 400
       statusText: "Bad Request"

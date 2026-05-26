@@ -1,7 +1,7 @@
 info:
   name: Search suggestions
   type: http
-  seq: 14
+  seq: 7
 
 http:
   method: GET

@@ -1,7 +1,7 @@
 info:
   name: Upvote review
   type: http
-  seq: 9
+  seq: 25
 
 http:
   method: PATCH

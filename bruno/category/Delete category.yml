@@ -1,7 +1,7 @@
 info:
   name: Delete category
   type: http
-  seq: 5
+  seq: 56
 
 http:
   method: DELETE

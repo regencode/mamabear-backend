@@ -1,7 +1,7 @@
 info:
   name: Create discount
   type: http
-  seq: 8
+  seq: 44
 
 http:
   method: POST

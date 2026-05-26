@@ -9,7 +9,7 @@ import {
 import { IsObject } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { CreateVariantImageDto } from './create-variant-image.dto';
+import { CreateImageDto } from '@/upload/dto/create-image.dto';
 
 export class CreateVariantDto {
   @ApiPropertyOptional({ example: 1 })
@@ -26,7 +26,7 @@ export class CreateVariantDto {
   @ApiPropertyOptional({ example: [] })
   @IsObject()
   @IsOptional()
-  images?: CreateVariantImageDto[];
+  images?: CreateImageDto[];
 
   @ApiProperty({ example: 185000 })
   @Type(() => Number)
@@ -56,6 +56,5 @@ export class CreateVariantDto {
   @Type(() => Number)
   @IsNumber()
   @Min(0)
-  @IsOptional()
   sortOrder: number;
 }

@@ -1,7 +1,7 @@
 info:
   name: Add to cart
   type: http
-  seq: 4
+  seq: 26
 
 http:
   method: POST
@@ -10,8 +10,8 @@ http:
     type: json
     data: |-
       {
-        "productId": 1,
-        "variantId": 1,
+        "productId": {{productId}},
+        "variantId": {{variantId}},
         "quantity": 2
       }
   auth: inherit
@@ -41,8 +41,8 @@ examples:
         type: json
         data: |-
           {
-            "productId": 1,
-            "variantId": 1,
+            "productId": {{productId}},
+            "variantId": {{variantId}},
             "quantity": 2
           }
     response:

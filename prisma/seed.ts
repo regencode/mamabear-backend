@@ -167,7 +167,7 @@ async function main() {
 
   await prisma.$executeRawUnsafe(`
     TRUNCATE TABLE 
-      "ProductImage",
+      "Image",
       "ProductVariant",
       "Discount",
       "Review",
@@ -189,26 +189,7 @@ async function main() {
   console.log('Creating categories...');
 
   for (const category of categories) {
-    let uploadedImage: Awaited<ReturnType<typeof uploadSeedImage>> | null =
-      null;
-
-    if ((category as any).imageUrl) {
-      uploadedImage = await uploadSeedImage((category as any).imageUrl);
-    }
-
-    await prisma.category.create({
-      data: {
-        ...category,
-        ...(uploadedImage && {
-          imageUrl: uploadedImage.imageUrl,
-          publicId: uploadedImage.publicId,
-          width: uploadedImage.width,
-          height: uploadedImage.height,
-          fileSize: uploadedImage.fileSize,
-          format: uploadedImage.format,
-        }),
-      },
-    });
+    await prisma.category.create({ data: { ...category } });
   }
 
   console.log(`Inserted ${categories.length} categories.`);
@@ -322,7 +303,7 @@ async function main() {
           });
 
           for (const { uploaded, sortOrder, altText } of uploadedImages) {
-            await tx.productImage.create({
+            await tx.image.create({
               data: {
                 variantId: variant.id,
                 publicId: uploaded.publicId,
@@ -339,7 +320,7 @@ async function main() {
         }
 
         for (const { uploaded, sortOrder, altText } of uploadedProductImages) {
-          await tx.productImage.create({
+          await tx.image.create({
             data: {
               productId: createdProduct.id,
               publicId: uploaded.publicId,
@@ -418,7 +399,6 @@ async function main() {
           description: pickRandom(REVIEW_DESCRIPTIONS),
           rating: randFloat(3, 5),
           numUpvotes: randInt(0, 50),
-          imageUrls: [],
           reviewerId: pickRandom(reviewerIds),
           productId: product.id,
         },

@@ -1,7 +1,7 @@
 info:
   name: Upload image
   type: http
-  seq: 2
+  seq: 40
 
 http:
   method: POST

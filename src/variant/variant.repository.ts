@@ -66,6 +66,7 @@ export class VariantRepository {
         weightG: dto.weightG,
         sku: dto.sku,
         stock: dto.stock,
+        sortOrder: dto.sortOrder,
         product: { connect: { id: dto.productId } },
         images: dto.images?.length
           ? {
@@ -96,7 +97,7 @@ export class VariantRepository {
   findProductBySlug(productSlug: string) {
     return this.prisma.product.findUnique({ 
         where: { slug: productSlug },
-        include: VARIANT_INCLUDE,
+        include: { variants: { include: VARIANT_INCLUDE }},
     });
   }
 }

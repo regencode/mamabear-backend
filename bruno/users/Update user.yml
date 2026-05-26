@@ -1,7 +1,7 @@
 info:
   name: Update user
   type: http
-  seq: 4
+  seq: 51
 
 http:
   method: PATCH

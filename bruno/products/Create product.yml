@@ -1,38 +1,24 @@
 info:
   name: Create product
   type: http
-  seq: 5
+  seq: 42
 
 http:
   method: POST
   url: "{{baseUrl}}/api/admin/products"
   body:
-    type: multipart-form
-    data:
-      - name: name
-        type: text
-        value: Bruno Test Product
-      - name: description
-        type: text
-        value: Test product from Bruno collection
-      - name: ingredients
-        type: text
-        value: Test ingredients
-      - name: usageInstructions
-        type: text
-        value: Test usage instructions
-      - name: weightG
-        type: text
-        value: "100"
-      - name: priceIdr
-        type: text
-        value: "50000"
-      - name: stock
-        type: text
-        value: "10"
-      - name: sku
-        type: text
-        value: BRUNO-TEST-001
+    type: json
+    data: |-
+      {
+        "name": "Bruno Test Product",
+        "description": "Test product from Bruno collection",
+        "ingredients": "Test ingredients",
+        "usageInstructions": "Test usage instructions",
+        "weightG": 100,
+        "priceIdr": 50000,
+        "stock": 10,
+        "sku": "BRUNO-TEST-001"
+      }
   auth:
     type: bearer
     token: "{{jwtToken}}"
@@ -60,26 +46,18 @@ examples:
       url: "{{baseUrl}}/api/admin/products"
       method: POST
       body:
-        type: multipart-form
-        data:
-          - name: name
-            type: text
-            value: Bruno Test Product
-          - name: description
-            type: text
-            value: Test product from Bruno collection
-          - name: weightG
-            type: text
-            value: "100"
-          - name: priceIdr
-            type: text
-            value: "50000"
-          - name: stock
-            type: text
-            value: "10"
-          - name: sku
-            type: text
-            value: BRUNO-TEST-001
+        type: json
+        data: |-
+          {
+            "name": "Bruno Test Product",
+            "description": "Test product from Bruno collection",
+            "ingredients": "Test ingredients",
+            "usageInstructions": "Test usage instructions",
+            "weightG": 100,
+            "priceIdr": 50000,
+            "stock": 10,
+            "sku": "BRUNO-TEST-001"
+          }
     response:
       status: 201
       statusText: "Created"

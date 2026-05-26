@@ -1,7 +1,7 @@
 info:
   name: Get highlights
   type: http
-  seq: 1
+  seq: 14
 
 http:
   method: GET

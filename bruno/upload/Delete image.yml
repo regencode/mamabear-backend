@@ -1,7 +1,7 @@
 info:
   name: Delete image
   type: http
-  seq: 5
+  seq: 60
 
 http:
   method: DELETE

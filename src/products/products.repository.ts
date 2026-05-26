@@ -46,7 +46,7 @@ export class ProductsRepository {
             })
         }
         if(images?.length) {
-            await tx.productImage.createMany({
+            await tx.image.createMany({
                 data: images.map(img => ({...img, productId: product.id }))
             })
         }

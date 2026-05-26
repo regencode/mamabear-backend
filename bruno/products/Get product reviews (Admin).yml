@@ -1,7 +1,7 @@
 info:
   name: Get product reviews (Admin)
   type: http
-  seq: 12
+  seq: 36
 
 http:
   method: GET
