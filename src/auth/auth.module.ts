@@ -13,7 +13,7 @@ import { RefreshJwtStrategy } from './refresh-jwt.strategy';
 @Module({
   imports: [
     ConfigModule,
-    PassportModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -31,6 +31,6 @@ import { RefreshJwtStrategy } from './refresh-jwt.strategy';
     JwtStrategy,
     RefreshJwtStrategy,
   ],
-  exports: [JwtStrategy],
+  exports: [PassportModule, JwtModule],
 })
 export class AuthModule {}
