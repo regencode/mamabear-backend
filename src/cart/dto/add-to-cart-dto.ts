@@ -6,9 +6,10 @@ export class AddToCartDto {
   @IsNumber()
   productId: number;
 
-  @ApiProperty({ example: 1 })
+  @ApiPropertyOptional({ example: 1 })
   @IsNumber()
-  variantId: number;
+  @IsOptional()
+  variantId?: number;
 
   @ApiPropertyOptional({ example: 2, default: 1 })
   @IsNumber()

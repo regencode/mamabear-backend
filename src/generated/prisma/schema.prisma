@@ -55,6 +55,7 @@ model Product {
   cartItems         CartItem[]
   createdAt         DateTime                     @default(now())
   updatedAt         DateTime?                    @updatedAt
+  orderItems        OrderItem[]
 }
 
 model ProductImage {
@@ -88,20 +89,21 @@ model Discount {
 }
 
 model ProductVariant {
-  id        Int            @id @default(autoincrement())
-  productId Int
-  product   Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
-  name      String
-  images    ProductImage[]
-  priceIdr  Decimal        @db.Decimal(10, 2)
-  discount  Discount?
-  weightG   Int
-  sku       String?
-  stock     Int            @default(0)
-  sortOrder Int            @default(0)
-  cartItems CartItem[]
-  createdAt DateTime       @default(now())
-  updatedAt DateTime?      @updatedAt
+  id         Int            @id @default(autoincrement())
+  productId  Int
+  product    Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name       String
+  images     ProductImage[]
+  priceIdr   Decimal        @db.Decimal(10, 2)
+  discount   Discount?
+  weightG    Int
+  sku        String?
+  stock      Int            @default(0)
+  sortOrder  Int            @default(0)
+  cartItems  CartItem[]
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime?      @updatedAt
+  orderItems OrderItem[]
 
   @@unique([productId, sortOrder], name: "variantCompositeIdentifier")
 }
@@ -203,6 +205,7 @@ model Order {
   id               String        @id @default(uuid(7)) @db.Uuid
   orderNumber      String        @unique
   userId           String        @db.Uuid
+  orderItems       OrderItem[]
   status           OrderStatus   @default(PENDING)
   subtotalIdr      Int           @default(0)
   shippingCostIdr  Int           @default(0)
@@ -216,5 +219,34 @@ model Order {
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 
-  user User @relation(fields: [userId], references: [id])
+  user                 User                 @relation(fields: [userId], references: [id])
+  orderStatusHistories OrderStatusHistory[]
+}
+
+model OrderItem {
+  id          Int     @id @default(autoincrement())
+  orderId     String  @db.Uuid
+  productId   Int
+  variantId   Int
+  // if not exists, try to pull from productId and variantId               
+  productName String?
+  variantName String?
+  price       Int?
+  // end
+  quantity    Int     @default(1)
+
+  order   Order          @relation(fields: [orderId], references: [id])
+  product Product        @relation(fields: [productId], references: [id])
+  variant ProductVariant @relation(fields: [variantId], references: [id])
+}
+
+model OrderStatusHistory {
+  id        Int         @id @default(autoincrement())
+  orderId   String      @db.Uuid
+  status    OrderStatus
+  notes     String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id])
 }

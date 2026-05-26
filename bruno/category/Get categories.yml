@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/categories"
+  url: "{{baseUrl}}/api/categories"
   auth: inherit
 
 runtime:
@@ -28,7 +28,7 @@ settings:
 examples:
   - name: "Success (200)"
     request:
-      url: "{{baseUrl}}/categories"
+      url: "{{baseUrl}}/api/categories"
       method: GET
     response:
       status: 200
@@ -43,42 +43,43 @@ examples:
             "success": true,
             "statusCode": 200,
             "message": [
-              "Found 3 categories"
+              "Found 2 categories"
             ],
             "data": [
               {
                 "id": 1,
-                "name": "Food",
-                "slug": "food",
-                "description": "Makanan & camilan untuk ibu menyusui",
-                "imageUrl": null,
+                "name": "Maternity Supplies",
+                "slug": "maternity-supplies",
+                "description": "Makanan & minuman untuk ibu menyusui",
                 "isActive": true,
                 "sortOrder": 1,
-                "createdAt": "2026-05-16T09:43:11.126Z",
-                "updatedAt": "2026-05-16T09:43:11.126Z"
+                "createdAt": "2026-05-25T14:13:29.188Z",
+                "updatedAt": "2026-05-25T14:13:29.188Z",
+                "imageUrl": null,
+                "publicId": "62bc13b1-20ff-44fe-9d52-bea934374a31",
+                "altText": null,
+                "width": null,
+                "height": null,
+                "fileSize": null,
+                "format": null
               },
               {
                 "id": 2,
-                "name": "Drink",
-                "slug": "drink",
-                "description": "Minuman pelancar & peningkat ASI",
-                "imageUrl": null,
+                "name": "ASI Booster",
+                "slug": "asi-booster",
+                "description": "Produk pelancar & peningkat ASI",
                 "isActive": true,
                 "sortOrder": 2,
-                "createdAt": "2026-05-16T09:43:11.131Z",
-                "updatedAt": "2026-05-16T09:43:11.131Z"
-              },
-              {
-                "id": 3,
-                "name": "Other",
-                "slug": "other",
-                "description": "Produk lainnya",
+                "createdAt": "2026-05-25T14:13:29.193Z",
+                "updatedAt": "2026-05-25T14:13:29.193Z",
                 "imageUrl": null,
-                "isActive": true,
-                "sortOrder": 3,
-                "createdAt": "2026-05-16T09:43:11.136Z",
-                "updatedAt": "2026-05-16T09:43:11.136Z"
+                "publicId": "2fdaf6e5-f02a-4d16-8011-77fff8fb28e7",
+                "altText": null,
+                "width": null,
+                "height": null,
+                "fileSize": null,
+                "format": null
               }
             ],
-            "timestamp": "2026-05-16T09:43:11.592Z"
+            "timestamp": "2026-05-25T14:24:08.639Z"
           }

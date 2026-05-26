@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/health"
+  url: "{{baseUrl}}/api/health"
   auth: inherit
 
 settings:
@@ -17,7 +17,7 @@ settings:
 examples:
   - name: "Success (200)"
     request:
-      url: "{{baseUrl}}/health"
+      url: "{{baseUrl}}/api/health"
       method: GET
     response:
       status: 200
@@ -40,13 +40,13 @@ examples:
                 "name": "mamabear-backend",
                 "version": "0.0.1",
                 "environment": "development",
-                "uptimeSeconds": 58,
-                "timestamp": "2026-05-16T09:43:11.462Z"
+                "uptimeSeconds": 3438,
+                "timestamp": "2026-05-25T14:24:08.469Z"
               },
               "checks": {
                 "database": {
                   "status": "healthy",
-                  "latencyMs": 4,
+                  "latencyMs": 3,
                   "message": "Connection successful"
                 },
                 "storage": {
@@ -61,5 +61,5 @@ examples:
                 "unhealthy": 0
               }
             },
-            "timestamp": "2026-05-16T09:43:11.462Z"
+            "timestamp": "2026-05-25T14:24:08.469Z"
           }

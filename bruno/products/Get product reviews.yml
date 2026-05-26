@@ -5,19 +5,14 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/products/{{productSlug}}/reviews"
+  url: "{{baseUrl}}/api/products/{{productSlug}}/reviews"
   auth: inherit
 
 runtime:
   scripts:
     - type: after-response
       code: |-
-        const phase = bru.getVar('phase');
-        if (phase === 'read-created') {
-          bru.setNextRequest('Get product reviews (Admin)');
-        } else {
-          bru.setNextRequest('Get category by slug');
-        }
+        bru.setNextRequest('Get review summary');
 
 settings:
   encodeUrl: true
@@ -28,7 +23,7 @@ settings:
 examples:
   - name: "Success (200)"
     request:
-      url: "{{baseUrl}}/products/mamabear-almonmix-isi-6-sachet/reviews?limit=10&cursor=1"
+      url: "{{baseUrl}}/api/products/mamabear-almonmix-isi-6-sachet/reviews?limit=10&cursor=1"
       method: GET
     response:
       status: 200
@@ -43,54 +38,21 @@ examples:
             "success": true,
             "statusCode": 200,
             "message": [
-              "Found 4 reviews for product mamabear-almonmix-isi-6-sachet"
+              "Found 1 reviews for product mamabear-almonmix-isi-6-sachet"
             ],
             "data": {
               "success": true,
               "data": [
                 {
-                  "id": 2,
+                  "id": 1,
                   "title": "Sangat puas",
-                  "reviewerId": "8c587081-a774-4f13-9b11-1c9529df0ffd",
+                  "reviewerId": "53ff9709-69e4-4aba-a02b-4955381f5a1c",
                   "productId": 1,
-                  "rating": 3.6,
-                  "numUpvotes": 26,
-                  "description": "ASI saya meningkat drastis setelah 1 minggu konsumsi. Syukur banget.",
+                  "rating": 5,
+                  "numUpvotes": 0,
+                  "description": "ASI saya meningkat drastis setelah 1 minggu konsumsi",
                   "imageUrls": [],
-                  "createdAt": "2026-05-16T09:43:11.237Z"
-                },
-                {
-                  "id": 3,
-                  "title": "Kualitas oke",
-                  "reviewerId": "ae06314b-c63b-44c7-8ee7-8d34a0baff6b",
-                  "productId": 1,
-                  "rating": 3.4,
-                  "numUpvotes": 39,
-                  "description": "Sudah beberapa kali beli, selalu puas. Bayi saya juga sehat-sehat saja.",
-                  "imageUrls": [],
-                  "createdAt": "2026-05-16T09:43:11.241Z"
-                },
-                {
-                  "id": 4,
-                  "title": "Manfaatnya nyata",
-                  "reviewerId": "8c587081-a774-4f13-9b11-1c9529df0ffd",
-                  "productId": 1,
-                  "rating": 3.5,
-                  "numUpvotes": 26,
-                  "description": "Kualitasnya konsisten, tidak pernah mengecewakan.",
-                  "imageUrls": [],
-                  "createdAt": "2026-05-16T09:43:11.245Z"
-                },
-                {
-                  "id": 5,
-                  "title": "Kualitas oke",
-                  "reviewerId": "bdae006a-a264-4f05-b4e0-1f828f4b06b7",
-                  "productId": 1,
-                  "rating": 3,
-                  "numUpvotes": 8,
-                  "description": "Produk ini benar-benar membantu produksi ASI saya. Sangat recommended!",
-                  "imageUrls": [],
-                  "createdAt": "2026-05-16T09:43:11.249Z"
+                  "createdAt": "2026-05-25T14:23:39.391Z"
                 }
               ],
               "pagination": {
@@ -99,11 +61,11 @@ examples:
                 "hasNextPage": false
               }
             },
-            "timestamp": "2026-05-16T09:43:11.623Z"
+            "timestamp": "2026-05-25T14:24:08.618Z"
           }
   - name: "Not Found (404)"
     request:
-      url: "{{baseUrl}}/products/nonexistent-product-xyz/reviews"
+      url: "{{baseUrl}}/api/products/nonexistent-xyz/reviews"
       method: GET
     response:
       status: 404
@@ -118,8 +80,8 @@ examples:
             "success": false,
             "statusCode": 404,
             "message": [
-              "Cannot find product with slug nonexistent-product-xyz"
+              "Cannot find product with slug nonexistent-xyz"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.065Z"
+            "timestamp": "2026-05-25T14:24:28.261Z"
           }

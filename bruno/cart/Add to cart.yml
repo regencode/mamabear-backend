@@ -1,0 +1,99 @@
+info:
+  name: Add to cart
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/cart/items"
+  body:
+    type: json
+    data: |-
+      {
+        "productId": 1,
+        "variantId": 1,
+        "quantity": 2
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const body = res.getBody();
+        if (body && body.data) {
+          bru.setVar('cartItemId', body.data.id || '');
+        }
+        bru.setNextRequest('Get cart');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: "Success (201)"
+    request:
+      url: "{{baseUrl}}/api/cart/items"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "productId": 1,
+            "variantId": 1,
+            "quantity": 2
+          }
+    response:
+      status: 201
+      statusText: "Created"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 201,
+            "message": [
+              "Item added to cart successfully"
+            ],
+            "data": {
+              "id": "item-uuid",
+              "productId": 1,
+              "variantId": 1,
+              "quantity": 2
+            },
+            "timestamp": "2026-05-25T00:00:00.000Z"
+          }
+  - name: "Validation Error (400)"
+    request:
+      url: "{{baseUrl}}/api/cart/items"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "productId": "not-a-number"
+          }
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "productId must be a number",
+              "quantity must not be less than 1"
+            ],
+            "data": null,
+            "timestamp": "2026-05-25T00:00:00.000Z"
+          }
