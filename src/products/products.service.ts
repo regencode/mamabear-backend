@@ -231,8 +231,7 @@ export class ProductsService {
     try {
       if (dto.name) {
         const generatedSlug = slugify(dto.name, { lower: true, strict: true });
-        const resolvedProduct =
-          await this.productsRepository.findBySlug(generatedSlug);
+        const resolvedProduct = await this.productsRepository.findBySlug(generatedSlug);
         if (resolvedProduct)
           throw new BadRequestException(
             `Product with slug ${generatedSlug} already exists`,

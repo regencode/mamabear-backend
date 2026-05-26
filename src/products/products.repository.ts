@@ -7,6 +7,7 @@ import { ProductUtils } from '@/product-utils/product-utils';
 import { Product } from '@/generated/prisma';
 import { FilterProductsDto } from './dto/filter-products.dto';
 import { PinoLogger } from 'pino-nestjs';
+import { BadRequestException } from '@nestjs/common';
 
 
 export const PRODUCT_INCLUDE = {
@@ -209,19 +210,19 @@ export class ProductsRepository {
   }
 
   async findById(id: number) {
-    const products = await this.prisma.product.findUnique({
+    const product = await this.prisma.product.findUnique({
       where: { id },
       include: PRODUCT_INCLUDE,
     });
-    return this.utils.enrichOne(products as Product);
+    return this.utils.enrichOne(product as Product);
   }
 
   async findBySlug(slug: string) {
-    const products = await this.prisma.product.findUnique({
+    const product = await this.prisma.product.findUnique({
       where: { slug },
       include: PRODUCT_INCLUDE,
     });
-    return this.utils.enrichOne(products as Product);
+    return this.utils.enrichOne(product as Product);
   }
   async findRelated(id: number) {
     const rows: any[] = await this.prisma.$queryRaw`
