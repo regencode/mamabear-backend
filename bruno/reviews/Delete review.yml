@@ -6,7 +6,15 @@ info:
 http:
   method: DELETE
   url: "{{baseUrl}}/api/admin/products/reviews/{{reviewId}}"
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        bru.setNextRequest('Login');
 
 settings:
   encodeUrl: true

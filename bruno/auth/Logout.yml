@@ -6,7 +6,9 @@ info:
 http:
   method: POST
   url: "{{baseUrl}}/api/auth/logout"
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
 
 settings:
   encodeUrl: true

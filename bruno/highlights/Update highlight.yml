@@ -14,7 +14,9 @@ http:
         "description": "Updated best sellers description",
         "slug": "best-seller-updated-v2"
       }
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
 
 runtime:
   scripts:

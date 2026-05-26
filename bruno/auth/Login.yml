@@ -19,6 +19,11 @@ runtime:
   scripts:
     - type: after-response
       code: |-
+        const body = res.getBody();
+        if (res.getStatus() === 201 && body?.data?.accessToken) {
+          bru.setVar('jwtToken', body.data.accessToken);
+          bru.setVar('refreshToken', body.data.refreshToken);
+        }
         bru.deleteVar('phase');
         bru.setNextRequest('Get products (Pagination)');
 
@@ -46,10 +51,6 @@ examples:
       headers:
         - name: Content-Type
           value: "application/json; charset=utf-8"
-        - name: Set-Cookie
-          value: "accessToken=eyJhbGci...; Path=/; HttpOnly; Secure; SameSite=Strict"
-        - name: Set-Cookie
-          value: "refreshToken=eyJhbGci...; Path=/; HttpOnly; Secure; SameSite=Strict"
       body:
         type: json
         data: |-
@@ -59,8 +60,11 @@ examples:
             "message": [
               "Login successful"
             ],
-            "data": null,
-            "timestamp": "2026-05-25T14:19:53.645Z"
+            "data": {
+              "accessToken": "eyJhbGci...",
+              "refreshToken": "eyJhbGci..."
+            },
+            "timestamp": "2026-05-26T02:14:50.891Z"
           }
   - name: "Invalid Password (400)"
     request:

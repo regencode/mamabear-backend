@@ -7,16 +7,26 @@ http:
   method: PUT
   url: "{{baseUrl}}/api/admin/products/{{productId}}"
   body:
-    type: json
-    data: |-
-      {
-        "name": "MamaBear AlmonMix Isi 6 Sachet (Updated)",
-        "description": "Updated: Minuman Serbuk dengan Almond Kaya Nutrisi",
-        "slug": "mamabear-almonmix-isi-6-sachet-v2",
-        "priceIdr": 85000,
-        "stock": 75
-      }
-  auth: inherit
+    type: multipart-form
+    data:
+      - name: name
+        type: text
+        value: MamaBear AlmonMix Isi 6 Sachet (Updated)
+      - name: description
+        type: text
+        value: "Updated: Minuman Serbuk dengan Almond Kaya Nutrisi"
+      - name: slug
+        type: text
+        value: mamabear-almonmix-isi-6-sachet-v2
+      - name: priceIdr
+        type: text
+        value: "85000"
+      - name: stock
+        type: text
+        value: "75"
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
 
 runtime:
   scripts:
@@ -36,15 +46,23 @@ examples:
       url: "{{baseUrl}}/api/admin/products/1"
       method: PUT
       body:
-        type: json
-        data: |-
-          {
-            "name": "MamaBear AlmonMix Isi 6 Sachet (Updated)",
-            "description": "Updated: Minuman Serbuk dengan Almond Kaya Nutrisi",
-            "slug": "mamabear-almonmix-isi-6-sachet-v2",
-            "priceIdr": 85000,
-            "stock": 75
-          }
+        type: multipart-form
+        data:
+          - name: name
+            type: text
+            value: "MamaBear AlmonMix Isi 6 Sachet (Updated)"
+          - name: description
+            type: text
+            value: "Updated: Minuman Serbuk dengan Almond Kaya Nutrisi"
+          - name: slug
+            type: text
+            value: mamabear-almonmix-isi-6-sachet-v2
+          - name: priceIdr
+            type: text
+            value: "85000"
+          - name: stock
+            type: text
+            value: "75"
     response:
       status: 200
       statusText: "OK"
@@ -116,11 +134,11 @@ examples:
       url: "{{baseUrl}}/api/admin/products/1"
       method: PUT
       body:
-        type: json
-        data: |-
-          {
-            "slug": "mamabear-teh-pelancar-asi"
-          }
+        type: multipart-form
+        data:
+          - name: slug
+            type: text
+            value: mamabear-teh-pelancar-asi
     response:
       status: 500
       statusText: "Internal Server Error"
@@ -144,11 +162,11 @@ examples:
       url: "{{baseUrl}}/api/admin/products/999999"
       method: PUT
       body:
-        type: json
-        data: |-
-          {
-            "name": "Test"
-          }
+        type: multipart-form
+        data:
+          - name: name
+            type: text
+            value: Test
     response:
       status: 500
       statusText: "Internal Server Error"
@@ -172,11 +190,11 @@ examples:
       url: "{{baseUrl}}/api/admin/products/1"
       method: PUT
       body:
-        type: json
-        data: |-
-          {
-            "name": "Test"
-          }
+        type: multipart-form
+        data:
+          - name: name
+            type: text
+            value: Test
     response:
       status: 401
       statusText: "Unauthorized"

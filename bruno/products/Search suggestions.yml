@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-      url: "{{baseUrl}}/api/products/search/suggestions?q=mam"
+  url: "{{baseUrl}}/api/products/search/suggestions?q=mam"
   auth: inherit
 
 runtime:
@@ -23,7 +23,7 @@ settings:
 examples:
   - name: "Success (200)"
     request:
-  url: "{{baseUrl}}/api/products/search/suggestions?q=mam"
+      url: "{{baseUrl}}/api/products/search/suggestions?q=mam"
       method: GET
     response:
       status: 200
@@ -38,14 +38,23 @@ examples:
             "success": true,
             "statusCode": 200,
             "message": [
-              "Found 5 suggestions"
+              "Found 3 products matching query 'mam' with fuzzy search"
             ],
             "data": [
-              "MamaBear AlmonMix",
-              "MamaBear ZoyaMix",
-              "MamaBear Teh Pelancar ASI"
+              {
+                "name": "MamaBear ASI Booster 30 Kapsul",
+                "similarity": 0.04761905
+              },
+              {
+                "name": "MamaBear Teh Pelancar ASI Isi 20 Sachet",
+                "similarity": 0.039473683
+              },
+              {
+                "name": "MamaBear Kukis Almond Oat",
+                "similarity": 0.030303031
+              }
             ],
-            "timestamp": "2026-05-25T00:00:00.000Z"
+            "timestamp": "2026-05-26T02:14:51.062Z"
           }
   - name: "Validation Error (400)"
     request:
@@ -68,5 +77,5 @@ examples:
               "limit must be a number conforming to the specified constraints"
             ],
             "data": null,
-            "timestamp": "2026-05-25T14:24:08.546Z"
+            "timestamp": "2026-05-26T02:14:51.070Z"
           }

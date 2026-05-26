@@ -15,7 +15,9 @@ http:
         "isActive": true,
         "slug": "best-seller"
       }
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
 
 runtime:
   scripts:

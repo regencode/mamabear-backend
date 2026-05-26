@@ -6,7 +6,9 @@ info:
 http:
   method: DELETE
   url: "{{baseUrl}}/api/admin/categories/{{categoryId}}"
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
 
 runtime:
   scripts:

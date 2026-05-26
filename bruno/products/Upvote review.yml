@@ -6,7 +6,9 @@ info:
 http:
   method: PATCH
   url: "{{baseUrl}}/api/products/{{productSlug}}/reviews/{{reviewId}}/upvote"
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
 
 runtime:
   scripts:
