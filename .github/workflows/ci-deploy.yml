@@ -113,4 +113,5 @@ jobs:
       run: |
         npx nest build
         npx nest start &
+        sleep 10
         npm run test:e2e
