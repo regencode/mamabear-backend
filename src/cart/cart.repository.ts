@@ -10,9 +10,10 @@ const CART_INCLUDE = {
   },
 };
 
-const CART_ITEM_INCLUDE = {
+const CART_ITEM_WITH_CART_INCLUDE = {
   product: true,
   variant: true,
+  cart: true,
 };
 
 @Injectable()
@@ -52,12 +53,24 @@ export class CartRepository {
   }
 
   async findCartWithItems(userId?: string, sessionId?: string) {
-    const where = userId ? { userId } : { sessionId };
-
-    return this.prisma.cart.findFirst({
-      where,
-      include: CART_INCLUDE,
-    });
+    // If userId is provided, try to find cart by user first
+    if (userId) {
+      const userCart = await this.prisma.cart.findFirst({
+        where: { userId },
+        include: CART_INCLUDE,
+      });
+      if (userCart) return userCart;
+    }
+    
+    // Fall back to session cart if no user cart found
+    if (sessionId) {
+      return this.prisma.cart.findFirst({
+        where: { sessionId },
+        include: CART_INCLUDE,
+      });
+    }
+    
+    return null;
   }
 
   async upsertCartItem(data: {
@@ -97,7 +110,7 @@ export class CartRepository {
   async findCartItemById(id: string) {
     return this.prisma.cartItem.findUnique({
       where: { id },
-      include: CART_ITEM_INCLUDE,
+      include: CART_ITEM_WITH_CART_INCLUDE,
     });
   }
 

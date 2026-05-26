@@ -35,8 +35,13 @@ export class CartService {
 
     let createdSessionId: string | undefined;
 
-    if (userId) data.userId = userId;
-    if (sessionId) {
+    // For authenticated users, only set userId (no sessionId)
+    // For guests, set sessionId
+    if (userId) {
+      data.userId = userId;
+      // Optionally set expiresAt for user carts too
+      data.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    } else if (sessionId) {
       data.sessionId = sessionId;
       data.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     } else {
@@ -110,16 +115,23 @@ export class CartService {
   }
 
   // Update Quantity
-  async updateItemQuantity(itemId: string, quantity: number) {
+  async updateItemQuantity(itemId: string, quantity: number, userId?: string, sessionId?: string) {
     try {
       if (quantity <= 0) {
-        return this.removeItem(itemId);
+        return this.removeItem(itemId, userId, sessionId);
       }
 
       const cartItem = await this.cartRepo.findCartItemById(itemId);
 
       if (!cartItem) {
         throw new NotFoundException('Cart item not found');
+      }
+
+      if (userId && cartItem.cart.userId !== userId) {
+        throw new BadRequestException('Cart item does not belong to user');
+      }
+      if (sessionId && cartItem.cart.sessionId !== sessionId) {
+        throw new BadRequestException('Cart item does not belong to session');
       }
 
       if (cartItem.variant && quantity > cartItem.variant.stock) {
@@ -151,8 +163,21 @@ export class CartService {
   }
 
   // Remove Item
-  async removeItem(itemsId: string) {
+  async removeItem(itemsId: string, userId?: string, sessionId?: string) {
     try {
+      const cartItem = await this.cartRepo.findCartItemById(itemsId);
+
+      if (!cartItem) {
+        throw new NotFoundException('Cart item not found');
+      }
+
+      if (userId && cartItem.cart.userId !== userId) {
+        throw new BadRequestException('Cart item does not belong to user');
+      }
+      if (sessionId && cartItem.cart.sessionId !== sessionId) {
+        throw new BadRequestException('Cart item does not belong to session');
+      }
+
       const result = await this.cartRepo.deleteCartItem(itemsId);
       this.logger.info({
         level: 'info',
