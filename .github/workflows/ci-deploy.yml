@@ -28,7 +28,7 @@ jobs:
       CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
       CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
       CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
-      DATABASE_URL: "postgresql://regencode:pgpasswordregencode@/mamabear?host=/tmp/postgres&schema=public"
+      DATABASE_URL: "postgresql://regencode:pgpasswordregencode@localhost/mamabear?schema=public"
     steps:
     - name: Add PostgreSQL binaries to PATH
       shell: bash
