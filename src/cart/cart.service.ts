@@ -346,6 +346,9 @@ export class CartService {
 
       await this.cartRepo.deleteCart(guestCart.id);
 
+      // Ensure no duplicate items remain after merge
+      await this.cartRepo.deduplicateCart(userCart.id);
+
       this.logger.info({
         level: 'info',
         message: 'Cart merged successfully',
