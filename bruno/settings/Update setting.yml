@@ -1,0 +1,66 @@
+info:
+  name: Update setting
+  type: http
+  seq: 33
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/admin/settings/{{settingKey}}"
+  body:
+    type: json
+    data: |-
+      {
+        "value": "Updated site name",
+        "type": "string",
+        "description": "Updated site title"
+      }
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: Success (200)
+    request:
+      url: "{{baseUrl}}/api/admin/settings/site.name"
+      method: PUT
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "value": "MamaBear - Updated",
+            "type": "string",
+            "description": "Public site name"
+          }
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: Content-Type
+          value: application/json; charset=utf-8
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": ["Updated setting"],
+            "data": {
+              "id": 1,
+              "key": "site.name",
+              "value": "MamaBear - Updated",
+              "type": "string",
+              "description": "Public site name",
+              "createdAt": "2026-05-25T14:23:11.448Z",
+              "updatedAt": "2026-05-25T14:24:08.658Z"
+            },
+            "timestamp": "2026-05-25T14:24:08.658Z"
+          }
