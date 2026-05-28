@@ -174,7 +174,8 @@ async function main() {
       "Product",
       "Category",
       "Highlight",
-      "User"
+      "User",
+      "Setting"
     RESTART IDENTITY CASCADE;
   `);
 
@@ -409,6 +410,99 @@ async function main() {
   }
 
   console.log(`Inserted ${totalReviews} reviews.`);
+
+  console.log('Upserting default settings...');
+
+  const defaultSettings = [
+    {
+      key: 'site.name',
+      value: 'MamaBear',
+      type: 'string',
+      description: 'Public site name',
+    },
+    {
+      key: 'site.description',
+      value: 'Natural lactation support products and supplements',
+      type: 'string',
+      description: 'Short site description for meta tags',
+    },
+    {
+      key: 'contact.email',
+      value: 'support@example.com',
+      type: 'string',
+      description: 'Customer support email',
+    },
+    {
+      key: 'contact.phone',
+      value: '+62-812-3456-7890',
+      type: 'string',
+      description: 'Customer support phone',
+    },
+    {
+      key: 'social.links',
+      value: JSON.stringify({ facebook: '', instagram: '', twitter: '' }),
+      type: 'json',
+      description: 'Social media links as JSON',
+    },
+    {
+      key: 'shipping.origin',
+      value: JSON.stringify({
+        address1: '',
+        address2: '',
+        city: '',
+        province: '',
+        postalCode: '',
+      }),
+      type: 'json',
+      description: 'Shipping origin address',
+    },
+    {
+      key: 'tax.rate',
+      value: '0.10',
+      type: 'number',
+      description: 'Default tax rate (decimal)',
+    },
+    {
+      key: 'currency',
+      value: 'IDR',
+      type: 'string',
+      description: 'Default currency code',
+    },
+    {
+      key: 'email.smtp',
+      value: JSON.stringify({
+        host: '',
+        port: 587,
+        user: '',
+        pass: '',
+        secure: false,
+      }),
+      type: 'json',
+      description: 'SMTP configuration JSON',
+    },
+    {
+      key: 'payment.gateway',
+      value: JSON.stringify({ provider: '', config: {} }),
+      type: 'json',
+      description: 'Payment gateway configuration',
+    },
+    {
+      key: 'maintenance.mode',
+      value: 'false',
+      type: 'boolean',
+      description: 'Maintenance mode toggle',
+    },
+  ];
+
+  for (const s of defaultSettings) {
+    await prisma.setting.upsert({
+      where: { key: s.key },
+      create: s as any,
+      update: s as any,
+    });
+  }
+
+  console.log(`Upserted ${defaultSettings.length} settings.`);
 
   if (fs.existsSync(TEMP_DIR)) fs.rmSync(TEMP_DIR, { recursive: true });
 
