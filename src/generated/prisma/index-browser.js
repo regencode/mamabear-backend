@@ -254,6 +254,7 @@ exports.Prisma.OrderScalarFieldEnum = {
   subtotalIdr: 'subtotalIdr',
   shippingCostIdr: 'shippingCostIdr',
   taxIdr: 'taxIdr',
+  grandTotal: 'grandTotal',
   shippingMethod: 'shippingMethod',
   trackingNumber: 'trackingNumber',
   paymentMethod: 'paymentMethod',
@@ -262,6 +263,40 @@ exports.Prisma.OrderScalarFieldEnum = {
   notes: 'notes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ShippingAddressScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  name: 'name',
+  street: 'street',
+  city: 'city',
+  province: 'province',
+  postal: 'postal',
+  phone: 'phone',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.OrderItemScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  productId: 'productId',
+  variantId: 'variantId',
+  productName: 'productName',
+  variantName: 'variantName',
+  priceIdr: 'priceIdr',
+  quantity: 'quantity',
+  grandPrice: 'grandPrice'
+};
+
+exports.Prisma.OrderStatusHistoryScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -354,6 +389,28 @@ exports.Prisma.OrderOrderByRelevanceFieldEnum = {
   paymentMethod: 'paymentMethod',
   notes: 'notes'
 };
+
+exports.Prisma.ShippingAddressOrderByRelevanceFieldEnum = {
+  orderId: 'orderId',
+  name: 'name',
+  street: 'street',
+  city: 'city',
+  province: 'province',
+  postal: 'postal',
+  phone: 'phone',
+  notes: 'notes'
+};
+
+exports.Prisma.OrderItemOrderByRelevanceFieldEnum = {
+  orderId: 'orderId',
+  productName: 'productName',
+  variantName: 'variantName'
+};
+
+exports.Prisma.OrderStatusHistoryOrderByRelevanceFieldEnum = {
+  orderId: 'orderId',
+  notes: 'notes'
+};
 exports.Role = exports.$Enums.Role = {
   USER: 'USER',
   ADMIN: 'ADMIN',
@@ -365,7 +422,8 @@ exports.OrderStatus = exports.$Enums.OrderStatus = {
   PROCESSING: 'PROCESSING',
   SHIPPED: 'SHIPPED',
   RECEIVED: 'RECEIVED',
-  FAILED: 'FAILED'
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
 };
 
 exports.PaymentStatus = exports.$Enums.PaymentStatus = {
@@ -386,7 +444,10 @@ exports.Prisma.ModelName = {
   Review: 'Review',
   Cart: 'Cart',
   CartItem: 'CartItem',
-  Order: 'Order'
+  Order: 'Order',
+  ShippingAddress: 'ShippingAddress',
+  OrderItem: 'OrderItem',
+  OrderStatusHistory: 'OrderStatusHistory'
 };
 
 /**

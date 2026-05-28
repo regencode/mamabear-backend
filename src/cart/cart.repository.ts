@@ -63,7 +63,7 @@ export class CartRepository {
   async upsertCartItem(data: {
     cartId: string;
     productId: number;
-    variantId: number | null;
+    variantId: number;
     quantity?: number;
     price: any;
     increment?: boolean;

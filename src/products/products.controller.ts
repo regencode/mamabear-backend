@@ -30,6 +30,7 @@ export class ProductsController {
     private readonly searchService: SearchService,
   ) {}
 
+  @UseGuards(new JwtAuthGuard())
   @Get()
   findAll(@Query() paginationDto: CursorPaginationRequestDto) {
     return this.productsService.findAll(paginationDto);
@@ -37,16 +38,19 @@ export class ProductsController {
 
   @Get('search')
   searchForProducts(@Query() query: SearchRequestDto) {
-      return this.searchService.findProductsMatchingQuery(query);
+    return this.searchService.findProductsMatchingQuery(query);
   }
 
   @Get('filter')
   filterProducts(@Query() query: FilterProductsDto) {
-      return this.productsService.findProductsWithFilter(query);
+    return this.productsService.findProductsWithFilter(query);
   }
   @Get('search/suggestions')
-  suggestAutocomplete(@Query() query: SearchRequestDto, @Query() options?: SearchAutocompleteOptionsDto) {
-      return this.searchService.getFuzzyAutocompleteResults(query, options);
+  suggestAutocomplete(
+    @Query() query: SearchRequestDto,
+    @Query() options?: SearchAutocompleteOptionsDto,
+  ) {
+    return this.searchService.getFuzzyAutocompleteResults(query, options);
   }
 
   @Get(':slug')
@@ -72,9 +76,7 @@ export class ProductsController {
     return this.reviewsService.findReviewsOfProductBySlug(slug, paginationDto);
   }
   @Get(':slug/reviews/summary')
-  getReviewSummaryOfProductWithSlug(
-    @Param('slug') slug: string
-  ) {
+  getReviewSummaryOfProductWithSlug(@Param('slug') slug: string) {
     return this.reviewsService.getReviewSummaryOfProductWithSlug(slug);
   }
 
