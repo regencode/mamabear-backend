@@ -141,6 +141,37 @@ export class CartController {
     }
   }
 
+  @Post('validate')
+  async validateCart(
+    @GetUserId() userId: string | undefined,
+    @Req() req: Request,
+  ) {
+    try {
+      const sessionId = req.cookies?.sessionId;
+      const result = await this.cartService.validateCartForCheckout(
+        userId,
+        sessionId,
+      );
+      this.logger.info({
+        level: 'info',
+        message: 'Cart validated successfully',
+        endpoint: 'POST /cart/validate',
+        userId: userId || 'guest',
+        status: 'success',
+      });
+      return result;
+    } catch (error: any) {
+      this.logger.error({
+        level: 'error',
+        message: 'Failed to validate cart',
+        endpoint: 'POST /cart/validate',
+        status: 'error',
+        error: error.message,
+      });
+      throw error;
+    }
+  }
+
   @Post('items')
   async addToCart(
     @GetUserId() userId: string | undefined,
@@ -258,7 +289,9 @@ export class CartController {
   @Delete()
   async clearCart(
     @GetUserId() userId: string | undefined,
-    @Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     try {
       const sessionId = req.cookies?.sessionId;
       const { cart, createdSessionId } = await this.cartService.getOrCreateCart(
