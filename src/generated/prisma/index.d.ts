@@ -93,7 +93,9 @@ export type Role = (typeof Role)[keyof typeof Role]
 
 
 export const OrderStatus: {
-  PENDING: 'PENDING',
+  PAYMENT_PENDING: 'PAYMENT_PENDING',
+  PAYMENT_PAID: 'PAYMENT_PAID',
+  PAYMENT_FAILED: 'PAYMENT_FAILED',
   CONFIRMED: 'CONFIRMED',
   PROCESSED: 'PROCESSED',
   SENDING: 'SENDING',
@@ -14505,7 +14507,6 @@ export namespace Prisma {
     orderNumber: string | null
     userId: string | null
     status: $Enums.OrderStatus | null
-    pendingExpiresAt: Date | null
     receivedExpiresAt: Date | null
     subtotalIdr: number | null
     shippingCostIdr: number | null
@@ -14523,7 +14524,6 @@ export namespace Prisma {
     orderNumber: string | null
     userId: string | null
     status: $Enums.OrderStatus | null
-    pendingExpiresAt: Date | null
     receivedExpiresAt: Date | null
     subtotalIdr: number | null
     shippingCostIdr: number | null
@@ -14541,7 +14541,6 @@ export namespace Prisma {
     orderNumber: number
     userId: number
     status: number
-    pendingExpiresAt: number
     receivedExpiresAt: number
     subtotalIdr: number
     shippingCostIdr: number
@@ -14573,7 +14572,6 @@ export namespace Prisma {
     orderNumber?: true
     userId?: true
     status?: true
-    pendingExpiresAt?: true
     receivedExpiresAt?: true
     subtotalIdr?: true
     shippingCostIdr?: true
@@ -14591,7 +14589,6 @@ export namespace Prisma {
     orderNumber?: true
     userId?: true
     status?: true
-    pendingExpiresAt?: true
     receivedExpiresAt?: true
     subtotalIdr?: true
     shippingCostIdr?: true
@@ -14609,7 +14606,6 @@ export namespace Prisma {
     orderNumber?: true
     userId?: true
     status?: true
-    pendingExpiresAt?: true
     receivedExpiresAt?: true
     subtotalIdr?: true
     shippingCostIdr?: true
@@ -14714,7 +14710,6 @@ export namespace Prisma {
     orderNumber: string
     userId: string
     status: $Enums.OrderStatus
-    pendingExpiresAt: Date | null
     receivedExpiresAt: Date | null
     subtotalIdr: number
     shippingCostIdr: number
@@ -14751,7 +14746,6 @@ export namespace Prisma {
     orderNumber?: boolean
     userId?: boolean
     status?: boolean
-    pendingExpiresAt?: boolean
     receivedExpiresAt?: boolean
     subtotalIdr?: boolean
     shippingCostIdr?: boolean
@@ -14773,7 +14767,6 @@ export namespace Prisma {
     orderNumber?: boolean
     userId?: boolean
     status?: boolean
-    pendingExpiresAt?: boolean
     receivedExpiresAt?: boolean
     subtotalIdr?: boolean
     shippingCostIdr?: boolean
@@ -14792,7 +14785,6 @@ export namespace Prisma {
     orderNumber?: boolean
     userId?: boolean
     status?: boolean
-    pendingExpiresAt?: boolean
     receivedExpiresAt?: boolean
     subtotalIdr?: boolean
     shippingCostIdr?: boolean
@@ -14811,7 +14803,6 @@ export namespace Prisma {
     orderNumber?: boolean
     userId?: boolean
     status?: boolean
-    pendingExpiresAt?: boolean
     receivedExpiresAt?: boolean
     subtotalIdr?: boolean
     shippingCostIdr?: boolean
@@ -14824,7 +14815,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNumber" | "userId" | "status" | "pendingExpiresAt" | "receivedExpiresAt" | "subtotalIdr" | "shippingCostIdr" | "taxIdr" | "shippingMethod" | "trackingNumber" | "paymentMethod" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNumber" | "userId" | "status" | "receivedExpiresAt" | "subtotalIdr" | "shippingCostIdr" | "taxIdr" | "shippingMethod" | "trackingNumber" | "paymentMethod" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderItems?: boolean | Order$orderItemsArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -14850,7 +14841,6 @@ export namespace Prisma {
       orderNumber: string
       userId: string
       status: $Enums.OrderStatus
-      pendingExpiresAt: Date | null
       receivedExpiresAt: Date | null
       subtotalIdr: number
       shippingCostIdr: number
@@ -15291,7 +15281,6 @@ export namespace Prisma {
     readonly orderNumber: FieldRef<"Order", 'String'>
     readonly userId: FieldRef<"Order", 'String'>
     readonly status: FieldRef<"Order", 'OrderStatus'>
-    readonly pendingExpiresAt: FieldRef<"Order", 'DateTime'>
     readonly receivedExpiresAt: FieldRef<"Order", 'DateTime'>
     readonly subtotalIdr: FieldRef<"Order", 'Int'>
     readonly shippingCostIdr: FieldRef<"Order", 'Int'>
@@ -18211,7 +18200,6 @@ export namespace Prisma {
     orderNumber: 'orderNumber',
     userId: 'userId',
     status: 'status',
-    pendingExpiresAt: 'pendingExpiresAt',
     receivedExpiresAt: 'receivedExpiresAt',
     subtotalIdr: 'subtotalIdr',
     shippingCostIdr: 'shippingCostIdr',
@@ -19356,7 +19344,6 @@ export namespace Prisma {
     orderNumber?: StringFilter<"Order"> | string
     userId?: UuidFilter<"Order"> | string
     status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
-    pendingExpiresAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     receivedExpiresAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     subtotalIdr?: IntFilter<"Order"> | number
     shippingCostIdr?: IntFilter<"Order"> | number
@@ -19377,7 +19364,6 @@ export namespace Prisma {
     orderNumber?: SortOrder
     userId?: SortOrder
     status?: SortOrder
-    pendingExpiresAt?: SortOrderInput | SortOrder
     receivedExpiresAt?: SortOrderInput | SortOrder
     subtotalIdr?: SortOrder
     shippingCostIdr?: SortOrder
@@ -19402,7 +19388,6 @@ export namespace Prisma {
     NOT?: OrderWhereInput | OrderWhereInput[]
     userId?: UuidFilter<"Order"> | string
     status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
-    pendingExpiresAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     receivedExpiresAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     subtotalIdr?: IntFilter<"Order"> | number
     shippingCostIdr?: IntFilter<"Order"> | number
@@ -19423,7 +19408,6 @@ export namespace Prisma {
     orderNumber?: SortOrder
     userId?: SortOrder
     status?: SortOrder
-    pendingExpiresAt?: SortOrderInput | SortOrder
     receivedExpiresAt?: SortOrderInput | SortOrder
     subtotalIdr?: SortOrder
     shippingCostIdr?: SortOrder
@@ -19449,7 +19433,6 @@ export namespace Prisma {
     orderNumber?: StringWithAggregatesFilter<"Order"> | string
     userId?: UuidWithAggregatesFilter<"Order"> | string
     status?: EnumOrderStatusWithAggregatesFilter<"Order"> | $Enums.OrderStatus
-    pendingExpiresAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
     receivedExpiresAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
     subtotalIdr?: IntWithAggregatesFilter<"Order"> | number
     shippingCostIdr?: IntWithAggregatesFilter<"Order"> | number
@@ -20481,7 +20464,6 @@ export namespace Prisma {
     id?: string
     orderNumber: string
     status?: $Enums.OrderStatus
-    pendingExpiresAt?: Date | string | null
     receivedExpiresAt?: Date | string | null
     subtotalIdr?: number
     shippingCostIdr?: number
@@ -20502,7 +20484,6 @@ export namespace Prisma {
     orderNumber: string
     userId: string
     status?: $Enums.OrderStatus
-    pendingExpiresAt?: Date | string | null
     receivedExpiresAt?: Date | string | null
     subtotalIdr?: number
     shippingCostIdr?: number
@@ -20521,7 +20502,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNumber?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    pendingExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     receivedExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotalIdr?: IntFieldUpdateOperationsInput | number
     shippingCostIdr?: IntFieldUpdateOperationsInput | number
@@ -20542,7 +20522,6 @@ export namespace Prisma {
     orderNumber?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    pendingExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     receivedExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotalIdr?: IntFieldUpdateOperationsInput | number
     shippingCostIdr?: IntFieldUpdateOperationsInput | number
@@ -20562,7 +20541,6 @@ export namespace Prisma {
     orderNumber: string
     userId: string
     status?: $Enums.OrderStatus
-    pendingExpiresAt?: Date | string | null
     receivedExpiresAt?: Date | string | null
     subtotalIdr?: number
     shippingCostIdr?: number
@@ -20579,7 +20557,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNumber?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    pendingExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     receivedExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotalIdr?: IntFieldUpdateOperationsInput | number
     shippingCostIdr?: IntFieldUpdateOperationsInput | number
@@ -20597,7 +20574,6 @@ export namespace Prisma {
     orderNumber?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    pendingExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     receivedExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotalIdr?: IntFieldUpdateOperationsInput | number
     shippingCostIdr?: IntFieldUpdateOperationsInput | number
@@ -21762,7 +21738,6 @@ export namespace Prisma {
     orderNumber?: SortOrder
     userId?: SortOrder
     status?: SortOrder
-    pendingExpiresAt?: SortOrder
     receivedExpiresAt?: SortOrder
     subtotalIdr?: SortOrder
     shippingCostIdr?: SortOrder
@@ -21786,7 +21761,6 @@ export namespace Prisma {
     orderNumber?: SortOrder
     userId?: SortOrder
     status?: SortOrder
-    pendingExpiresAt?: SortOrder
     receivedExpiresAt?: SortOrder
     subtotalIdr?: SortOrder
     shippingCostIdr?: SortOrder
@@ -21804,7 +21778,6 @@ export namespace Prisma {
     orderNumber?: SortOrder
     userId?: SortOrder
     status?: SortOrder
-    pendingExpiresAt?: SortOrder
     receivedExpiresAt?: SortOrder
     subtotalIdr?: SortOrder
     shippingCostIdr?: SortOrder
@@ -23462,7 +23435,6 @@ export namespace Prisma {
     id?: string
     orderNumber: string
     status?: $Enums.OrderStatus
-    pendingExpiresAt?: Date | string | null
     receivedExpiresAt?: Date | string | null
     subtotalIdr?: number
     shippingCostIdr?: number
@@ -23481,7 +23453,6 @@ export namespace Prisma {
     id?: string
     orderNumber: string
     status?: $Enums.OrderStatus
-    pendingExpiresAt?: Date | string | null
     receivedExpiresAt?: Date | string | null
     subtotalIdr?: number
     shippingCostIdr?: number
@@ -23588,7 +23559,6 @@ export namespace Prisma {
     orderNumber?: StringFilter<"Order"> | string
     userId?: UuidFilter<"Order"> | string
     status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
-    pendingExpiresAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     receivedExpiresAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     subtotalIdr?: IntFilter<"Order"> | number
     shippingCostIdr?: IntFilter<"Order"> | number
@@ -25656,7 +25626,6 @@ export namespace Prisma {
     id?: string
     orderNumber: string
     status?: $Enums.OrderStatus
-    pendingExpiresAt?: Date | string | null
     receivedExpiresAt?: Date | string | null
     subtotalIdr?: number
     shippingCostIdr?: number
@@ -25676,7 +25645,6 @@ export namespace Prisma {
     orderNumber: string
     userId: string
     status?: $Enums.OrderStatus
-    pendingExpiresAt?: Date | string | null
     receivedExpiresAt?: Date | string | null
     subtotalIdr?: number
     shippingCostIdr?: number
@@ -25788,7 +25756,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNumber?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    pendingExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     receivedExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotalIdr?: IntFieldUpdateOperationsInput | number
     shippingCostIdr?: IntFieldUpdateOperationsInput | number
@@ -25808,7 +25775,6 @@ export namespace Prisma {
     orderNumber?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    pendingExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     receivedExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotalIdr?: IntFieldUpdateOperationsInput | number
     shippingCostIdr?: IntFieldUpdateOperationsInput | number
@@ -25916,7 +25882,6 @@ export namespace Prisma {
     id?: string
     orderNumber: string
     status?: $Enums.OrderStatus
-    pendingExpiresAt?: Date | string | null
     receivedExpiresAt?: Date | string | null
     subtotalIdr?: number
     shippingCostIdr?: number
@@ -25936,7 +25901,6 @@ export namespace Prisma {
     orderNumber: string
     userId: string
     status?: $Enums.OrderStatus
-    pendingExpiresAt?: Date | string | null
     receivedExpiresAt?: Date | string | null
     subtotalIdr?: number
     shippingCostIdr?: number
@@ -25970,7 +25934,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNumber?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    pendingExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     receivedExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotalIdr?: IntFieldUpdateOperationsInput | number
     shippingCostIdr?: IntFieldUpdateOperationsInput | number
@@ -25990,7 +25953,6 @@ export namespace Prisma {
     orderNumber?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    pendingExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     receivedExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotalIdr?: IntFieldUpdateOperationsInput | number
     shippingCostIdr?: IntFieldUpdateOperationsInput | number
@@ -26026,7 +25988,6 @@ export namespace Prisma {
     id?: string
     orderNumber: string
     status?: $Enums.OrderStatus
-    pendingExpiresAt?: Date | string | null
     receivedExpiresAt?: Date | string | null
     subtotalIdr?: number
     shippingCostIdr?: number
@@ -26100,7 +26061,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNumber?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    pendingExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     receivedExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotalIdr?: IntFieldUpdateOperationsInput | number
     shippingCostIdr?: IntFieldUpdateOperationsInput | number
@@ -26119,7 +26079,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNumber?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    pendingExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     receivedExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotalIdr?: IntFieldUpdateOperationsInput | number
     shippingCostIdr?: IntFieldUpdateOperationsInput | number
@@ -26138,7 +26097,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     orderNumber?: StringFieldUpdateOperationsInput | string
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-    pendingExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     receivedExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotalIdr?: IntFieldUpdateOperationsInput | number
     shippingCostIdr?: IntFieldUpdateOperationsInput | number

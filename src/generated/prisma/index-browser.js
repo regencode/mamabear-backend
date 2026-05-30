@@ -245,7 +245,6 @@ exports.Prisma.OrderScalarFieldEnum = {
   orderNumber: 'orderNumber',
   userId: 'userId',
   status: 'status',
-  pendingExpiresAt: 'pendingExpiresAt',
   receivedExpiresAt: 'receivedExpiresAt',
   subtotalIdr: 'subtotalIdr',
   shippingCostIdr: 'shippingCostIdr',
@@ -381,7 +380,9 @@ exports.Role = exports.$Enums.Role = {
 };
 
 exports.OrderStatus = exports.$Enums.OrderStatus = {
-  PENDING: 'PENDING',
+  PAYMENT_PENDING: 'PAYMENT_PENDING',
+  PAYMENT_PAID: 'PAYMENT_PAID',
+  PAYMENT_FAILED: 'PAYMENT_FAILED',
   CONFIRMED: 'CONFIRMED',
   PROCESSED: 'PROCESSED',
   SENDING: 'SENDING',
