@@ -1,4 +1,4 @@
-import { City, Province, Response } from '@/types/shipping.type';
+import { City, District, Province, Response } from '@/types/shipping.type';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -44,6 +44,23 @@ export class ShippingService {
       return cities;
     } catch (error) {
       throw new Error('Failed to fetch cities');
+    }
+  }
+
+  async findDistrictsByCityId(cityId: string) {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/destination/district/${cityId}`,
+        {
+          method: 'GET',
+          headers: this.headers,
+        },
+      );
+      const data: Response<District> = await response.json();
+      const districts = data.data;
+      return districts;
+    } catch (error) {
+      throw new Error('Failed to fetch districts');
     }
   }
 }
