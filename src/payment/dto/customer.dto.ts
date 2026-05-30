@@ -1,6 +1,19 @@
+import { IsNotEmpty, IsOptional, IsString } from "class-validator"
+
 export class TransactionCustomerDto {
+    @IsString()
+    @IsNotEmpty()
     firstName: string
-    lastName: string
+
+    @IsString()
+    @IsOptional()
+    lastName?: string
+
+    @IsString()
+    @IsNotEmpty()
     email: string
-    phone: string
+
+    @IsString()
+    @IsNotEmpty()
+    phone: string // maybe need to add to jwt token
 }
