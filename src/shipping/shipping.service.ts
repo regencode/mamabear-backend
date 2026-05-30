@@ -3,9 +3,11 @@ import {
   District,
   Province,
   Response,
+  ShippingCostResponse,
   Subdistrict,
 } from '@/types/shipping.type';
 import { Injectable } from '@nestjs/common';
+import { CalculateShippingCostDto } from './dto/calculate-cost.dto';
 
 @Injectable()
 export class ShippingService {
@@ -84,6 +86,27 @@ export class ShippingService {
       return subdistricts;
     } catch (error) {
       throw new Error('Failed to fetch subdistricts');
+    }
+  }
+
+  async calculateShippingCost(dto: CalculateShippingCostDto) {
+    try {
+      const params = new URLSearchParams();
+      params.append('origin', dto.origin.toString());
+      params.append('destination', dto.destination.toString());
+      params.append('weight', dto.weight.toString());
+      params.append('courier', dto.courier);
+      params.append('price', dto.price ? dto.price : '');
+      const response = await fetch(`${this.baseUrl}/calculate/domestic-cost`, {
+        method: 'POST',
+        headers: this.headers,
+        body: params,
+      });
+      const data: Response<ShippingCostResponse> = await response.json();
+      const shippingCost = data.data;
+      return shippingCost;
+    } catch (error) {
+      throw new Error('Failed to calculate shipping cost');
     }
   }
 }

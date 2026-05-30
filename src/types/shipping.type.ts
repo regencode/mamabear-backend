@@ -25,6 +25,22 @@ export interface Meta {
   status: string;
 }
 
+export interface ShippingCost {
+  origin: number;
+  destination: number;
+  weight: number;
+  courier: string;
+}
+
+export interface ShippingCostResponse {
+  name: string;
+  code: string;
+  service: string;
+  description: string;
+  cost: number;
+  etd: string;
+}
+
 export interface Response<T> {
   meta: Meta;
   data: T[];

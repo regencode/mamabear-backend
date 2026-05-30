@@ -1,6 +1,7 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ShippingService } from './shipping.service';
 import { ApiTags } from '@nestjs/swagger';
+import { CalculateShippingCostDto } from './dto/calculate-cost.dto';
 
 @ApiTags('shipping')
 @Controller('shipping')
@@ -25,5 +26,11 @@ export class ShippingController {
   @Get('subdistrict/:districtId')
   findSubdistrictsByDistrictId(@Param('districtId') districtId: string) {
     return this.shippingService.findSubdistrictsByDistrictId(districtId);
+  }
+
+  @Post('cost')
+  calculateShippingCost(@Body() dto: CalculateShippingCostDto) {
+    console.log(dto);
+    return this.shippingService.calculateShippingCost(dto);
   }
 }
