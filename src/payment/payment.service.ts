@@ -1,9 +1,9 @@
 import 'dotenv/config';
-import { MidtransService } from '@/midtrans/midtrans.service';
 import { BadRequestException, Injectable, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { ServiceResult } from '@/common/ServiceResult';
 import { QrisNotificationDto } from './dto/notifications.dto';
+import { MidtransService } from './midtrans.service';
 import crypto from 'crypto';
 
 @Injectable()
@@ -15,9 +15,10 @@ export class PaymentService {
     FRONTEND_URL = process.env.FRONTEND_URL!;
     SERVER_KEY = process.env.MIDTRANS_SERVER_KEY!;
     // note: can only fit in transaction_details, customer_details does not work yet
-    async createTransaction(dto: CreateTransactionDto): Promise<ServiceResult<any>>{
+    async createTransaction(dto: CreateTransactionDto): Promise<ServiceResult<any>> {
         try {
             const { orderId, subtotal, customerDetails } = dto;
+
             const transaction = await this.snap.createTransaction({
                 transaction_details: {
                     order_id: orderId,

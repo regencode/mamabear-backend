@@ -23,6 +23,7 @@ import { EmbeddingsModule } from './embeddings/embeddings.module';
 import { ProductUtilsModule } from './product-utils/product-utils.module';
 import { CartModule } from './cart/cart.module';
 import { CleanupService } from './scheduler/cleanup.service';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { CleanupService } from './scheduler/cleanup.service';
     SearchModule,
     EmbeddingsModule,
     ProductUtilsModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService, CleanupService],
