@@ -24,6 +24,7 @@ import { ProductUtilsModule } from './product-utils/product-utils.module';
 import { SettingsModule } from './settings/settings.module';
 import { CartModule } from './cart/cart.module';
 import { CleanupService } from './scheduler/cleanup.service';
+import { ShippingModule } from './shipping/shipping.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { CleanupService } from './scheduler/cleanup.service';
     EmbeddingsModule,
     ProductUtilsModule,
     SettingsModule,
+    ShippingModule,
   ],
   controllers: [AppController],
   providers: [AppService, CleanupService],
