@@ -16,9 +16,7 @@ export class PaymentService {
     SERVER_KEY = process.env.MIDTRANS_SERVER_KEY!;
     // note: can only fit in transaction_details, customer_details does not work yet
     async createTransaction(dto: CreateTransactionDto): Promise<ServiceResult<any>> {
-        try {
-            const { orderId, subtotal, customerDetails } = dto;
-
+            const { orderId, subtotal, customerDetails, ...rest } = dto;
             const transaction = await this.snap.createTransaction({
                 transaction_details: {
                     order_id: orderId,
@@ -36,10 +34,6 @@ export class PaymentService {
                 message: `Created new transaction for order ${orderId}`,
                 data: transaction,
             }
-        }
-        catch (error) {
-            throw new BadRequestException("Cannot create transaction: ", error);
-        }
     }
     resolveNotificationType(paymentType: string) {
         if(paymentType == 'qris') return this.handleQris;

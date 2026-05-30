@@ -4,7 +4,7 @@ import { ApiProperty } from "@nestjs/swagger"
 import { Type } from "class-transformer"
 
 
-export class CreateTransactionDto { // to be passed to midtrans 
+export class CreateTransactionDto {
 
     @IsString()
     @IsNotEmpty()
