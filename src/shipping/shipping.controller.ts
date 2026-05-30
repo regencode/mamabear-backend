@@ -21,4 +21,9 @@ export class ShippingController {
   findDistrictsByCityId(@Param('cityId') cityId: string) {
     return this.shippingService.findDistrictsByCityId(cityId);
   }
+
+  @Get('subdistrict/:districtId')
+  findSubdistrictsByDistrictId(@Param('districtId') districtId: string) {
+    return this.shippingService.findSubdistrictsByDistrictId(districtId);
+  }
 }
