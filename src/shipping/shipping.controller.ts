@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ShippingService } from './shipping.service';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -10,5 +10,10 @@ export class ShippingController {
   @Get('province')
   findAllProvince() {
     return this.shippingService.findAllProvince();
+  }
+
+  @Get('city/:provinceId')
+  findCitiesByProvinceId(@Param('provinceId') provinceId: string) {
+    return this.shippingService.findCitiesByProvinceId(provinceId);
   }
 }
