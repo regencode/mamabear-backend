@@ -37,6 +37,12 @@ export class UploadService {
         id: result.id,
         altText: result.altText,
         imageUrl: result.imageUrl,
+        publicId: result.publicId,
+        width: result.width,
+        height: result.height,
+        fileSize: result.fileSize,
+        format: result.format,
+        sortOrder: result.sortOrder,
       },
     };
   }

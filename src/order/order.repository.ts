@@ -47,16 +47,8 @@ export class OrderRepository {
     });
   }
 
-  findAll(userId: string) {
-    return this.prisma.order.findMany({
-      where: {
-        userId,
-      },
-    });
-  }
-
-  findAllForAdmin() {
-    return this.prisma.order.findMany();
+  findMany(args: Prisma.OrderFindManyArgs) {
+    return this.prisma.order.findMany(args);
   }
 
   findUser(userId: string) {

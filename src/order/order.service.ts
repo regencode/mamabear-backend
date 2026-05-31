@@ -277,17 +277,83 @@ export class OrderService {
     };
   }
 
-  async getOrdersByUserId(userId: string, paginationDTO?: OrderPaginationDto) {
+  async getOrdersByUserId(userId: string, paginationDto: OrderPaginationDto) {
     const user = await this.repo.findUser(userId);
 
     if (!user) {
       throw new UnauthorizedException('Login required');
     }
 
-    const limit = paginationDTO?.limit ?? 10;
-    const cursor = paginationDTO?.cursor;
+    const {
+      cursor,
+      limit = 10,
+      search,
+      status,
+      customer,
+      startDate,
+      endDate,
+    } = paginationDto;
 
-    const commonQuery = {
+    const where: Prisma.OrderWhereInput = {};
+
+    if (user.role !== Role.ADMIN) {
+      where.userId = userId;
+    }
+
+    if (search) {
+      where.orderNumber = {
+        contains: search,
+        mode: 'insensitive',
+      };
+    }
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (customer) {
+      where.user = {
+        OR: [
+          {
+            name: {
+              contains: customer,
+              mode: 'insensitive',
+            },
+          },
+          {
+            email: {
+              contains: customer,
+              mode: 'insensitive',
+            },
+          },
+        ],
+      };
+    }
+
+    const createdAtFilter: Prisma.DateTimeFilter = {};
+
+    if (startDate || endDate) {
+      where.createdAt = {} as Prisma.DateTimeFilter;
+    }
+
+    if (startDate) {
+      createdAtFilter.gte = new Date(startDate);
+    }
+
+    if (endDate) {
+      const finalDate = new Date(endDate);
+      finalDate.setHours(23, 59, 59, 999);
+
+      createdAtFilter.lte = finalDate;
+    }
+
+    if (Object.keys(createdAtFilter).length > 0) {
+      where.createdAt = createdAtFilter;
+    }
+
+    const orders = await this.repo.findMany({
+      where,
+
       take: limit + 1,
 
       ...(cursor && {
@@ -297,28 +363,33 @@ export class OrderService {
         skip: 1,
       }),
 
-      orderBy: {
-        createdAt: 'desc' as const,
-      },
+      orderBy: [
+        {
+          createdAt: 'desc',
+        },
+        {
+          id: 'desc',
+        },
+      ],
 
       include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+
         items: true,
         address: true,
-        histories: true,
+        histories: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
       },
-    };
-
-    const orders =
-      user.role === Role.ADMIN
-        ? await this.prisma.order.findMany({
-            ...commonQuery,
-          })
-        : await this.prisma.order.findMany({
-            ...commonQuery,
-            where: {
-              userId,
-            },
-          });
+    });
 
     let nextCursor: string | null = null;
 
@@ -330,6 +401,7 @@ export class OrderService {
 
     return {
       success: true,
+
       message:
         user.role === Role.ADMIN
           ? 'Orders retrieved successfully by Admin'
