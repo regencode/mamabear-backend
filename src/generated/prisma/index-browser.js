@@ -288,6 +288,26 @@ exports.Prisma.SettingScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.AddressScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  phone: 'phone',
+  provinceId: 'provinceId',
+  proviceName: 'proviceName',
+  cityId: 'cityId',
+  cityName: 'cityName',
+  districtId: 'districtId',
+  districtName: 'districtName',
+  subdistrictId: 'subdistrictId',
+  subdistrictName: 'subdistrictName',
+  postalCode: 'postalCode',
+  road: 'road',
+  completeAddress: 'completeAddress',
+  detail: 'detail',
+  usedFor: 'usedFor'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -391,6 +411,21 @@ exports.Prisma.SettingOrderByRelevanceFieldEnum = {
   type: 'type',
   description: 'description'
 };
+
+exports.Prisma.AddressOrderByRelevanceFieldEnum = {
+  userId: 'userId',
+  name: 'name',
+  phone: 'phone',
+  proviceName: 'proviceName',
+  cityName: 'cityName',
+  districtName: 'districtName',
+  subdistrictName: 'subdistrictName',
+  postalCode: 'postalCode',
+  road: 'road',
+  completeAddress: 'completeAddress',
+  detail: 'detail',
+  usedFor: 'usedFor'
+};
 exports.Role = exports.$Enums.Role = {
   USER: 'USER',
   ADMIN: 'ADMIN',
@@ -423,7 +458,8 @@ exports.Prisma.ModelName = {
   Order: 'Order',
   OrderItem: 'OrderItem',
   OrderStatusHistory: 'OrderStatusHistory',
-  Setting: 'Setting'
+  Setting: 'Setting',
+  Address: 'Address'
 };
 
 /**

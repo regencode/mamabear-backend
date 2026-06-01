@@ -33,6 +33,7 @@ model User {
   refreshTokenExpiry      DateTime?
   carts                   Cart[]
   orders                  Order[]
+  address                 Address[]
 }
 
 model Product {
@@ -259,4 +260,30 @@ model Setting {
   description String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime? @updatedAt
+}
+
+model Address {
+  id     Int    @id @default(autoincrement())
+  userId String @db.Uuid
+  name   String
+  phone  String
+
+  // information and validation is coming from Raja Ongkir API
+  provinceId      Int
+  proviceName     String
+  cityId          Int
+  cityName        String
+  districtId      Int
+  districtName    String
+  subdistrictId   Int //used for shipping cost calculation
+  subdistrictName String
+  postalCode      String //included in subdistrict validation response
+
+  //other information, no validation, user's responsibility
+  road            String //Jalan, no rumah etc
+  completeAddress String //Append all address information
+  detail          String //Sebelah rumah pak RT
+  usedFor         String //Kantor, Rumah 
+
+  user User @relation(fields: [userId], references: [id])
 }
