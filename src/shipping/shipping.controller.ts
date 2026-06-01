@@ -30,7 +30,6 @@ export class ShippingController {
 
   @Post('cost')
   calculateShippingCost(@Body() dto: CalculateShippingCostDto) {
-    console.log(dto);
     return this.shippingService.calculateShippingCost(dto);
   }
 }
