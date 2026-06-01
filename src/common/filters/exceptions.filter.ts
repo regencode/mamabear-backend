@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import {
   ExceptionFilter,
   Catch,
@@ -29,10 +30,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
       };
       response.status(status).json(responseJson);
     } else {
-      const responseJson: CustomResponse<null> = {
+        const message =
+            exception instanceof Error ? exception.name : 'Internal server error';
+        console.error("Unhandled exception:", exception);
+        const responseJson: CustomResponse<null> = {
         success: false,
         statusCode: 500,
-        message: ['Internal server error'],
+        message: [process.env.NODE_ENV == 'production' ? 'Internal server error' : message],
         data: null,
         timestamp: new Date().toISOString(),
       };

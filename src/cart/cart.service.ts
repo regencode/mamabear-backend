@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PinoLogger } from 'pino-nestjs';
 import { AddToCartDto } from './dto/add-to-cart-dto';
 import { CartRepository } from './cart.repository';
@@ -11,7 +15,9 @@ export class CartService {
     private readonly cartRepo: CartRepository,
     private readonly prisma: PrismaService,
     private readonly logger: PinoLogger,
-  ) {this.logger.setContext(CartService.name);}
+  ) {
+    this.logger.setContext(CartService.name);
+  }
 
   // Get or Create Cart
   async getOrCreateCart(userId?: string, sessionId?: string) {
@@ -35,8 +41,13 @@ export class CartService {
 
     let createdSessionId: string | undefined;
 
-    if (userId) data.userId = userId;
-    if (sessionId) {
+    // For authenticated users, only set userId (no sessionId)
+    // For guests, set sessionId
+    if (userId) {
+      data.userId = userId;
+      // Optionally set expiresAt for user carts too
+      data.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    } else if (sessionId) {
       data.sessionId = sessionId;
       data.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     } else {
@@ -52,7 +63,10 @@ export class CartService {
   // Add Item to Cart
   async addToCart(dto: AddToCartDto, userId?: string, sessionId?: string) {
     try {
-      const { cart, createdSessionId } = await this.getOrCreateCart(userId, sessionId);
+      const { cart, createdSessionId } = await this.getOrCreateCart(
+        userId,
+        sessionId,
+      );
 
       // Variants are required for pricing - products don't have base prices
       if (!dto.variantId) {
@@ -68,11 +82,26 @@ export class CartService {
         throw new NotFoundException('Variant not found');
       }
 
+      // Ensure product exists and is available
+      if (!variant.product || !variant.product.isActive) {
+        throw new BadRequestException('Product is not available');
+      }
+
+      // Verify variant belongs to provided productId (if provided)
+      if (dto.productId && dto.productId !== variant.productId) {
+        throw new BadRequestException(
+          'Variant does not belong to the specified product',
+        );
+      }
+
       // Check stock availability
       const requestedQuantity = dto.quantity ?? 1;
+      if (requestedQuantity < 1) {
+        throw new BadRequestException('Quantity must be at least 1');
+      }
       if (requestedQuantity > variant.stock) {
         throw new BadRequestException(
-          `Insufficient stock. Available: ${variant.stock}, Requested: ${requestedQuantity}`
+          `Insufficient stock. Available: ${variant.stock}, Requested: ${requestedQuantity}`,
         );
       }
 
@@ -110,10 +139,15 @@ export class CartService {
   }
 
   // Update Quantity
-  async updateItemQuantity(itemId: string, quantity: number) {
+  async updateItemQuantity(
+    itemId: string,
+    quantity: number,
+    userId?: string,
+    sessionId?: string,
+  ) {
     try {
       if (quantity <= 0) {
-        return this.removeItem(itemId);
+        return this.removeItem(itemId, userId, sessionId);
       }
 
       const cartItem = await this.cartRepo.findCartItemById(itemId);
@@ -122,13 +156,28 @@ export class CartService {
         throw new NotFoundException('Cart item not found');
       }
 
+      if (userId && cartItem.cart.userId !== userId) {
+        throw new BadRequestException('Cart item does not belong to user');
+      }
+      if (sessionId && cartItem.cart.sessionId !== sessionId) {
+        throw new BadRequestException('Cart item does not belong to session');
+      }
+
+      // Ensure product is still available
+      if (cartItem.product && !cartItem.product.isActive) {
+        throw new BadRequestException('Product is not available');
+      }
+
       if (cartItem.variant && quantity > cartItem.variant.stock) {
         throw new BadRequestException(
-          `Insufficient stock. Available: ${cartItem.variant.stock}, Requested: ${quantity}`
+          `Insufficient stock. Available: ${cartItem.variant.stock}, Requested: ${quantity}`,
         );
       }
 
-      const result = await this.cartRepo.updateCartItemQuantity(itemId, quantity);
+      const result = await this.cartRepo.updateCartItemQuantity(
+        itemId,
+        quantity,
+      );
       this.logger.info({
         level: 'info',
         message: 'Cart item quantity updated',
@@ -150,9 +199,75 @@ export class CartService {
     }
   }
 
+  // Validate entire cart before checkout
+  async validateCartForCheckout(userId?: string, sessionId?: string) {
+    const cart = await this.cartRepo.findCartWithItems(userId, sessionId);
+    if (!cart) {
+      throw new NotFoundException('Cart not found');
+    }
+
+    const issues: string[] = [];
+
+    for (const item of cart.items || []) {
+      // Product availability
+      if (!item.product || !item.product.isActive) {
+        issues.push(`Product ${item.productId} is not available`);
+        continue;
+      }
+
+      // Variant existence
+      if (item.variantId == null || !item.variant) {
+        issues.push(
+          `Variant ${item.variantId ?? 'null'} not found for product ${item.productId}`,
+        );
+        continue;
+      }
+
+      // Variant compatibility
+      if (item.variant.productId !== item.productId) {
+        issues.push(
+          `Variant ${item.variantId} does not belong to product ${item.productId}`,
+        );
+      }
+
+      // Quantity checks
+      if (item.quantity < 1) {
+        issues.push(`Item ${item.id} has invalid quantity ${item.quantity}`);
+      }
+
+      if (item.quantity > item.variant.stock) {
+        issues.push(
+          `Insufficient stock for variant ${item.variantId}. Available: ${item.variant.stock}, Requested: ${item.quantity}`,
+        );
+      }
+    }
+
+    if (issues.length > 0) {
+      throw new BadRequestException({
+        message: 'Cart validation failed',
+        issues,
+      });
+    }
+
+    return { valid: true };
+  }
+
   // Remove Item
-  async removeItem(itemsId: string) {
+  async removeItem(itemsId: string, userId?: string, sessionId?: string) {
     try {
+      const cartItem = await this.cartRepo.findCartItemById(itemsId);
+
+      if (!cartItem) {
+        throw new NotFoundException('Cart item not found');
+      }
+
+      if (userId && cartItem.cart.userId !== userId) {
+        throw new BadRequestException('Cart item does not belong to user');
+      }
+      if (sessionId && cartItem.cart.sessionId !== sessionId) {
+        throw new BadRequestException('Cart item does not belong to session');
+      }
+
       const result = await this.cartRepo.deleteCartItem(itemsId);
       this.logger.info({
         level: 'info',
@@ -231,6 +346,9 @@ export class CartService {
 
       await this.cartRepo.deleteCart(guestCart.id);
 
+      // Ensure no duplicate items remain after merge
+      await this.cartRepo.deduplicateCart(userCart.id);
+
       this.logger.info({
         level: 'info',
         message: 'Cart merged successfully',
@@ -267,7 +385,10 @@ export class CartService {
     }
 
     const itemCount = cart.items.reduce((sum, item) => sum + item.quantity, 0);
-    const subtotal = cart.items.reduce((sum, item) => sum + (item.quantity * Number(item.price)), 0);
+    const subtotal = cart.items.reduce(
+      (sum, item) => sum + item.quantity * Number(item.price),
+      0,
+    );
 
     // For now, assuming no tax or shipping - extend as needed
     const total = subtotal;

@@ -12,13 +12,7 @@ export class RefreshJwtStrategy extends PassportStrategy(
 ) {
   constructor(private readonly prisma: PrismaService) {
     super({
-      jwtFromRequest: (req: Request) => {
-        const token = req?.cookies?.['refreshToken'] ?? null;
-        console.log('=== REFRESH STRATEGY ===');
-        console.log('cookies:', req?.cookies);
-        console.log('token:', token);
-        return req?.cookies?.['refreshToken'] ?? null;
-      },
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.JWT_REFRESH_SECRET!,
       passReqToCallback: true,
       ignoreExpiration: false,
@@ -26,12 +20,10 @@ export class RefreshJwtStrategy extends PassportStrategy(
   }
 
   async validate(req: Request, payload: any) {
-    const refreshToken = req?.cookies?.['refreshToken'];
-
+    const refreshToken = req.headers.authorization;
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token not found');
     }
-
     const user = await this.prisma.user.findUnique({
       where: { id: payload.sub },
     });
@@ -51,6 +43,7 @@ export class RefreshJwtStrategy extends PassportStrategy(
     return {
       sub: payload.sub,
       email: payload.email,
+      name: payload.name,
       role: payload.role,
     };
   }

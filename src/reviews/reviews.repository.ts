@@ -17,14 +17,28 @@ export class ReviewsRepository {
   constructor(private prisma: PrismaService) {}
 
   async create(dto: CreateReviewDto): Promise<Review> {
+    const { images, ...reviewsData } = dto
     return this.prisma.review.create({
       data: {
         title: dto.title,
         rating: dto.rating,
         description: dto.description,
-        imageUrls: dto.imageUrls,
         reviewer: { connect: { id: dto.reviewerId }},
-        product: { connect: { id: dto.productId }}
+        product: { connect: { id: dto.productId }},
+        images: {
+            createMany: {
+              data: (images ?? []).map((img) => ({
+                imageUrl: img.imageUrl,
+                publicId: img.publicId,
+                width: img.width,
+                height: img.height,
+                fileSize: img.fileSize,
+                format: img.format,
+                sortOrder: img.sortOrder,
+                altText: img.altText,
+              })),
+            }
+        },
       },
     });
   }

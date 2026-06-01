@@ -167,14 +167,15 @@ async function main() {
 
   await prisma.$executeRawUnsafe(`
     TRUNCATE TABLE 
-      "ProductImage",
+      "Image",
       "ProductVariant",
       "Discount",
       "Review",
       "Product",
       "Category",
       "Highlight",
-      "User"
+      "User",
+      "Setting"
     RESTART IDENTITY CASCADE;
   `);
 
@@ -189,26 +190,7 @@ async function main() {
   console.log('Creating categories...');
 
   for (const category of categories) {
-    let uploadedImage: Awaited<ReturnType<typeof uploadSeedImage>> | null =
-      null;
-
-    if ((category as any).imageUrl) {
-      uploadedImage = await uploadSeedImage((category as any).imageUrl);
-    }
-
-    await prisma.category.create({
-      data: {
-        ...category,
-        ...(uploadedImage && {
-          imageUrl: uploadedImage.imageUrl,
-          publicId: uploadedImage.publicId,
-          width: uploadedImage.width,
-          height: uploadedImage.height,
-          fileSize: uploadedImage.fileSize,
-          format: uploadedImage.format,
-        }),
-      },
-    });
+    await prisma.category.create({ data: { ...category } });
   }
 
   console.log(`Inserted ${categories.length} categories.`);
@@ -322,7 +304,7 @@ async function main() {
           });
 
           for (const { uploaded, sortOrder, altText } of uploadedImages) {
-            await tx.productImage.create({
+            await tx.image.create({
               data: {
                 variantId: variant.id,
                 publicId: uploaded.publicId,
@@ -339,7 +321,7 @@ async function main() {
         }
 
         for (const { uploaded, sortOrder, altText } of uploadedProductImages) {
-          await tx.productImage.create({
+          await tx.image.create({
             data: {
               productId: createdProduct.id,
               publicId: uploaded.publicId,
@@ -418,7 +400,6 @@ async function main() {
           description: pickRandom(REVIEW_DESCRIPTIONS),
           rating: randFloat(3, 5),
           numUpvotes: randInt(0, 50),
-          imageUrls: [],
           reviewerId: pickRandom(reviewerIds),
           productId: product.id,
         },
@@ -429,6 +410,99 @@ async function main() {
   }
 
   console.log(`Inserted ${totalReviews} reviews.`);
+
+  console.log('Upserting default settings...');
+
+  const defaultSettings = [
+    {
+      key: 'site.name',
+      value: 'MamaBear',
+      type: 'string',
+      description: 'Public site name',
+    },
+    {
+      key: 'site.description',
+      value: 'Natural lactation support products and supplements',
+      type: 'string',
+      description: 'Short site description for meta tags',
+    },
+    {
+      key: 'contact.email',
+      value: 'support@example.com',
+      type: 'string',
+      description: 'Customer support email',
+    },
+    {
+      key: 'contact.phone',
+      value: '+62-812-3456-7890',
+      type: 'string',
+      description: 'Customer support phone',
+    },
+    {
+      key: 'social.links',
+      value: JSON.stringify({ facebook: '', instagram: '', twitter: '' }),
+      type: 'json',
+      description: 'Social media links as JSON',
+    },
+    {
+      key: 'shipping.origin',
+      value: JSON.stringify({
+        address1: '',
+        address2: '',
+        city: '',
+        province: '',
+        postalCode: '',
+      }),
+      type: 'json',
+      description: 'Shipping origin address',
+    },
+    {
+      key: 'tax.rate',
+      value: '0.10',
+      type: 'number',
+      description: 'Default tax rate (decimal)',
+    },
+    {
+      key: 'currency',
+      value: 'IDR',
+      type: 'string',
+      description: 'Default currency code',
+    },
+    {
+      key: 'email.smtp',
+      value: JSON.stringify({
+        host: '',
+        port: 587,
+        user: '',
+        pass: '',
+        secure: false,
+      }),
+      type: 'json',
+      description: 'SMTP configuration JSON',
+    },
+    {
+      key: 'payment.gateway',
+      value: JSON.stringify({ provider: '', config: {} }),
+      type: 'json',
+      description: 'Payment gateway configuration',
+    },
+    {
+      key: 'maintenance.mode',
+      value: 'false',
+      type: 'boolean',
+      description: 'Maintenance mode toggle',
+    },
+  ];
+
+  for (const s of defaultSettings) {
+    await prisma.setting.upsert({
+      where: { key: s.key },
+      create: s as any,
+      update: s as any,
+    });
+  }
+
+  console.log(`Upserted ${defaultSettings.length} settings.`);
 
   if (fs.existsSync(TEMP_DIR)) fs.rmSync(TEMP_DIR, { recursive: true });
 

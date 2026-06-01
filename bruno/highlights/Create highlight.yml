@@ -1,19 +1,19 @@
 info:
   name: Create highlight
   type: http
-  seq: 3
+  seq: 46
 
 http:
   method: POST
-  url: "{{baseUrl}}/api/highlights"
+  url: "{{baseUrl}}/api/admin/highlights"
   body:
     type: json
     data: |-
       {
-        "name": "Best Seller",
-        "description": "Products that are our best sellers",
+        "name": "Bruno Highlight {{runId}}",
+        "description": "Test highlight from Bruno",
         "isActive": true,
-        "slug": "best-seller"
+        "slug": "bruno-highlight-{{runId}}"
       }
   auth:
     type: bearer
@@ -38,16 +38,16 @@ settings:
 examples:
   - name: "Success (201)"
     request:
-      url: "{{baseUrl}}/api/highlights"
+      url: "{{baseUrl}}/api/admin/highlights"
       method: POST
       body:
         type: json
         data: |-
           {
-            "name": "Test Capture Highlight",
-            "description": "A test highlight for capture script",
+            "name": "Best Seller",
+            "description": "Products that are our best sellers",
             "isActive": true,
-            "slug": "test-capture-highlight"
+            "slug": "best-seller"
           }
     response:
       status: 201
@@ -62,21 +62,21 @@ examples:
             "success": true,
             "statusCode": 201,
             "message": [
-              "Created highlight test-capture-highlight"
+              "Created highlight best-seller"
             ],
             "data": {
               "id": 3,
-              "name": "Test Capture Highlight",
-              "slug": "test-capture-highlight",
-              "description": "A test highlight for capture script",
+              "name": "Best Seller",
+              "slug": "best-seller",
+              "description": "Products that are our best sellers",
               "isActive": true,
               "products": []
             },
-            "timestamp": "2026-05-16T09:43:11.695Z"
+            "timestamp": "2026-05-25T14:30:00.000Z"
           }
   - name: "Unauthorized (401)"
     request:
-      url: "{{baseUrl}}/api/highlights"
+      url: "{{baseUrl}}/api/admin/highlights"
       method: POST
       body:
         type: json
@@ -100,11 +100,11 @@ examples:
               "Unauthorized"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.216Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }
   - name: "Validation Error (400)"
     request:
-      url: "{{baseUrl}}/api/highlights"
+      url: "{{baseUrl}}/api/admin/highlights"
       method: POST
       body:
         type: json
@@ -128,11 +128,11 @@ examples:
               "name should not be empty"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.218Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }
   - name: "Highlight Already Exists (400)"
     request:
-      url: "{{baseUrl}}/api/highlights"
+      url: "{{baseUrl}}/api/admin/highlights"
       method: POST
       body:
         type: json
@@ -158,5 +158,5 @@ examples:
               "Highlight already exists"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.222Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }

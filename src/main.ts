@@ -53,7 +53,7 @@ async function bootstrap() {
 
   if (process.env.NODE_ENV == 'ci') {
     app.listen(process.env.PORT ?? 3000);
-    const timeMs = 10000;
+    const timeMs = 30000;
     console.log(`[ci] Aborting application within ${timeMs}`);
     setTimeout(async () => {
       await app.close();

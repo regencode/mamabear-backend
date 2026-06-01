@@ -21,9 +21,10 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { SearchModule } from './search/search.module';
 import { EmbeddingsModule } from './embeddings/embeddings.module';
 import { ProductUtilsModule } from './product-utils/product-utils.module';
+import { SettingsModule } from './settings/settings.module';
 import { CartModule } from './cart/cart.module';
 import { CleanupService } from './scheduler/cleanup.service';
-import { OrderModule } from './order/order.module';
+import { ShippingModule } from './shipping/shipping.module';
 
 @Module({
   imports: [
@@ -55,7 +56,8 @@ import { OrderModule } from './order/order.module';
     SearchModule,
     EmbeddingsModule,
     ProductUtilsModule,
-    OrderModule,
+    SettingsModule,
+    ShippingModule,
   ],
   controllers: [AppController],
   providers: [AppService, CleanupService],

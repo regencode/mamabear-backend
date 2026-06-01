@@ -1,23 +1,21 @@
 info:
   name: Create user
   type: http
-  seq: 3
+  seq: 47
 
 http:
   method: POST
-  url: "{{baseUrl}}/api/users"
+  url: "{{baseUrl}}/api/admin/users"
   body:
     type: json
     data: |-
       {
-        "email": "user@email.com",
+        "email": "bruno-{{runId}}@test.com",
         "password": "password123",
-        "name": "John Doe",
-        "phone": "081234567890"
+        "name": "Bruno User {{runId}}",
+        "phone": "081299880001"
       }
-  auth:
-    type: bearer
-    token: "{{jwtToken}}"
+  auth: inherit
 
 runtime:
   scripts:
@@ -38,7 +36,7 @@ settings:
 examples:
   - name: "Success (201)"
     request:
-      url: "{{baseUrl}}/api/users"
+      url: "{{baseUrl}}/api/admin/users"
       method: POST
       body:
         type: json
@@ -71,14 +69,14 @@ examples:
               "phone": "081234567890",
               "role": "USER",
               "isVerified": false,
-              "createdAt": "2026-05-16T09:43:11.701Z",
-              "updatedAt": "2026-05-16T09:43:11.701Z"
+              "createdAt": "2026-05-25T14:30:00.000Z",
+              "updatedAt": "2026-05-25T14:30:00.000Z"
             },
-            "timestamp": "2026-05-16T09:43:11.704Z"
+            "timestamp": "2026-05-25T14:30:00.000Z"
           }
   - name: "Unauthorized (401)"
     request:
-      url: "{{baseUrl}}/api/users"
+      url: "{{baseUrl}}/api/admin/users"
       method: POST
       body:
         type: json
@@ -102,11 +100,11 @@ examples:
               "Unauthorized"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.241Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }
   - name: "Validation Error (400)"
     request:
-      url: "{{baseUrl}}/api/users"
+      url: "{{baseUrl}}/api/admin/users"
       method: POST
       body:
         type: json
@@ -136,11 +134,11 @@ examples:
               "phone should not be empty"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.243Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }
   - name: "Email Already Exists (400)"
     request:
-      url: "{{baseUrl}}/api/users"
+      url: "{{baseUrl}}/api/admin/users"
       method: POST
       body:
         type: json
@@ -167,5 +165,5 @@ examples:
               "User with email admin@mamabear.id already exists"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.246Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }

@@ -1,11 +1,11 @@
 info:
   name: Update highlight
   type: http
-  seq: 4
+  seq: 50
 
 http:
   method: PATCH
-  url: "{{baseUrl}}/api/highlights/{{highlightId}}"
+  url: "{{baseUrl}}/api/admin/highlights/{{highlightId}}"
   body:
     type: json
     data: |-
@@ -33,15 +33,15 @@ settings:
 examples:
   - name: "Success (200)"
     request:
-      url: "{{baseUrl}}/api/highlights/3"
+      url: "{{baseUrl}}/api/admin/highlights/3"
       method: PATCH
       body:
         type: json
         data: |-
           {
-            "name": "Updated Test Highlight",
-            "description": "Updated description",
-            "slug": "test-highlight-updated"
+            "name": "Best Seller (Updated)",
+            "description": "Updated best sellers description",
+            "slug": "best-seller-updated-v2"
           }
     response:
       status: 200
@@ -56,21 +56,21 @@ examples:
             "success": true,
             "statusCode": 200,
             "message": [
-              "Highlight updated-test-highlight updated successfully"
+              "Highlight best-seller-updated-v2 updated successfully"
             ],
             "data": {
               "id": 3,
-              "name": "Updated Test Highlight",
-              "slug": "updated-test-highlight",
-              "description": "Updated description",
+              "name": "Best Seller (Updated)",
+              "slug": "best-seller-updated-v2",
+              "description": "Updated best sellers description",
               "isActive": true,
               "products": []
             },
-            "timestamp": "2026-05-16T09:43:11.773Z"
+            "timestamp": "2026-05-25T14:31:00.000Z"
           }
   - name: "Not Found (400)"
     request:
-      url: "{{baseUrl}}/api/highlights/999999"
+      url: "{{baseUrl}}/api/admin/highlights/999999"
       method: PATCH
       body:
         type: json
@@ -94,11 +94,11 @@ examples:
               "Highlight not found"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.225Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }
   - name: "Unauthorized (401)"
     request:
-      url: "{{baseUrl}}/api/highlights/1"
+      url: "{{baseUrl}}/api/admin/highlights/1"
       method: PATCH
       body:
         type: json
@@ -122,5 +122,5 @@ examples:
               "Unauthorized"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.227Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }

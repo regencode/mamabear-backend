@@ -1,11 +1,11 @@
 info:
   name: Delete product review (Admin)
   type: http
-  seq: 13
+  seq: 53
 
 http:
   method: DELETE
-  url: "{{baseUrl}}/api/products/{{productId}}/reviews/{{reviewId}}"
+  url: "{{baseUrl}}/api/admin/products/{{productId}}/reviews/{{reviewId}}"
   auth:
     type: bearer
     token: "{{jwtToken}}"
@@ -25,7 +25,7 @@ settings:
 examples:
   - name: "Success (200)"
     request:
-      url: "{{baseUrl}}/api/products/6/reviews/33"
+      url: "{{baseUrl}}/api/admin/products/1/reviews/1"
       method: DELETE
     response:
       status: 200
@@ -40,26 +40,24 @@ examples:
             "success": true,
             "statusCode": 200,
             "message": [
-              "Review 33 deleted successfully"
+              "Review 1 deleted successfully"
             ],
             "data": {
-              "id": 33,
-              "title": "Great product!",
-              "reviewerId": "fbf8fb32-effd-4374-8689-a3d598540aa1",
-              "productId": 6,
+              "id": 1,
+              "title": "Sangat puas",
+              "reviewerId": "53ff9709-69e4-4aba-a02b-4955381f5a1c",
+              "productId": 1,
               "rating": 5,
               "numUpvotes": 1,
-              "description": "This is a test review from the capture script.",
-              "imageUrls": [
-                "https://example.com/review-img1.jpg"
-              ],
-              "createdAt": "2026-05-16T09:43:11.728Z"
+              "description": "ASI saya meningkat drastis setelah 1 minggu konsumsi",
+              "imageUrls": [],
+              "createdAt": "2026-05-25T14:23:39.391Z"
             },
-            "timestamp": "2026-05-16T09:43:11.802Z"
+            "timestamp": "2026-05-25T14:30:00.000Z"
           }
   - name: "Not Found (500)"
     request:
-      url: "{{baseUrl}}/api/products/1/reviews/999999"
+      url: "{{baseUrl}}/api/admin/products/1/reviews/999999"
       method: DELETE
     response:
       status: 500
@@ -77,11 +75,11 @@ examples:
               "Internal server error"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.175Z"
+            "timestamp": "2026-05-25T14:24:28.235Z"
           }
   - name: "Unauthorized (401)"
     request:
-      url: "{{baseUrl}}/api/products/1/reviews/2"
+      url: "{{baseUrl}}/api/admin/products/1/reviews/1"
       method: DELETE
     response:
       status: 401
@@ -99,5 +97,5 @@ examples:
               "Unauthorized"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.177Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }

@@ -1,17 +1,17 @@
 info:
   name: Update variant
   type: http
-  seq: 1
+  seq: 52
 
 http:
   method: PUT
-  url: "{{baseUrl}}/api/products/variants/{{variantId}}"
+  url: "{{baseUrl}}/api/admin/products/variants/{{variantId}}"
   body:
     type: json
     data: |-
       {
-        "name": "S-26 Procal Gold 3 - 900g (Updated)",
-        "priceIdr": 195000,
+        "name": "Bruno Test Variant (Updated)",
+        "priceIdr": 55000,
         "stock": 75
       }
   auth:
@@ -33,15 +33,15 @@ settings:
 examples:
   - name: "Success (200)"
     request:
-      url: "{{baseUrl}}/api/products/variants/7"
+      url: "{{baseUrl}}/api/admin/products/variants/7"
       method: PUT
       body:
         type: json
         data: |-
           {
-            "name": "Updated Test Variant",
+            "name": "Bruno Test Variant (Updated)",
             "priceIdr": 55000,
-            "stock": 60
+            "stock": 75
           }
     response:
       status: 200
@@ -67,14 +67,14 @@ examples:
               "sku": "UPDATED-TEST-CAPTURE-PRODUCT-UPDATED-TEST-VARIANT",
               "stock": 60,
               "sortOrder": 0,
-              "createdAt": "2026-05-16T09:43:11.717Z",
-              "updatedAt": "2026-05-16T09:43:11.785Z"
+              "createdAt": "2026-05-25T14:30:00.000Z",
+              "updatedAt": "2026-05-25T14:31:00.000Z"
             },
-            "timestamp": "2026-05-16T09:43:11.788Z"
+            "timestamp": "2026-05-25T14:31:00.000Z"
           }
   - name: "Not Found (400)"
     request:
-      url: "{{baseUrl}}/api/products/variants/999999"
+      url: "{{baseUrl}}/api/admin/products/variants/999999"
       method: PUT
       body:
         type: json
@@ -98,11 +98,11 @@ examples:
               "Variant not found"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.275Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }
   - name: "Unauthorized (401)"
     request:
-      url: "{{baseUrl}}/api/products/variants/1"
+      url: "{{baseUrl}}/api/admin/products/variants/1"
       method: PUT
       body:
         type: json
@@ -126,5 +126,5 @@ examples:
               "Unauthorized"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.276Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }

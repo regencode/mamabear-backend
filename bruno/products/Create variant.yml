@@ -1,21 +1,21 @@
 info:
   name: Create variant
   type: http
-  seq: 7
+  seq: 43
 
 http:
   method: POST
-  url: "{{baseUrl}}/api/products/{{productId}}/variants"
+  url: "{{baseUrl}}/api/admin/products/{{productId}}/variants"
   body:
     type: json
     data: |-
       {
-        "name": "S-26 Procal Gold 3 - 900g",
-        "priceIdr": 185000,
-        "weightG": 900,
-        "sku": "S26-PROCAL-3-900",
-        "stock": 50,
-        "sortOrder": 0
+        "name": "Bruno Variant {{runId}}",
+        "priceIdr": 50000,
+        "weightG": 100,
+        "sku": "BRUNO-VAR-{{runId}}",
+        "stock": 10,
+        "sortOrder": 1
       }
   auth:
     type: bearer
@@ -40,18 +40,18 @@ settings:
 examples:
   - name: "Success (201)"
     request:
-      url: "{{baseUrl}}/api/products/6/variants"
+      url: "{{baseUrl}}/api/admin/products/1/variants"
       method: POST
       body:
         type: json
         data: |-
           {
-            "name": "Test Capture Variant",
+            "name": "Bruno Test Variant",
             "priceIdr": 50000,
             "weightG": 100,
-            "sku": "TEST.CAPTURE.VAR",
-            "stock": 50,
-            "sortOrder": 0
+            "sku": "BRUNO-VAR-001",
+            "stock": 10,
+            "sortOrder": 1
           }
     response:
       status: 201
@@ -69,22 +69,22 @@ examples:
               "Variant created successfully"
             ],
             "data": {
-              "id": 7,
-              "productId": 6,
-              "name": "Test Capture Variant",
-              "priceIdr": "50000",
-              "weightG": 100,
-              "sku": "TEST.CAPTURE.VAR",
+              "id": 2,
+              "productId": 1,
+              "name": "MamaBear AlmonMix - Rasa Cokelat",
+              "priceIdr": "80000",
+              "weightG": 180,
+              "sku": "ALMMBR01-CHK",
               "stock": 50,
               "sortOrder": 0,
-              "createdAt": "2026-05-16T09:43:11.717Z",
-              "updatedAt": "2026-05-16T09:43:11.717Z"
+              "createdAt": "2026-05-25T14:30:00.000Z",
+              "updatedAt": "2026-05-25T14:30:00.000Z"
             },
-            "timestamp": "2026-05-16T09:43:11.721Z"
+            "timestamp": "2026-05-25T14:30:00.000Z"
           }
   - name: "Unauthorized (401)"
     request:
-      url: "{{baseUrl}}/api/products/1/variants"
+      url: "{{baseUrl}}/api/admin/products/1/variants"
       method: POST
       body:
         type: json
@@ -108,11 +108,11 @@ examples:
               "Unauthorized"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.132Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }
   - name: "Validation Error (400)"
     request:
-      url: "{{baseUrl}}/api/products/1/variants"
+      url: "{{baseUrl}}/api/admin/products/1/variants"
       method: POST
       body:
         type: json
@@ -142,11 +142,11 @@ examples:
               "weightG must be a number conforming to the specified constraints"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.135Z"
+            "timestamp": "2026-05-25T14:24:28.235Z"
           }
   - name: "Product Not Found (400)"
     request:
-      url: "{{baseUrl}}/api/products/999999/variants"
+      url: "{{baseUrl}}/api/admin/products/999999/variants"
       method: POST
       body:
         type: json
@@ -175,5 +175,5 @@ examples:
               "Product not found"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.139Z"
+            "timestamp": "2026-05-25T14:24:28.235Z"
           }

@@ -33,17 +33,7 @@ export class UploadService {
     return {
       success: true,
       message: 'Image uploaded successfully',
-      data: {
-        id: result.id,
-        altText: result.altText,
-        imageUrl: result.imageUrl,
-        publicId: result.publicId,
-        width: result.width,
-        height: result.height,
-        fileSize: result.fileSize,
-        format: result.format,
-        sortOrder: result.sortOrder,
-      },
+      data: result,
     };
   }
 

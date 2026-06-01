@@ -9,16 +9,20 @@ import {
   Param,
   Inject,
   Res,
+  UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { CartService } from './cart.service';
 import { AddToCartDto } from './dto/add-to-cart-dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { PinoLogger } from 'pino-nestjs';
+import { OptionalJwtAuthGuard } from '@/auth/guard/optional-jwt-auth.guard';
+import { GetUserId } from '@/common/decorators/get-user-id-decorator';
 
 @ApiTags('cart')
 @ApiBearerAuth('JwtAuthGuard')
+@UseGuards(OptionalJwtAuthGuard)
 @Controller('cart')
 export class CartController {
   constructor(
@@ -29,13 +33,16 @@ export class CartController {
   }
 
   @Get()
-  async getCart(@Req() req: any, @Res({ passthrough: true }) res: Response) {
+  async getCart(
+    @GetUserId() userId: string | undefined,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     try {
-      const userId = req.user?.sub;
       const sessionId = req.cookies?.sessionId;
       let result = await this.cartService.getCart(userId, sessionId);
 
-      if (!result && !userId && !sessionId) {
+      if (!result) {
         const data = await this.cartService.getOrCreateCart(userId, sessionId);
         if (data.createdSessionId) {
           res.cookie('sessionId', data.createdSessionId, {
@@ -67,9 +74,11 @@ export class CartController {
   }
 
   @Get('totals')
-  async getCartTotals(@Req() req: any) {
+  async getCartTotals(
+    @GetUserId() userId: string | undefined,
+    @Req() req: Request,
+  ) {
     try {
-      const userId = req.user?.sub;
       const sessionId = req.cookies?.sessionId;
 
       const result = await this.cartService.getCartTotals(userId, sessionId);
@@ -94,9 +103,11 @@ export class CartController {
   }
 
   @Post('merge')
-  async mergeCart(@Req() req: any) {
+  async mergeCart(
+    @GetUserId() userId: string | undefined,
+    @Req() req: Request,
+  ) {
     try {
-      const userId = req.user?.sub;
       const sessionId = req.cookies?.sessionId;
 
       if (!userId || !sessionId) {
@@ -130,14 +141,45 @@ export class CartController {
     }
   }
 
+  @Post('validate')
+  async validateCart(
+    @GetUserId() userId: string | undefined,
+    @Req() req: Request,
+  ) {
+    try {
+      const sessionId = req.cookies?.sessionId;
+      const result = await this.cartService.validateCartForCheckout(
+        userId,
+        sessionId,
+      );
+      this.logger.info({
+        level: 'info',
+        message: 'Cart validated successfully',
+        endpoint: 'POST /cart/validate',
+        userId: userId || 'guest',
+        status: 'success',
+      });
+      return result;
+    } catch (error: any) {
+      this.logger.error({
+        level: 'error',
+        message: 'Failed to validate cart',
+        endpoint: 'POST /cart/validate',
+        status: 'error',
+        error: error.message,
+      });
+      throw error;
+    }
+  }
+
   @Post('items')
   async addToCart(
+    @GetUserId() userId: string | undefined,
     @Body() dto: AddToCartDto,
-    @Req() req: any,
+    @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
     try {
-      const userId = req.user?.sub;
       const sessionId = req.cookies?.sessionId;
       const { result, createdSessionId } = await this.cartService.addToCart(
         dto,
@@ -177,12 +219,17 @@ export class CartController {
   @Patch('items/:id')
   async updateItem(
     @Param('id') itemId: string,
+    @GetUserId() userId: string | undefined,
     @Body() dto: UpdateCartItemDto,
+    @Req() req: Request,
   ) {
     try {
+      const sessionId = req.cookies?.sessionId;
       const result = await this.cartService.updateItemQuantity(
         itemId,
         dto.quantity,
+        userId,
+        sessionId,
       );
       this.logger.info({
         level: 'info',
@@ -206,9 +253,18 @@ export class CartController {
   }
 
   @Delete('items/:id')
-  async removeItem(@Param('id') itemId: string) {
+  async removeItem(
+    @Param('id') itemId: string,
+    @GetUserId() userId: string | undefined,
+    @Req() req: Request,
+  ) {
     try {
-      const result = await this.cartService.removeItem(itemId);
+      const sessionId = req.cookies?.sessionId;
+      const result = await this.cartService.removeItem(
+        itemId,
+        userId,
+        sessionId,
+      );
       this.logger.info({
         level: 'info',
         message: 'Cart item removed successfully',
@@ -231,15 +287,17 @@ export class CartController {
   }
 
   @Delete()
-  async clearCart(@Req() req: any, @Res({ passthrough: true }) res: Response) {
+  async clearCart(
+    @GetUserId() userId: string | undefined,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     try {
-      const userId = req.user?.sub;
       const sessionId = req.cookies?.sessionId;
       const { cart, createdSessionId } = await this.cartService.getOrCreateCart(
         userId,
         sessionId,
       );
-
       if (createdSessionId) {
         res.cookie('sessionId', createdSessionId, {
           httpOnly: true,
@@ -247,9 +305,7 @@ export class CartController {
           sameSite: 'lax',
         });
       }
-
       const result = await this.cartService.clearCart(cart.id);
-
       this.logger.info({
         level: 'info',
         message: 'Cart cleared successfully',

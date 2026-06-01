@@ -1,11 +1,11 @@
 info:
   name: Delete highlight
   type: http
-  seq: 5
+  seq: 57
 
 http:
   method: DELETE
-  url: "{{baseUrl}}/api/highlights/{{highlightId}}"
+  url: "{{baseUrl}}/api/admin/highlights/{{highlightId}}"
   auth:
     type: bearer
     token: "{{jwtToken}}"
@@ -25,7 +25,7 @@ settings:
 examples:
   - name: "Success (200)"
     request:
-      url: "{{baseUrl}}/api/highlights/3"
+      url: "{{baseUrl}}/api/admin/highlights/3"
       method: DELETE
     response:
       status: 200
@@ -40,20 +40,20 @@ examples:
             "success": true,
             "statusCode": 200,
             "message": [
-              "Updated Test Highlight deleted successfully"
+              "Best Seller (Updated) deleted successfully"
             ],
             "data": {
               "id": 3,
-              "name": "Updated Test Highlight",
-              "slug": "updated-test-highlight",
-              "description": "Updated description",
+              "name": "Best Seller (Updated)",
+              "slug": "best-seller-updated-v2",
+              "description": "Updated best sellers description",
               "isActive": true
             },
-            "timestamp": "2026-05-16T09:43:11.831Z"
+            "timestamp": "2026-05-25T14:32:00.000Z"
           }
   - name: "Not Found (400)"
     request:
-      url: "{{baseUrl}}/api/highlights/999999"
+      url: "{{baseUrl}}/api/admin/highlights/999999"
       method: DELETE
     response:
       status: 400
@@ -71,11 +71,11 @@ examples:
               "Highlight not found"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.229Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }
   - name: "Unauthorized (401)"
     request:
-      url: "{{baseUrl}}/api/highlights/1"
+      url: "{{baseUrl}}/api/admin/highlights/1"
       method: DELETE
     response:
       status: 401
@@ -93,11 +93,11 @@ examples:
               "Unauthorized"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.230Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }
   - name: "Highlight Has Products (400)"
     request:
-      url: "{{baseUrl}}/api/highlights/1"
+      url: "{{baseUrl}}/api/admin/highlights/1"
       method: DELETE
     response:
       status: 400
@@ -115,5 +115,5 @@ examples:
               "Highlight has products"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.233Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }

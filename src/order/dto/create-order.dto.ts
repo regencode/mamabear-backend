@@ -1,55 +1,34 @@
 import {
+  IsArray,
   IsNotEmpty,
   IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-
-class Address {
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
-  @IsString()
-  @IsNotEmpty()
-  street: string;
-
-  @IsString()
-  @IsNotEmpty()
-  city: string;
-
-  @IsString()
-  @IsNotEmpty()
-  province: string;
-
-  @IsString()
-  @IsNotEmpty()
-  postal: string;
-
-  @IsString()
-  @IsNotEmpty()
-  phone: string;
-
-  @IsOptional()
-  @IsString()
-  notes?: string;
-}
+import { CreateOrderItemDto } from './create-order-item.dto';
 
 export class CreateOrderDto {
-  @IsString()
+  @ApiProperty({ type: [CreateOrderItemDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateOrderItemDto)
   @IsNotEmpty()
-  shippingMethod: string;
+  orderItems: CreateOrderItemDto[];
 
+  @ApiProperty({ example: 'BANK_TRANSFER' })
   @IsString()
   @IsNotEmpty()
   paymentMethod: string;
 
-  @ValidateNested()
-  @Type(() => Address)
-  address: Address;
-
-  @IsOptional()
+  @ApiPropertyOptional({ example: 'JNE REG' })
   @IsString()
+  @IsOptional()
+  shippingMethod?: string;
+
+  @ApiPropertyOptional({ example: 'Please deliver before noon' })
+  @IsString()
+  @IsOptional()
   notes?: string;
 }

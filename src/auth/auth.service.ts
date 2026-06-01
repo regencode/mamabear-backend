@@ -17,6 +17,11 @@ import { Response } from 'express';
 import { ServiceResult } from '@/common/ServiceResult';
 import { Role } from '@/generated/prisma';
 
+class LoginReturns {
+    accessToken: string;
+    refreshToken: string;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -28,7 +33,7 @@ export class AuthService {
     this.logger.setContext(AuthService.name);
   }
 
-  async login(dto: LoginUserDto, res: Response): Promise<ServiceResult<null>> {
+  async login(dto: LoginUserDto, res: Response): Promise<ServiceResult<LoginReturns>> {
     try {
       const user = await this.repo.findEmail(dto.email);
 
@@ -71,6 +76,7 @@ export class AuthService {
         sub: user.id,
         email: user.email,
         role: user.role,
+        name: user.name,
       };
 
       const accessToken = await this.jwtService.signAsync(payload, {
@@ -100,24 +106,10 @@ export class AuthService {
         status: 'success',
       });
 
-      res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: process.env.REFRESHTOKEN_ENV === 'REFRESHTOKEN_ENV',
-        sameSite: 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
-
-      res.cookie('accessToken', accessToken, {
-        httpOnly: true,
-        secure: process.env.REFRESHTOKEN_ENV === 'REFRESHTOKEN_ENV',
-        sameSite: 'lax',
-        maxAge: 15 * 60 * 1000,
-      });
-
       return {
         success: true,
         message: `Login successful`,
-        data: null,
+        data: { accessToken, refreshToken }
       };
     } catch (error: any) {
       if (
@@ -276,7 +268,7 @@ export class AuthService {
   async refreshToken(
     refreshToken: string,
     res: Response,
-  ): Promise<ServiceResult<null>> {
+  ): Promise<ServiceResult<LoginReturns>> {
     try {
       const payload = await this.jwtService.verifyAsync(refreshToken, {
         secret: process.env.JWT_REFRESH_SECRET,
@@ -338,6 +330,7 @@ export class AuthService {
         sub: user.id,
         email: user.email,
         role: user.role,
+        name: user.name,
       };
 
       const newRefreshToken = await this.jwtService.signAsync(newPayload, {
@@ -359,21 +352,6 @@ export class AuthService {
           refreshTokenExpiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         },
       );
-
-      res.cookie('refreshToken', newRefreshToken, {
-        httpOnly: true,
-        secure: process.env.REFRESHTOKEN_ENV === 'REFRESHTOKEN_ENV',
-        sameSite: 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
-
-      res.cookie('accessToken', newAccessToken, {
-        httpOnly: true,
-        secure: process.env.REFRESHTOKEN_ENV === 'REFRESHTOKEN_ENV',
-        sameSite: 'lax',
-        maxAge: 15 * 60 * 1000,
-      });
-
       this.logger.info({
         level: 'info',
         message: 'Token refresh successful',
@@ -385,7 +363,7 @@ export class AuthService {
       return {
         success: true,
         message: `Token refreshed successfully`,
-        data: null,
+        data: { accessToken: newAccessToken, refreshToken: newRefreshToken },
       };
     } catch (error: any) {
       if (

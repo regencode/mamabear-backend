@@ -1,20 +1,18 @@
 info:
   name: Update product
   type: http
-  seq: 10
+  seq: 48
 
 http:
   method: PUT
-  url: "{{baseUrl}}/api/products/{{productId}}"
+  url: "{{baseUrl}}/api/admin/products/{{productId}}"
   body:
     type: json
     data: |-
       {
-        "name": "S-26 Procal Gold 3 (Updated)",
-        "description": "Updated growing-up formula for children aged 1-3 years.",
-        "slug": "s-26-procal-gold-3-updated-v2",
-        "priceIdr": 195000,
-        "stock": 75
+        "name": "Bruno Test Product (Updated)",
+        "description": "Updated test product from Bruno collection",
+        "priceIdr": 55000
       }
   auth:
     type: bearer
@@ -35,17 +33,15 @@ settings:
 examples:
   - name: "Success (200)"
     request:
-      url: "{{baseUrl}}/api/products/6"
+      url: "{{baseUrl}}/api/admin/products/1"
       method: PUT
       body:
         type: json
         data: |-
           {
-            "name": "Updated Test Capture Product",
-            "description": "Updated description",
-            "slug": "test-capture-product-updated",
-            "priceIdr": 55000,
-            "stock": 60
+            "name": "Bruno Test Product (Updated)",
+            "description": "Updated test product from Bruno collection",
+            "priceIdr": 55000
           }
     response:
       status: 200
@@ -63,70 +59,65 @@ examples:
               "Product updated successfully"
             ],
             "data": {
-              "id": 6,
-              "name": "Updated Test Capture Product",
-              "slug": "updated-test-capture-product",
+              "id": 1,
+              "name": "MamaBear AlmonMix Isi 6 Sachet (Updated)",
+              "slug": "mamabear-almonmix-isi-6-sachet-v2",
               "isActive": true,
-              "categoryId": null,
-              "highlightId": null,
+              "categoryId": 1,
+              "highlightId": 1,
               "tags": [
-                "test",
-                "capture"
+                "formula",
+                "lactation"
               ],
-              "description": "Updated description",
-              "ingredients": "Test ingredients",
-              "usageInstructions": "Test usage instructions",
-              "createdAt": "2026-05-16T09:43:11.658Z",
-              "updatedAt": "2026-05-16T09:43:11.750Z",
-              "category": null,
-              "images": [
-                {
-                  "id": 27,
-                  "productId": 6,
-                  "variantId": null,
-                  "imageUrl": "https://example.com/test.jpg",
-                  "sortOrder": 1,
-                  "altText": "Test image"
-                }
-              ],
+              "description": "Updated: Minuman Serbuk dengan Almond Kaya Nutrisi",
+              "ingredients": "Daun Katuk, Daun Kelor, Almond",
+              "usageInstructions": "Seduh 1 sachet",
+              "createdAt": "2026-05-25T14:23:11.448Z",
+              "updatedAt": "2026-05-25T14:30:00.000Z",
+              "category": {
+                "id": 1,
+                "name": "Maternity Supplies",
+                "slug": "maternity-supplies",
+                "description": "Makanan & minuman untuk ibu menyusui",
+                "isActive": true,
+                "sortOrder": 1,
+                "createdAt": "2026-05-25T14:13:29.188Z",
+                "updatedAt": "2026-05-25T14:13:29.188Z",
+                "imageUrl": null,
+                "publicId": "62bc13b1-20ff-44fe-9d52-bea934374a31",
+                "altText": null,
+                "width": null,
+                "height": null,
+                "fileSize": null,
+                "format": null
+              },
+              "images": [],
               "variants": [
                 {
-                  "id": 6,
-                  "productId": 6,
+                  "id": 1,
+                  "productId": 1,
                   "name": "INTERNAL_DEFAULT",
-                  "priceIdr": "50000",
-                  "weightG": 100,
-                  "sku": "TEST.CAPTURE",
-                  "stock": 50,
+                  "priceIdr": "80000",
+                  "weightG": 180,
+                  "sku": "ALMMBR01",
+                  "stock": 100,
                   "sortOrder": 0,
-                  "createdAt": "2026-05-16T09:43:11.664Z",
-                  "updatedAt": "2026-05-16T09:43:11.664Z"
-                },
-                {
-                  "id": 7,
-                  "productId": 6,
-                  "name": "Test Capture Variant",
-                  "priceIdr": "50000",
-                  "weightG": 100,
-                  "sku": "TEST.CAPTURE.VAR",
-                  "stock": 50,
-                  "sortOrder": 0,
-                  "createdAt": "2026-05-16T09:43:11.717Z",
-                  "updatedAt": "2026-05-16T09:43:11.717Z"
+                  "createdAt": "2026-05-25T14:23:12.881Z",
+                  "updatedAt": "2026-05-25T14:23:12.881Z"
                 }
               ]
             },
-            "timestamp": "2026-05-16T09:43:11.754Z"
+            "timestamp": "2026-05-25T14:30:00.000Z"
           }
   - name: "Slug Already Exists (500)"
     request:
-      url: "{{baseUrl}}/api/products/1"
+      url: "{{baseUrl}}/api/admin/products/1"
       method: PUT
       body:
         type: json
         data: |-
           {
-            "slug": "mamabear-zoyamix-rasa-cokelat-isi-10-sachet"
+            "slug": "mamabear-teh-pelancar-asi"
           }
     response:
       status: 500
@@ -144,11 +135,11 @@ examples:
               "Internal server error"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.101Z"
+            "timestamp": "2026-05-25T14:24:08.607Z"
           }
   - name: "Not Found (500)"
     request:
-      url: "{{baseUrl}}/api/products/999999"
+      url: "{{baseUrl}}/api/admin/products/999999"
       method: PUT
       body:
         type: json
@@ -172,11 +163,11 @@ examples:
               "Internal server error"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.117Z"
+            "timestamp": "2026-05-25T14:24:28.235Z"
           }
   - name: "Unauthorized (401)"
     request:
-      url: "{{baseUrl}}/api/products/1"
+      url: "{{baseUrl}}/api/admin/products/1"
       method: PUT
       body:
         type: json
@@ -200,5 +191,5 @@ examples:
               "Unauthorized"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.119Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }

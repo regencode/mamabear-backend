@@ -1,14 +1,12 @@
 info:
   name: Get users
   type: http
-  seq: 1
+  seq: 33
 
 http:
   method: GET
-  url: "{{baseUrl}}/api/users"
-  auth:
-    type: bearer
-    token: "{{jwtToken}}"
+  url: "{{baseUrl}}/api/admin/users"
+  auth: inherit
 
 runtime:
   scripts:
@@ -18,12 +16,7 @@ runtime:
         if (body && body.data && body.data.length > 0) {
           bru.setVar('userId', body.data[0].id || '');
         }
-        const phase = bru.getVar('phase');
-        if (phase === 'read-created') {
-          bru.setNextRequest('Get highlight');
-        } else {
-          bru.setNextRequest('Get one product');
-        }
+        bru.setNextRequest('Get one product');
 
 settings:
   encodeUrl: true
@@ -34,7 +27,7 @@ settings:
 examples:
   - name: "Success (200)"
     request:
-      url: "{{baseUrl}}/api/users"
+      url: "{{baseUrl}}/api/admin/users"
       method: GET
     response:
       status: 200
@@ -53,61 +46,61 @@ examples:
             ],
             "data": [
               {
-                "id": "42bf8a9e-9e84-4e55-8bbb-a4c20e4769e8",
+                "id": "53ff9709-69e4-4aba-a02b-4955381f5a1c",
                 "email": "siti.rahayu@email.com",
                 "name": "Siti Rahayu",
                 "phone": "081234567890",
                 "role": "USER",
                 "isVerified": true,
-                "createdAt": "2026-05-16T09:43:11.108Z",
-                "updatedAt": "2026-05-16T09:43:11.108Z"
+                "createdAt": "2026-05-25T14:13:29.168Z",
+                "updatedAt": "2026-05-25T14:13:29.168Z"
               },
               {
-                "id": "8c587081-a774-4f13-9b11-1c9529df0ffd",
+                "id": "936f784c-34f0-4840-8341-4a3265882a8a",
                 "email": "dewi.lestari@email.com",
                 "name": "Dewi Lestari",
                 "phone": "081298765432",
                 "role": "USER",
                 "isVerified": true,
-                "createdAt": "2026-05-16T09:43:11.113Z",
-                "updatedAt": "2026-05-16T09:43:11.113Z"
+                "createdAt": "2026-05-25T14:13:29.174Z",
+                "updatedAt": "2026-05-25T14:13:29.174Z"
               },
               {
-                "id": "bdae006a-a264-4f05-b4e0-1f828f4b06b7",
+                "id": "15c4474c-9dc5-4010-93d3-a91bf48e937b",
                 "email": "rina.wati@email.com",
                 "name": "Rina Wati",
                 "phone": "082112345678",
                 "role": "USER",
                 "isVerified": false,
-                "createdAt": "2026-05-16T09:43:11.117Z",
-                "updatedAt": "2026-05-16T09:43:11.117Z"
+                "createdAt": "2026-05-25T14:13:29.178Z",
+                "updatedAt": "2026-05-25T14:13:29.178Z"
               },
               {
-                "id": "ae06314b-c63b-44c7-8ee7-8d34a0baff6b",
+                "id": "a835fbf2-80cb-43c5-b59b-a2356ea00eb0",
                 "email": "budi.santoso@email.com",
                 "name": "Budi Santoso",
                 "phone": "085678901234",
                 "role": "USER",
                 "isVerified": true,
-                "createdAt": "2026-05-16T09:43:11.121Z",
-                "updatedAt": "2026-05-16T09:43:11.121Z"
+                "createdAt": "2026-05-25T14:13:29.182Z",
+                "updatedAt": "2026-05-25T14:13:29.182Z"
               },
               {
-                "id": "74594de5-997e-4e1d-a551-c2d433a3182e",
+                "id": "e6435616-17f3-4834-9f3f-e092d8088b2f",
                 "email": "admin@mamabear.id",
                 "name": "Admin MamaBear",
                 "phone": "081200001111",
                 "role": "ADMIN",
                 "isVerified": true,
-                "createdAt": "2026-05-16T09:43:11.059Z",
-                "updatedAt": "2026-05-16T09:43:11.566Z"
+                "createdAt": "2026-05-25T14:13:29.160Z",
+                "updatedAt": "2026-05-25T14:21:56.117Z"
               }
             ],
-            "timestamp": "2026-05-16T09:43:11.604Z"
+            "timestamp": "2026-05-25T14:24:08.470Z"
           }
   - name: "Unauthorized (401)"
     request:
-      url: "{{baseUrl}}/api/users"
+      url: "{{baseUrl}}/api/admin/users"
       method: GET
     response:
       status: 401
@@ -125,5 +118,5 @@ examples:
               "Unauthorized"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.235Z"
+            "timestamp": "2026-05-25T14:24:28.269Z"
           }

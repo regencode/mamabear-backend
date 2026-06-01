@@ -65,7 +65,6 @@ export const categories = [
     description: 'Makanan & minuman untuk ibu menyusui',
     isActive: true,
     sortOrder: 1,
-    publicId: genPublicId(),
   },
   {
     name: 'ASI Booster',
@@ -73,7 +72,6 @@ export const categories = [
     description: 'Produk pelancar & peningkat ASI',
     isActive: true,
     sortOrder: 2,
-    publicId: genPublicId(),
   },
 ];
 

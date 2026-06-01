@@ -153,11 +153,13 @@ exports.Prisma.ProductScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.ProductImageScalarFieldEnum = {
+exports.Prisma.ImageScalarFieldEnum = {
   id: 'id',
-  productId: 'productId',
   publicId: 'publicId',
+  productId: 'productId',
   variantId: 'variantId',
+  reviewId: 'reviewId',
+  categoryId: 'categoryId',
   imageUrl: 'imageUrl',
   sortOrder: 'sortOrder',
   altText: 'altText',
@@ -205,14 +207,7 @@ exports.Prisma.CategoryScalarFieldEnum = {
   isActive: 'isActive',
   sortOrder: 'sortOrder',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  imageUrl: 'imageUrl',
-  publicId: 'publicId',
-  altText: 'altText',
-  width: 'width',
-  height: 'height',
-  fileSize: 'fileSize',
-  format: 'format'
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.ReviewScalarFieldEnum = {
@@ -223,7 +218,6 @@ exports.Prisma.ReviewScalarFieldEnum = {
   rating: 'rating',
   numUpvotes: 'numUpvotes',
   description: 'description',
-  imageUrls: 'imageUrls',
   createdAt: 'createdAt'
 };
 
@@ -251,6 +245,8 @@ exports.Prisma.OrderScalarFieldEnum = {
   orderNumber: 'orderNumber',
   userId: 'userId',
   status: 'status',
+  pendingExpiresAt: 'pendingExpiresAt',
+  receivedExpiresAt: 'receivedExpiresAt',
   subtotalIdr: 'subtotalIdr',
   shippingCostIdr: 'shippingCostIdr',
   taxIdr: 'taxIdr',
@@ -258,22 +254,6 @@ exports.Prisma.OrderScalarFieldEnum = {
   shippingMethod: 'shippingMethod',
   trackingNumber: 'trackingNumber',
   paymentMethod: 'paymentMethod',
-  paymentStatus: 'paymentStatus',
-  pendingExpiresAt: 'pendingExpiresAt',
-  notes: 'notes',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.ShippingAddressScalarFieldEnum = {
-  id: 'id',
-  orderId: 'orderId',
-  name: 'name',
-  street: 'street',
-  city: 'city',
-  province: 'province',
-  postal: 'postal',
-  phone: 'phone',
   notes: 'notes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -286,9 +266,8 @@ exports.Prisma.OrderItemScalarFieldEnum = {
   variantId: 'variantId',
   productName: 'productName',
   variantName: 'variantName',
-  priceIdr: 'priceIdr',
-  quantity: 'quantity',
-  grandPrice: 'grandPrice'
+  price: 'price',
+  quantity: 'quantity'
 };
 
 exports.Prisma.OrderStatusHistoryScalarFieldEnum = {
@@ -296,7 +275,18 @@ exports.Prisma.OrderStatusHistoryScalarFieldEnum = {
   orderId: 'orderId',
   status: 'status',
   notes: 'notes',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SettingScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  value: 'value',
+  type: 'type',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -334,7 +324,7 @@ exports.Prisma.ProductOrderByRelevanceFieldEnum = {
   usageInstructions: 'usageInstructions'
 };
 
-exports.Prisma.ProductImageOrderByRelevanceFieldEnum = {
+exports.Prisma.ImageOrderByRelevanceFieldEnum = {
   publicId: 'publicId',
   imageUrl: 'imageUrl',
   altText: 'altText',
@@ -355,18 +345,13 @@ exports.Prisma.HighlightOrderByRelevanceFieldEnum = {
 exports.Prisma.CategoryOrderByRelevanceFieldEnum = {
   name: 'name',
   slug: 'slug',
-  description: 'description',
-  imageUrl: 'imageUrl',
-  publicId: 'publicId',
-  altText: 'altText',
-  format: 'format'
+  description: 'description'
 };
 
 exports.Prisma.ReviewOrderByRelevanceFieldEnum = {
   title: 'title',
   reviewerId: 'reviewerId',
-  description: 'description',
-  imageUrls: 'imageUrls'
+  description: 'description'
 };
 
 exports.Prisma.CartOrderByRelevanceFieldEnum = {
@@ -390,17 +375,6 @@ exports.Prisma.OrderOrderByRelevanceFieldEnum = {
   notes: 'notes'
 };
 
-exports.Prisma.ShippingAddressOrderByRelevanceFieldEnum = {
-  orderId: 'orderId',
-  name: 'name',
-  street: 'street',
-  city: 'city',
-  province: 'province',
-  postal: 'postal',
-  phone: 'phone',
-  notes: 'notes'
-};
-
 exports.Prisma.OrderItemOrderByRelevanceFieldEnum = {
   orderId: 'orderId',
   productName: 'productName',
@@ -411,6 +385,13 @@ exports.Prisma.OrderStatusHistoryOrderByRelevanceFieldEnum = {
   orderId: 'orderId',
   notes: 'notes'
 };
+
+exports.Prisma.SettingOrderByRelevanceFieldEnum = {
+  key: 'key',
+  value: 'value',
+  type: 'type',
+  description: 'description'
+};
 exports.Role = exports.$Enums.Role = {
   USER: 'USER',
   ADMIN: 'ADMIN',
@@ -419,24 +400,20 @@ exports.Role = exports.$Enums.Role = {
 
 exports.OrderStatus = exports.$Enums.OrderStatus = {
   PENDING: 'PENDING',
-  PROCESSING: 'PROCESSING',
-  SHIPPED: 'SHIPPED',
+  CONFIRMED: 'CONFIRMED',
+  PROCESSED: 'PROCESSED',
+  SENDING: 'SENDING',
   RECEIVED: 'RECEIVED',
-  FAILED: 'FAILED',
-  CANCELLED: 'CANCELLED'
-};
-
-exports.PaymentStatus = exports.$Enums.PaymentStatus = {
-  PENDING: 'PENDING',
-  PAID: 'PAID',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
   REFUNDED: 'REFUNDED',
-  CANCELLED: 'CANCELLED'
+  RETURNED: 'RETURNED'
 };
 
 exports.Prisma.ModelName = {
   User: 'User',
   Product: 'Product',
-  ProductImage: 'ProductImage',
+  Image: 'Image',
   Discount: 'Discount',
   ProductVariant: 'ProductVariant',
   Highlight: 'Highlight',
@@ -445,9 +422,9 @@ exports.Prisma.ModelName = {
   Cart: 'Cart',
   CartItem: 'CartItem',
   Order: 'Order',
-  ShippingAddress: 'ShippingAddress',
   OrderItem: 'OrderItem',
-  OrderStatusHistory: 'OrderStatusHistory'
+  OrderStatusHistory: 'OrderStatusHistory',
+  Setting: 'Setting'
 };
 
 /**

@@ -15,12 +15,9 @@ config:
       bypassProxy: ""
 
 request:
-  auth:
-    type: bearer
-    token: "{{jwtToken}}"
   variables:
     - name: baseUrl
-      value: '"http://localhost:3000"'
+      value: http://localhost:3000
     - name: jwtToken
       value: ""
     - name: refreshToken
@@ -40,6 +37,10 @@ request:
     - name: userId
       value: ""
     - name: highlightId
+      value: ""
+    - name: imageId
+      value: ""
+    - name: cartItemId
       value: ""
 bundled: false
 extensions:

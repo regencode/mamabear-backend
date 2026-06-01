@@ -1,18 +1,18 @@
 info:
   name: Get one product
   type: http
-  seq: 2
+  seq: 4
 
 http:
   method: GET
-  url: "{{baseUrl}}/products/{{productSlug}}"
+  url: "{{baseUrl}}/api/products/{{productSlug}}"
   auth: inherit
 
 runtime:
   scripts:
     - type: after-response
       code: |-
-        bru.setNextRequest('Get product variants');
+        bru.setNextRequest('Get related products');
 
 settings:
   encodeUrl: true
@@ -23,7 +23,7 @@ settings:
 examples:
   - name: "Success (200)"
     request:
-      url: "{{baseUrl}}/products/mamabear-almonmix-isi-6-sachet"
+      url: "{{baseUrl}}/api/products/mamabear-almonmix-isi-6-sachet"
       method: GET
     response:
       status: 200
@@ -42,70 +42,38 @@ examples:
             ],
             "data": {
               "id": 1,
-              "name": "MamaBear AlmonMix Isi 6 Sachet - Minuman Serbuk dengan Almond - Kaya Nutrisi Untuk Ibu Menyusui BPOM HALAL",
+              "name": "MamaBear AlmonMix Isi 6 Sachet",
               "slug": "mamabear-almonmix-isi-6-sachet",
               "isActive": true,
-              "categoryId": 2,
-              "highlightId": 2,
-              "tags": [],
-              "description": "MamaBear AlmonMix Isi 6 Sachet\nMinuman Almond Kaya Nutrisi dengan Daun Katuk & Daun Kelor.\n\n\nLACTOSE FREE\nTINGGI VITAMIN A, B1, B2, B6, B9 (ASAM FOLAT), B12\nTINGGI VITAMIN C & ZAT BESI\nTINGGI SERAT PANGAN\nMAKRO & MIKRO NUTRISI LENGKAP\n\n\nHadir dalam 7 varian rasa:\nCokelat\nChoco Hazelnut\nCoffee Latte\nStrawberry\nVanilla\nMatcha\nCaramel\n\n\nCara penyajian:\nSeduh 1 sachet MamaBear AlmonMix dengan 200 ml air hangat.\nDapat ditambahkan es batu jika ingin disajikan dingin.\n\n\nIngredients:\nDaun Katuk\nDaun Kelor\nAlmond\nEkstrak Ragi\n\n\nKeunggulan Mamabear AlmonMix:\nEfektif meningkatkan produksi dan nutrisi ASI.\nEfektif membantu ASI cepat keluar.\nMeningkatkan mood untuk membantu mengurangi risiko baby blues.",
-              "ingredients": null,
-              "usageInstructions": null,
-              "createdAt": "2026-05-16T09:43:11.156Z",
-              "updatedAt": "2026-05-16T09:43:11.156Z",
-              "category": {
-                "id": 2,
-                "name": "Drink",
-                "slug": "drink",
-                "description": "Minuman pelancar & peningkat ASI",
-                "imageUrl": null,
-                "isActive": true,
-                "sortOrder": 2,
-                "createdAt": "2026-05-16T09:43:11.131Z",
-                "updatedAt": "2026-05-16T09:43:11.131Z"
-              },
-              "images": [
-                {
-                  "id": 1,
-                  "productId": 1,
-                  "variantId": null,
-                  "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/AlmonMix/AlmonMix-01.jpg",
-                  "sortOrder": 1,
-                  "altText": "MamaBear AlmonMix 01"
-                },
-                {
-                  "id": 2,
-                  "productId": 1,
-                  "variantId": null,
-                  "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/AlmonMix/AlmonMix-02.jpg",
-                  "sortOrder": 2,
-                  "altText": "MamaBear AlmonMix 02"
-                },
-                {
-                  "id": 3,
-                  "productId": 1,
-                  "variantId": null,
-                  "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/AlmonMix/AlmonMix-03.jpg",
-                  "sortOrder": 3,
-                  "altText": "MamaBear AlmonMix 03"
-                },
-                {
-                  "id": 4,
-                  "productId": 1,
-                  "variantId": null,
-                  "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/AlmonMix/AlmonMix-04.jpg",
-                  "sortOrder": 4,
-                  "altText": "MamaBear AlmonMix 04"
-                },
-                {
-                  "id": 5,
-                  "productId": 1,
-                  "variantId": null,
-                  "imageUrl": "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images/AlmonMix/AlmonMix-05.jpg",
-                  "sortOrder": 5,
-                  "altText": "MamaBear AlmonMix 05"
-                }
+              "categoryId": 1,
+              "highlightId": 1,
+              "tags": [
+                "formula",
+                "lactation"
               ],
+              "description": "Minuman Serbuk dengan Almond",
+              "ingredients": "Daun Katuk, Daun Kelor, Almond",
+              "usageInstructions": "Seduh 1 sachet",
+              "createdAt": "2026-05-25T14:23:11.448Z",
+              "updatedAt": "2026-05-25T14:23:11.448Z",
+              "category": {
+                "id": 1,
+                "name": "Maternity Supplies",
+                "slug": "maternity-supplies",
+                "description": "Makanan & minuman untuk ibu menyusui",
+                "isActive": true,
+                "sortOrder": 1,
+                "createdAt": "2026-05-25T14:13:29.188Z",
+                "updatedAt": "2026-05-25T14:13:29.188Z",
+                "imageUrl": null,
+                "publicId": "62bc13b1-20ff-44fe-9d52-bea934374a31",
+                "altText": null,
+                "width": null,
+                "height": null,
+                "fileSize": null,
+                "format": null
+              },
+              "images": [],
               "variants": [
                 {
                   "id": 1,
@@ -113,19 +81,42 @@ examples:
                   "name": "INTERNAL_DEFAULT",
                   "priceIdr": "80000",
                   "weightG": 180,
-                  "sku": "AL.MMBR",
+                  "sku": "ALMMBR01",
                   "stock": 100,
                   "sortOrder": 0,
-                  "createdAt": "2026-05-16T09:43:11.162Z",
-                  "updatedAt": "2026-05-16T09:43:11.162Z"
+                  "createdAt": "2026-05-25T14:23:12.881Z",
+                  "updatedAt": "2026-05-25T14:23:12.881Z"
                 }
-              ]
+              ],
+              "highlight": {
+                "id": 1,
+                "name": "New Additions",
+                "slug": "new-additions",
+                "description": "Produk terbaru dari MamaBear",
+                "isActive": true
+              },
+              "currentPrice": "80000",
+              "originalPrice": "80000",
+              "discountPercent": 0,
+              "rating": 5,
+              "reviewsCount": 1,
+              "topReview": {
+                "id": 1,
+                "title": "Sangat puas",
+                "reviewerId": "53ff9709-69e4-4aba-a02b-4955381f5a1c",
+                "productId": 1,
+                "rating": 5,
+                "numUpvotes": 0,
+                "description": "ASI saya meningkat drastis setelah 1 minggu konsumsi",
+                "imageUrls": [],
+                "createdAt": "2026-05-25T14:23:39.391Z"
+              }
             },
-            "timestamp": "2026-05-16T09:43:11.610Z"
+            "timestamp": "2026-05-25T14:24:08.565Z"
           }
   - name: "Not Found (404)"
     request:
-      url: "{{baseUrl}}/products/nonexistent-product-xyz"
+      url: "{{baseUrl}}/api/products/nonexistent-xyz"
       method: GET
     response:
       status: 404
@@ -140,8 +131,8 @@ examples:
             "success": false,
             "statusCode": 404,
             "message": [
-              "Product with slug nonexistent-product-xyz not found"
+              "Cannot find product with slug nonexistent-xyz"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.061Z"
+            "timestamp": "2026-05-25T14:24:28.261Z"
           }

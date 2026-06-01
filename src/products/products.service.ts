@@ -15,7 +15,6 @@ import { CreateVariantDto } from '@/variant/dto/create-variant.dto';
 import { ServiceResult } from '@/common/ServiceResult';
 import slugify from 'slugify';
 import { Product } from '@/generated/prisma';
-import { CloudinaryService } from '@/cloudinary/cloudinary.service';
 import { FilterProductsDto } from './dto/filter-products.dto';
 import {
   FilterPaginationMetaDto,
@@ -28,7 +27,6 @@ export class ProductsService {
     private readonly productsRepository: ProductsRepository,
     private readonly logger: PinoLogger,
     private readonly paginationService: CursorPaginationService,
-    private readonly cloudinary: CloudinaryService,
   ) {
     this.logger.setContext(ProductsService.name);
   }
@@ -68,7 +66,6 @@ export class ProductsService {
   }
   async create(
     dto: CreateProductDto,
-    files: Express.Multer.File[],
   ): Promise<ServiceResult<Product>> {
     try {
       if (!dto.variants) dto.variants = [];
@@ -82,21 +79,21 @@ export class ProductsService {
       };
 
       dto.variants.push(defaultVariant);
-      const images = await this.cloudinary.uploadMultiple(files);
+    
 
       const generatedSlug = slugify(dto.name, { lower: true, strict: true });
 
       const result = await this.productsRepository.create({
         ...dto,
         slug: generatedSlug,
-        images: images.map((image) => ({
+        images: (dto.images ?? []).map((image) => ({
           imageUrl: image.imageUrl,
           publicId: image.publicId,
           width: image.width,
           height: image.height,
           fileSize: image.fileSize,
           format: image.format,
-          sortOrder: 0,
+          sortOrder: image.sortOrder,
           altText: image.altText,
         })),
       });
@@ -241,13 +238,11 @@ export class ProductsService {
   async update(
     id: number,
     dto: UpdateProductDto,
-    files: Express.Multer.File[],
   ): Promise<ServiceResult<Product>> {
     try {
       if (dto.name) {
         const generatedSlug = slugify(dto.name, { lower: true, strict: true });
-        const resolvedProduct =
-          await this.productsRepository.findBySlug(generatedSlug);
+        const resolvedProduct = await this.productsRepository.findBySlug(generatedSlug);
         if (resolvedProduct)
           throw new BadRequestException(
             `Product with slug ${generatedSlug} already exists`,
@@ -255,23 +250,22 @@ export class ProductsService {
         dto.slug = generatedSlug;
       }
 
-      const images = await Promise.all(
-        files.map(async (file) => this.cloudinary.uploadFile(file)),
-      );
-
-      const result = await this.productsRepository.update(id, {
-        ...dto,
-        images: images.map((image) => ({
-          imageUrl: image.imageUrl,
-          publicId: image.publicId,
-          width: image.width,
-          height: image.height,
-          fileSize: image.fileSize,
-          format: image.format,
-          sortOrder: 0,
-          altText: image.altText,
-        })),
-      });
+      const { images, variants, ...dtoData } = dto;
+      const updateData: any = {};
+      for (const [key, value] of Object.entries(dtoData)) {
+        if (value !== undefined) updateData[key] = value;
+      }
+      updateData.images = (images ?? []).map((image) => ({
+        imageUrl: image.imageUrl,
+        publicId: image.publicId,
+        width: image.width,
+        height: image.height,
+        fileSize: image.fileSize,
+        format: image.format,
+        sortOrder: image.sortOrder,
+        altText: image.altText,
+      }));
+      const result = await this.productsRepository.update(id, updateData);
       this.logger.info({
         level: 'info',
         message: 'Product updated successfully',

@@ -30,7 +30,6 @@ export class VariantService {
     userId: number,
     variantId: number,
     dto: UpdateVariantDto,
-    files: Express.Multer.File[],
   ): Promise<ServiceResult<ProductVariant>> {
     const variant = await this.repo.findOne(variantId);
     if (!variant) throw new BadRequestException('Variant not found');
@@ -42,25 +41,19 @@ export class VariantService {
       const newSku = this.generateSku(product.slug, dto.name);
       dto.sku = newSku;
     }
-
-    const images = files?.length
-      ? await Promise.all(files.map((file) => this.cloudinary.uploadFile(file)))
-      : [];
-
+    var increment = 0
     const result = await this.repo.update(variantId, {
       ...dto,
-      images: images.length
-        ? images.map((image) => ({
+      images: (dto.images ?? []).map((image) => ({
             imageUrl: image.imageUrl,
             publicId: image.publicId,
             width: image.width,
             height: image.height,
             fileSize: image.fileSize,
             format: image.format,
-            sortOrder: 0,
+            sortOrder: increment++,
             altText: image.altText,
           }))
-        : undefined,
     });
 
     return {
@@ -73,7 +66,6 @@ export class VariantService {
   async createVariant(
     userId: number,
     dto: CreateVariantDto,
-    files: Express.Multer.File[],
   ): Promise<ServiceResult<ProductVariant>> {
     if (!dto.productId) {
       throw new BadRequestException('Product Id must be set!');
@@ -87,11 +79,9 @@ export class VariantService {
       dto.sku = newSku;
     }
 
-    const images = await this.cloudinary.uploadMultiple(files);
-
     const result = await this.repo.createProductVariant({
       ...dto,
-      images: images.map((image, index) => ({
+      images: (dto.images ?? []).map((image, index) => ({
         imageUrl: image.imageUrl,
         publicId: image.publicId,
         width: image.width,

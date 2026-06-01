@@ -8,6 +8,7 @@ import { Decimal } from "@prisma/client-runtime-utils";
 export class ProductUtils {
     constructor(private readonly prisma: PrismaService) {}
     async enrichOne(product: Product) {
+        if(!product) return product;
         const defaultPrice = await this.prisma.productVariant.findUnique({
             select: { productId: true, priceIdr: true, discount: true },
             where: { variantCompositeIdentifier: {

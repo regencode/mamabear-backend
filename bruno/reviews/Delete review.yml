@@ -1,12 +1,20 @@
 info:
   name: Delete review
   type: http
-  seq: 1
+  seq: 59
 
 http:
   method: DELETE
-  url: "{{baseUrl}}/api/products/reviews/{{reviewId}}"
-  auth: inherit
+  url: "{{baseUrl}}/api/admin/products/reviews/{{reviewId}}"
+  auth:
+    type: bearer
+    token: "{{jwtToken}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        bru.setNextRequest('Login');
 
 settings:
   encodeUrl: true
@@ -17,7 +25,7 @@ settings:
 examples:
   - name: "Not Found (500)"
     request:
-      url: "{{baseUrl}}/api/products/reviews/999999"
+      url: "{{baseUrl}}/api/admin/products/reviews/999999"
       method: DELETE
     response:
       status: 500
@@ -35,11 +43,11 @@ examples:
               "Internal server error"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.291Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }
   - name: "Unauthorized (401)"
     request:
-      url: "{{baseUrl}}/api/products/reviews/2"
+      url: "{{baseUrl}}/api/admin/products/reviews/2"
       method: DELETE
     response:
       status: 401
@@ -57,5 +65,5 @@ examples:
               "Unauthorized"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.292Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }

@@ -1,14 +1,12 @@
 info:
   name: Get user
   type: http
-  seq: 2
+  seq: 34
 
 http:
   method: GET
-  url: "{{baseUrl}}/api/users/{{userId}}"
-  auth:
-    type: bearer
-    token: "{{jwtToken}}"
+  url: "{{baseUrl}}/api/admin/users/{{userId}}"
+  auth: inherit
 
 runtime:
   scripts:
@@ -25,7 +23,7 @@ settings:
 examples:
   - name: "Success (200)"
     request:
-      url: "{{baseUrl}}/api/users/42bf8a9e-9e84-4e55-8bbb-a4c20e4769e8"
+      url: "{{baseUrl}}/api/admin/users/53ff9709-69e4-4aba-a02b-4955381f5a1c"
       method: GET
     response:
       status: 200
@@ -40,23 +38,23 @@ examples:
             "success": true,
             "statusCode": 200,
             "message": [
-              "Found user with id 42bf8a9e-9e84-4e55-8bbb-a4c20e4769e8"
+              "Found user with id 53ff9709-69e4-4aba-a02b-4955381f5a1c"
             ],
             "data": {
-              "id": "42bf8a9e-9e84-4e55-8bbb-a4c20e4769e8",
+              "id": "53ff9709-69e4-4aba-a02b-4955381f5a1c",
               "email": "siti.rahayu@email.com",
               "name": "Siti Rahayu",
               "phone": "081234567890",
               "role": "USER",
               "isVerified": true,
-              "createdAt": "2026-05-16T09:43:11.108Z",
-              "updatedAt": "2026-05-16T09:43:11.108Z"
+              "createdAt": "2026-05-25T14:13:29.168Z",
+              "updatedAt": "2026-05-25T14:13:29.168Z"
             },
-            "timestamp": "2026-05-16T09:43:11.633Z"
+            "timestamp": "2026-05-25T14:24:08.485Z"
           }
   - name: "Not Found (404)"
     request:
-      url: "{{baseUrl}}/api/users/00000000-0000-0000-0000-000000000000"
+      url: "{{baseUrl}}/api/admin/users/00000000-0000-0000-0000-000000000000"
       method: GET
     response:
       status: 404
@@ -74,11 +72,11 @@ examples:
               "User with id 00000000-0000-0000-0000-000000000000 not found"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.238Z"
+            "timestamp": "2026-05-25T00:00:00.000Z"
           }
   - name: "Unauthorized (401)"
     request:
-      url: "{{baseUrl}}/api/users/42bf8a9e-9e84-4e55-8bbb-a4c20e4769e8"
+      url: "{{baseUrl}}/api/admin/users/53ff9709-69e4-4aba-a02b-4955381f5a1c"
       method: GET
     response:
       status: 401
@@ -96,5 +94,5 @@ examples:
               "Unauthorized"
             ],
             "data": null,
-            "timestamp": "2026-05-16T09:43:12.240Z"
+            "timestamp": "2026-05-25T14:24:28.269Z"
           }
