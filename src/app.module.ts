@@ -25,6 +25,7 @@ import { SettingsModule } from './settings/settings.module';
 import { CartModule } from './cart/cart.module';
 import { CleanupService } from './scheduler/cleanup.service';
 import { ShippingModule } from './shipping/shipping.module';
+import { AddressesModule } from './addresses/addresses.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { ShippingModule } from './shipping/shipping.module';
     ProductUtilsModule,
     SettingsModule,
     ShippingModule,
+    AddressesModule,
   ],
   controllers: [AppController],
   providers: [AppService, CleanupService],
