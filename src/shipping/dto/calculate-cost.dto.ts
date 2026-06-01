@@ -9,15 +9,6 @@ export enum PriceSort {
 
 export class CalculateShippingCostDto {
   @ApiProperty({
-    example: 501,
-    description: 'Origin location ID',
-  })
-  @Type(() => Number)
-  @IsInt()
-  @IsPositive()
-  origin!: number;
-
-  @ApiProperty({
     example: 114,
     description: 'Destination location ID',
   })

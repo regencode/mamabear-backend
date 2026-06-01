@@ -91,8 +91,9 @@ export class ShippingService {
 
   async calculateShippingCost(dto: CalculateShippingCostDto) {
     try {
+      const origin = 69298; //Sambikerep (Mamabear address in GMaps) sub-district ID. Currently hardcoded. Later need to integrate to website settings for warehouse location
       const params = new URLSearchParams();
-      params.append('origin', dto.origin.toString());
+      params.append('origin', origin.toString());
       params.append('destination', dto.destination.toString());
       params.append('weight', dto.weight.toString());
       params.append('courier', dto.courier);
