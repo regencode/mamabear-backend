@@ -30,7 +30,6 @@ export class ProductsController {
     private readonly searchService: SearchService,
   ) {}
 
-  @UseGuards(new JwtAuthGuard())
   @Get()
   findAll(@Query() paginationDto: CursorPaginationRequestDto) {
     return this.productsService.findAll(paginationDto);
