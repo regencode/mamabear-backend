@@ -250,7 +250,6 @@ exports.Prisma.OrderScalarFieldEnum = {
   subtotalIdr: 'subtotalIdr',
   shippingCostIdr: 'shippingCostIdr',
   taxIdr: 'taxIdr',
-  grandTotal: 'grandTotal',
   shippingMethod: 'shippingMethod',
   trackingNumber: 'trackingNumber',
   paymentMethod: 'paymentMethod',
@@ -279,6 +278,26 @@ exports.Prisma.OrderStatusHistoryScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.OrderAddressScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  name: 'name',
+  phone: 'phone',
+  provinceId: 'provinceId',
+  provinceName: 'provinceName',
+  cityId: 'cityId',
+  cityName: 'cityName',
+  districtId: 'districtId',
+  districtName: 'districtName',
+  subdistrictId: 'subdistrictId',
+  subdistrictName: 'subdistrictName',
+  postalCode: 'postalCode',
+  road: 'road',
+  completeAddress: 'completeAddress',
+  detail: 'detail',
+  usedFor: 'usedFor'
+};
+
 exports.Prisma.SettingScalarFieldEnum = {
   id: 'id',
   key: 'key',
@@ -287,6 +306,26 @@ exports.Prisma.SettingScalarFieldEnum = {
   description: 'description',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AddressScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  phone: 'phone',
+  provinceId: 'provinceId',
+  proviceName: 'proviceName',
+  cityId: 'cityId',
+  cityName: 'cityName',
+  districtId: 'districtId',
+  districtName: 'districtName',
+  subdistrictId: 'subdistrictId',
+  subdistrictName: 'subdistrictName',
+  postalCode: 'postalCode',
+  road: 'road',
+  completeAddress: 'completeAddress',
+  detail: 'detail',
+  usedFor: 'usedFor'
 };
 
 exports.Prisma.SortOrder = {
@@ -386,11 +425,41 @@ exports.Prisma.OrderStatusHistoryOrderByRelevanceFieldEnum = {
   notes: 'notes'
 };
 
+exports.Prisma.OrderAddressOrderByRelevanceFieldEnum = {
+  orderId: 'orderId',
+  name: 'name',
+  phone: 'phone',
+  provinceName: 'provinceName',
+  cityName: 'cityName',
+  districtName: 'districtName',
+  subdistrictName: 'subdistrictName',
+  postalCode: 'postalCode',
+  road: 'road',
+  completeAddress: 'completeAddress',
+  detail: 'detail',
+  usedFor: 'usedFor'
+};
+
 exports.Prisma.SettingOrderByRelevanceFieldEnum = {
   key: 'key',
   value: 'value',
   type: 'type',
   description: 'description'
+};
+
+exports.Prisma.AddressOrderByRelevanceFieldEnum = {
+  userId: 'userId',
+  name: 'name',
+  phone: 'phone',
+  proviceName: 'proviceName',
+  cityName: 'cityName',
+  districtName: 'districtName',
+  subdistrictName: 'subdistrictName',
+  postalCode: 'postalCode',
+  road: 'road',
+  completeAddress: 'completeAddress',
+  detail: 'detail',
+  usedFor: 'usedFor'
 };
 exports.Role = exports.$Enums.Role = {
   USER: 'USER',
@@ -424,7 +493,9 @@ exports.Prisma.ModelName = {
   Order: 'Order',
   OrderItem: 'OrderItem',
   OrderStatusHistory: 'OrderStatusHistory',
-  Setting: 'Setting'
+  OrderAddress: 'OrderAddress',
+  Setting: 'Setting',
+  Address: 'Address'
 };
 
 /**

@@ -9,7 +9,11 @@ export class OrderRepository {
   create(tx: Prisma.TransactionClient, data: Prisma.OrderCreateInput) {
     return tx.order.create({
       data,
-      include: { items: true, address: true, histories: true },
+      include: {
+        orderItems: true,
+        shippingAddress: true,
+        orderStatusHistory: true,
+      },
     });
   }
 
@@ -27,9 +31,33 @@ export class OrderRepository {
         id: orderId,
       },
       include: {
-        items: true,
-        address: true,
-        histories: true,
+        orderItems: {
+          include: {
+            product: {
+              select: {
+                name: true,
+                slug: true,
+              },
+            },
+            variant: {
+              select: {
+                name: true,
+                stock: true,
+                priceIdr: true,
+                images: {
+                  take: 1,
+                  select: { imageUrl: true, altText: true },
+                },
+              },
+            },
+          },
+        },
+        shippingAddress: true,
+        orderStatusHistory: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
       },
     });
   }
@@ -40,9 +68,54 @@ export class OrderRepository {
         id: orderId,
       },
       include: {
-        items: true,
-        address: true,
-        histories: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
+        orderItems: {
+          include: {
+            product: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                images: {
+                  take: 1,
+                  select: { imageUrl: true, altText: true },
+                },
+              },
+            },
+            variant: {
+              select: {
+                id: true,
+                name: true,
+                priceIdr: true,
+                stock: true,
+                sku: true,
+                weightG: true,
+              },
+            },
+          },
+        },
+        shippingAddress: true,
+        orderStatusHistory: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+      },
+    });
+  }
+
+  findAddressById(userId: string, addressId: number) {
+    return this.prisma.address.findFirst({
+      where: {
+        id: addressId,
+        userId,
       },
     });
   }
@@ -67,8 +140,57 @@ export class OrderRepository {
       include: {
         items: {
           include: {
-            variant: true,
-            product: true,
+            variant: {
+              include: {
+                discount: true,
+              },
+            },
+            product: {
+              select: {
+                id: true,
+                name: true,
+                isActive: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  findOrderForInvoice(orderId: string) {
+    return this.prisma.order.findUnique({
+      where: {
+        id: orderId,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
+        shippingAddress: true,
+        orderItems: {
+          include: {
+            product: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+              },
+            },
+            variant: {
+              select: {
+                id: true,
+                name: true,
+                sku: true,
+                weightG: true,
+                priceIdr: true,
+              },
+            },
           },
         },
       },

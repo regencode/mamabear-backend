@@ -10,7 +10,7 @@ import {
   Min,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { CreateImageDto } from '@/upload/dto/create-image.dto';
 import { CreateVariantDto } from '@/variant/dto/create-variant.dto';
 

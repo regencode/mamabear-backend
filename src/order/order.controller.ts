@@ -17,6 +17,7 @@ import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 import { Roles } from '@/auth/decorators/roles.decorator';
 import { Role } from '@/generated/prisma';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
+import { CancelOrderDto } from './dto/cancel-order-item.dto';
 @UseGuards(new JwtAuthGuard())
 @Controller('order')
 export class OrderController {
@@ -28,8 +29,12 @@ export class OrderController {
   }
 
   @Post(':id/cancel')
-  cancelOrder(@Req() req, @Param('id') id: string) {
-    return this.orderService.cancelOrder(req.user.sub, id);
+  cancelOrder(
+    @Req() req,
+    @Param('id') id: string,
+    @Body() dto: CancelOrderDto,
+  ) {
+    return this.orderService.cancelOrder(req.user.sub, id, dto.reason);
   }
 
   @Roles([Role.ADMIN])
@@ -54,5 +59,10 @@ export class OrderController {
   @Get()
   findAll(@Req() req, @Query() paginationDto: OrderPaginationDto) {
     return this.orderService.getOrdersByUserId(req.user.sub, paginationDto);
+  }
+
+  @Get(':id/invoice')
+  getInvoice(@Req() req, @Param('id') id: string) {
+    return this.orderService.getInvoice(req.user.sub, id);
   }
 }
