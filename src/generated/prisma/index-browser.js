@@ -277,6 +277,16 @@ exports.Prisma.OrderStatusHistoryScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.SettingScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  value: 'value',
+  type: 'type',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -373,6 +383,13 @@ exports.Prisma.OrderStatusHistoryOrderByRelevanceFieldEnum = {
   orderId: 'orderId',
   notes: 'notes'
 };
+
+exports.Prisma.SettingOrderByRelevanceFieldEnum = {
+  key: 'key',
+  value: 'value',
+  type: 'type',
+  description: 'description'
+};
 exports.Role = exports.$Enums.Role = {
   USER: 'USER',
   ADMIN: 'ADMIN',
@@ -406,7 +423,8 @@ exports.Prisma.ModelName = {
   CartItem: 'CartItem',
   Order: 'Order',
   OrderItem: 'OrderItem',
-  OrderStatusHistory: 'OrderStatusHistory'
+  OrderStatusHistory: 'OrderStatusHistory',
+  Setting: 'Setting'
 };
 
 /**
