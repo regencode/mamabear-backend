@@ -33,6 +33,7 @@ model User {
   refreshTokenExpiry      DateTime?
   carts                   Cart[]
   orders                  Order[]
+  address                 Address[]
 }
 
 model Product {
@@ -173,16 +174,16 @@ model Cart {
 }
 
 model CartItem {
-  id        String          @id @default(uuid(7)) @db.Uuid
-  cartId    String          @db.Uuid
+  id        String         @id @default(uuid(7)) @db.Uuid
+  cartId    String         @db.Uuid
   productId Int
-  variantId Int?
-  quantity  Int             @default(1)
-  price     Decimal         @db.Decimal(10, 2)
-  createdAt DateTime        @default(now())
-  cart      Cart            @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  product   Product         @relation(fields: [productId], references: [id])
-  variant   ProductVariant? @relation(fields: [variantId], references: [id])
+  variantId Int
+  quantity  Int            @default(1)
+  price     Decimal        @db.Decimal(10, 2)
+  createdAt DateTime       @default(now())
+  cart      Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product        @relation(fields: [productId], references: [id])
+  variant   ProductVariant @relation(fields: [variantId], references: [id])
 
   @@unique([cartId, productId, variantId])
   @@index([cartId])
@@ -219,8 +220,9 @@ model Order {
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
 
-  user               User                @relation(fields: [userId], references: [id])
-  orderStatusHistory OrderStatusHistory?
+  user               User                 @relation(fields: [userId], references: [id])
+  orderStatusHistory OrderStatusHistory[]
+  shippingAddress    OrderAddress?
 }
 
 model OrderItem {
@@ -242,11 +244,41 @@ model OrderItem {
 
 model OrderStatusHistory {
   id        Int         @id @default(autoincrement())
-  orderId   String      @unique @db.Uuid
+  orderId   String      @db.Uuid
   status    OrderStatus
   notes     String?
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id])
+}
+
+model OrderAddress {
+  id Int @id @default(autoincrement())
+
+  orderId String @unique @db.Uuid
+
+  name  String
+  phone String
+
+  provinceId   Int
+  provinceName String
+
+  cityId   Int
+  cityName String
+
+  districtId   Int
+  districtName String
+
+  subdistrictId   Int
+  subdistrictName String
+
+  postalCode String
+
+  road            String
+  completeAddress String
+  detail          String?
+  usedFor         String?
 
   order Order @relation(fields: [orderId], references: [id])
 }
@@ -259,4 +291,30 @@ model Setting {
   description String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime? @updatedAt
+}
+
+model Address {
+  id     Int    @id @default(autoincrement())
+  userId String @db.Uuid
+  name   String
+  phone  String
+
+  // information and validation is coming from Raja Ongkir API
+  provinceId      Int
+  proviceName     String
+  cityId          Int
+  cityName        String
+  districtId      Int
+  districtName    String
+  subdistrictId   Int //used for shipping cost calculation
+  subdistrictName String
+  postalCode      String //included in subdistrict validation response
+
+  //other information, no validation, user's responsibility
+  road            String //Jalan, no rumah etc
+  completeAddress String //Append all address information
+  detail          String //Sebelah rumah pak RT
+  usedFor         String //Kantor, Rumah 
+
+  user User @relation(fields: [userId], references: [id])
 }
