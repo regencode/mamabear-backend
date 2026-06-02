@@ -38,7 +38,7 @@ export class OrderController {
   }
 
   @Roles([Role.ADMIN])
-  @Patch(':id')
+  @Patch(':id/status')
   update(
     @Req() req,
     @Param('id') id: string,
