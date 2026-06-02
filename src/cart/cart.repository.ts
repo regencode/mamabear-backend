@@ -9,7 +9,13 @@ const CART_INCLUDE = {
         select: { id: true, name: true, isActive: true },
       },
       variant: {
-        select: { id: true, priceIdr: true, stock: true, productId: true },
+        select: {
+          id: true,
+          priceIdr: true,
+          stock: true,
+          productId: true,
+          weightG: true,
+        },
       },
     },
   },
@@ -17,7 +23,9 @@ const CART_INCLUDE = {
 
 const CART_ITEM_WITH_CART_INCLUDE = {
   product: { select: { id: true, isActive: true } },
-  variant: { select: { id: true, stock: true, productId: true } },
+  variant: {
+    select: { id: true, stock: true, productId: true, weightG: true },
+  },
   cart: true,
 };
 

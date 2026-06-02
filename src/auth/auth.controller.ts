@@ -106,6 +106,6 @@ export class AuthController {
 
   @Post('create-admin')
   createAdmin(@Body() dto: RegisterUserDto) {
-    return this.authService.createUser(dto);
+    return this.authService.createAdmin(dto);
   }
 }

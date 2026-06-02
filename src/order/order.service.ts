@@ -6,13 +6,14 @@ import {
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderRepository } from './order.repository';
 import { PrismaService } from '@/prisma/prisma.service';
-import { OrderStatus, Prisma, Role } from '@/generated/prisma';
+import { Order, OrderStatus, Prisma, Role } from '@/generated/prisma';
 import { PinoLogger } from 'pino-nestjs';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { CursorPaginationRequestDto } from '@/common/dto/request/pagination.request.dto';
 import { CursorPaginationService } from '@/common/services/pagination.service';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
 import { ShippingService } from '@/shipping/shipping.service';
+import { ServiceResult } from '@/common/ServiceResult';
 
 @Injectable()
 export class OrderService {
@@ -23,7 +24,10 @@ export class OrderService {
     private readonly shippingService: ShippingService,
   ) {}
 
-  async createOrder(userId: string, dto: CreateOrderDto) {
+  async createOrder(
+    userId: string,
+    dto: CreateOrderDto,
+  ): Promise<ServiceResult<Order & { grandTotal: number }> | null> {
     const cart = await this.repo.findCartByUserId(userId);
 
     if (!cart || cart.items.length === 0) {
@@ -217,7 +221,7 @@ export class OrderService {
     return {
       success: true,
       message: 'Order created successfully',
-      data: { makeOrder, grandTotal },
+      data: { ...makeOrder, grandTotal },
     };
   }
 
