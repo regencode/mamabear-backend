@@ -27,7 +27,7 @@ export class CartService {
       cart = await this.cartRepo.findCartByUser(userId);
     }
 
-    if (!cart && sessionId) {
+    if (!cart && sessionId && !userId) {
       cart = await this.cartRepo.findCartBySession(sessionId);
     }
 
@@ -314,14 +314,22 @@ export class CartService {
   // Get Full Cart (with relations)
   async getCart(userId?: string, sessionId?: string) {
     const result = await this.cartRepo.findCartWithItems(userId, sessionId);
+    const totalWeight = result?.items?.reduce((sum, item) => {
+      const weight = item.variant?.weightG ?? 0;
+      return sum + weight * item.quantity;
+    }, 0);
     this.logger.info({
       level: 'info',
       message: 'Cart retrieved',
       userId: userId || 'guest',
       itemCount: result?.items?.length || 0,
+      totalWeight: totalWeight || 0,
       status: 'success',
     });
-    return result;
+    return {
+      ...result,
+      totalWeight,
+    };
   }
 
   // Merge Guest Cart → User Cart
