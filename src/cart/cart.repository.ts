@@ -11,10 +11,12 @@ const CART_INCLUDE = {
       variant: {
         select: {
           id: true,
+          name: true,
           priceIdr: true,
           stock: true,
           productId: true,
           weightG: true,
+          image: true,
         },
       },
     },
