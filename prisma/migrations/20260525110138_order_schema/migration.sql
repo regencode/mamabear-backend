@@ -2,7 +2,7 @@
 CREATE TYPE "PaymentStatus" AS ENUM ('PENDING', 'PAID', 'REFUNDED', 'CANCELLED');
 
 -- CreateEnum
-CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'PROCESSING', 'SHIPPED', 'RECEIVED', 'FAILED');
+CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'PROCESSING', 'SHIPPED', 'RECEIVED', 'FAILED', 'CANCELLED');
 
 -- AlterEnum
 ALTER TYPE "Role" ADD VALUE 'SUPERADMIN';
@@ -38,9 +38,9 @@ CREATE TABLE "Order" (
     "orderNumber" TEXT NOT NULL,
     "userId" UUID NOT NULL,
     "status" "OrderStatus" NOT NULL DEFAULT 'PENDING',
-    "subtotalIdr" INTEGER NOT NULL DEFAULT 0,
-    "shippingCostIdr" INTEGER NOT NULL DEFAULT 0,
-    "taxIdr" INTEGER NOT NULL DEFAULT 0,
+    "subtotalIdr" DECIMAL(10,2) NOT NULL,
+    "shippingCostIdr" DECIMAL(10,2) NOT NULL,
+    "taxIdr" DECIMAL(10,2) NOT NULL,
     "shippingMethod" TEXT,
     "trackingNumber" TEXT,
     "paymentMethod" TEXT NOT NULL,
@@ -54,15 +54,32 @@ CREATE TABLE "Order" (
 );
 
 -- CreateTable
+CREATE TABLE "ShippingAddress" (
+    "id" SERIAL NOT NULL,
+    "orderId" UUID NOT NULL,
+    "name" TEXT NOT NULL,
+    "street" TEXT NOT NULL,
+    "city" TEXT NOT NULL,
+    "province" TEXT NOT NULL,
+    "postal" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
+    "notes" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ShippingAddress_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "OrderItem" (
     "id" SERIAL NOT NULL,
     "orderId" UUID NOT NULL,
     "productId" INTEGER NOT NULL,
     "variantId" INTEGER NOT NULL,
-    "productName" TEXT,
-    "variantName" TEXT,
-    "price" INTEGER,
-    "quantity" INTEGER NOT NULL DEFAULT 1,
+    "name" TEXT NOT NULL,
+    "priceIdr" DECIMAL(10,2) NOT NULL,
+    "quantity" INTEGER NOT NULL,
+    "grandPrice" DECIMAL(10,2) NOT NULL,
 
     CONSTRAINT "OrderItem_pkey" PRIMARY KEY ("id")
 );
@@ -74,7 +91,6 @@ CREATE TABLE "OrderStatusHistory" (
     "status" "OrderStatus" NOT NULL,
     "notes" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "OrderStatusHistory_pkey" PRIMARY KEY ("id")
 );
@@ -103,6 +119,9 @@ CREATE UNIQUE INDEX "CartItem_cartId_productId_variantId_key" ON "CartItem"("car
 -- CreateIndex
 CREATE UNIQUE INDEX "Order_orderNumber_key" ON "Order"("orderNumber");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "ShippingAddress_orderId_key" ON "ShippingAddress"("orderId");
+
 -- AddForeignKey
 ALTER TABLE "Cart" ADD CONSTRAINT "Cart_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -119,6 +138,9 @@ ALTER TABLE "CartItem" ADD CONSTRAINT "CartItem_variantId_fkey" FOREIGN KEY ("va
 ALTER TABLE "Order" ADD CONSTRAINT "Order_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "ShippingAddress" ADD CONSTRAINT "ShippingAddress_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -128,4 +150,4 @@ ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_productId_fkey" FOREIGN KEY ("
 ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_variantId_fkey" FOREIGN KEY ("variantId") REFERENCES "ProductVariant"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "OrderStatusHistory" ADD CONSTRAINT "OrderStatusHistory_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "OrderStatusHistory" ADD CONSTRAINT "OrderStatusHistory_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id") ON DELETE CASCADE ON UPDATE CASCADE;

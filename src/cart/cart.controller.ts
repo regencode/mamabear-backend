@@ -51,7 +51,7 @@ export class CartController {
             sameSite: 'lax',
           });
         }
-        result = data.cart;
+        result = { ...data.cart, totalWeight: 0 };
       }
       this.logger.info({
         level: 'info',
