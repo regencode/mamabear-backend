@@ -65,10 +65,9 @@ export class AuthController {
   @UseGuards(RefreshGuard)
   async refresh(
     @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
   ) {
-    const refreshToken = req.cookies['refreshToken'];
-    return this.authService.refreshToken(refreshToken, res);
+    const refreshToken = req.header['Authorization'];
+    return this.authService.refreshToken(refreshToken);
   }
 
   @Throttle({
