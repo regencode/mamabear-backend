@@ -15,5 +15,10 @@ export class CreateUploadDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
+  categoryId?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
   sortOrder?: number;
 }

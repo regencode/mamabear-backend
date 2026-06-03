@@ -17,7 +17,6 @@ export class UploadService {
     }
 
     let result = await this.cloudinary.uploadFile(file);
-
     return {
       success: true,
       message: 'Image uploaded successfully to cloudinary. Manually assign a unique sortOrder, and append the following metadata to images=[] in entities that have "images" field.',
