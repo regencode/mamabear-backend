@@ -6,15 +6,16 @@ import {
   ShippingCostResponse,
   Subdistrict,
 } from '@/types/shipping.type';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CalculateShippingCostDto } from './dto/calculate-cost.dto';
+import { CartRepository } from '@/cart/cart.repository';
 
 @Injectable()
 export class ShippingService {
   private readonly apiKey: string | undefined;
   private readonly baseUrl: string | undefined;
   private readonly headers: Record<string, string>;
-  constructor() {
+  constructor(private readonly cartRepository: CartRepository) {
     this.apiKey = process.env.RAJAONGKIR_API_KEY ?? '';
     this.baseUrl =
       process.env.RAJAONGKIR_BASE_URL ?? 'https://rajaongkir.komerce.id/api/v1';
@@ -89,14 +90,26 @@ export class ShippingService {
     }
   }
 
-  async calculateShippingCost(dto: CalculateShippingCostDto) {
+  async calculateShippingCost(
+    userId: string | undefined,
+    dto: CalculateShippingCostDto,
+  ) {
+    console.log('calculateShippingCost userId', userId);
+    //visit to cart repository function findCartByUser tambah cartId di dto
+    const weight = await this.calculateWeight(userId ?? '');
+    //visit to admin/setting service untuk fetch warehouse origin and selected courier
+    const originId = null; // this should contain function to fetch warehouse origin from admin/setting service
+    const courierNames = null;
     try {
-      const origin = 69298; //Sambikerep (Mamabear address in GMaps) sub-district ID. Currently hardcoded. Later need to integrate to website settings for warehouse location
+      const origin = originId ? originId : 69298; //Sambikerep (Mamabear address in GMaps) sub-district ID. Currently hardcoded. Later need to integrate to website settings for warehouse location
+      const courier = courierNames
+        ? courierNames
+        : 'jne:sicepat:jnt:tiki:anteraja:pos';
       const params = new URLSearchParams();
       params.append('origin', origin.toString());
       params.append('destination', dto.destination.toString());
-      params.append('weight', dto.weight.toString());
-      params.append('courier', dto.courier);
+      params.append('weight', weight.toString()); //remove from dto. fetch from DB (cart repo)
+      params.append('courier', courier); //remove from dto. fetch from DB (admin/setting repo)
       params.append('price', dto.price ? dto.price : '');
       const response = await fetch(`${this.baseUrl}/calculate/domestic-cost`, {
         method: 'POST',
@@ -104,10 +117,30 @@ export class ShippingService {
         body: params,
       });
       const data: Response<ShippingCostResponse> = await response.json();
+      console.log('calculate shipping cost data', data);
       const shippingCost = data.data;
       return shippingCost;
     } catch (error) {
       throw new Error('Failed to calculate shipping cost');
     }
+  }
+
+  async calculateWeight(userId: string) {
+    if (!userId) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    const cart = await this.cartRepository.findCartByUser(userId);
+    if (!cart) {
+      throw new Error('Cart not found');
+    }
+    const weight = cart.items.reduce((total, item) => {
+      const itemWeight = item.variant?.weightG ?? 0;
+      const quantity = item.quantity ?? 1;
+
+      return total + itemWeight * quantity;
+    }, 0);
+
+    return weight;
   }
 }

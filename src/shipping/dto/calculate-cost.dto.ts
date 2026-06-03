@@ -18,23 +18,6 @@ export class CalculateShippingCostDto {
   destination!: number;
 
   @ApiProperty({
-    example: 1700,
-    description: 'Weight in grams',
-  })
-  @Type(() => Number)
-  @IsInt()
-  @IsPositive()
-  weight!: number;
-
-  @ApiProperty({
-    example: 'jne',
-    description: 'Courier code',
-  })
-  @Transform(({ value }) => value?.toLowerCase())
-  @IsString()
-  courier!: string;
-
-  @ApiProperty({
     enum: PriceSort,
     example: PriceSort.LOWEST,
     description: 'Sort shipping price result',

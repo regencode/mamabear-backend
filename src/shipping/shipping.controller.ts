@@ -1,9 +1,13 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ShippingService } from './shipping.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CalculateShippingCostDto } from './dto/calculate-cost.dto';
+import { GetUserId } from '@/common/decorators/get-user-id-decorator';
+import { OptionalJwtAuthGuard } from '@/auth/guard/optional-jwt-auth.guard';
 
 @ApiTags('shipping')
+@ApiBearerAuth('JwtAuthGuard')
+@UseGuards(OptionalJwtAuthGuard)
 @Controller('shipping')
 export class ShippingController {
   constructor(private readonly shippingService: ShippingService) {}
@@ -29,7 +33,10 @@ export class ShippingController {
   }
 
   @Post('cost')
-  calculateShippingCost(@Body() dto: CalculateShippingCostDto) {
-    return this.shippingService.calculateShippingCost(dto);
+  calculateShippingCost(
+    @GetUserId() userId: string | undefined,
+    @Body() dto: CalculateShippingCostDto,
+  ) {
+    return this.shippingService.calculateShippingCost(userId, dto);
   }
 }
