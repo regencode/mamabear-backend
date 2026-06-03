@@ -63,10 +63,8 @@ export class AuthController {
   })
   @Post('/refresh')
   @UseGuards(RefreshGuard)
-  async refresh(
-    @Req() req: Request,
-  ) {
-    const refreshToken = req.header['Authorization'];
+  async refresh(@Req() req: Request) {
+    const refreshToken = req.headers.authorization?.replace('Bearer ', '') ?? '';
     return this.authService.refreshToken(refreshToken);
   }
 

@@ -5,6 +5,7 @@ const runId = Date.now();
 
 const state = {
   token: '',
+  refreshToken: '',
   productId: 0,
   productSlug: '',
   existingSlug: '',
@@ -30,6 +31,7 @@ describe('Smoke Tests (e2e)', () => {
       expect(res.body.success).toBe(true);
       expect(res.body.data.accessToken).toBeDefined();
       state.token = res.body.data.accessToken;
+      state.refreshToken = res.body.data.refreshToken;
     });
 
     it('POST /auth/logout', async () => {
@@ -49,6 +51,18 @@ describe('Smoke Tests (e2e)', () => {
 
       expect(res.body.success).toBe(true);
       state.token = res.body.data.accessToken;
+      state.refreshToken = res.body.data.refreshToken;
+    });
+
+    it('POST /auth/refresh — should return new tokens', async () => {
+      const res = await request(BASE)
+        .post('/auth/refresh')
+        .set('Authorization', `Bearer ${state.refreshToken}`)
+        .expect(201);
+
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.accessToken).toBeDefined();
+      expect(res.body.data.refreshToken).toBeDefined();
     });
   });
 
