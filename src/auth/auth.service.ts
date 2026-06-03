@@ -255,7 +255,6 @@ export class AuthService {
 
   async refreshToken(
     refreshToken: string,
-    res: Response,
   ): Promise<ServiceResult<LoginReturns>> {
     try {
       const payload = await this.jwtService.verifyAsync(refreshToken, {

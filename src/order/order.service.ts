@@ -111,7 +111,7 @@ export class OrderService {
           },
         },
 
-        status: OrderStatus.PENDING,
+        status: OrderStatus.PAYMENT_PENDING,
 
         subtotalIdr: subTotal,
 
@@ -122,8 +122,6 @@ export class OrderService {
         shippingMethod: `${dto.courierCode.toUpperCase()} ${dto.courierService.toUpperCase()}`,
 
         paymentMethod: dto.paymentMethod,
-
-        pendingExpiresAt,
 
         notes: dto.notes,
 
@@ -179,7 +177,7 @@ export class OrderService {
 
         orderStatusHistory: {
           create: {
-            status: OrderStatus.PENDING,
+            status: OrderStatus.PAYMENT_PENDING,
             notes: 'Order created',
           },
         },
