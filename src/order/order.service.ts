@@ -241,6 +241,15 @@ export class OrderService {
       throw new BadRequestException('Order not found');
     }
 
+    if (
+      dto.status === OrderStatus.COMPLETED &&
+      order.status !== OrderStatus.COMPLETED
+    ) {
+      for (const item of order.orderItems) {
+        await this.repo.incrementProductSold(item.product.id, item.quantity);
+      }
+    }
+
     const updated = await this.repo.update(
       { id: orderId },
       {

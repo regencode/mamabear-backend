@@ -41,6 +41,7 @@ model Product {
   name              String
   slug              String                       @unique
   isActive          Boolean                      @default(true)
+  totalSold Int @default(0)
   categoryId        Int?
   highlightId       Int?
   images            Image[]
