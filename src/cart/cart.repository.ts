@@ -72,12 +72,10 @@ export class CartRepository {
 
   async findCartByUser(userId: string) {
     // We can't key cache by userId reliably, so fetch and cache by cart id
-    console.log('findCartByUser userId', userId);
     const cart = await this.prisma.cart.findFirst({
       where: { userId },
       include: CART_INCLUDE,
     });
-    console.log('findCartByUser cart', cart);
     if (cart) this.setCache(cart.id, cart);
     return cart;
   }
@@ -103,9 +101,7 @@ export class CartRepository {
 
   async findCartWithItems(userId?: string, sessionId?: string) {
     if (userId) {
-      console.log('findCartWithItems userId', userId);
       const userCart = await this.findCartByUser(userId);
-      console.log('userCart', userCart);
       if (userCart) return userCart;
     }
 

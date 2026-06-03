@@ -94,7 +94,6 @@ export class ShippingService {
     userId: string | undefined,
     dto: CalculateShippingCostDto,
   ) {
-    console.log('calculateShippingCost userId', userId);
     //visit to cart repository function findCartByUser tambah cartId di dto
     const weight = await this.calculateWeight(userId ?? '');
     //visit to admin/setting service untuk fetch warehouse origin and selected courier
@@ -117,7 +116,6 @@ export class ShippingService {
         body: params,
       });
       const data: Response<ShippingCostResponse> = await response.json();
-      console.log('calculate shipping cost data', data);
       const shippingCost = data.data;
       return shippingCost;
     } catch (error) {
