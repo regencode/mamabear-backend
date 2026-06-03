@@ -306,6 +306,7 @@ export class CartService {
   // Get Full Cart (with relations)
   async getCart(userId?: string, sessionId?: string) {
     const result = await this.cartRepo.findCartWithItems(userId, sessionId);
+    if(!result) return null;
     const totalWeight = result?.items?.reduce((sum, item) => {
       const weight = item.variant?.weightG ?? 0;
       return sum + weight * item.quantity;
@@ -313,6 +314,7 @@ export class CartService {
     this.logger.info({
       message: 'Cart retrieved',
       userId: userId || 'guest',
+      sessionId: sessionId || "null",
       itemCount: result?.items?.length || 0,
       totalWeight: totalWeight || 0,
       status: 'success',

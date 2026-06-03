@@ -52,13 +52,22 @@ export class CartController {
           });
         }
         result = { ...data.cart, totalWeight: 0 };
+          this.logger.info({
+            message: 'Cart created successfully',
+            endpoint: 'GET /cart',
+            userId: userId || 'guest',
+            sessionId: data.createdSessionId,
+            status: 'success',
+          });
       }
-      this.logger.info({
-        message: 'Cart retrieved successfully',
-        endpoint: 'GET /cart',
-        userId: userId || 'guest',
-        status: 'success',
-      });
+      else {
+          this.logger.info({
+            message: 'Cart retrieved successfully',
+            endpoint: 'GET /cart',
+            userId: userId || 'guest',
+            status: 'success',
+          });
+      }
       return result;
     } catch (error: any) {
       this.logger.error({
