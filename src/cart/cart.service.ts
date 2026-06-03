@@ -27,7 +27,7 @@ export class CartService {
       cart = await this.cartRepo.findCartByUser(userId);
     }
 
-    if (!cart && sessionId) {
+    if (!cart && sessionId && !userId) {
       cart = await this.cartRepo.findCartBySession(sessionId);
     }
 
