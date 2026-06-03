@@ -23,7 +23,6 @@ export class UsersService {
       if(resolvedUser) throw new BadRequestException(`User with email ${createUserDto.email} already exists`);
       const result = await this.usersRepository.create(createUserDto);
       this.logger.info({
-        level: 'info',
         message: 'User created successfully',
         endpoint: 'POST /users',
         email: createUserDto.email,
@@ -37,7 +36,6 @@ export class UsersService {
       };
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'User creation failed',
         endpoint: 'POST /users',
         email: createUserDto.email,
@@ -52,7 +50,6 @@ export class UsersService {
     try {
       const result = await this.usersRepository.findAll();
       this.logger.info({
-        level: 'info',
         message: 'Retrieved all users',
         endpoint: 'GET /users',
         count: result.length,
@@ -65,7 +62,6 @@ export class UsersService {
       };
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'Failed to retrieve users',
         endpoint: 'GET /users',
         status: 'error',
@@ -80,7 +76,6 @@ export class UsersService {
       const user = await this.usersRepository.findById(id);
       if (!user) {
         this.logger.warn({
-          level: 'warn',
           message: 'User not found',
           endpoint: 'GET /users/:id',
           userId: id,
@@ -89,7 +84,6 @@ export class UsersService {
         throw new NotFoundException(`User with id ${id} not found`);
       }
       this.logger.info({
-        level: 'info',
         message: 'Retrieved user by id',
         endpoint: 'GET /users/:id',
         userId: id,
@@ -103,7 +97,6 @@ export class UsersService {
     } catch (error: any) {
       if (error instanceof NotFoundException) throw error;
       this.logger.error({
-        level: 'error',
         message: 'Failed to retrieve user',
         endpoint: 'GET /users/:id',
         userId: id,
@@ -118,7 +111,6 @@ export class UsersService {
     try {
       const result = await this.usersRepository.update(id, updateUserDto);
       this.logger.info({
-        level: 'info',
         message: 'User updated successfully',
         endpoint: 'PATCH /users/:id',
         userId: id,
@@ -131,7 +123,6 @@ export class UsersService {
       };
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'User update failed',
         endpoint: 'PATCH /users/:id',
         userId: id,
@@ -146,7 +137,6 @@ export class UsersService {
     try {
       const result = await this.usersRepository.delete(id);
       this.logger.info({
-        level: 'info',
         message: 'User deleted successfully',
         endpoint: 'DELETE /users/:id',
         userId: id,
@@ -159,7 +149,6 @@ export class UsersService {
       };
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'User deletion failed',
         endpoint: 'DELETE /users/:id',
         userId: id,

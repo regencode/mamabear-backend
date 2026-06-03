@@ -39,7 +39,6 @@ export class AuthService {
 
       if (!user) {
         this.logger.warn({
-          level: 'warn',
           message: 'Login attempt with non-existent email',
           endpoint: 'POST /auth/login',
           email: dto.email,
@@ -52,7 +51,6 @@ export class AuthService {
 
       if (!isValid) {
         this.logger.warn({
-          level: 'warn',
           message: 'Invalid password provided',
           endpoint: 'POST /auth/login',
           email: dto.email,
@@ -63,7 +61,6 @@ export class AuthService {
 
       if (!user.isVerified) {
         this.logger.warn({
-          level: 'warn',
           message: 'Login attempt with unverified account',
           endpoint: 'POST /auth/login',
           email: dto.email,
@@ -98,7 +95,6 @@ export class AuthService {
       );
 
       this.logger.info({
-        level: 'info',
         message: 'User login successful',
         endpoint: 'POST /auth/login',
         email: dto.email,
@@ -119,7 +115,6 @@ export class AuthService {
         throw error;
       }
       this.logger.error({
-        level: 'error',
         message: 'Login error',
         endpoint: 'POST /auth/login',
         email: dto.email,
@@ -135,7 +130,6 @@ export class AuthService {
       const emailIsExist = await this.repo.findEmail(dto.email);
       if (emailIsExist) {
         this.logger.warn({
-          level: 'warn',
           message: 'Registration attempt with existing email',
           endpoint: 'POST /auth/register',
           email: dto.email,
@@ -164,7 +158,6 @@ export class AuthService {
       );
 
       this.logger.info({
-        level: 'info',
         message: 'User registration successful',
         endpoint: 'POST /auth/register',
         email: dto.email,
@@ -185,7 +178,6 @@ export class AuthService {
         throw error;
       }
       this.logger.error({
-        level: 'error',
         message: 'Registration error',
         endpoint: 'POST /auth/register',
         email: dto.email,
@@ -202,7 +194,6 @@ export class AuthService {
 
       if (!user) {
         this.logger.warn({
-          level: 'warn',
           message: 'Email verification with invalid token',
           endpoint: 'GET /auth/verify-email',
           status: 'failure',
@@ -215,7 +206,6 @@ export class AuthService {
         user.verificationTokenExpiry < new Date()
       ) {
         this.logger.warn({
-          level: 'warn',
           message: 'Email verification with expired token',
           endpoint: 'GET /auth/verify-email',
           email: user.email,
@@ -234,7 +224,6 @@ export class AuthService {
       );
 
       this.logger.info({
-        level: 'info',
         message: 'Email verified successfully',
         endpoint: 'GET /auth/verify-email',
         email: user.email,
@@ -255,7 +244,6 @@ export class AuthService {
         throw error;
       }
       this.logger.error({
-        level: 'error',
         message: 'Email verification error',
         endpoint: 'GET /auth/verify-email',
         status: 'error',
@@ -278,7 +266,6 @@ export class AuthService {
 
       if (!user) {
         this.logger.warn({
-          level: 'warn',
           message: 'Refresh token attempt with non-existent user',
           endpoint: 'POST /auth/refresh',
           userId: payload.sub,
@@ -289,7 +276,6 @@ export class AuthService {
 
       if (!user.refreshToken) {
         this.logger.warn({
-          level: 'warn',
           message: 'Refresh token attempt without stored token',
           endpoint: 'POST /auth/refresh',
           userId: user.id,
@@ -302,7 +288,6 @@ export class AuthService {
 
       if (!isMatch) {
         this.logger.warn({
-          level: 'warn',
           message: 'Invalid refresh token provided',
           endpoint: 'POST /auth/refresh',
           userId: user.id,
@@ -317,7 +302,6 @@ export class AuthService {
           { refreshToken: null, refreshTokenExpiry: null },
         );
         this.logger.warn({
-          level: 'warn',
           message: 'Refresh token expired',
           endpoint: 'POST /auth/refresh',
           userId: user.id,
@@ -353,7 +337,6 @@ export class AuthService {
         },
       );
       this.logger.info({
-        level: 'info',
         message: 'Token refresh successful',
         endpoint: 'POST /auth/refresh',
         userId: user.id,
@@ -373,7 +356,6 @@ export class AuthService {
         throw error;
       }
       this.logger.error({
-        level: 'error',
         message: 'Token refresh error',
         endpoint: 'POST /auth/refresh',
         status: 'error',
@@ -389,7 +371,6 @@ export class AuthService {
 
       if (!user) {
         this.logger.warn({
-          level: 'warn',
           message: 'Logout attempt for non-existent user',
           endpoint: 'POST /auth/logout',
           userId,
@@ -410,7 +391,6 @@ export class AuthService {
       );
 
       this.logger.info({
-        level: 'info',
         message: 'User logout successful',
         endpoint: 'POST /auth/logout',
         userId: user.id,
@@ -430,7 +410,6 @@ export class AuthService {
         throw error;
       }
       this.logger.error({
-        level: 'error',
         message: 'Logout error',
         endpoint: 'POST /auth/logout',
         userId,
@@ -447,7 +426,6 @@ export class AuthService {
 
       if (!user) {
         this.logger.warn({
-          level: 'warn',
           message: 'Forgot password attempt with non-existent email',
           endpoint: 'POST /auth/forgot-password',
           email: dto.email,
@@ -471,7 +449,6 @@ export class AuthService {
       await this.mailService.sendForgotPasswordMail(dto.email, resetToken);
 
       this.logger.info({
-        level: 'info',
         message: 'Forgot password request processed',
         endpoint: 'POST /auth/forgot-password',
         email: dto.email,
@@ -492,7 +469,6 @@ export class AuthService {
         throw error;
       }
       this.logger.error({
-        level: 'error',
         message: 'Forgot password error',
         endpoint: 'POST /auth/forgot-password',
         email: dto.email,
@@ -512,7 +488,6 @@ export class AuthService {
 
       if (!user) {
         this.logger.warn({
-          level: 'warn',
           message: 'Password reset with invalid token',
           endpoint: 'POST /auth/reset-password',
           status: 'failure',
@@ -526,7 +501,6 @@ export class AuthService {
           { resetToken: null, resetTokenExpiry: null },
         );
         this.logger.warn({
-          level: 'warn',
           message: 'Password reset with expired token',
           endpoint: 'POST /auth/reset-password',
           email: user.email,
@@ -549,7 +523,6 @@ export class AuthService {
       );
 
       this.logger.info({
-        level: 'info',
         message: 'Password reset successful',
         endpoint: 'POST /auth/reset-password',
         email: user.email,
@@ -570,7 +543,6 @@ export class AuthService {
         throw error;
       }
       this.logger.error({
-        level: 'error',
         message: 'Password reset error',
         endpoint: 'POST /auth/reset-password',
         status: 'error',

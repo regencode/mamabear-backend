@@ -115,7 +115,6 @@ export class CartService {
       });
 
       this.logger.info({
-        level: 'info',
         message: 'Item added to cart',
         cartId: cart.id,
         productId: variant.productId,
@@ -128,7 +127,6 @@ export class CartService {
       return { result, createdSessionId };
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'Failed to add item to cart',
         variantId: dto.variantId,
         status: 'error',
@@ -179,7 +177,6 @@ export class CartService {
         quantity,
       );
       this.logger.info({
-        level: 'info',
         message: 'Cart item quantity updated',
         itemId,
         quantity,
@@ -189,7 +186,6 @@ export class CartService {
       return result;
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'Failed to update cart item quantity',
         itemId,
         status: 'error',
@@ -270,7 +266,6 @@ export class CartService {
 
       const result = await this.cartRepo.deleteCartItem(itemsId);
       this.logger.info({
-        level: 'info',
         message: 'Cart item removed',
         itemId: itemsId,
         status: 'success',
@@ -278,7 +273,6 @@ export class CartService {
       return result;
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'Failed to remove cart item',
         itemId: itemsId,
         status: 'error',
@@ -293,7 +287,6 @@ export class CartService {
     try {
       const result = await this.cartRepo.deleteCartItems(cartId);
       this.logger.info({
-        level: 'info',
         message: 'Cart cleared',
         cartId,
         status: 'success',
@@ -301,7 +294,6 @@ export class CartService {
       return result;
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'Failed to clear cart',
         cartId,
         status: 'error',
@@ -319,7 +311,6 @@ export class CartService {
       return sum + weight * item.quantity;
     }, 0);
     this.logger.info({
-      level: 'info',
       message: 'Cart retrieved',
       userId: userId || 'guest',
       itemCount: result?.items?.length || 0,
@@ -358,7 +349,6 @@ export class CartService {
       await this.cartRepo.deduplicateCart(userCart.id);
 
       this.logger.info({
-        level: 'info',
         message: 'Cart merged successfully',
         userId,
         guestCartId: guestCart.id,
@@ -370,7 +360,6 @@ export class CartService {
       return userCart;
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'Failed to merge cart',
         userId,
         status: 'error',
