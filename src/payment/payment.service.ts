@@ -4,12 +4,15 @@ import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { ServiceResult } from '@/common/ServiceResult';
 import { QrisNotificationDto } from './dto/notifications.dto';
 import { MidtransService } from './midtrans.service';
+import { OrderRepository } from '@/order/order.repository';
 import crypto from 'crypto';
+import { OrderStatus } from '@/generated/prisma';
 
 @Injectable()
 export class PaymentService {
     constructor(
         private readonly snap: MidtransService,
+        private readonly orderRepository: OrderRepository,
     ) {
     }
     FRONTEND_URL = process.env.FRONTEND_URL!;
@@ -60,17 +63,30 @@ export class PaymentService {
             switch (transactionStatus) {
                 case 'capture':
                     if(fraudStatus == 'accept') 
-                        // update order
+                        this.orderRepository.update(
+                            { id: orderId },
+                            { status: OrderStatus.PAYMENT_PAID }
+                        );
+                        // then decrement stock, increase totalSold
                     break;
                 case 'settlement':
+                    this.orderRepository.update(
+                        { id: orderId },
+                        { status: OrderStatus.PAYMENT_PAID }
+                    );
+                        // then decrement stock, increase totalSold
                     break;
-
-                case 'cancel':
-                case 'deny':
-                case 'expire':
+                case 'cancel': case 'deny': case 'expire':
+                    this.orderRepository.update(
+                        { id: orderId },
+                        { status: OrderStatus.PAYMENT_FAILED }
+                    );
                     break;
-
                 case 'pending':
+                    this.orderRepository.update(
+                        { id: orderId },
+                        { status: OrderStatus.PAYMENT_PENDING }
+                    );
                     break;
 
                 default:

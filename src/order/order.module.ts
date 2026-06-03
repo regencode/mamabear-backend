@@ -15,5 +15,6 @@ import { ShippingService } from '@/shipping/shipping.service';
     CursorPaginationService,
     ShippingService,
   ],
+  exports: [OrderRepository],
 })
 export class OrderModule {}
