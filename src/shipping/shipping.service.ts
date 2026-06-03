@@ -9,7 +9,7 @@ import {
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CalculateShippingCostDto } from './dto/calculate-cost.dto';
 import { CartRepository } from '@/cart/cart.repository';
-
+import { ServiceResult } from '@/common/ServiceResult';
 @Injectable()
 export class ShippingService {
   private readonly apiKey: string | undefined;
@@ -17,15 +17,14 @@ export class ShippingService {
   private readonly headers: Record<string, string>;
   constructor(private readonly cartRepository: CartRepository) {
     this.apiKey = process.env.RAJAONGKIR_API_KEY ?? '';
-    this.baseUrl =
-      process.env.RAJAONGKIR_BASE_URL ?? 'https://rajaongkir.komerce.id/api/v1';
+    this.baseUrl = process.env.RAJAONGKIR_BASE_URL ?? '';
     this.headers = {
       key: this.apiKey,
       'content-type': 'application/x-www-form-urlencoded',
     };
   }
 
-  async findAllProvince() {
+  async findAllProvince(): Promise<ServiceResult<Province[]>> {
     try {
       const response = await fetch(`${this.baseUrl}/destination/province`, {
         method: 'GET',
@@ -33,13 +32,19 @@ export class ShippingService {
       });
       const data: Response<Province> = await response.json();
       const provinces = data.data;
-      return provinces;
+      return {
+        success: true,
+        message: `Returned ${provinces.length} provinces`,
+        data: provinces,
+      };
     } catch (error) {
       throw new Error('Failed to fetch provinces');
     }
   }
 
-  async findCitiesByProvinceId(provinceId: string) {
+  async findCitiesByProvinceId(
+    provinceId: string,
+  ): Promise<ServiceResult<City[]>> {
     try {
       const response = await fetch(
         `${this.baseUrl}/destination/city/${provinceId}`,
@@ -50,13 +55,19 @@ export class ShippingService {
       );
       const data: Response<City> = await response.json();
       const cities = data.data;
-      return cities;
+      return {
+        success: true,
+        message: `Returned ${cities.length} cities for province ID ${provinceId}`,
+        data: cities,
+      };
     } catch (error) {
       throw new Error('Failed to fetch cities');
     }
   }
 
-  async findDistrictsByCityId(cityId: string) {
+  async findDistrictsByCityId(
+    cityId: string,
+  ): Promise<ServiceResult<District[]>> {
     try {
       const response = await fetch(
         `${this.baseUrl}/destination/district/${cityId}`,
@@ -67,13 +78,19 @@ export class ShippingService {
       );
       const data: Response<District> = await response.json();
       const districts = data.data;
-      return districts;
+      return {
+        success: true,
+        message: `Returned ${districts.length} districts for city ID ${cityId}`,
+        data: districts,
+      };
     } catch (error) {
       throw new Error('Failed to fetch districts');
     }
   }
 
-  async findSubdistrictsByDistrictId(districtId: string) {
+  async findSubdistrictsByDistrictId(
+    districtId: string,
+  ): Promise<ServiceResult<Subdistrict[]>> {
     try {
       const response = await fetch(
         `${this.baseUrl}/destination/sub-district/${districtId}`,
@@ -84,7 +101,11 @@ export class ShippingService {
       );
       const data: Response<Subdistrict> = await response.json();
       const subdistricts = data.data;
-      return subdistricts;
+      return {
+        success: true,
+        message: `Returned ${subdistricts.length} subdistricts for district ID ${districtId}`,
+        data: subdistricts,
+      };
     } catch (error) {
       throw new Error('Failed to fetch subdistricts');
     }

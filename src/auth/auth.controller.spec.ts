@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { Role } from '@/generated/prisma';
+import { Request } from 'express';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -86,7 +87,9 @@ describe('AuthController', () => {
   });
 
   it('should call authService.refreshToken', async () => {
-    const dto = { refreshToken: 'RefreshToken' };
+    const req = {
+      headers: { authorization: 'Bearer RefreshToken' },
+    };
 
     const result = {
       accessToken: 'NewAccessToken',
@@ -94,8 +97,8 @@ describe('AuthController', () => {
 
     mockAuthService.refreshToken.mockResolvedValue(result);
 
-    const resultResponse = await controller.refresh(dto);
-    expect(service.refreshToken).toHaveBeenCalledWith(dto.refreshToken);
+    const resultResponse = await controller.refresh(req as unknown as Request);
+    expect(service.refreshToken).toHaveBeenCalledWith('RefreshToken');
     expect(resultResponse).toEqual(result);
   });
 
