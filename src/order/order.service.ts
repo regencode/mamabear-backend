@@ -111,7 +111,7 @@ export class OrderService {
           },
         },
 
-        status: OrderStatus.PENDING,
+        status: OrderStatus.PAYMENT_PENDING,
 
         subtotalIdr: subTotal,
 
@@ -122,8 +122,6 @@ export class OrderService {
         shippingMethod: `${dto.courierCode.toUpperCase()} ${dto.courierService.toUpperCase()}`,
 
         paymentMethod: dto.paymentMethod,
-
-        pendingExpiresAt,
 
         notes: dto.notes,
 
@@ -179,7 +177,7 @@ export class OrderService {
 
         orderStatusHistory: {
           create: {
-            status: OrderStatus.PENDING,
+            status: OrderStatus.PAYMENT_PENDING,
             notes: 'Order created',
           },
         },
@@ -239,6 +237,15 @@ export class OrderService {
 
     if (!order) {
       throw new BadRequestException('Order not found');
+    }
+
+    if (
+      dto.status === OrderStatus.COMPLETED &&
+      order.status !== OrderStatus.COMPLETED
+    ) {
+      for (const item of order.orderItems) {
+        await this.repo.incrementProductSold(item.product.id, item.quantity);
+      }
     }
 
     const updated = await this.repo.update(

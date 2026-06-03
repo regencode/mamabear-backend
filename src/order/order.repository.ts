@@ -62,6 +62,19 @@ export class OrderRepository {
     });
   }
 
+  incrementProductSold(productId: number, quantity: number) {
+    return this.prisma.product.update({
+      where: {
+        id: productId,
+      },
+      data: {
+        totalSold: {
+          increment: quantity,
+        },
+      },
+    });
+  }
+
   findOneForAdmin(orderId: string) {
     return this.prisma.order.findFirst({
       where: {

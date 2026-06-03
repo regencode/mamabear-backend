@@ -24,6 +24,7 @@ import { ProductUtilsModule } from './product-utils/product-utils.module';
 import { SettingsModule } from './settings/settings.module';
 import { CartModule } from './cart/cart.module';
 import { CleanupService } from './scheduler/cleanup.service';
+import { PaymentModule } from './payment/payment.module';
 import { ShippingModule } from './shipping/shipping.module';
 import { OrderModule } from './order/order.module';
 
@@ -57,6 +58,7 @@ import { OrderModule } from './order/order.module';
     SearchModule,
     EmbeddingsModule,
     ProductUtilsModule,
+    PaymentModule,
     SettingsModule,
     ShippingModule,
     OrderModule,

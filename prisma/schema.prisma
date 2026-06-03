@@ -41,6 +41,7 @@ model Product {
   name              String
   slug              String                       @unique
   isActive          Boolean                      @default(true)
+  totalSold Int @default(0)
   categoryId        Int?
   highlightId       Int?
   images            Image[]
@@ -190,10 +191,12 @@ model CartItem {
 }
 
 enum OrderStatus {
-  PENDING
-  CONFIRMED
-  PROCESSED
-  SENDING
+  PAYMENT_PENDING
+  PAYMENT_PAID
+  PAYMENT_FAILED
+  CONFIRMED // confirmed by mamabear
+  PROCESSED // mamabear process order: packing and assigning courier
+  SENDING // courier transporting order
   RECEIVED
   COMPLETED
   CANCELLED
@@ -206,8 +209,7 @@ model Order {
   orderNumber      String        @unique
   userId           String        @db.Uuid
   orderItems       OrderItem[]
-  status           OrderStatus   @default(PENDING)
-  pendingExpiresAt DateTime?     // auto expire pending
+  status           OrderStatus   @default(PAYMENT_PENDING)
   receivedExpiresAt DateTime?    // auto expire received
   subtotalIdr      Int           @default(0)
   shippingCostIdr  Int           @default(0)
