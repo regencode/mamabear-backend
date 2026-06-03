@@ -3,11 +3,11 @@ import { ShippingService } from './shipping.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CalculateShippingCostDto } from './dto/calculate-cost.dto';
 import { GetUserId } from '@/common/decorators/get-user-id-decorator';
-import { OptionalJwtAuthGuard } from '@/auth/guard/optional-jwt-auth.guard';
+import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 
 @ApiTags('shipping')
+@UseGuards(JwtAuthGuard)
 @ApiBearerAuth('JwtAuthGuard')
-@UseGuards(OptionalJwtAuthGuard)
 @Controller('shipping')
 export class ShippingController {
   constructor(private readonly shippingService: ShippingService) {}

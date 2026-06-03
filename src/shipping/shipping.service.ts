@@ -6,7 +6,7 @@ import {
   ShippingCostResponse,
   Subdistrict,
 } from '@/types/shipping.type';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CalculateShippingCostDto } from './dto/calculate-cost.dto';
 import { CartRepository } from '@/cart/cart.repository';
 
@@ -126,13 +126,9 @@ export class ShippingService {
   }
 
   async calculateWeight(userId: string) {
-    if (!userId) {
-      throw new UnauthorizedException('User not authenticated');
-    }
-
     const cart = await this.cartRepository.findCartByUser(userId);
     if (!cart) {
-      throw new Error('Cart not found');
+      throw new NotFoundException('Cart not found');
     }
     const weight = cart.items.reduce((total, item) => {
       const itemWeight = item.variant?.weightG ?? 0;
