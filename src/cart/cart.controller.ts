@@ -27,7 +27,7 @@ import { GetUserId } from '@/common/decorators/get-user-id-decorator';
 export class CartController {
   constructor(
     private readonly cartService: CartService,
-    @Inject(PinoLogger) private readonly logger: PinoLogger,
+    private readonly logger: PinoLogger,
   ) {
     this.logger.setContext(CartController.name);
   }
