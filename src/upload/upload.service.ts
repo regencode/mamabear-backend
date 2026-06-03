@@ -27,6 +27,9 @@ export class UploadService {
       format,
       ...(dto.productId ? { product: { connect: { id: dto.productId } } } : {}),
       ...(dto.variantId ? { variant: { connect: { id: dto.variantId } } } : {}),
+      ...(dto.categoryId
+        ? { category: { connect: { id: dto.categoryId } } }
+        : {}),
       sortOrder: dto.sortOrder ?? 0,
     });
 
@@ -60,6 +63,9 @@ export class UploadService {
           : {}),
         ...(dto.variantId
           ? { variant: { connect: { id: dto.variantId } } }
+          : {}),
+        ...(dto.categoryId
+          ? { category: { connect: { id: dto.categoryId } } }
           : {}),
         sortOrder: dto.sortOrder ?? 0,
       })),
