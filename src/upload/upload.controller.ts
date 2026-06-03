@@ -48,9 +48,8 @@ export class UploadController {
   )
   uploadSingleImage(
     @UploadedFile() file: Express.Multer.File,
-    @Body() dto: CreateUploadDto,
   ) {
-    return this.uploadService.uploadImage(file, dto);
+    return this.uploadService.uploadImage(file);
   }
 
   @Post('images')
@@ -70,9 +69,8 @@ export class UploadController {
   )
   uploadMultipleImages(
     @UploadedFiles() files: Express.Multer.File[],
-    @Body() dto: CreateUploadDto,
   ) {
-    return this.uploadService.uploadImages(files, dto);
+    return this.uploadService.uploadImages(files);
   }
 
   @Delete('image/:id')
