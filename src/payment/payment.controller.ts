@@ -18,7 +18,7 @@ export class PaymentController {
       return this.paymentService.createTransaction(dto);
   }
   @Post('notification')
-  handleNotification(@Res({ passthrough: true }) res: Response, notification: any) {
+  handleNotification(@Res({ passthrough: true }) res: Response, @Body() notification: any) {
       this.logger.info(`Processing inbound notification: ${notification}`) 
       const handler = this.paymentService.resolveNotificationType(notification.payment_type as string);
       return handler(res, notification);
