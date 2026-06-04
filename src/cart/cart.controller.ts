@@ -27,7 +27,7 @@ import { GetUserId } from '@/common/decorators/get-user-id-decorator';
 export class CartController {
   constructor(
     private readonly cartService: CartService,
-    @Inject(PinoLogger) private readonly logger: PinoLogger,
+    private readonly logger: PinoLogger,
   ) {
     this.logger.setContext(CartController.name);
   }
@@ -51,19 +51,26 @@ export class CartController {
             sameSite: 'lax',
           });
         }
-        result = data.cart;
+        result = { ...data.cart, totalWeight: 0 };
+          this.logger.info({
+            message: 'Cart created successfully',
+            endpoint: 'GET /cart',
+            userId: userId || 'guest',
+            sessionId: data.createdSessionId,
+            status: 'success',
+          });
       }
-      this.logger.info({
-        level: 'info',
-        message: 'Cart retrieved successfully',
-        endpoint: 'GET /cart',
-        userId: userId || 'guest',
-        status: 'success',
-      });
+      else {
+          this.logger.info({
+            message: 'Cart retrieved successfully',
+            endpoint: 'GET /cart',
+            userId: userId || 'guest',
+            status: 'success',
+          });
+      }
       return result;
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'Failed to retrieve cart',
         endpoint: 'GET /cart',
         status: 'error',
@@ -83,7 +90,6 @@ export class CartController {
 
       const result = await this.cartService.getCartTotals(userId, sessionId);
       this.logger.info({
-        level: 'info',
         message: 'Cart totals retrieved successfully',
         endpoint: 'GET /cart/totals',
         userId: userId || 'guest',
@@ -92,7 +98,6 @@ export class CartController {
       return result;
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'Failed to retrieve cart totals',
         endpoint: 'GET /cart/totals',
         status: 'error',
@@ -112,7 +117,6 @@ export class CartController {
 
       if (!userId || !sessionId) {
         this.logger.warn({
-          level: 'warn',
           message: 'Merge cart requires userId and sessionId',
           endpoint: 'POST /cart/merge',
           status: 'failure',
@@ -122,7 +126,6 @@ export class CartController {
 
       const result = await this.cartService.mergeCart(userId, sessionId);
       this.logger.info({
-        level: 'info',
         message: 'Cart merged successfully',
         endpoint: 'POST /cart/merge',
         userId,
@@ -131,7 +134,6 @@ export class CartController {
       return result;
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'Failed to merge cart',
         endpoint: 'POST /cart/merge',
         status: 'error',
@@ -153,7 +155,6 @@ export class CartController {
         sessionId,
       );
       this.logger.info({
-        level: 'info',
         message: 'Cart validated successfully',
         endpoint: 'POST /cart/validate',
         userId: userId || 'guest',
@@ -162,7 +163,6 @@ export class CartController {
       return result;
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'Failed to validate cart',
         endpoint: 'POST /cart/validate',
         status: 'error',
@@ -195,7 +195,6 @@ export class CartController {
         });
       }
       this.logger.info({
-        level: 'info',
         message: 'Item added to cart successfully',
         endpoint: 'POST /cart/items',
         userId: userId || 'guest',
@@ -205,7 +204,6 @@ export class CartController {
       return result;
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'Failed to add item to cart',
         endpoint: 'POST /cart/items',
         variantId: dto.variantId,
@@ -232,7 +230,6 @@ export class CartController {
         sessionId,
       );
       this.logger.info({
-        level: 'info',
         message: 'Cart item updated successfully',
         endpoint: 'PATCH /cart/items/:id',
         itemId,
@@ -241,7 +238,6 @@ export class CartController {
       return result;
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'Failed to update cart item',
         endpoint: 'PATCH /cart/items/:id',
         itemId,
@@ -266,7 +262,6 @@ export class CartController {
         sessionId,
       );
       this.logger.info({
-        level: 'info',
         message: 'Cart item removed successfully',
         endpoint: 'DELETE /cart/items/:id',
         itemId,
@@ -275,7 +270,6 @@ export class CartController {
       return result;
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'Failed to remove cart item',
         endpoint: 'DELETE /cart/items/:id',
         itemId,
@@ -307,7 +301,6 @@ export class CartController {
       }
       const result = await this.cartService.clearCart(cart.id);
       this.logger.info({
-        level: 'info',
         message: 'Cart cleared successfully',
         endpoint: 'DELETE /cart',
         cartId: cart.id,
@@ -316,7 +309,6 @@ export class CartController {
       return result;
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'Failed to clear cart',
         endpoint: 'DELETE /cart',
         status: 'error',
