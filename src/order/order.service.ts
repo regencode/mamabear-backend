@@ -14,6 +14,7 @@ import { CursorPaginationService } from '@/common/services/pagination.service';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
 import { ShippingService } from '@/shipping/shipping.service';
 import { ServiceResult } from '@/common/ServiceResult';
+import { PriceSort } from '@/shipping/dto/calculate-cost.dto';
 
 @Injectable()
 export class OrderService {
@@ -56,11 +57,12 @@ export class OrderService {
 
     const originSubdistrictId = process.env.ORIGIN_SUBDISTRICT_ID;
 
-    const shippingOptions = await this.shippingService.calculateShippingCost({
-      origin: Number(originSubdistrictId),
-      destination: address.subdistrictId,
-      weight: totalWeightG,
-      courier: dto.courierCode,
+    const shippingOptions = await this.shippingService.calculateShippingCost(
+        userId,
+        {
+          destination: address.subdistrictId,
+          weightG: totalWeightG,
+          priceSortDirection: PriceSort.DESCENDING,
     });
 
     const selectedService = shippingOptions?.find(

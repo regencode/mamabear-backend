@@ -191,9 +191,9 @@ model CartItem {
 }
 
 enum OrderStatus {
-  PAYMENT_PENDING
-  PAYMENT_PAID
-  PAYMENT_FAILED
+  PAYMENT_PENDING // for midtrans pending
+  PAYMENT_PAID // for midtrans success
+  PAYMENT_FAILED // for midtrans failed
   CONFIRMED // confirmed by mamabear
   PROCESSED // mamabear process order: packing and assigning courier
   SENDING // courier transporting order

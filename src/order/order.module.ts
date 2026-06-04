@@ -4,7 +4,6 @@ import { OrderController } from './order.controller';
 import { OrderRepository } from './order.repository';
 import { CursorPaginationService } from '@/common/services/pagination.service';
 import { ShippingModule } from '@/shipping/shipping.module';
-import { ShippingService } from '@/shipping/shipping.service';
 
 @Module({
   imports: [ShippingModule],
@@ -13,7 +12,6 @@ import { ShippingService } from '@/shipping/shipping.service';
     OrderService,
     OrderRepository,
     CursorPaginationService,
-    ShippingService,
   ],
   exports: [OrderRepository],
 })
