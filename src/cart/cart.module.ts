@@ -6,8 +6,8 @@ import { AuthModule } from '@/auth/auth.module';
 
 @Module({
   imports: [AuthModule],
-  providers: [CartService, CartRepository],
-  exports: [CartService],
   controllers: [CartController],
+  providers: [CartService, CartRepository],
+  exports: [CartService, CartRepository],
 })
 export class CartModule {}

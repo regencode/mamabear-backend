@@ -1,22 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import { IsEnum, IsInt, IsPositive, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsPositive, IsString, Min } from 'class-validator';
 
 export enum PriceSort {
-  HIGHEST = 'highest',
-  LOWEST = 'lowest',
+  DESCENDING = 'highest',
+  ASCENDING = 'lowest',
 }
 
 export class CalculateShippingCostDto {
-  @ApiProperty({
-    example: 501,
-    description: 'Origin location ID',
-  })
-  @Type(() => Number)
-  @IsInt()
-  @IsPositive()
-  origin!: number;
-
   @ApiProperty({
     example: 114,
     description: 'Destination location ID',
@@ -27,27 +18,19 @@ export class CalculateShippingCostDto {
   destination!: number;
 
   @ApiProperty({
-    example: 1700,
-    description: 'Weight in grams',
+    example: 300,
+    description: 'Total weight of item (in grams)',
   })
-  @Type(() => Number)
   @IsInt()
   @IsPositive()
-  weight!: number;
-
-  @ApiProperty({
-    example: 'jne',
-    description: 'Courier code',
-  })
-  @Transform(({ value }) => value?.toLowerCase())
-  @IsString()
-  courier!: string;
+  @Min(0)
+  weightG!: number;
 
   @ApiProperty({
     enum: PriceSort,
-    example: PriceSort.LOWEST,
+    example: PriceSort.DESCENDING,
     description: 'Sort shipping price result',
   })
   @IsEnum(PriceSort)
-  price?: PriceSort;
+  priceSortDirection?: PriceSort;
 }
