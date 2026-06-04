@@ -18,15 +18,6 @@ export class CalculateShippingCostDto {
   destination!: number;
 
   @ApiProperty({
-    example: 300,
-    description: 'Total weight of item (in grams)',
-  })
-  @IsInt()
-  @IsPositive()
-  @Min(0)
-  weightG!: number;
-
-  @ApiProperty({
     enum: PriceSort,
     example: PriceSort.DESCENDING,
     description: 'Sort shipping price result',
