@@ -1,7 +1,8 @@
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 
-const PLACEHOLDER_HASH = '$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK' // password is "admin"
+const PLACEHOLDER_HASH =
+  '$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK'; // password is "admin"
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -16,7 +17,8 @@ function genPublicId(): string {
 export const users = [
   {
     email: 'admin@mamabear.id',
-    hashedPassword: '$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK', // password is "admin"
+    hashedPassword:
+      '$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK', // password is "admin"
     name: 'Admin MamaBear',
     phone: '081200001111',
     role: 'ADMIN' as const,
@@ -24,7 +26,8 @@ export const users = [
   },
   {
     email: 'siti.rahayu@email.com',
-    hashedPassword: PLACEHOLDER_HASH,
+    hashedPassword:
+      '$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK', // password is "admin"
     name: 'Siti Rahayu',
     phone: '081234567890',
     role: 'USER' as const,
@@ -32,7 +35,8 @@ export const users = [
   },
   {
     email: 'dewi.lestari@email.com',
-    hashedPassword: PLACEHOLDER_HASH,
+    hashedPassword:
+      '$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK', // password is "admin"
     name: 'Dewi Lestari',
     phone: '081298765432',
     role: 'USER' as const,
@@ -40,7 +44,8 @@ export const users = [
   },
   {
     email: 'rina.wati@email.com',
-    hashedPassword: PLACEHOLDER_HASH,
+    hashedPassword:
+      '$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK', // password is "admin"
     name: 'Rina Wati',
     phone: '082112345678',
     role: 'USER' as const,
@@ -48,7 +53,8 @@ export const users = [
   },
   {
     email: 'budi.santoso@email.com',
-    hashedPassword: PLACEHOLDER_HASH,
+    hashedPassword:
+      '$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK', // password is "admin"
     name: 'Budi Santoso',
     phone: '085678901234',
     role: 'USER' as const,
