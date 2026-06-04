@@ -111,6 +111,7 @@ export class CartController {
   async mergeCart(
     @GetUserId() userId: string | undefined,
     @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
   ) {
     try {
       const sessionId = req.cookies?.sessionId;
@@ -125,8 +126,12 @@ export class CartController {
       }
 
       const result = await this.cartService.mergeCart(userId, sessionId);
+      res.clearCookie('sessionId', {
+          httpOnly: true,
+          sameSite: 'lax',
+      })
       this.logger.info({
-        message: 'Cart merged successfully',
+        message: `Cart merged successfully and sessionId cookie ${sessionId} deleted`,
         endpoint: 'POST /cart/merge',
         userId,
         status: 'success',
