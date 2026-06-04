@@ -48,7 +48,7 @@ export class PaymentService {
         }
     }
 
-    async handleQris(res: Response, notification: any): Promise<ServiceResult<null>> {
+    async handleQris(notification: any): Promise<ServiceResult<null>> {
         try {
             notification = notification as QrisNotificationDto;
             const orderId = notification.order_id;
@@ -97,7 +97,6 @@ export class PaymentService {
                 default:
                     throw new UnprocessableEntityException("Cannot process transaction with status: ", transactionStatus);
             }
-            res.status(HttpStatus.OK)
             return {
                 success: true,
                 message: "ok",
