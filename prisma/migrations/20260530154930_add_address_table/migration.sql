@@ -5,7 +5,7 @@ CREATE TABLE "Address" (
     "name" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "provinceId" INTEGER NOT NULL,
-    "proviceName" TEXT NOT NULL,
+    "provinceName" TEXT NOT NULL,
     "cityId" INTEGER NOT NULL,
     "cityName" TEXT NOT NULL,
     "districtId" INTEGER NOT NULL,
