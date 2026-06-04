@@ -16,7 +16,10 @@ import { ServiceResult } from '@/common/ServiceResult';
 import slugify from 'slugify';
 import { Product } from '@/generated/prisma';
 import { FilterProductsDto } from './dto/filter-products.dto';
-import { FilterPaginationMetaDto, FilterPaginationResponseDto } from './dto/filter-pagination-meta.dto';
+import {
+  FilterPaginationMetaDto,
+  FilterPaginationResponseDto,
+} from './dto/filter-pagination-meta.dto';
 
 @Injectable()
 export class ProductsService {
@@ -28,30 +31,38 @@ export class ProductsService {
     this.logger.setContext(ProductsService.name);
   }
 
-  async findProductsWithFilter(query: FilterProductsDto): Promise<ServiceResult<FilterPaginationResponseDto<Product>>> {
-      if(query.minPrice && query.maxPrice && query.minPrice > query.maxPrice) 
-          throw new UnprocessableEntityException("Min price must be large than max price");
-      const { items, nextCursor } = await this.productsRepository.findByFilter(query);
-      const limit = query.limit ?? 10;
-      const result = new FilterPaginationResponseDto<Product>(
-        items,
-        new FilterPaginationMetaDto(limit, nextCursor),
+  async findProductsWithFilter(
+    query: FilterProductsDto,
+  ): Promise<ServiceResult<FilterPaginationResponseDto<Product>>> {
+    if (query.minPrice && query.maxPrice && query.minPrice > query.maxPrice)
+      throw new UnprocessableEntityException(
+        'Min price must be large than max price',
       );
-      return {
-          success: true,
-          message: `Returned ${items.length} products with the selected filters`,
-          data: result,
-      }
+    const { items, nextCursor } =
+      await this.productsRepository.findByFilter(query);
+    const limit = query.limit ?? 10;
+    const result = new FilterPaginationResponseDto<Product>(
+      items,
+      new FilterPaginationMetaDto(limit, nextCursor),
+    );
+    return {
+      success: true,
+      message: `Returned ${items.length} products with the selected filters`,
+      data: result,
+    };
   }
   async findRelatedProducts(slug: string): Promise<ServiceResult<Product[]>> {
-      const resolvedProduct = await this.productsRepository.findBySlug(slug);
-      if(!resolvedProduct) throw new BadRequestException(`Cannot find product with slug ${slug}`);
-      const result = await this.productsRepository.findRelated(resolvedProduct.id);
-      return {
-          success: true,
-          message: `Returned ${result.length} products that are similar to ${slug}`,
-          data: result
-      }
+    const resolvedProduct = await this.productsRepository.findBySlug(slug);
+    if (!resolvedProduct)
+      throw new BadRequestException(`Cannot find product with slug ${slug}`);
+    const result = await this.productsRepository.findRelated(
+      resolvedProduct.id,
+    );
+    return {
+      success: true,
+      message: `Returned ${result.length} products that are similar to ${slug}`,
+      data: result,
+    };
   }
   async create(
     dto: CreateProductDto,
@@ -89,7 +100,6 @@ export class ProductsService {
 
       if (!result) throw new BadRequestException('Cannot create product');
       this.logger.info({
-        level: 'info',
         message: 'Product created successfully',
         endpoint: 'POST /products',
         productId: result?.id,
@@ -103,7 +113,6 @@ export class ProductsService {
       };
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'Product creation failed',
         endpoint: 'POST /products',
         name: dto.name,
@@ -124,7 +133,6 @@ export class ProductsService {
         {},
       );
       this.logger.info({
-        level: 'info',
         message: 'Retrieved all products',
         endpoint: 'GET /products',
         count: result.data.length,
@@ -137,7 +145,6 @@ export class ProductsService {
       };
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'Failed to retrieve products',
         endpoint: 'GET /products',
         status: 'error',
@@ -152,7 +159,6 @@ export class ProductsService {
       const product = await this.productsRepository.findById(id);
       if (!product) {
         this.logger.warn({
-          level: 'warn',
           message: 'Product not found',
           endpoint: 'GET /products/:id',
           productId: id,
@@ -161,7 +167,6 @@ export class ProductsService {
         throw new NotFoundException(`Product with id ${id} not found`);
       }
       this.logger.info({
-        level: 'info',
         message: 'Retrieved product by id',
         endpoint: 'GET /products/:id',
         productId: id,
@@ -175,7 +180,6 @@ export class ProductsService {
     } catch (error: any) {
       if (error instanceof NotFoundException) throw error;
       this.logger.error({
-        level: 'error',
         message: 'Failed to retrieve product',
         endpoint: 'GET /products/:id',
         productId: id,
@@ -191,7 +195,6 @@ export class ProductsService {
       const product = await this.productsRepository.findBySlug(slug);
       if (!product) {
         this.logger.warn({
-          level: 'warn',
           message: 'Product not found',
           endpoint: 'GET /products/:slug',
           status: 'failure',
@@ -199,7 +202,6 @@ export class ProductsService {
         throw new NotFoundException(`Product with slug ${slug} not found`);
       }
       this.logger.info({
-        level: 'info',
         message: 'Retrieved product by slug',
         endpoint: 'GET /products/:slug',
         slug: slug,
@@ -213,7 +215,6 @@ export class ProductsService {
     } catch (error: any) {
       if (error instanceof NotFoundException) throw error;
       this.logger.error({
-        level: 'error',
         message: 'Failed to retrieve product',
         endpoint: 'GET /products/:slug',
         slug: slug,
@@ -256,7 +257,6 @@ export class ProductsService {
       }));
       const result = await this.productsRepository.update(id, updateData);
       this.logger.info({
-        level: 'info',
         message: 'Product updated successfully',
         endpoint: 'PUT /products/:id',
         productId: id,
@@ -269,7 +269,6 @@ export class ProductsService {
       };
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'Product update failed',
         endpoint: 'PUT /products/:id',
         productId: id,
@@ -284,7 +283,6 @@ export class ProductsService {
     try {
       const result = await this.productsRepository.delete(id);
       this.logger.info({
-        level: 'info',
         message: 'Product deleted successfully',
         endpoint: 'DELETE /products/:id',
         productId: id,
@@ -297,7 +295,6 @@ export class ProductsService {
       };
     } catch (error: any) {
       this.logger.error({
-        level: 'error',
         message: 'Product deletion failed',
         endpoint: 'DELETE /products/:id',
         productId: id,

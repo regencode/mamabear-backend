@@ -70,6 +70,9 @@ export class CategoryRepository {
 
   findAll() {
     return this.prisma.category.findMany({
+      include: {
+        images: true,
+      },
       orderBy: {
         sortOrder: 'asc',
       },
@@ -77,7 +80,10 @@ export class CategoryRepository {
   }
 
   findBySlug(slug: string) {
-    return this.prisma.category.findUnique({ where: { slug }, include: { products: true } });
+    return this.prisma.category.findUnique({
+      where: { slug },
+      include: { products: true, images: true },
+    });
   }
 
   findById(id: number) {

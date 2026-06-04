@@ -13,7 +13,11 @@ import { BadRequestException } from '@nestjs/common';
 export const PRODUCT_INCLUDE = {
   category: true,
   images: true,
-  variants: true,
+  variants: {
+      include: {
+          images: true,
+      }
+  },
   highlight: true,
 };
 
