@@ -26,6 +26,7 @@ import { CartModule } from './cart/cart.module';
 import { CleanupService } from './scheduler/cleanup.service';
 import { PaymentModule } from './payment/payment.module';
 import { ShippingModule } from './shipping/shipping.module';
+import { AddressesModule } from './addresses/addresses.module';
 import { OrderModule } from './order/order.module';
 
 @Module({
@@ -61,6 +62,7 @@ import { OrderModule } from './order/order.module';
     PaymentModule,
     SettingsModule,
     ShippingModule,
+    AddressesModule,
     OrderModule,
   ],
   controllers: [AppController],
