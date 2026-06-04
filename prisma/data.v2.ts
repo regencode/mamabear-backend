@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 
-const PLACEHOLDER_HASH = '$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK' // password is 'admin'
+const PLACEHOLDER_HASH = '$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK' // password is "admin"
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -16,7 +16,7 @@ function genPublicId(): string {
 export const users = [
   {
     email: 'admin@mamabear.id',
-    hashedPassword: '$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK', // password is 'admin'
+    hashedPassword: '$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK', // password is "admin"
     name: 'Admin MamaBear',
     phone: '081200001111',
     role: 'ADMIN' as const,

@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { BadRequestException, Injectable, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { ServiceResult } from '@/common/ServiceResult';
 import { QrisNotificationDto } from './dto/notifications.dto';
@@ -7,6 +7,7 @@ import { MidtransService } from './midtrans.service';
 import { OrderRepository } from '@/order/order.repository';
 import crypto from 'crypto';
 import { OrderStatus } from '@/generated/prisma';
+import { Response } from 'express';
 
 @Injectable()
 export class PaymentService {
@@ -47,7 +48,7 @@ export class PaymentService {
         }
     }
 
-    async handleQris(notification: any): Promise<ServiceResult<null>> {
+    async handleQris(res: Response, notification: any): Promise<ServiceResult<null>> {
         try {
             notification = notification as QrisNotificationDto;
             const orderId = notification.order_id;
@@ -96,6 +97,7 @@ export class PaymentService {
                 default:
                     throw new UnprocessableEntityException("Cannot process transaction with status: ", transactionStatus);
             }
+            res.status(HttpStatus.OK)
             return {
                 success: true,
                 message: "ok",

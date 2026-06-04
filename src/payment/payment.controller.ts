@@ -1,8 +1,9 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 import { PinoLogger } from 'pino-nestjs';
+import { Response } from 'express';
 
 @Controller('payment')
 export class PaymentController {
@@ -17,9 +18,9 @@ export class PaymentController {
       return this.paymentService.createTransaction(dto);
   }
   @Post('notification')
-  handleNotification(notification: any) {
+  handleNotification(@Res({ passthrough: true }) res: Response, notification: any) {
       this.logger.info(`Processing inbound notification: ${notification}`) 
       const handler = this.paymentService.resolveNotificationType(notification.payment_type as string);
-      return handler(notification);
+      return handler(res, notification);
   }
 }
