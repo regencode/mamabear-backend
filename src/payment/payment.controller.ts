@@ -18,10 +18,7 @@ export class PaymentController {
   }
   @Post('notification')
   handleNotification(notification: any) {
-      this.logger.info({
-          message: "Processing inbound notification",
-          inboundNotification: notification,
-      }) 
+      this.logger.info("Processing inbound notification", notification) 
       const handler = this.paymentService.resolveNotificationType(notification.payment_type as string);
       return handler(notification);
   }
