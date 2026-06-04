@@ -133,7 +133,7 @@ export class OrderService {
             phone: address.phone,
 
             provinceId: address.provinceId,
-            provinceName: address.proviceName,
+            provinceName: address.provinceName,
 
             cityId: address.cityId,
             cityName: address.cityName,
