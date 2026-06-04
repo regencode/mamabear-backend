@@ -269,7 +269,7 @@ model Address {
 
     // information and validation is coming from Raja Ongkir API
     provinceId       Int          
-    proviceName      String       
+    provinceName      String       
     cityId           Int          
     cityName         String       
     districtId       Int          
