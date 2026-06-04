@@ -55,13 +55,10 @@ export class OrderService {
       return acc + item.variant.weightG * item.quantity;
     }, 0);
 
-    const originSubdistrictId = process.env.ORIGIN_SUBDISTRICT_ID;
-
     const shippingOptions = await this.shippingService.calculateShippingCost(
         userId,
         {
           destination: address.subdistrictId,
-          weightG: totalWeightG,
           priceSortDirection: PriceSort.DESCENDING,
     });
 
