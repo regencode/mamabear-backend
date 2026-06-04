@@ -194,7 +194,7 @@ enum OrderStatus {
   PAYMENT_PENDING // for midtrans pending
   PAYMENT_PAID // for midtrans success
   PAYMENT_FAILED // for midtrans failed
-  CONFIRMED // confirmed by mamabear
+  CONFIRMED // confirmed payment by mamabear 
   PROCESSED // mamabear process order: packing and assigning courier
   SENDING // courier transporting order
   RECEIVED

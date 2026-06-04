@@ -62,17 +62,31 @@ export class OrderRepository {
     });
   }
 
-  incrementProductSold(productId: number, quantity: number) {
-    return this.prisma.product.update({
-      where: {
-        id: productId,
-      },
-      data: {
-        totalSold: {
-          increment: quantity,
-        },
-      },
-    });
+  incrementProductSold(productId: number, variantId: number, quantity: number) {
+    return this.prisma.$transaction(async (tx) => {
+        const product = await tx.product.update({
+          where: {
+            id: productId,
+          },
+          data: {
+            totalSold: {
+              increment: quantity,
+            },
+          },
+        });
+        const variant = this.prisma.productVariant.update({
+          where: {
+            id: variantId,
+            productId: product.id,
+          },
+          data: {
+            stock: {
+                decrement: quantity,
+            }
+          },
+        });
+        return variant;
+     })
   }
 
   findOneForAdmin(orderId: string) {

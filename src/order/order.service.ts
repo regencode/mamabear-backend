@@ -246,7 +246,7 @@ export class OrderService {
       order.status !== OrderStatus.COMPLETED
     ) {
       for (const item of order.orderItems) {
-        await this.repo.incrementProductSold(item.product.id, item.quantity);
+        await this.repo.incrementProductSold(item.productId, item.variantId, item.quantity);
       }
     }
 

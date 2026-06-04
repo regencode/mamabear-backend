@@ -39,8 +39,12 @@ export class PaymentService {
             }
     }
     resolveNotificationType(paymentType: string) {
-        if(paymentType == 'qris') return this.handleQris;
-        else throw new UnprocessableEntityException(`Cannot process payment_type=${paymentType}: Unsupported.`);
+        switch(paymentType) {
+            case "qris":
+            case "gopay":
+                return this.handleQris;
+            default: throw new UnprocessableEntityException(`Cannot process payment_type=${paymentType}: Unsupported.`);
+        }
     }
 
     async handleQris(notification: any): Promise<ServiceResult<null>> {
