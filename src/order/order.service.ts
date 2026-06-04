@@ -242,8 +242,8 @@ export class OrderService {
     }
 
     if (
-      dto.status === OrderStatus.COMPLETED &&
-      order.status !== OrderStatus.COMPLETED
+      dto.status === OrderStatus.PAYMENT_PAID &&
+      order.status !== OrderStatus.PAYMENT_PAID
     ) {
       for (const item of order.orderItems) {
         await this.repo.incrementProductSold(item.productId, item.variantId, item.quantity);
