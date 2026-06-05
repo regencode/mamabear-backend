@@ -1,20 +1,24 @@
 import { Prisma } from '@/generated/prisma';
 import { PrismaService } from '@/prisma/prisma.service';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { CreateOrderDto } from './dto/create-order.dto';
 
 @Injectable()
 export class OrderRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(tx: Prisma.TransactionClient, data: Prisma.OrderCreateInput) {
-    return tx.order.create({
-      data,
-      include: {
-        orderItems: true,
-        shippingAddress: true,
-        orderStatusHistory: true,
-      },
-    });
+  createOrFindExisting(dto: CreateOrderDto) {
+      return this.prisma.$transaction(async tx => { 
+          const resolvedCart = await tx.cart.findUnique({
+              where: { id: dto.cartId },
+              include: { items: { include: { product: true, variant: true }} }
+          });
+          if(!resolvedCart) throw new UnprocessableEntityException(`Cart with id ${dto.cartId} does not exist!`);
+          if(resolvedCart.items.length <= 0) throw new UnprocessableEntityException(`Cart with id ${dto.cartId} does not contain any items`);
+          return tx.order.create({ // create with cart info
+              data: {}
+          })
+      });
   }
 
   update(where: Prisma.OrderWhereUniqueInput, data: Prisma.OrderUpdateInput) {

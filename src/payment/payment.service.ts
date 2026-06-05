@@ -33,6 +33,7 @@ export class PaymentService {
                     error: this.FRONTEND_URL + "/payment/error",
                 }
             } as any);
+            // TODO: add midtrans link to order (link is temporary anyway)
             return {
                 success: true,
                 message: `Created new transaction for order ${orderId}`,
@@ -43,12 +44,13 @@ export class PaymentService {
         switch(paymentType) {
             case "qris":
             case "gopay":
-                return this.handleQris;
+                return this.handleQris.bind(this);
             default: throw new UnprocessableEntityException(`Cannot process payment_type=${paymentType}: Unsupported.`);
         }
     }
 
     async handleQris(notification: any): Promise<ServiceResult<null>> {
+        // still not working, TypeError??
         try {
             notification = notification as QrisNotificationDto;
             const orderId = notification.order_id;

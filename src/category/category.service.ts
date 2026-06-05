@@ -79,6 +79,7 @@ export class CategoryService {
     if (!resolvedCategory) throw new BadRequestException('Category not found');
 
     if (dto.name) {
+        // updated categoryid: 2
       const generatedSlug = slugify(dto.name, { lower: true, strict: true });
       const category = await this.repo.findBySlug(generatedSlug);
       if (category)
