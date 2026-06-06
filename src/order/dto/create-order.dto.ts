@@ -7,12 +7,12 @@ export class CreateOrderDto {
   @IsNotEmpty()
   cartId: string;
 
-  @ApiProperty({ example: 1, description: 'Final selected address.id' })
+  @ApiProperty({ example: 1, description: 'id of final selected address' })
   @IsString()
   @IsNotEmpty()
   addressId: number;
 
-  @ApiPropertyOptional({ description: 'note from customer' })
+  @ApiPropertyOptional({ description: 'notes from customer' })
   @IsString()
   @IsOptional()
   notes?: string;
