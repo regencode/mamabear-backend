@@ -68,10 +68,10 @@ export class PaymentService {
             switch (transactionStatus) {
                 case 'capture':
                     if(fraudStatus == 'accept') 
-                        await this.orderRepository.incrementProductSoldFromOrder(orderId);
+                        await this.orderRepository.handleCompleteOrder(orderId);
                     break;
                 case 'settlement':
-                    await this.orderRepository.incrementProductSoldFromOrder(orderId);
+                    await this.orderRepository.handleCompleteOrder(orderId);
                     break;
                 case 'cancel': case 'deny': case 'expire':
                     await this.orderRepository.update(

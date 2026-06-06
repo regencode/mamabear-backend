@@ -136,7 +136,7 @@ export class OrderRepository {
 
   
 
-  incrementProductSoldFromOrder(orderId: string) {
+  handleCompleteOrder(orderId: string) {
     return this.prisma.$transaction(async (tx) => {
       if(!isUUID(orderId)) throw new UnprocessableEntityException(`Order id='${orderId}' must be in the form of UUID`);
       const resolvedOrder = await tx.order.findUnique({
