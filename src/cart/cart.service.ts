@@ -405,7 +405,7 @@ export class CartService {
   }
 
   async updateCourierInformation(cartId: string, dto: PatchCourierDto) {
-      return this.cartRepo.updateCourierInformation(cartId);
+      return this.cartRepo.updateCourierInformation(cartId, dto);
   } 
 
   // Cleanup Expired Carts (for cron)
