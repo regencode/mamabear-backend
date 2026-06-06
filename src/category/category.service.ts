@@ -79,11 +79,11 @@ export class CategoryService {
     if (!resolvedCategory) throw new BadRequestException('Category not found');
 
     if (dto.name) {
-      const generatedSlug = slugify(dto.name, { lower: true, strict: true });
+      const generatedSlug = dto.slug ? dto.slug : slugify(dto.name, { lower: true, strict: true });
       const category = await this.repo.findBySlug(generatedSlug);
-      if (category)
+      if (category && category.id != categoryId) // another category with same resulting slug
         throw new BadRequestException(
-          'Name update generates a slug that already exists',
+          'Name update generates a slug that already exists, or dto.slug is a slug that already exists',
         );
       dto.slug = generatedSlug;
     }
