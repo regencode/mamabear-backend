@@ -2,6 +2,7 @@ import { OrderStatus, Prisma } from '@/generated/prisma';
 import { PrismaService } from '@/prisma/prisma.service';
 import { BadRequestException, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
+import { isUUID } from 'class-validator';
 
 const ORDER_INCLUDE = {
     shippingAddress: true,
@@ -137,12 +138,16 @@ export class OrderRepository {
 
   incrementProductSoldFromOrder(orderId: string) {
     return this.prisma.$transaction(async (tx) => {
+      if(!isUUID(orderId)) throw new UnprocessableEntityException(`Order id='${orderId}' must be in the form of UUID`);
+      const resolvedOrder = await tx.order.findUnique({
+          where: { id: orderId } 
+      })
+      if(!resolvedOrder) throw new UnprocessableEntityException(`Cannot process product sold increment: order with orderId=${orderId} does not exist`);
       const order = await tx.order.update({ 
-          where: { id: orderId },
+          where: { id: resolvedOrder.id },
           data: { status: OrderStatus.PAYMENT_PAID },
           include: { orderItems: { include: ORDER_INCLUDE } }
       });
-      if(!order) throw new UnprocessableEntityException(`Cannot process product sold increment: order with orderId=${orderId} does not exist`);
       if(order.orderItems.length <= 0) throw new UnprocessableEntityException(`Cannot process product sold increment: order with orderId=${orderId} has no order items`);
       return order.orderItems.forEach(async item => {
           const currentVariant = await tx.productVariant.findUnique({

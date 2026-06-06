@@ -96,7 +96,7 @@ export class PaymentService {
             }
         }
         catch(error) {
-            throw new UnprocessableEntityException("Cannot process notification in qris handler: ", error);
+            throw error;
         }
     }
 }
