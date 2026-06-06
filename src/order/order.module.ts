@@ -1,18 +1,12 @@
 import { Module } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { OrderController } from './order.controller';
+import { OrderAdminController } from './order-admin.controller';
 import { OrderRepository } from './order.repository';
-import { CursorPaginationService } from '@/common/services/pagination.service';
-import { ShippingModule } from '@/shipping/shipping.module';
 
 @Module({
-  imports: [ShippingModule],
-  controllers: [OrderController],
-  providers: [
-    OrderService,
-    OrderRepository,
-    CursorPaginationService,
-  ],
+  controllers: [OrderController, OrderAdminController],
+  providers: [OrderService, OrderRepository],
   exports: [OrderRepository],
 })
 export class OrderModule {}

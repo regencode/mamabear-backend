@@ -42,13 +42,10 @@ export class OrderController {
 
   // refactor below
   @Post() // on checkout
-  createOrderAfterCheckout(@GetUserId() userId: string, @Body() dto: CreateOrderDto) {
-      return this.orderService.createOrder(userId, dto); // orderId as param for everything below
+  createOrderAfterCheckout(
+    @GetUserId() userId: string,
+    @Body() dto: CreateOrderDto,
+  ) {
+    return this.orderService.createOrder(userId, dto); // orderId as param for everything below
   }
-
-  @Get(':id') // after checkout
-  getOrderInformation(@Param() id: string) {
-      return this.orderService.getOrderInformation(id);
-  }
-
 }
