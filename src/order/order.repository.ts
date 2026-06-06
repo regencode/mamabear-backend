@@ -133,40 +133,51 @@ export class OrderRepository {
     });
   }
 
-  incrementProductSold(productId: number, variantId: number, quantity: number) {
+  
+
+  incrementProductSoldFromOrder(orderId: string) {
     return this.prisma.$transaction(async (tx) => {
-      const currentVariant = await this.prisma.productVariant.findUnique({
-          where: {
-              id: variantId,
-              productId: productId,
-          },
-          select: { stock: true },
+      const order = await tx.order.update({ 
+          where: { id: orderId },
+          data: { status: OrderStatus.PAYMENT_PAID },
+          include: { orderItems: { include: ORDER_INCLUDE } }
       });
-      if(!currentVariant) throw new BadRequestException(`Variant ${variantId} does not exist`)
-      if(currentVariant.stock < quantity) 
-          throw new BadRequestException(`Cannot decrement stock of variantId=${variantId} by ${quantity} (quantity must be less than ${currentVariant.stock})`)
-      const product = await tx.product.update({
-        where: {
-          id: productId,
-        },
-        data: {
-          totalSold: {
-            increment: quantity,
-          },
-        },
+      if(!order) throw new UnprocessableEntityException(`Cannot process product sold increment: order with orderId=${orderId} does not exist`);
+      if(order.orderItems.length <= 0) throw new UnprocessableEntityException(`Cannot process product sold increment: order with orderId=${orderId} has no order items`);
+      return order.orderItems.forEach(async item => {
+          const currentVariant = await tx.productVariant.findUnique({
+              where: {
+                  id: item.variantId,
+                  productId: item.productId,
+              },
+              select: { stock: true },
+          });
+          if(!currentVariant) throw new BadRequestException(`orderItems forEach: Variant variantId=${item.variantId} of Product productId=${item.productId} does not exist`)
+          if(currentVariant.stock < item.quantity) 
+              throw new BadRequestException(`orderItems forEach: Cannot decrement stock of variantId=${item.variantId} by ${item.quantity} (quantity must be less than ${currentVariant.stock})`)
+          const product = await tx.product.update({
+              where: {
+                  id: item.productId,
+              },
+              data: {
+                  totalSold: {
+                      increment: item.quantity,
+                  },
+              },
+          });
+          const variant = this.prisma.productVariant.update({
+              where: {
+                  id: item.variantId,
+                  productId: product.id,
+              },
+              data: {
+                  stock: {
+                      decrement: item.quantity,
+                  },
+              },
+          });
+          return variant;
       });
-      const variant = this.prisma.productVariant.update({
-        where: {
-          id: variantId,
-          productId: product.id,
-        },
-        data: {
-          stock: {
-            decrement: quantity,
-          },
-        },
-      });
-      return variant;
     });
   }
 

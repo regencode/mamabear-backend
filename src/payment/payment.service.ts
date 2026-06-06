@@ -50,7 +50,6 @@ export class PaymentService {
     }
 
     async handleQris(notification: any): Promise<ServiceResult<null>> {
-        // still not working, TypeError??
         try {
             notification = notification as QrisNotificationDto;
             const orderId = notification.order_id;
@@ -66,31 +65,22 @@ export class PaymentService {
             if (hash !== signatureKey) {
                 throw new UnauthorizedException("Signature key and hash does not match");
             }
-            // TODO: wait for order repository
             switch (transactionStatus) {
                 case 'capture':
                     if(fraudStatus == 'accept') 
-                        this.orderRepository.update(
-                            { id: orderId },
-                            { status: OrderStatus.PAYMENT_PAID }
-                        );
-                        // then decrement stock, increase totalSold
+                        await this.orderRepository.incrementProductSoldFromOrder(orderId);
                     break;
                 case 'settlement':
-                    this.orderRepository.update(
-                        { id: orderId },
-                        { status: OrderStatus.PAYMENT_PAID }
-                    );
-                        // then decrement stock, increase totalSold
+                    await this.orderRepository.incrementProductSoldFromOrder(orderId);
                     break;
                 case 'cancel': case 'deny': case 'expire':
-                    this.orderRepository.update(
+                    await this.orderRepository.update(
                         { id: orderId },
                         { status: OrderStatus.PAYMENT_FAILED }
                     );
                     break;
                 case 'pending':
-                    this.orderRepository.update(
+                    await this.orderRepository.update(
                         { id: orderId },
                         { status: OrderStatus.PAYMENT_PENDING }
                     );
