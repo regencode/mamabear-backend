@@ -13,10 +13,12 @@ export class CategoryRepository {
       data: {
         name: categoryData.name,
         slug: categoryData.slug!,
-        description: categoryData.description,
+        description: categoryData.description ?? "",
         isActive: categoryData.isActive,
         sortOrder: categoryData.sortOrder,
-        ...(images?.length && {
+        metaTitle: categoryData.metaTitle ?? categoryData.name,
+        metaDescription: categoryData.metaDescription ?? categoryData.description,
+       ...(images?.length && {
           images: {
             createMany: {
               data: images.map((img) => ({

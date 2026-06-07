@@ -231,9 +231,9 @@ export class ProductsService {
   ): Promise<ServiceResult<Product>> {
     try {
       if (dto.name) {
-        const generatedSlug = slugify(dto.name, { lower: true, strict: true });
+        let generatedSlug = dto.slug ? dto.slug : slugify(dto.name, { lower: true, strict: true });
         const resolvedProduct = await this.productsRepository.findBySlug(generatedSlug);
-        if (resolvedProduct)
+        if (resolvedProduct && resolvedProduct.id != id) // there exists another product with same slug
           throw new BadRequestException(
             `Product with slug ${generatedSlug} already exists`,
           );
