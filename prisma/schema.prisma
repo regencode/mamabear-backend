@@ -65,7 +65,7 @@ model Product {
 model Image {
   id        Int      @id @default(autoincrement())
 
-  publicId  String @unique
+  publicId  String
 
   productId Int?
   variantId Int?
