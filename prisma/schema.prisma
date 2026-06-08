@@ -60,6 +60,8 @@ model Product {
 
   category          Category?                    @relation(fields: [categoryId], references: [id])
   highlight         Highlight?                   @relation(fields: [highlightId], references: [id])
+  metaTitle   String?
+  metaDescription String?
 }
 
 model Image {
@@ -124,6 +126,8 @@ model Highlight {
   description String?
   isActive    Boolean   @default(true)
   products    Product[]
+  metaTitle   String?
+  metaDescription String?
 }
 
 model Category {
