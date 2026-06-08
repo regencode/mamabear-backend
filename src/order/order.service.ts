@@ -6,10 +6,14 @@ import { OrderRepository } from './order.repository';
 import { ServiceResult } from '@/common/ServiceResult';
 import { OrderStatus } from '@/generated/prisma';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
+import { MailService } from '@/auth/mail.service';
 
 @Injectable()
 export class OrderService {
-  constructor(private readonly repo: OrderRepository) {}
+  constructor(
+    private readonly repo: OrderRepository,
+    private readonly mailService: MailService,
+  ) {}
 
   async createOrder(
     userId: string,
@@ -19,6 +23,7 @@ export class OrderService {
     if (!user) throw new NotFoundException('User not found');
 
     const order = await this.repo.createOrder(userId, dto);
+    await this.mailService.orderConfirmationEmail(user.email, order.id);
     return {
       success: true,
       message: `Order ${order.id} created successfully`,
