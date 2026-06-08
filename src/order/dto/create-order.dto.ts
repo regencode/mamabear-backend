@@ -1,11 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateOrderDto {
   @ApiProperty({ example: 1 })
-  @Type(() => Number)
-  @IsInt()
+  @IsNumber()
   @IsNotEmpty()
   addressId: number;
 
