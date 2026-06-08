@@ -8,6 +8,7 @@ import { AddToCartDto } from './dto/add-to-cart-dto';
 import { CartRepository } from './cart.repository';
 import { PrismaService } from '@/prisma/prisma.service';
 import { randomUUID } from 'crypto';
+import { PatchCourierDto } from './dto/patch-courier.dto';
 
 @Injectable()
 export class CartService {
@@ -398,6 +399,14 @@ export class CartService {
       total: Number(total.toFixed(2)),
     };
   }
+
+  async clearCourierInformation(cartId: string) {
+      return this.cartRepo.clearCourierInformation(cartId);
+  }
+
+  async updateCourierInformation(cartId: string, dto: PatchCourierDto) {
+      return this.cartRepo.updateCourierInformation(cartId, dto);
+  } 
 
   // Cleanup Expired Carts (for cron)
   async cleanupExpiredCarts() {

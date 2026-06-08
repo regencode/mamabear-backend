@@ -1,5 +1,6 @@
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
+import { PatchCourierDto } from './dto/patch-courier.dto';
 
 // Keep includes minimal to reduce payload size (eager loading optimized)
 const CART_INCLUDE = {
@@ -218,6 +219,23 @@ export class CartRepository {
       where: { cartId },
       select: { id: true, productId: true, variantId: true, quantity: true },
     });
+  }
+
+  clearCourierInformation(cartId: string) {
+      return this.prisma.cart.update({
+          where: { id: cartId },
+          data: { shippingCostIdr: 0, courierCode: null, courierName: null, shippingMethod: null, }
+      })
+  }
+  async updateCourierInformation(cartId: string, dto: PatchCourierDto) {
+      return this.prisma.cart.update({
+          where: { id: cartId },
+          data: { shippingCostIdr: dto.shippingCostIdr, 
+              courierCode: dto.courierCode, 
+              courierName: dto.courierName, 
+              shippingMethod: dto.shippingMethod, 
+          }
+     })
   }
 
   // Consolidate duplicate cart items (group by productId+variantId)

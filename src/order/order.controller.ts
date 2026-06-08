@@ -18,51 +18,34 @@ import { Roles } from '@/auth/decorators/roles.decorator';
 import { Role } from '@/generated/prisma';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
 import { CancelOrderDto } from './dto/cancel-order-item.dto';
+import { GetUserId } from '@/common/decorators/get-user-id-decorator';
+
 @UseGuards(new JwtAuthGuard())
 @Controller('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Post()
-  create(@Req() req, @Body() createOrderDto: CreateOrderDto) {
-    return this.orderService.createOrder(req.user.sub, createOrderDto);
-  }
-
-  @Post(':id/cancel')
-  cancelOrder(
-    @Req() req,
-    @Param('id') id: string,
-    @Body() dto: CancelOrderDto,
-  ) {
-    return this.orderService.cancelOrder(req.user.sub, id, dto.reason);
-  }
-
-  @Roles([Role.ADMIN])
-  @Patch(':id/status')
-  update(
-    @Req() req,
-    @Param('id') id: string,
-    @Body() updateOrderDto: UpdateOrderDto,
-  ) {
-    return this.orderService.updateOrderStatus(
-      req.user.sub,
-      id,
-      updateOrderDto,
-    );
-  }
-
   @Get(':id')
-  findOne(@Req() req, @Param('id') id: string) {
+  findOne(@Req() req: any, @Param('id') id: string) {
     return this.orderService.getOrderById(req.user.sub, id);
   }
 
   @Get()
-  findAll(@Req() req, @Query() paginationDto: OrderPaginationDto) {
+  findAll(@Req() req: any, @Query() paginationDto: OrderPaginationDto) {
     return this.orderService.getOrdersByUserId(req.user.sub, paginationDto);
   }
 
   @Get(':id/invoice')
-  getInvoice(@Req() req, @Param('id') id: string) {
+  getInvoice(@Req() req: any, @Param('id') id: string) {
     return this.orderService.getInvoice(req.user.sub, id);
+  }
+
+  // refactor below
+  @Post() // on checkout
+  createOrderAfterCheckout(
+    @GetUserId() userId: string,
+    @Body() dto: CreateOrderDto,
+  ) {
+    return this.orderService.createOrder(userId, dto); // orderId as param for everything below
   }
 }
