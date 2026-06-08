@@ -4,8 +4,7 @@ import { BadRequestException, Injectable, UnprocessableEntityException } from '@
 import { CreateOrderDto } from './dto/create-order.dto';
 import { isUUID } from 'class-validator';
 
-const ORDER_INCLUDE = {
-    shippingAddress: true,
+const ORDERITEM_INCLUDE = {
     product: { select: { name: true, slug: true } },
     variant: {
         select: {
@@ -18,6 +17,11 @@ const ORDER_INCLUDE = {
             },
         },
     },
+}
+
+const ORDER_INCLUDE = {
+    shippingAddress: true,
+    orderItems: { select: ORDERITEM_INCLUDE },
 }
 
 
@@ -146,7 +150,7 @@ export class OrderRepository {
       const order = await tx.order.update({ 
           where: { id: resolvedOrder.id },
           data: { status: OrderStatus.PAYMENT_PAID },
-          include: { orderItems: { include: ORDER_INCLUDE } }
+          include: { orderItems: { include: ORDERITEM_INCLUDE } }
       });
       if(order.orderItems.length <= 0) throw new UnprocessableEntityException(`Cannot process product sold increment: order with orderId=${orderId} has no order items`);
       return order.orderItems.forEach(async item => {
