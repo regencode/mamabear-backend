@@ -33,6 +33,7 @@ export class PaymentService {
                     error: this.FRONTEND_URL + "/payment/error",
                 }
             } as any);
+            // TODO: add midtrans link to order (link is temporary anyway)
             return {
                 success: true,
                 message: `Created new transaction for order ${orderId}`,
@@ -43,7 +44,7 @@ export class PaymentService {
         switch(paymentType) {
             case "qris":
             case "gopay":
-                return this.handleQris;
+                return this.handleQris.bind(this);
             default: throw new UnprocessableEntityException(`Cannot process payment_type=${paymentType}: Unsupported.`);
         }
     }
@@ -64,31 +65,22 @@ export class PaymentService {
             if (hash !== signatureKey) {
                 throw new UnauthorizedException("Signature key and hash does not match");
             }
-            // TODO: wait for order repository
             switch (transactionStatus) {
                 case 'capture':
                     if(fraudStatus == 'accept') 
-                        this.orderRepository.update(
-                            { id: orderId },
-                            { status: OrderStatus.PAYMENT_PAID }
-                        );
-                        // then decrement stock, increase totalSold
+                        await this.orderRepository.handleCompleteOrder(orderId);
                     break;
                 case 'settlement':
-                    this.orderRepository.update(
-                        { id: orderId },
-                        { status: OrderStatus.PAYMENT_PAID }
-                    );
-                        // then decrement stock, increase totalSold
+                    await this.orderRepository.handleCompleteOrder(orderId);
                     break;
                 case 'cancel': case 'deny': case 'expire':
-                    this.orderRepository.update(
+                    await this.orderRepository.update(
                         { id: orderId },
                         { status: OrderStatus.PAYMENT_FAILED }
                     );
                     break;
                 case 'pending':
-                    this.orderRepository.update(
+                    await this.orderRepository.update(
                         { id: orderId },
                         { status: OrderStatus.PAYMENT_PENDING }
                     );
@@ -104,7 +96,7 @@ export class PaymentService {
             }
         }
         catch(error) {
-            throw new UnprocessableEntityException("Cannot process notification in qris handler: ", error);
+            throw error;
         }
     }
 }

@@ -19,6 +19,7 @@ import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { PinoLogger } from 'pino-nestjs';
 import { OptionalJwtAuthGuard } from '@/auth/guard/optional-jwt-auth.guard';
 import { GetUserId } from '@/common/decorators/get-user-id-decorator';
+import { PatchCourierDto } from './dto/patch-courier.dto';
 
 @ApiTags('cart')
 @ApiBearerAuth('JwtAuthGuard')
@@ -283,6 +284,15 @@ export class CartController {
       });
       throw error;
     }
+  }
+  @Delete(':id/courier')
+  async clearCartCourierInformation(@Param('id') id: string) {
+      return this.cartService.clearCourierInformation(id);
+  }
+
+  @Patch(':id/courier')
+  async updateCourierInformation(@Param('id') id: string, @Body() dto: PatchCourierDto) {
+      return this.cartService.updateCourierInformation(id, dto);
   }
 
   @Delete()

@@ -1,0 +1,45 @@
+import { OrderService } from './order.service';
+import {
+  Body,
+  Controller,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { CancelOrderDto } from './dto/cancel-order-item.dto';
+import { UpdateOrderDto } from './dto/update-order.dto';
+import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
+import { RolesGuard } from '@/auth/guard/roles.guard';
+import { Roles } from '@/auth/decorators/roles.decorator';
+import { Role } from '@/generated/prisma';
+
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles([Role.ADMIN, Role.SUPERADMIN])
+@Controller('admin/order')
+export class OrderAdminController {
+  constructor(private readonly orderService: OrderService) {}
+
+  @Post(':id/cancel')
+  cancelOrder(
+    @Req() req: any,
+    @Param('id') id: string,
+    @Body() dto: CancelOrderDto,
+  ) {
+    return this.orderService.cancelOrder(req.user.sub, id, dto.reason);
+  }
+
+  @Patch(':id/status')
+  update(
+    @Req() req: any,
+    @Param('id') id: string,
+    @Body() updateOrderDto: UpdateOrderDto,
+  ) {
+    return this.orderService.updateOrderStatus(
+      req.user.sub,
+      id,
+      updateOrderDto,
+    );
+  }
+}
