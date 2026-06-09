@@ -4,7 +4,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { EmbeddingsService } from '@/embeddings/embeddings.service';
 import { ProductUtils } from '@/product-utils/product-utils';
-import { Product } from '@/generated/prisma';
+import { Image, Product } from '@/generated/prisma';
 import { FilterProductsDto } from './dto/filter-products.dto';
 import { PinoLogger } from 'pino-nestjs';
 import { BadRequestException } from '@nestjs/common';
@@ -248,29 +248,27 @@ export class ProductsRepository {
     const { images, variants, weightG, priceIdr, stock, sku, ...productData } =
       data;
 
-    return this.prisma.product.update({
-      where: { id },
-      data: {
-        ...productData,
-        ...(images?.length && {
-          images: {
-            createMany: {
-              data: images.map((img) => ({
-                imageUrl: img.imageUrl,
-                publicId: img.publicId,
-                width: img.width,
-                height: img.height,
-                fileSize: img.fileSize,
-                format: img.format,
-                sortOrder: img.sortOrder,
-                altText: img.altText,
-              })),
+    return this.prisma.$transaction(async tx => {
+      const product = await tx.product.update({
+        where: { id },
+        data: productData,
+        include: PRODUCT_INCLUDE,
+      });
+      let imageUpserts: Image[] = [];
+      if (images && images.length > 0) {
+        imageUpserts = await Promise.all(images.map(async img => {
+          return await tx.image.upsert({
+            where: { publicId: img.publicId },
+            update: {
+              sortOrder: img.sortOrder,
+              altText: img.altText,
+              productId: id,
             },
-          },
-        }),
-      },
-
-      include: PRODUCT_INCLUDE,
+            create: { ...img, productId: id },
+          });
+        }));
+      }
+      return { ...product, images: product.images.concat(imageUpserts ?? []) };
     });
   }
 
