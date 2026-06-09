@@ -22,7 +22,7 @@ import { Roles } from '@/auth/decorators/roles.decorator';
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 
-  @Get()
+  @Get('dashboard')
   getDashboard() {
     return this.reportsService.getDashboard();
   }
