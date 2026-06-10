@@ -2,6 +2,7 @@ import { OrderService } from './order.service';
 import {
   Body,
   Controller,
+  Get,
   Param,
   Patch,
   Post,
@@ -14,6 +15,7 @@ import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 import { RolesGuard } from '@/auth/guard/roles.guard';
 import { Roles } from '@/auth/decorators/roles.decorator';
 import { Role } from '@/generated/prisma';
+import { UpdateTrackingDto } from './dto/update-tracking.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles([Role.ADMIN, Role.SUPERADMIN])
@@ -41,5 +43,18 @@ export class OrderAdminController {
       id,
       updateOrderDto,
     );
+  }
+
+  @Patch(':id/tracking')
+  updateTrackingNumber(
+    @Param('id') id: string,
+    @Body() updateTrackingDto: UpdateTrackingDto,
+  ) {
+    return this.orderService.updateTrackingNumber(id, updateTrackingDto);
+  }
+
+  @Get(':id/invoice')
+  getInvoice(@Req() req: any, @Param('id') id: string) {
+    return this.orderService.getInvoice(req.user.sub, req.user.role, id);
   }
 }
