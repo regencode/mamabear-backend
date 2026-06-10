@@ -1,8 +1,8 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
 export class UpdateTrackingDto {
-  @ApiPropertyOptional({
+  @ApiProperty({
     example: 'JNE1234567890',
   })
   @IsString()
