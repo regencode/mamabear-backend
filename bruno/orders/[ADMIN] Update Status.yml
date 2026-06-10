@@ -1,0 +1,27 @@
+info:
+  name: "[ADMIN] Update Status"
+  type: http
+  seq: 3
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/api/admin/order/{{id}}/status"
+  body:
+    type: form-urlencoded
+    data:
+      - name: status
+        value: PAYMENT_PAID
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZmEyMzVkYi02ZjAwLTQzOWItYWM0Ny1jN2VkYzcyNzNiNTEiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwibmFtZSI6IkFkbWluIE1hbWFCZWFyIiwiaWF0IjoxNzgxMTA5ODkzLCJleHAiOjE3ODExMTA3OTN9.fGxck0X7JadXe8Gxtnwo2q9Tc-MVwVtCGJ0FnYneYNQ
+
+runtime:
+  variables:
+    - name: id
+      value: 019eb26a-12fb-734c-944d-3c0ffcdd6bf3
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
