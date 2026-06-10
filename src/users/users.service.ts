@@ -4,7 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository, USER_SELECT } from './users.repository';
 import { ServiceResult } from '@/common/ServiceResult';
-import { Prisma } from '@/generated/prisma';
+import { Prisma, OrderStatus, Role } from '@/generated/prisma';
 import { ListCustomersQueryDto } from './dto/list-customers-query.dto';
 
 type UserPublic = Prisma.UserGetPayload<{ select: typeof USER_SELECT }>;
@@ -17,6 +17,47 @@ type AdminCustomerItem = {
   total_orders: number;
   total_spent: number;
   registered_at: Date;
+};
+
+type AdminCustomerOrderSummary = {
+  id: string;
+  status: OrderStatus;
+  subtotalIdr: number;
+  taxIdr: number;
+  shippingCostIdr: number;
+  total_amount: number;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type AdminCustomerDetail = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: Role;
+  isVerified: boolean;
+  registered_at: Date;
+  updated_at: Date | null;
+  addresses: Array<{
+    id: number;
+    name: string;
+    phone: string;
+    provinceName: string;
+    cityName: string;
+    districtName: string;
+    subdistrictName: string;
+    postalCode: string;
+    road: string;
+    completeAddress: string;
+    detail: string | null;
+    usedFor: string;
+  }>;
+  total_orders: number;
+  total_spent: number;
+  average_order_value: number;
+  last_order_date: Date | null;
+  order_history: AdminCustomerOrderSummary[];
 };
 
 @Injectable()
@@ -197,6 +238,68 @@ export class UsersService {
       this.logger.error({
         message: 'Failed to retrieve admin customers',
         endpoint: 'GET /admin/customers',
+        status: 'error',
+        error: error.message,
+      });
+      throw error;
+    }
+  }
+
+  async findCustomerDetail(id: string): Promise<ServiceResult<AdminCustomerDetail>> {
+    try {
+      const customer = await this.usersRepository.findCustomerDetail(id);
+      if (!customer) {
+        this.logger.warn({
+          message: 'Customer not found',
+          endpoint: 'GET /admin/customers/:id',
+          customerId: id,
+          status: 'failure',
+        });
+        throw new NotFoundException(`Customer with id ${id} not found`);
+      }
+
+      const orderStats = await this.usersRepository.aggregateCustomerOrders(id);
+      const orderHistory = await this.usersRepository.findCustomerOrderHistory(id);
+      const totalSpent = Number(orderStats._sum.subtotalIdr ?? 0) +
+        Number(orderStats._sum.taxIdr ?? 0) +
+        Number(orderStats._sum.shippingCostIdr ?? 0);
+      const totalOrders = Number(orderStats._count.id ?? 0);
+      const averageOrderValue = totalOrders > 0 ? totalSpent / totalOrders : 0;
+
+      const result: AdminCustomerDetail = {
+        id: customer.id,
+        name: customer.name,
+        email: customer.email,
+        phone: customer.phone,
+        role: customer.role,
+        isVerified: customer.isVerified,
+        registered_at: customer.createdAt,
+        updated_at: customer.updatedAt ?? null,
+        addresses: customer.address,
+        total_orders: totalOrders,
+        total_spent: totalSpent,
+        average_order_value: averageOrderValue,
+        last_order_date: orderStats._max.createdAt ?? null,
+        order_history: orderHistory,
+      };
+
+      this.logger.info({
+        message: 'Retrieved admin customer detail',
+        endpoint: 'GET /admin/customers/:id',
+        customerId: id,
+        status: 'success',
+      });
+      return {
+        success: true,
+        message: `Found customer detail for id ${id}`,
+        data: result,
+      };
+    } catch (error: any) {
+      if (error instanceof NotFoundException) throw error;
+      this.logger.error({
+        message: 'Failed to retrieve admin customer detail',
+        endpoint: 'GET /admin/customers/:id',
+        customerId: id,
         status: 'error',
         error: error.message,
       });

@@ -116,6 +116,83 @@ export class UsersRepository {
     };
   }
 
+  async findCustomerDetail(id: string) {
+    return this.prisma.user.findFirst({
+      where: {
+        id,
+        role: Role.USER,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        role: true,
+        isVerified: true,
+        createdAt: true,
+        updatedAt: true,
+        address: {
+          select: {
+            id: true,
+            name: true,
+            phone: true,
+            provinceName: true,
+            cityName: true,
+            districtName: true,
+            subdistrictName: true,
+            postalCode: true,
+            road: true,
+            completeAddress: true,
+            detail: true,
+            usedFor: true,
+          },
+        },
+      },
+    });
+  }
+
+  async aggregateCustomerOrders(userId: string) {
+    return this.prisma.order.aggregate({
+      where: { userId },
+      _count: { id: true },
+      _sum: {
+        subtotalIdr: true,
+        taxIdr: true,
+        shippingCostIdr: true,
+      },
+      _max: { createdAt: true },
+    });
+  }
+
+  async findCustomerOrderHistory(userId: string) {
+    const orders = await this.prisma.order.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        status: true,
+        subtotalIdr: true,
+        taxIdr: true,
+        shippingCostIdr: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      take: 10,
+    });
+
+    return orders.map((order) => ({
+      id: order.id,
+      status: order.status,
+      subtotalIdr: Number(order.subtotalIdr),
+      taxIdr: Number(order.taxIdr),
+      shippingCostIdr: Number(order.shippingCostIdr),
+      total_amount:
+        Number(order.subtotalIdr) + Number(order.taxIdr) + Number(order.shippingCostIdr),
+      createdAt: order.createdAt,
+      updatedAt: order.updatedAt,
+    }));
+  }
+
   findById(id: string) {
     return this.prisma.user.findUnique({
       where: { id },
