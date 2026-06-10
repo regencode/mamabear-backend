@@ -2,6 +2,7 @@ import { OrderService } from './order.service';
 import {
   Body,
   Controller,
+  Get,
   Param,
   Patch,
   Post,
@@ -50,5 +51,10 @@ export class OrderAdminController {
     @Body() updateTrackingDto: UpdateTrackingDto,
   ) {
     return this.orderService.updateTrackingNumber(id, updateTrackingDto);
+  }
+
+  @Get(':id/invoice')
+  getInvoice(@Req() req: any, @Param('id') id: string) {
+    return this.orderService.getInvoice(req.user.sub, req.user.role, id);
   }
 }

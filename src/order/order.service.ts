@@ -1,5 +1,9 @@
-import { Order, Prisma } from '@/generated/prisma';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Order, Prisma, Role } from '@/generated/prisma';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { OrderRepository } from './order.repository';
@@ -7,6 +11,7 @@ import { ServiceResult } from '@/common/ServiceResult';
 import { OrderStatus } from '@/generated/prisma';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
 import { UpdateTrackingDto } from './dto/update-tracking.dto';
+import { InvoicePaymentStatus, InvoiceStructure } from '@/types/invoice.type';
 
 @Injectable()
 export class OrderService {
@@ -95,20 +100,6 @@ export class OrderService {
     };
   }
 
-  async getInvoice(
-    userId: string,
-    orderId: string,
-  ): Promise<ServiceResult<any>> {
-    const order = await this.repo.findOrderForInvoice(orderId);
-    if (!order || order.userId !== userId)
-      throw new NotFoundException(`Order with id ${orderId} not found`);
-    return {
-      success: true,
-      message: 'Invoice found',
-      data: order,
-    };
-  }
-
   async cancelOrder(
     userId: string,
     orderId: string,
@@ -158,5 +149,61 @@ export class OrderService {
     const trackingNumber = dto.trackingNumber;
 
     return this.repo.update({ id: orderId }, { trackingNumber });
+  }
+
+  async getInvoice(
+    userId: string,
+    role: Role,
+    orderId: string,
+  ): Promise<InvoiceStructure> {
+    const order =
+      role === Role.ADMIN || role === Role.SUPERADMIN
+        ? await this.repo.findOneForAdmin(orderId)
+        : await this.repo.findOne(userId, orderId);
+
+    // const order = await this.repo.findOneForAdmin(orderId);
+
+    if (!order)
+      throw new NotFoundException(`Order with id ${orderId} not found`);
+
+    const INVALID_STATUSES: OrderStatus[] = [
+      OrderStatus.CANCELLED,
+      OrderStatus.RETURNED,
+      OrderStatus.REFUNDED,
+      OrderStatus.PAYMENT_FAILED,
+    ];
+
+    if (INVALID_STATUSES.includes(order.status))
+      throw new BadRequestException(
+        "Can't generate invoice in current order status",
+      );
+
+    const datePart = order.createdAt
+      .toISOString()
+      .slice(0, 10)
+      .replace(/-/g, '');
+
+    const invoicePaymentStatus =
+      order.status === OrderStatus.PAYMENT_PAID
+        ? InvoicePaymentStatus.PAID
+        : InvoicePaymentStatus.UNPAID;
+
+    return {
+      invoiceNumber: `INV-${datePart}-${order.id.slice(0, 6).toUpperCase()}`,
+      issuedAt: new Date(),
+      OrderedItem: order.orderItems.map((item) => ({
+        productName: item.product.name,
+        variantName: item.variant.name,
+        quantity: item.quantity,
+        price: item.variant.priceIdr.toString(),
+      })),
+      ShippingAddress:
+        order.shippingAddress?.completeAddress ?? 'Address not found',
+      subtotalIdr: order.subtotalIdr.toString(),
+      shippingCostIdr: order.shippingCostIdr.toString(),
+      totalIdr: (order.subtotalIdr + order.shippingCostIdr).toString(),
+      PaymentMethod: order.paymentMethod?.toUpperCase() ?? 'Method not found',
+      InvoicePaymentStatus: invoicePaymentStatus,
+    };
   }
 }
