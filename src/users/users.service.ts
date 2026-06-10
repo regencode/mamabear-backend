@@ -5,8 +5,19 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository, USER_SELECT } from './users.repository';
 import { ServiceResult } from '@/common/ServiceResult';
 import { Prisma } from '@/generated/prisma';
+import { ListCustomersQueryDto } from './dto/list-customers-query.dto';
 
 type UserPublic = Prisma.UserGetPayload<{ select: typeof USER_SELECT }>;
+
+type AdminCustomerItem = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  total_orders: number;
+  total_spent: number;
+  registered_at: Date;
+};
 
 @Injectable()
 export class UsersService {
@@ -152,6 +163,40 @@ export class UsersService {
         message: 'User deletion failed',
         endpoint: 'DELETE /users/:id',
         userId: id,
+        status: 'error',
+        error: error.message,
+      });
+      throw error;
+    }
+  }
+
+  async findCustomers(
+    query: ListCustomersQueryDto,
+  ): Promise<ServiceResult<{ items: AdminCustomerItem[]; total: number; page: number; limit: number }>> {
+    try {
+      const { items, total } = await this.usersRepository.findCustomers(query);
+      this.logger.info({
+        message: 'Retrieved admin customer list',
+        endpoint: 'GET /admin/customers',
+        total,
+        page: query.page,
+        limit: query.limit,
+        status: 'success',
+      });
+      return {
+        success: true,
+        message: `Found ${items.length} customers`,
+        data: {
+          items,
+          total,
+          page: query.page ?? 1,
+          limit: query.limit ?? 10,
+        },
+      };
+    } catch (error: any) {
+      this.logger.error({
+        message: 'Failed to retrieve admin customers',
+        endpoint: 'GET /admin/customers',
         status: 'error',
         error: error.message,
       });
