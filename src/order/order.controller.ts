@@ -37,7 +37,7 @@ export class OrderController {
 
   @Get(':id/invoice')
   getInvoice(@Req() req: any, @Param('id') id: string) {
-    return this.orderService.getInvoice(req.user.sub, id);
+    return this.orderService.getInvoice(req.user.sub, req.user.role, id);
   }
 
   // refactor below

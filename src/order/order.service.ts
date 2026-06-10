@@ -161,8 +161,6 @@ export class OrderService {
         ? await this.repo.findOneForAdmin(orderId)
         : await this.repo.findOne(userId, orderId);
 
-    // const order = await this.repo.findOneForAdmin(orderId);
-
     if (!order)
       throw new NotFoundException(`Order with id ${orderId} not found`);
 
