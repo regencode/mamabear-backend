@@ -6,6 +6,7 @@ import { OrderRepository } from './order.repository';
 import { ServiceResult } from '@/common/ServiceResult';
 import { OrderStatus } from '@/generated/prisma';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
+import { UpdateTrackingDto } from './dto/update-tracking.dto';
 
 @Injectable()
 export class OrderService {
@@ -147,5 +148,15 @@ export class OrderService {
       message: `Order ${orderId} status updated to ${status}`,
       data: updatedOrder,
     };
+  }
+
+  async updateTrackingNumber(orderId: string, dto: UpdateTrackingDto) {
+    const order = await this.repo.findOneForAdmin(orderId);
+    if (!order)
+      throw new NotFoundException(`Order with id ${orderId} not found`);
+
+    const trackingNumber = dto.trackingNumber;
+
+    return this.repo.update({ id: orderId }, { trackingNumber });
   }
 }
