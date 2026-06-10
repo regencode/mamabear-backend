@@ -28,6 +28,8 @@ import { CreateVariantDto } from '@/variant/dto/create-variant.dto';
 import { UpdateVariantDto } from '@/variant/dto/update-variant.dto';
 import { VariantService } from '@/variant/variant.service';
 import { memoryStorage } from 'multer';
+import { BulkDeleteProductsDto } from './dto/bulk-delete-products.dto';
+import { BulkUpdateProductsStatusDto } from './dto/bulk-update-products-status.dto';
 
 @ApiTags('products (admin)')
 @Controller('admin/products')
@@ -42,10 +44,18 @@ export class ProductsAdminController {
   ) {}
 
   @Post()
-  create(
-    @Body() dto: CreateProductDto,
-  ) {
+  create(@Body() dto: CreateProductDto) {
     return this.productsService.create(dto);
+  }
+
+  @Delete('bulk-delete')
+  bulkDelete(@Body() dto: BulkDeleteProductsDto) {
+    return this.productsService.bulkDelete(dto);
+  }
+
+  @Patch('bulk-publish')
+  bulkUpdateProductStatus(@Body() dto: BulkUpdateProductsStatusDto) {
+    return this.productsService.bulkUpdateProductStatus(dto);
   }
 
   @Get(':id')
@@ -54,16 +64,8 @@ export class ProductsAdminController {
   }
 
   @Put(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateProductDto: UpdateProductDto,
-  ) {
+  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productsService.update(+id, updateProductDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productsService.remove(+id);
   }
 
   @Post(':id/variants')

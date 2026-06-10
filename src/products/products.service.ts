@@ -20,6 +20,8 @@ import {
   FilterPaginationMetaDto,
   FilterPaginationResponseDto,
 } from './dto/filter-pagination-meta.dto';
+import { BulkDeleteProductsDto } from './dto/bulk-delete-products.dto';
+import { BulkUpdateProductsStatusDto } from './dto/bulk-update-products-status.dto';
 
 @Injectable()
 export class ProductsService {
@@ -64,9 +66,7 @@ export class ProductsService {
       data: result,
     };
   }
-  async create(
-    dto: CreateProductDto,
-  ): Promise<ServiceResult<Product>> {
+  async create(dto: CreateProductDto): Promise<ServiceResult<Product>> {
     try {
       if (!dto.variants) dto.variants = [];
       const defaultVariant: CreateVariantDto = {
@@ -79,7 +79,6 @@ export class ProductsService {
       };
 
       dto.variants.push(defaultVariant);
-    
 
       const generatedSlug = slugify(dto.name, { lower: true, strict: true });
 
@@ -231,9 +230,13 @@ export class ProductsService {
   ): Promise<ServiceResult<Product>> {
     try {
       if (dto.name) {
-        let generatedSlug = dto.slug ? dto.slug : slugify(dto.name, { lower: true, strict: true });
-        const resolvedProduct = await this.productsRepository.findBySlug(generatedSlug);
-        if (resolvedProduct && resolvedProduct.id != id) // there exists another product with same slug
+        let generatedSlug = dto.slug
+          ? dto.slug
+          : slugify(dto.name, { lower: true, strict: true });
+        const resolvedProduct =
+          await this.productsRepository.findBySlug(generatedSlug);
+        if (resolvedProduct && resolvedProduct.id != id)
+          // there exists another product with same slug
           throw new BadRequestException(
             `Product with slug ${generatedSlug} already exists`,
           );
@@ -288,5 +291,35 @@ export class ProductsService {
       });
       throw error;
     }
+  }
+
+  async bulkDelete(
+    dto: BulkDeleteProductsDto,
+  ): Promise<ServiceResult<{ deletedCount: number }>> {
+    console.log('DTO:', dto);
+    const result = await this.productsRepository.bulkDelete(dto.ids);
+
+    console.log('RESULT:', result);
+
+    return {
+      success: true,
+      message: `Successfully deleted ${result.count} products`,
+      data: { deletedCount: result.count },
+    };
+  }
+
+  async bulkUpdateProductStatus(
+    dto: BulkUpdateProductsStatusDto,
+  ): Promise<ServiceResult<{ updatedCount: number }>> {
+    const result = await this.productsRepository.bulkUpdateProductStatus({
+      ids: dto.ids,
+      isActive: dto.isActive,
+    });
+
+    return {
+      success: true,
+      message: `Successfully updated status for ${result.count} products to ${dto.isActive ? 'active' : 'inactive'}`,
+      data: { updatedCount: result.count },
+    };
   }
 }
