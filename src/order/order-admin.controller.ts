@@ -23,13 +23,29 @@ import { UpdateTrackingDto } from './dto/update-tracking.dto';
 export class OrderAdminController {
   constructor(private readonly orderService: OrderService) {}
 
+  @Get(':id')
+  findOrderById(@Param('id') id: string) {
+    return this.orderService.getOrderByIdForAdmin(id);
+  }
+
+  @Get()
+  findAll() {
+    //Should have the pagination params here
+    return this.orderService.findAll();
+  }
+
   @Post(':id/cancel')
   cancelOrder(
     @Req() req: any,
     @Param('id') id: string,
     @Body() dto: CancelOrderDto,
   ) {
-    return this.orderService.cancelOrder(req.user.sub, id, dto.reason);
+    return this.orderService.cancelOrder(
+      req.sub.role,
+      req.sub.sub,
+      id,
+      dto.reason,
+    );
   }
 
   @Patch(':id/status')

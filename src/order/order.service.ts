@@ -51,6 +51,17 @@ export class OrderService {
     };
   }
 
+  async getOrderByIdForAdmin(orderId: string) {
+    const order = await this.repo.findOneForAdmin(orderId);
+    if (!order)
+      throw new NotFoundException(`Order with id ${orderId} not found`);
+    return {
+      success: true,
+      message: 'Order found',
+      data: order,
+    };
+  }
+
   async getOrdersByUserId(userId: string, paginationDto: OrderPaginationDto) {
     const where: Prisma.OrderWhereInput = { userId };
 
@@ -106,13 +117,20 @@ export class OrderService {
   }
 
   async cancelOrder(
+    role: string,
     userId: string,
     orderId: string,
     reason?: string,
   ): Promise<ServiceResult<null>> {
-    const order = await this.repo.findOneForAdmin(orderId);
+    const order =
+      role === Role.ADMIN || role === Role.SUPERADMIN
+        ? await this.repo.findOneForAdmin(orderId)
+        : await this.repo.findOne(userId, orderId);
     if (!order)
       throw new NotFoundException(`Order with id ${orderId} not found`);
+
+    if (order.status !== OrderStatus.CONFIRMED && role === Role.USER)
+      throw new BadRequestException('Cannot cancel order in current status');
 
     await this.repo.update({ id: orderId }, { status: OrderStatus.CANCELLED });
     await this.repo.createOrderStatusHistory(
@@ -208,5 +226,9 @@ export class OrderService {
       PaymentMethod: order.paymentMethod?.toUpperCase() ?? 'Method not found',
       InvoicePaymentStatus: invoicePaymentStatus,
     };
+  }
+
+  async findAll() {
+    return this.repo.findAll();
   }
 }
