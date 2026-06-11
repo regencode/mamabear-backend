@@ -48,72 +48,79 @@ export class UsersRepository {
     page?: number;
     limit?: number;
   }) {
-    const allowedSortMap: Record<string, string> = {
-      id: '"u"."id"',
-      name: '"u"."name"',
-      email: '"u"."email"',
-      phone: '"u"."phone"',
-      total_orders: '"total_orders"',
-      total_spent: '"total_spent"',
-      registered_at: '"u"."createdAt"',
-    };
-
     const search = query.search?.trim();
     const sortKey = query.sort ?? 'registered_at';
-    const orderDirection = query.order === 'asc' ? 'ASC' : 'DESC';
+    const orderDirection = query.order === 'asc' ? 'asc' : 'desc';
     const limit = Math.min(query.limit ?? 10, 100);
     const page = Math.max(query.page ?? 1, 1);
     const offset = (page - 1) * limit;
-    const sortClause = allowedSortMap[sortKey] ?? allowedSortMap.registered_at;
 
-    const searchClause = search
-      ? Prisma.sql`
-      AND (
-        "u"."name" ILIKE ${`%${search}%`} OR
-        "u"."email" ILIKE ${`%${search}%`} OR
-        "u"."phone" ILIKE ${`%${search}%`}
-      )
-    `
-      : Prisma.empty;
+    const where: any = { role: Role.USER };
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+        { phone: { contains: search, mode: 'insensitive' } },
+      ];
+    }
 
-    const rows = await this.prisma.$queryRaw<AdminCustomerRow[]>` 
-      SELECT
-        "u"."id",
-        "u"."name",
-        "u"."email",
-        "u"."phone",
-        COUNT("o"."id") AS "total_orders",
-        COALESCE(SUM("o"."subtotalIdr" + "o"."taxIdr" + "o"."shippingCostIdr"), 0) AS "total_spent",
-        "u"."createdAt" AS "registered_at"
-      FROM "User" AS "u"
-      LEFT JOIN "Order" AS "o" ON "o"."userId" = "u"."id"
-      WHERE "u"."role" = ${Role.USER}
-      ${searchClause}
-      GROUP BY "u"."id"
-      ORDER BY ${Prisma.raw(sortClause)} ${Prisma.raw(orderDirection)}
-      LIMIT ${limit}
-      OFFSET ${offset};
-    `;
+    const total = await this.prisma.user.count({ where });
 
-    const countResult = await this.prisma.$queryRaw<{ count: string }[]>`
-      SELECT COUNT(*) AS count
-      FROM "User" AS "u"
-      WHERE "u"."role" = ${Role.USER}
-      ${searchClause}
-    `;
+    // If sorting by aggregated fields, compute aggregates for all matching users,
+    // sort in-memory, then paginate. For other sorts, use Prisma orderBy with pagination.
+    if (sortKey === 'total_orders' || sortKey === 'total_spent') {
+      const allUsers = await this.prisma.user.findMany({ where, select: { id: true, name: true, email: true, phone: true, createdAt: true } });
+      const userIds = allUsers.map((u) => u.id);
+      const aggregates = await this.aggregateForUserIds(userIds);
+      const aggMap = new Map(aggregates.map((a: any) => [a.userId, a]));
 
-    return {
-      items: rows.map((row) => ({
-        id: row.id,
-        name: row.name,
-        email: row.email,
-        phone: row.phone,
-        total_orders: Number(row.total_orders),
-        total_spent: Number(row.total_spent),
-        registered_at: row.registered_at,
-      })),
-      total: Number(countResult[0]?.count ?? 0),
-    };
+      const rows = allUsers.map((u) => ({
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        phone: u.phone,
+        total_orders: aggMap.get(u.id)?.total_orders ?? 0,
+        total_spent: aggMap.get(u.id)?.total_spent ?? 0,
+        registered_at: u.createdAt,
+      }));
+
+      rows.sort((a, b) => {
+        const dir = orderDirection === 'asc' ? 1 : -1;
+        if (sortKey === 'total_orders') return dir * (a.total_orders - b.total_orders);
+        return dir * (a.total_spent - b.total_spent);
+      });
+
+      const paged = rows.slice(offset, offset + limit);
+      return { items: paged, total };
+    }
+
+    const orderBy: any = {};
+    if (sortKey === 'registered_at') orderBy.createdAt = orderDirection;
+    else orderBy[sortKey] = orderDirection;
+
+    const users = await this.prisma.user.findMany({
+      where,
+      orderBy,
+      skip: offset,
+      take: limit,
+      select: { id: true, name: true, email: true, phone: true, createdAt: true },
+    });
+
+    const userIds = users.map((u) => u.id);
+    const aggregates = await this.aggregateForUserIds(userIds);
+    const aggMap = new Map(aggregates.map((a: any) => [a.userId, a]));
+
+    const items = users.map((u) => ({
+      id: u.id,
+      name: u.name,
+      email: u.email,
+      phone: u.phone,
+      total_orders: aggMap.get(u.id)?.total_orders ?? 0,
+      total_spent: aggMap.get(u.id)?.total_spent ?? 0,
+      registered_at: u.createdAt,
+    }));
+
+    return { items, total };
   }
 
   async findCustomerDetail(id: string) {
@@ -190,6 +197,33 @@ export class UsersRepository {
         Number(order.subtotalIdr) + Number(order.taxIdr) + Number(order.shippingCostIdr),
       createdAt: order.createdAt,
       updatedAt: order.updatedAt,
+    }));
+  }
+
+  async aggregateForUserIds(userIds: string[]) {
+    if (!userIds || userIds.length === 0) return [];
+
+    const groups = await this.prisma.order.groupBy({
+      by: ['userId'],
+      where: { userId: { in: userIds } },
+      _count: { id: true },
+      _sum: { subtotalIdr: true, taxIdr: true, shippingCostIdr: true },
+      _max: { createdAt: true },
+    });
+
+    return groups.map((g) => ({
+      userId: g.userId,
+      total_orders: Number(g._count?.id ?? 0),
+      total_spent:
+        Number(g._sum?.subtotalIdr ?? 0) +
+        Number(g._sum?.taxIdr ?? 0) +
+        Number(g._sum?.shippingCostIdr ?? 0),
+      average_order_value:
+        (Number(g._sum?.subtotalIdr ?? 0) +
+          Number(g._sum?.taxIdr ?? 0) +
+          Number(g._sum?.shippingCostIdr ?? 0)) /
+        (Number(g._count?.id ?? 0) || 1),
+      last_order_date: g._max?.createdAt ?? null,
     }));
   }
 
