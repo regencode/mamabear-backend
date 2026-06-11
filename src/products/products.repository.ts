@@ -4,7 +4,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { EmbeddingsService } from '@/embeddings/embeddings.service';
 import { ProductUtils } from '@/product-utils/product-utils';
-import { Image, Product } from '@/generated/prisma';
+import { Image, Prisma, Product } from '@/generated/prisma';
 import { FilterProductsDto } from './dto/filter-products.dto';
 import { PinoLogger } from 'pino-nestjs';
 import { BadRequestException } from '@nestjs/common';
@@ -345,6 +345,36 @@ export class ProductsRepository {
       },
       orderBy: {
         createdAt: 'desc',
+      },
+    });
+  }
+
+  async findProductForDuplicate(productId: number) {
+    return this.prisma.product.findUnique({
+      where: { id: productId },
+      include: {
+        images: true,
+        variants: {
+          include: {
+            images: true,
+            discount: true,
+          },
+        },
+      },
+    });
+  }
+
+  async createDuplicatedProduct(data: any) {
+    return this.prisma.product.create({
+      data,
+      include: {
+        images: true,
+        variants: {
+          include: {
+            images: true,
+            discount: true,
+          },
+        },
       },
     });
   }

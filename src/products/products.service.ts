@@ -23,6 +23,7 @@ import {
 } from './dto/filter-pagination-meta.dto';
 import { BulkDeleteProductsDto } from './dto/bulk-delete-products.dto';
 import { BulkUpdateProductsStatusDto } from './dto/bulk-update-products-status.dto';
+import { CloudinaryService } from '@/cloudinary/cloudinary.service';
 
 @Injectable()
 export class ProductsService {
@@ -30,8 +31,18 @@ export class ProductsService {
     private readonly productsRepository: ProductsRepository,
     private readonly logger: PinoLogger,
     private readonly paginationService: CursorPaginationService,
+    private readonly cloudinary: CloudinaryService,
   ) {
     this.logger.setContext(ProductsService.name);
+  }
+
+  private generateSku(productSlug: string, variantValue: string): string {
+    const base = `${productSlug}-${variantValue}`;
+
+    return slugify(base, {
+      lower: false,
+      strict: true,
+    }).toUpperCase();
   }
 
   async findProductsWithFilter(
@@ -350,6 +361,118 @@ export class ProductsService {
       success: true,
       message: 'Product exported successfully',
       data: exportData,
+    };
+  }
+
+  async duplicateProduct(productId: number): Promise<ServiceResult<Product>> {
+    const product =
+      await this.productsRepository.findProductForDuplicate(productId);
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    const duplicatedSlug = `${product.slug}-copy-${Date.now()}`;
+
+    const duplicatedProductImages = await Promise.all(
+      product.images.map(async (image) => {
+        const uploaded = await this.cloudinary.duplicateImage(image.imageUrl);
+
+        return {
+          publicId: uploaded.publicId,
+          imageUrl: uploaded.imageUrl,
+          width: uploaded.width,
+          height: uploaded.height,
+          fileSize: uploaded.fileSize,
+          format: uploaded.format,
+          altText: image.altText,
+          sortOrder: image.sortOrder,
+        };
+      }),
+    );
+
+    const duplicatedVariants = await Promise.all(
+      product.variants.map(async (variant) => {
+        const duplicatedVariantImages = await Promise.all(
+          variant.images.map(async (image) => {
+            const uploaded = await this.cloudinary.duplicateImage(
+              image.imageUrl,
+            );
+
+            return {
+              publicId: uploaded.publicId,
+              imageUrl: uploaded.imageUrl,
+              width: uploaded.width,
+              height: uploaded.height,
+              fileSize: uploaded.fileSize,
+              format: uploaded.format,
+              altText: image.altText,
+              sortOrder: image.sortOrder,
+            };
+          }),
+        );
+
+        return {
+          name: variant.name,
+
+          sku: this.generateSku(duplicatedSlug, variant.name),
+
+          priceIdr: variant.priceIdr,
+          weightG: variant.weightG,
+          stock: variant.stock,
+          sortOrder: variant.sortOrder,
+
+          images: {
+            create: duplicatedVariantImages,
+          },
+
+          ...(variant.discount && {
+            discount: {
+              create: {
+                amount: variant.discount.amount,
+                isPercent: variant.discount.isPercent,
+                startedAt: variant.discount.startedAt,
+                endsAt: variant.discount.endsAt,
+              },
+            },
+          }),
+        };
+      }),
+    );
+
+    const result = await this.productsRepository.createDuplicatedProduct({
+      name: `${product.name} (Copy)`,
+
+      slug: duplicatedSlug,
+
+      isActive: false,
+      totalSold: 0,
+
+      categoryId: product.categoryId,
+      highlightId: product.highlightId,
+
+      description: product.description,
+      ingredients: product.ingredients,
+      usageInstructions: product.usageInstructions,
+
+      tags: product.tags,
+
+      metaTitle: product.metaTitle,
+      metaDescription: product.metaDescription,
+
+      images: {
+        create: duplicatedProductImages,
+      },
+
+      variants: {
+        create: duplicatedVariants,
+      },
+    });
+
+    return {
+      success: true,
+      message: `Product ${product.name} duplicated successfully`,
+      data: result,
     };
   }
 }

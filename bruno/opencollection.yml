@@ -17,7 +17,7 @@ config:
 request:
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjN2Q3MWQ4My02MmMzLTRhOTMtYTAxMC00YzdmMDIzMmIyNmQiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwibmFtZSI6IkFkbWluIE1hbWFCZWFyIiwiaWF0IjoxNzgxMTYzNzE5LCJleHAiOjE3ODExNjQ2MTl9.mOVR4fQkYtY8lFTZhX04YPgBCzSaX5hck9QXOG3EK9I
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjN2Q3MWQ4My02MmMzLTRhOTMtYTAxMC00YzdmMDIzMmIyNmQiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwibmFtZSI6IkFkbWluIE1hbWFCZWFyIiwiaWF0IjoxNzgxMTcxMDEwLCJleHAiOjE3ODExNzE5MTB9.J0shcv-XFtKJ9hl54j5wBGoJe8zWdMt-uwqXAUUP-6g
   variables:
     - name: baseUrl
       value: http://localhost:3000
@@ -28,7 +28,7 @@ request:
     - name: productSlug
       value: ""
     - name: productId
-      value: ""
+      value: "1"
     - name: variantId
       value: ""
     - name: reviewId
