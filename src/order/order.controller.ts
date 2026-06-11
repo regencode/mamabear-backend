@@ -32,8 +32,8 @@ export class OrderController {
     @Body() dto: CancelOrderDto,
   ) {
     return this.orderService.cancelOrder(
-      req.sub.role,
-      req.sub.sub,
+      req.user.role,
+      req.user.sub,
       id,
       dto.reason,
     );
