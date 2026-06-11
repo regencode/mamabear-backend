@@ -41,20 +41,7 @@ export class VariantService {
       const newSku = this.generateSku(product.slug, dto.name);
       dto.sku = newSku;
     }
-    var increment = 0
-    const result = await this.repo.update(variantId, {
-      ...dto,
-      images: (dto.images ?? []).map((image) => ({
-            imageUrl: image.imageUrl,
-            publicId: image.publicId,
-            width: image.width,
-            height: image.height,
-            fileSize: image.fileSize,
-            format: image.format,
-            sortOrder: increment++,
-            altText: image.altText,
-          }))
-    });
+    const result = await this.repo.update(variantId, dto);
 
     return {
       success: true,

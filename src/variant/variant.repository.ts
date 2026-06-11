@@ -1,4 +1,4 @@
-import { Prisma } from '@/generated/prisma';
+import { Image, Prisma } from '@/generated/prisma';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateVariantDto } from './dto/update-variant.dto';
@@ -25,32 +25,28 @@ export class VariantRepository {
   }
 
   update(variantId: number, dto: UpdateVariantDto) {
-    return this.prisma.productVariant.update({
-      where: { id: variantId },
-      data: {
-        name: dto.name,
-        priceIdr: dto.priceIdr,
-        weightG: dto.weightG,
-        sku: dto.sku,
-        stock: dto.stock,
-        images: dto.images?.length
-          ? {
-              create: dto.images.map((image) => ({
-                imageUrl: image.imageUrl,
-                publicId: image.publicId,
-                width: image.width,
-                height: image.height,
-                fileSize: image.fileSize,
-                format: image.format,
-                altText: image.altText,
-                sortOrder: image.sortOrder,
-              })),
-            }
-          : undefined,
-      },
-      include: {
-        images: true,
-      },
+    const { images, ...variantData } = dto;
+    return this.prisma.$transaction(async tx => {
+      const variant = await tx.productVariant.update({
+        where: { id: variantId },
+        data: variantData,
+        include: { images: true },
+      });
+      let imageUpserts: Image[] = [];
+      if (images && images.length > 0) {
+        imageUpserts = await Promise.all(images.map(async img => {
+          return await tx.image.upsert({
+            where: { publicId: img.publicId },
+            update: {
+              sortOrder: img.sortOrder,
+              altText: img.altText,
+              variantId: variantId,
+            },
+            create: { ...img, variantId: variantId },
+          });
+        }));
+      }
+      return { ...variant, images: variant.images.concat(imageUpserts ?? []) };
     });
   }
 

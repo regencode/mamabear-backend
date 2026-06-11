@@ -240,22 +240,7 @@ export class ProductsService {
         dto.slug = generatedSlug;
       }
 
-      const { images, variants, ...dtoData } = dto;
-      const updateData: any = {};
-      for (const [key, value] of Object.entries(dtoData)) {
-        if (value !== undefined) updateData[key] = value;
-      }
-      updateData.images = (images ?? []).map((image) => ({
-        imageUrl: image.imageUrl,
-        publicId: image.publicId,
-        width: image.width,
-        height: image.height,
-        fileSize: image.fileSize,
-        format: image.format,
-        sortOrder: image.sortOrder,
-        altText: image.altText,
-      }));
-      const result = await this.productsRepository.update(id, updateData);
+      const result = await this.productsRepository.update(id, dto);
       this.logger.info({
         message: 'Product updated successfully',
         endpoint: 'PUT /products/:id',

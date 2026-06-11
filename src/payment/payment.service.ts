@@ -40,18 +40,9 @@ export class PaymentService {
                 data: transaction,
             }
     }
-    resolveNotificationType(paymentType: string) {
-        switch(paymentType) {
-            case "qris":
-            case "gopay":
-                return this.handleQris.bind(this);
-            default: throw new UnprocessableEntityException(`Cannot process payment_type=${paymentType}: Unsupported.`);
-        }
-    }
 
-    async handleQris(notification: any): Promise<ServiceResult<null>> {
+    async handleNotification(notification: any): Promise<ServiceResult<null>> {
         try {
-            notification = notification as QrisNotificationDto;
             const orderId = notification.order_id;
             const statusCode = notification.status_code;
             const grossAmount = notification.gross_amount;
