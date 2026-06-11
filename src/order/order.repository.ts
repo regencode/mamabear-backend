@@ -354,4 +354,8 @@ export class OrderRepository {
       },
     });
   }
+
+  findAll() {
+    return this.prisma.order.findMany();
+  }
 }

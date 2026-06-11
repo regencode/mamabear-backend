@@ -209,4 +209,8 @@ export class OrderService {
       InvoicePaymentStatus: invoicePaymentStatus,
     };
   }
+
+  async findAll() {
+    return this.repo.findAll();
+  }
 }

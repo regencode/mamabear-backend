@@ -23,6 +23,12 @@ import { UpdateTrackingDto } from './dto/update-tracking.dto';
 export class OrderAdminController {
   constructor(private readonly orderService: OrderService) {}
 
+  @Get()
+  findAll() //Should have the pagination params here
+  {
+    return this.orderService.findAll();
+  }
+
   @Post(':id/cancel')
   cancelOrder(
     @Req() req: any,
