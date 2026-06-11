@@ -1,3 +1,4 @@
+import { map } from 'rxjs/operators';
 import {
   BadRequestException,
   Injectable,
@@ -320,6 +321,35 @@ export class ProductsService {
       success: true,
       message: `Successfully updated status for ${result.count} products to ${dto.isActive ? 'active' : 'inactive'}`,
       data: { updatedCount: result.count },
+    };
+  }
+
+  async exportProducts(): Promise<ServiceResult<any>> {
+    const products = await this.productsRepository.findAllForExport();
+
+    const exportData = products.map((p) => {
+      const prices = p.variants.map((v) => Number(v.priceIdr));
+
+      const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+      const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
+
+      const totalStock = p.variants.reduce((sum, v) => sum + (v.stock ?? 0), 0);
+
+      return {
+        name: p.name,
+        sku: p.variants[0]?.sku ?? '-',
+        priceIdr:
+          minPrice === maxPrice ? minPrice : `${minPrice} - ${maxPrice}`,
+        stock: totalStock,
+        totalSold: p.totalSold,
+        category: p.category?.name ?? '-',
+      };
+    });
+
+    return {
+      success: true,
+      message: 'Product exported successfully',
+      data: exportData,
     };
   }
 }

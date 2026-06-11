@@ -323,4 +323,29 @@ export class ProductsRepository {
       data: { isActive: data.isActive },
     });
   }
+
+  findAllForExport() {
+    return this.prisma.product.findMany({
+      where: { isActive: true },
+      select: {
+        name: true,
+        category: {
+          select: {
+            name: true,
+          },
+        },
+        variants: {
+          select: {
+            sku: true,
+            priceIdr: true,
+            stock: true,
+          },
+        },
+        totalSold: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
 }

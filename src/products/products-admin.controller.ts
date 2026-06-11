@@ -12,6 +12,7 @@ import {
   UseInterceptors,
   BadRequestException,
   Patch,
+  Res,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
@@ -30,6 +31,8 @@ import { VariantService } from '@/variant/variant.service';
 import { memoryStorage } from 'multer';
 import { BulkDeleteProductsDto } from './dto/bulk-delete-products.dto';
 import { BulkUpdateProductsStatusDto } from './dto/bulk-update-products-status.dto';
+import { createObjectCsvStringifier } from 'csv-writer';
+import { Response } from 'express';
 
 @ApiTags('products (admin)')
 @Controller('admin/products')
@@ -56,6 +59,31 @@ export class ProductsAdminController {
   @Patch('bulk-publish')
   bulkUpdateProductStatus(@Body() dto: BulkUpdateProductsStatusDto) {
     return this.productsService.bulkUpdateProductStatus(dto);
+  }
+
+  @Get('export')
+  async exportProduct(@Res() res: Response) {
+    const result = await this.productsService.exportProducts();
+
+    const csvStringifier = createObjectCsvStringifier({
+      header: [
+        { id: 'name', title: 'Name' },
+        { id: 'sku', title: 'SKU' },
+        { id: 'priceIdr', title: 'Price' },
+        { id: 'stock', title: 'Stock' },
+        { id: 'totalSold', title: 'Total Sold' },
+        { id: 'category', title: 'Category' },
+      ],
+    });
+
+    const csv =
+      csvStringifier.getHeaderString() +
+      csvStringifier.stringifyRecords(result.data);
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=products.csv');
+
+    return res.send(csv);
   }
 
   @Get(':id')
