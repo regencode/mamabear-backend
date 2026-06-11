@@ -1,0 +1,24 @@
+info:
+  name: "[ADMIN] Get All Orders"
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/admin/order/"
+  body:
+    type: form-urlencoded
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZmEyMzVkYi02ZjAwLTQzOWItYWM0Ny1jN2VkYzcyNzNiNTEiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwibmFtZSI6IkFkbWluIE1hbWFCZWFyIiwiaWF0IjoxNzgxMTkxODQ5LCJleHAiOjE3ODExOTI3NDl9.VbczqNIU4j00nn7ESaGovj_GB8zaNv5sdwzv0O5ah6E
+
+runtime:
+  variables:
+    - name: id
+      value: 019eb26a-12fb-734c-944d-3c0ffcdd6bf3
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
