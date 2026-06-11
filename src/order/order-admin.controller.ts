@@ -40,7 +40,12 @@ export class OrderAdminController {
     @Param('id') id: string,
     @Body() dto: CancelOrderDto,
   ) {
-    return this.orderService.cancelOrder(req.user.sub, id, dto.reason);
+    return this.orderService.cancelOrder(
+      req.sub.role,
+      req.sub.sub,
+      id,
+      dto.reason,
+    );
   }
 
   @Patch(':id/status')
