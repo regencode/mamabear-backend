@@ -51,6 +51,17 @@ export class OrderService {
     };
   }
 
+  async getOrderByIdForAdmin(orderId: string) {
+    const order = await this.repo.findOneForAdmin(orderId);
+    if (!order)
+      throw new NotFoundException(`Order with id ${orderId} not found`);
+    return {
+      success: true,
+      message: 'Order found',
+      data: order,
+    };
+  }
+
   async getOrdersByUserId(userId: string, paginationDto: OrderPaginationDto) {
     const where: Prisma.OrderWhereInput = { userId };
 

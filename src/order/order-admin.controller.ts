@@ -23,9 +23,14 @@ import { UpdateTrackingDto } from './dto/update-tracking.dto';
 export class OrderAdminController {
   constructor(private readonly orderService: OrderService) {}
 
+  @Get(':id')
+  findOrderById(@Param('id') id: string) {
+    return this.orderService.getOrderByIdForAdmin(id);
+  }
+
   @Get()
-  findAll() //Should have the pagination params here
-  {
+  findAll() {
+    //Should have the pagination params here
     return this.orderService.findAll();
   }
 
