@@ -31,6 +31,6 @@ import { RefreshJwtStrategy } from './refresh-jwt.strategy';
     JwtStrategy,
     RefreshJwtStrategy,
   ],
-  exports: [PassportModule, JwtModule],
+  exports: [PassportModule, JwtModule, MailService],
 })
 export class AuthModule {}
