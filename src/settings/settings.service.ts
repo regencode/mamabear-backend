@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  OnModuleInit,
+  Logger,
+} from '@nestjs/common';
 import { SettingsRepository } from './settings.repository';
 import { UpdateSettingDto } from './dto/update-setting.dto';
 
@@ -6,19 +11,28 @@ const ALLOWED_TYPES = new Set(['string', 'json', 'number', 'boolean']);
 
 // Keys that must be present and non-empty
 const REQUIRED_KEYS = new Set([
-  'site.name',
-  'site.description',
-  'contact.email',
-  'social.links',
-  'shipping.origin',
-  'tax.rate',
+  'courier',
+  'site_name',
+  'site_description',
+  'contact_phone',
+  'ig_link',
+  'tr_link',
+  'fb_link',
+  'addr_id',
+  'addr_province',
+  'addr',
+  'tax_rate',
   'currency',
-  'email.smtp',
-  'payment.gateway',
+  'email',
+  'payment_type',
+  'maint_mode',
 ]);
 
 @Injectable()
-export class SettingsService {
+export class SettingsService implements OnModuleInit {
+  private readonly logger = new Logger(SettingsService.name);
+  private cache = new Map<string, any>();
+
   constructor(private readonly repo: SettingsRepository) {}
 
   findAll() {
@@ -27,6 +41,51 @@ export class SettingsService {
 
   findByKey(key: string) {
     return this.repo.findByKey(key);
+  }
+
+  get(key: string, defaultValue?: any) {
+    if (this.cache.has(key)) return this.cache.get(key);
+    const alt = this.getAlternateKey(key);
+    if (alt && this.cache.has(alt)) return this.cache.get(alt);
+    return defaultValue;
+  }
+
+  getAll() {
+    return Object.fromEntries(this.cache.entries());
+  }
+
+  async onModuleInit() {
+    try {
+      const items = await this.repo.findAll();
+      for (const it of items) {
+        const parsed = this.parseValue(it.type, it.value);
+        this.cache.set(it.key, parsed);
+        const alt = this.getAlternateKey(it.key);
+        if (alt && !this.cache.has(alt)) this.cache.set(alt, parsed);
+      }
+      this.logger.log(`Loaded ${items.length} settings into cache`);
+    } catch (err: any) {
+      this.logger.error('Failed to load settings on init', err?.message ?? err);
+    }
+  }
+
+  async refreshCache() {
+    try {
+      const items = await this.repo.findAll();
+      this.cache.clear();
+      for (const it of items) {
+        const parsed = this.parseValue(it.type, it.value);
+        this.cache.set(it.key, parsed);
+        const alt = this.getAlternateKey(it.key);
+        if (alt && !this.cache.has(alt)) this.cache.set(alt, parsed);
+      }
+      this.logger.log(`Refreshed settings cache with ${items.length} items`);
+    } catch (err: any) {
+      this.logger.error(
+        'Failed to refresh settings cache',
+        err?.message ?? err,
+      );
+    }
   }
 
   private isEmptyValueForType(value: string, type: string) {
@@ -114,12 +173,14 @@ export class SettingsService {
         throw new BadRequestException('Unsupported type');
       }
 
-      // Required keys cannot be empty
-      if (
-        REQUIRED_KEYS.has(key) &&
-        this.isEmptyValueForType(sanitizedValue, type)
-      ) {
-        throw new BadRequestException(`${key} is required and cannot be empty`);
+      // Required keys cannot be empty (accept snake_case or dot-style)
+      const canonicalKey = this.canonicalizeKey(key);
+      if (REQUIRED_KEYS.has(key) || REQUIRED_KEYS.has(canonicalKey)) {
+        if (this.isEmptyValueForType(sanitizedValue, type)) {
+          throw new BadRequestException(
+            `${key} is required and cannot be empty`,
+          );
+        }
       }
 
       const out: UpdateSettingDto = {
@@ -134,6 +195,54 @@ export class SettingsService {
 
   async upsertByKey(key: string, dto: UpdateSettingDto) {
     const cleaned = await this.validateAndSanitize(key, dto);
-    return this.repo.upsertByKey(key, cleaned as UpdateSettingDto);
+    const result = await this.repo.upsertByKey(
+      key,
+      cleaned as UpdateSettingDto,
+    );
+    // update cache with parsed value
+    try {
+      const parsed = this.parseValue(result.type, result.value);
+      this.cache.set(result.key, parsed);
+      const alt = this.getAlternateKey(result.key);
+      if (alt) this.cache.set(alt, parsed);
+      // refresh full cache to ensure consistency with DB
+      await this.refreshCache();
+    } catch (e) {
+      this.logger.warn(
+        `Failed to parse setting ${result.key} into cache: ${e}`,
+      );
+    }
+    return result;
+  }
+
+  private parseValue(type: string, raw: string) {
+    const t = (type || 'string').toLowerCase();
+    if (t === 'json') {
+      try {
+        return JSON.parse(raw);
+      } catch (e) {
+        return null;
+      }
+    }
+    if (t === 'number') {
+      const n = Number(raw);
+      return Number.isFinite(n) ? n : null;
+    }
+    if (t === 'boolean') {
+      const v = String(raw).toLowerCase();
+      return v === 'true' || v === '1' || v === 'yes';
+    }
+    return String(raw);
+  }
+
+  private canonicalizeKey(key: string) {
+    return String(key).replace(/_/g, '.');
+  }
+
+  private getAlternateKey(key: string) {
+    if (!key) return null;
+    if (key.includes('.')) return key.replace(/\./g, '_');
+    if (key.includes('_')) return key.replace(/_/g, '.');
+    return null;
   }
 }
