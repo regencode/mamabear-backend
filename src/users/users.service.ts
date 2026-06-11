@@ -1,5 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Response } from 'express';
 import { PinoLogger } from 'pino-nestjs';
+import { format } from 'fast-csv';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository, USER_SELECT } from './users.repository';
@@ -304,6 +306,54 @@ export class UsersService {
         error: error.message,
       });
       throw error;
+    }
+  }
+
+  async exportCustomersToCSV(query: ListCustomersQueryDto, res: Response): Promise<void> {
+    try {
+      const { items } = await this.usersRepository.findCustomers(query);
+
+      const csvData = items.map((customer) => ({
+        ID: customer.id,
+        Name: customer.name,
+        Email: customer.email,
+        Phone: customer.phone,
+        'Total Orders': customer.total_orders,
+        'Total Spent': customer.total_spent,
+        'Registered At': new Date(customer.registered_at).toISOString(),
+      }));
+
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', `attachment; filename="customers_${new Date().toISOString().split('T')[0]}.csv"`);
+
+      const csvStream = format({ headers: true });
+      csvStream.pipe(res);
+
+      csvData.forEach((row) => csvStream.write(row));
+      csvStream.end();
+
+      this.logger.info({
+        message: 'Exported admin customers to CSV',
+        endpoint: 'GET /admin/customers/export',
+        total: items.length,
+        status: 'success',
+      });
+    } catch (error: any) {
+      this.logger.error({
+        message: 'Failed to export admin customers to CSV',
+        endpoint: 'GET /admin/customers/export',
+        status: 'error',
+        error: error.message,
+      });
+      if (!res.headersSent) {
+        res.status(500).json({
+          success: false,
+          statusCode: 500,
+          message: ['Failed to export customers'],
+          data: null,
+          timestamp: new Date().toISOString(),
+        });
+      }
     }
   }
 }

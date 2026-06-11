@@ -1,5 +1,6 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, Res, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiParam } from '@nestjs/swagger';
+import { Response } from 'express';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 import { Roles } from '@/auth/decorators/roles.decorator';
@@ -14,6 +15,11 @@ import { AdminCustomerDetailDto } from './dto/admin-customer-detail.dto';
 @Roles([Role.ADMIN])
 export class AdminCustomersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Get('export')
+  async export(@Query() query: ListCustomersQueryDto, @Res() res: Response) {
+    await this.usersService.exportCustomersToCSV(query, res);
+  }
 
   @Get()
   @ApiOkResponse({ type: AdminCustomersListResponseDto })
