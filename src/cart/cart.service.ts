@@ -115,6 +115,8 @@ export class CartService {
         increment: true,
       });
 
+      await this.cartRepo.recalculateCartTotals(cart.id);
+
       this.logger.info({
         message: 'Item added to cart',
         cartId: cart.id,
@@ -177,6 +179,8 @@ export class CartService {
         itemId,
         quantity,
       );
+
+      await this.cartRepo.recalculateCartTotals(cartItem.cart.id);
       this.logger.info({
         message: 'Cart item quantity updated',
         itemId,
@@ -266,6 +270,7 @@ export class CartService {
       }
 
       const result = await this.cartRepo.deleteCartItem(itemsId);
+      await this.cartRepo.recalculateCartTotals(cartItem.cart.id);
       this.logger.info({
         message: 'Cart item removed',
         itemId: itemsId,
@@ -287,6 +292,7 @@ export class CartService {
   async clearCart(cartId: string) {
     try {
       const result = await this.cartRepo.deleteCartItems(cartId);
+      await this.cartRepo.recalculateCartTotals(cartId);
       this.logger.info({
         message: 'Cart cleared',
         cartId,
@@ -307,7 +313,7 @@ export class CartService {
   // Get Full Cart (with relations)
   async getCart(userId?: string, sessionId?: string) {
     const result = await this.cartRepo.findCartWithItems(userId, sessionId);
-    if(!result) return null;
+    if (!result) return null;
     const totalWeight = result?.items?.reduce((sum, item) => {
       const weight = item.variant?.weightG ?? 0;
       return sum + weight * item.quantity;
@@ -315,7 +321,7 @@ export class CartService {
     this.logger.info({
       message: 'Cart retrieved',
       userId: userId || 'guest',
-      sessionId: sessionId || "null",
+      sessionId: sessionId || 'null',
       itemCount: result?.items?.length || 0,
       totalWeight: totalWeight || 0,
       status: 'success',
@@ -401,12 +407,12 @@ export class CartService {
   }
 
   async clearCourierInformation(cartId: string) {
-      return this.cartRepo.clearCourierInformation(cartId);
+    return this.cartRepo.clearCourierInformation(cartId);
   }
 
   async updateCourierInformation(cartId: string, dto: PatchCourierDto) {
-      return this.cartRepo.updateCourierInformation(cartId, dto);
-  } 
+    return this.cartRepo.updateCourierInformation(cartId, dto);
+  }
 
   // Cleanup Expired Carts (for cron)
   async cleanupExpiredCarts() {
