@@ -12,6 +12,7 @@ import {
   UseInterceptors,
   BadRequestException,
   Patch,
+  Res,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
@@ -28,6 +29,10 @@ import { CreateVariantDto } from '@/variant/dto/create-variant.dto';
 import { UpdateVariantDto } from '@/variant/dto/update-variant.dto';
 import { VariantService } from '@/variant/variant.service';
 import { memoryStorage } from 'multer';
+import { BulkDeleteProductsDto } from './dto/bulk-delete-products.dto';
+import { BulkUpdateProductsStatusDto } from './dto/bulk-update-products-status.dto';
+import { format } from '@fast-csv/format';
+import { Response } from 'express';
 
 @ApiTags('products (admin)')
 @Controller('admin/products')
@@ -42,10 +47,45 @@ export class ProductsAdminController {
   ) {}
 
   @Post()
-  create(
-    @Body() dto: CreateProductDto,
-  ) {
+  create(@Body() dto: CreateProductDto) {
     return this.productsService.create(dto);
+  }
+
+  @Delete('bulk-delete')
+  bulkDelete(@Body() dto: BulkDeleteProductsDto) {
+    return this.productsService.bulkDelete(dto);
+  }
+
+  @Patch('bulk-publish')
+  bulkUpdateProductStatus(@Body() dto: BulkUpdateProductsStatusDto) {
+    return this.productsService.bulkUpdateProductStatus(dto);
+  }
+
+  @Get('export')
+  async exportProduct(@Res() res: Response) {
+    const result = await this.productsService.exportProducts();
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=products.csv');
+
+    const csvStream = format({
+      headers: ['Name', 'SKU', 'Price', 'Stock', 'Total Sold', 'Category'],
+    });
+
+    csvStream.pipe(res);
+
+    result.data.forEach((product) => {
+      csvStream.write({
+        Name: product.name,
+        SKU: product.sku,
+        Price: product.priceIdr,
+        Stock: product.stock,
+        'Total Sold': product.totalSold,
+        Category: product.category,
+      });
+    });
+
+    csvStream.end();
   }
 
   @Get(':id')
@@ -53,14 +93,15 @@ export class ProductsAdminController {
     return this.productsService.findOne(+id);
   }
 
-  @Put(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateProductDto: UpdateProductDto,
-  ) {
-    return this.productsService.update(+id, updateProductDto);
+  @Post(':id/duplicate')
+  duplicateProduct(@Param('id') id: number) {
+    return this.productsService.duplicateProduct(id);
   }
 
+  @Put(':id')
+  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
+    return this.productsService.update(+id, updateProductDto);
+  }
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.productsService.remove(+id);
