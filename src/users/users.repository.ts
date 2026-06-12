@@ -10,6 +10,7 @@ export const USER_SELECT = {
   name: true,
   phone: true,
   role: true,
+  isBlocked: true,
   isVerified: true,
   createdAt: true,
   updatedAt: true,
@@ -250,6 +251,14 @@ export class UsersRepository {
     return this.prisma.user.update({
       where: { id },
       data: updateData,
+      select: USER_SELECT,
+    });
+  }
+
+  setBlocked(id: string, isBlocked: boolean) {
+    return this.prisma.user.update({
+      where: { id },
+      data: { isBlocked },
       select: USER_SELECT,
     });
   }

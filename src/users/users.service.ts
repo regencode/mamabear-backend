@@ -8,6 +8,7 @@ import { UsersRepository, USER_SELECT } from './users.repository';
 import { ServiceResult } from '@/common/ServiceResult';
 import { Prisma, OrderStatus, Role } from '@/generated/prisma';
 import { ListCustomersQueryDto } from './dto/list-customers-query.dto';
+import { UpdateCustomerStatusDto } from './dto/update-customer-status.dto';
 
 type UserPublic = Prisma.UserGetPayload<{ select: typeof USER_SELECT }>;
 
@@ -69,6 +70,46 @@ export class UsersService {
     private readonly logger: PinoLogger,
   ) {
     this.logger.setContext(UsersService.name);
+  }
+
+  async updateCustomerStatus(id: string, dto: UpdateCustomerStatusDto): Promise<ServiceResult<UserPublic>> {
+    try {
+      const user = await this.usersRepository.findById(id);
+      if (!user) {
+        this.logger.warn({
+          message: 'Customer not found for status update',
+          endpoint: 'PUT /admin/customers/:id/status',
+          customerId: id,
+          status: 'failure',
+        });
+        throw new NotFoundException(`Customer with id ${id} not found`);
+      }
+
+      const result = await this.usersRepository.setBlocked(id, dto.isBlocked);
+
+      this.logger.info({
+        message: `Customer ${dto.isBlocked ? 'blocked' : 'reactivated'} successfully`,
+        endpoint: 'PUT /admin/customers/:id/status',
+        customerId: id,
+        status: 'success',
+      });
+
+      return {
+        success: true,
+        message: `Customer ${dto.isBlocked ? 'blocked' : 'reactivated'} successfully`,
+        data: result,
+      };
+    } catch (error: any) {
+      if (error instanceof NotFoundException) throw error;
+      this.logger.error({
+        message: 'Failed to update customer status',
+        endpoint: 'PUT /admin/customers/:id/status',
+        customerId: id,
+        status: 'error',
+        error: error.message,
+      });
+      throw error;
+    }
   }
 
   async create(createUserDto: CreateUserDto): Promise<ServiceResult<UserPublic>> {

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, Res, UseGuards, Put, Body } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiParam } from '@nestjs/swagger';
 import { Response } from 'express';
 import { UsersService } from './users.service';
@@ -8,6 +8,7 @@ import { Role } from '@/generated/prisma';
 import { ListCustomersQueryDto } from './dto/list-customers-query.dto';
 import { AdminCustomersListResponseDto } from './dto/admin-customers-list-response.dto';
 import { AdminCustomerDetailDto } from './dto/admin-customer-detail.dto';
+import { UpdateCustomerStatusDto } from './dto/update-customer-status.dto';
 
 @ApiTags('customers (admin)')
 @Controller('admin/customers')
@@ -32,5 +33,11 @@ export class AdminCustomersController {
   @ApiOkResponse({ type: AdminCustomerDetailDto })
   findOne(@Param('id') id: string) {
     return this.usersService.findCustomerDetail(id);
+  }
+
+  @Put(':id/status')
+  @ApiParam({ name: 'id', required: true })
+  updateStatus(@Param('id') id: string, @Body() body: UpdateCustomerStatusDto) {
+    return this.usersService.updateCustomerStatus(id, body);
   }
 }
