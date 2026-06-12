@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@fast-csv/format": "^5.0.7",
     "@nestjs-modules/mailer": "^2.3.4",
     "@nestjs/common": "^11.1.23",
     "@nestjs/config": "^4.0.4",
@@ -41,7 +42,6 @@
     "class-validator": "^0.15.1",
     "cloudinary": "^2.10.0",
     "cookie-parser": "^1.4.7",
-    "csv-writer": "^1.6.0",
     "dotenv": "^17.4.2",
     "glob-parent": "^6.0.2",
     "midtrans-client": "^1.4.3",

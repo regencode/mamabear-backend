@@ -31,7 +31,7 @@ import { VariantService } from '@/variant/variant.service';
 import { memoryStorage } from 'multer';
 import { BulkDeleteProductsDto } from './dto/bulk-delete-products.dto';
 import { BulkUpdateProductsStatusDto } from './dto/bulk-update-products-status.dto';
-import { createObjectCsvStringifier } from 'csv-writer';
+import { format } from '@fast-csv/format';
 import { Response } from 'express';
 
 @ApiTags('products (admin)')
@@ -65,25 +65,27 @@ export class ProductsAdminController {
   async exportProduct(@Res() res: Response) {
     const result = await this.productsService.exportProducts();
 
-    const csvStringifier = createObjectCsvStringifier({
-      header: [
-        { id: 'name', title: 'Name' },
-        { id: 'sku', title: 'SKU' },
-        { id: 'priceIdr', title: 'Price' },
-        { id: 'stock', title: 'Stock' },
-        { id: 'totalSold', title: 'Total Sold' },
-        { id: 'category', title: 'Category' },
-      ],
-    });
-
-    const csv =
-      csvStringifier.getHeaderString() +
-      csvStringifier.stringifyRecords(result.data);
-
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', 'attachment; filename=products.csv');
 
-    return res.send(csv);
+    const csvStream = format({
+      headers: ['Name', 'SKU', 'Price', 'Stock', 'Total Sold', 'Category'],
+    });
+
+    csvStream.pipe(res);
+
+    result.data.forEach((product) => {
+      csvStream.write({
+        Name: product.name,
+        SKU: product.sku,
+        Price: product.priceIdr,
+        Stock: product.stock,
+        'Total Sold': product.totalSold,
+        Category: product.category,
+      });
+    });
+
+    csvStream.end();
   }
 
   @Get(':id')
