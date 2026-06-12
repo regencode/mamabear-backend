@@ -14,12 +14,13 @@ export class CategoryRepository {
       data: {
         name: categoryData.name,
         slug: categoryData.slug!,
-        description: categoryData.description ?? "",
+        description: categoryData.description ?? '',
         isActive: categoryData.isActive,
         sortOrder: categoryData.sortOrder,
         metaTitle: categoryData.metaTitle ?? categoryData.name,
-        metaDescription: categoryData.metaDescription ?? categoryData.description,
-       ...(images?.length && {
+        metaDescription:
+          categoryData.metaDescription ?? categoryData.description,
+        ...(images?.length && {
           images: {
             createMany: {
               data: images.map((img) => ({
@@ -42,27 +43,32 @@ export class CategoryRepository {
 
   update(id: number, dto: UpdateCategoryDto) {
     const { images, ...categoryData } = dto;
-    return this.prisma.$transaction(async tx => {
-        const category = await tx.category.update({
-            where: { id },
-            data: categoryData,
-            include: { images: true },
-        });
-        let imageUpserts: Image[] = [];
-        if(images && images.length > 0) {
-            imageUpserts = await Promise.all(images.map(async img => {
-                return await tx.image.upsert({
-                    where: { publicId: img.publicId },
-                    update: {
-                        sortOrder: img.sortOrder,
-                        altText: img.altText,
-                        categoryId: id,
-                    },
-                    create: { ...img, categoryId: id },
-                }); 
-            }))
-        }
-        return { ...category, images: category.images.concat(imageUpserts ?? []) };
+    return this.prisma.$transaction(async (tx) => {
+      const category = await tx.category.update({
+        where: { id },
+        data: categoryData,
+        include: { images: true },
+      });
+      let imageUpserts: Image[] = [];
+      if (images && images.length > 0) {
+        imageUpserts = await Promise.all(
+          images.map(async (img) => {
+            return await tx.image.upsert({
+              where: { publicId: img.publicId },
+              update: {
+                sortOrder: img.sortOrder,
+                altText: img.altText,
+                categoryId: id,
+              },
+              create: { ...img, categoryId: id },
+            });
+          }),
+        );
+      }
+      return {
+        ...category,
+        images: category.images.concat(imageUpserts ?? []),
+      };
     });
   }
 
@@ -74,6 +80,9 @@ export class CategoryRepository {
     return this.prisma.category.findMany({
       include: {
         images: true,
+        _count: {
+          select: { products: true },
+        },
       },
       orderBy: {
         sortOrder: 'asc',
@@ -93,6 +102,9 @@ export class CategoryRepository {
       where: { id },
       include: {
         products: true,
+        _count: {
+          select: { products: true },
+        },
       },
     });
   }
