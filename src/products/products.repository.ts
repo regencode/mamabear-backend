@@ -9,14 +9,13 @@ import { FilterProductsDto } from './dto/filter-products.dto';
 import { PinoLogger } from 'pino-nestjs';
 import { BadRequestException } from '@nestjs/common';
 
-
 export const PRODUCT_INCLUDE = {
   category: true,
   images: true,
   variants: {
-      include: {
-          images: true,
-      }
+    include: {
+      images: true,
+    },
   },
   highlight: true,
 };
@@ -29,41 +28,55 @@ type SortConfig = {
 @Injectable()
 export class ProductsRepository {
   constructor(
-     private readonly prisma: PrismaService,
-     private readonly utils: ProductUtils,
-     private readonly embedService: EmbeddingsService,
-     private readonly logger: PinoLogger,
+    private readonly prisma: PrismaService,
+    private readonly utils: ProductUtils,
+    private readonly embedService: EmbeddingsService,
+    private readonly logger: PinoLogger,
   ) {}
 
   create(data: CreateProductDto) {
     return this.prisma.$transaction(async (tx) => {
-        const { images, variants, weightG, priceIdr, stock, sku, ...productData } = data;
-        const product = await tx.product.create({ data: { ...productData }, include: PRODUCT_INCLUDE })
-        const embed = await this.embedService.generateEmbeddingsFromProduct(product);
-        tx.$executeRaw`
+      const {
+        images,
+        variants,
+        weightG,
+        priceIdr,
+        stock,
+        sku,
+        ...productData
+      } = data;
+      const product = await tx.product.create({
+        data: { ...productData },
+        include: PRODUCT_INCLUDE,
+      });
+      const embed =
+        await this.embedService.generateEmbeddingsFromProduct(product);
+      tx.$executeRaw`
             UPDATE "Product" 
             SET embedding = ${this.embedService.embeddingArrayToString(embed)}::vector
             WHERE id = ${product.id}
         `;
-        if(variants?.length) {
-            await tx.productVariant.createMany({
-                data: variants.map(v => ({...v, productId: product.id }))
-            })
-        }
-        if(images?.length) {
-            await tx.image.createMany({
-                data: images.map(img => ({...img, productId: product.id }))
-            })
-        }
-        return tx.product.findUnique({ where: { id: product.id }, include: PRODUCT_INCLUDE })
-    })
+      if (variants?.length) {
+        await tx.productVariant.createMany({
+          data: variants.map((v) => ({ ...v, productId: product.id })),
+        });
+      }
+      if (images?.length) {
+        await tx.image.createMany({
+          data: images.map((img) => ({ ...img, productId: product.id })),
+        });
+      }
+      return tx.product.findUnique({
+        where: { id: product.id },
+        include: PRODUCT_INCLUDE,
+      });
+    });
   }
-
 
   async findMany(args?: any) {
     const { select, include, ...other } = args;
-    const products = await this.prisma.product.findMany({ 
-        ...other, 
+    const products = await this.prisma.product.findMany({
+      ...other,
     });
     return this.utils.enrichMany(products);
   }
@@ -101,14 +114,27 @@ export class ProductsRepository {
     return Buffer.from(JSON.stringify(values)).toString('base64');
   }
 
-  private buildCursorCondition(sortConfig: SortConfig, decoded: Record<string, any>): string {
+  private buildCursorCondition(
+    sortConfig: SortConfig,
+    decoded: Record<string, any>,
+  ): string {
     const conditions: string[] = [];
-    if (sortConfig.cursorKeys.includes('minPrice') && decoded.minPrice !== undefined) {
+    if (
+      sortConfig.cursorKeys.includes('minPrice') &&
+      decoded.minPrice !== undefined
+    ) {
       const dir = sortConfig.orderByClause.includes('ASC') ? '>=' : '<=';
-      conditions.push(`(MIN(pv."priceIdr"), p.id) ${dir} (${decoded.minPrice}, ${decoded.id})`);
-    } else if (sortConfig.cursorKeys.includes('createdAt') && decoded.createdAt !== undefined) {
+      conditions.push(
+        `(MIN(pv."priceIdr"), p.id) ${dir} (${decoded.minPrice}, ${decoded.id})`,
+      );
+    } else if (
+      sortConfig.cursorKeys.includes('createdAt') &&
+      decoded.createdAt !== undefined
+    ) {
       const dir = sortConfig.orderByClause.includes('ASC') ? '>=' : '<=';
-      conditions.push(`(p."createdAt", p.id) ${dir} ('${decoded.createdAt}'::timestamp, ${decoded.id})`);
+      conditions.push(
+        `(p."createdAt", p.id) ${dir} ('${decoded.createdAt}'::timestamp, ${decoded.id})`,
+      );
     } else {
       conditions.push(`p.id >= ${decoded.id}`);
     }
@@ -120,7 +146,6 @@ export class ProductsRepository {
     const sortConfig = this.getSortConfig(query);
     const decodedCursor = query.cursor ? this.decodeCursor(query.cursor) : null;
 
-
     const needsVariantJoin =
       query.priceAscending !== undefined ||
       query.minPrice !== undefined ||
@@ -130,19 +155,21 @@ export class ProductsRepository {
     const whereParts: string[] = ['WHERE 1=1'];
 
     if (query.categories && query.categories.length > 0) {
-      const cats = query.categories.map(c => `'${c}'`).join(',');
+      const cats = query.categories.map((c) => `'${c}'`).join(',');
       whereParts.push(`AND c.slug IN (${cats})`);
     }
     if (query.highlights && query.highlights.length > 0) {
-      const highs = query.highlights.map(h => `'${h}'`).join(',');
+      const highs = query.highlights.map((h) => `'${h}'`).join(',');
       whereParts.push(`AND h.slug IN (${highs})`);
     }
 
     const havingParts: string[] = [];
     if (query.inStock) {
-      havingParts.push(needsVariantJoin
-        ? `AND SUM(CASE WHEN pv.stock >= 1 THEN 1 ELSE 0 END) > 0`
-        : '');
+      havingParts.push(
+        needsVariantJoin
+          ? `AND SUM(CASE WHEN pv.stock >= 1 THEN 1 ELSE 0 END) > 0`
+          : '',
+      );
     }
     if (query.minPrice !== undefined) {
       havingParts.push(`AND MIN(pv."priceIdr") >= ${query.minPrice}`);
@@ -161,9 +188,10 @@ export class ProductsRepository {
     const categoryJoin = `LEFT JOIN "Category" c ON c.id = p."categoryId"`;
     const highlightJoin = `LEFT JOIN "Highlight" h ON h.id = p."highlightId"`;
 
-    const selectPrice = query.priceAscending !== undefined
-      ? `, MIN(pv."priceIdr") as "minPrice"`
-      : '';
+    const selectPrice =
+      query.priceAscending !== undefined
+        ? `, MIN(pv."priceIdr") as "minPrice"`
+        : '';
 
     const rawQuery = `
       SELECT p.id ${selectPrice}
@@ -178,7 +206,7 @@ export class ProductsRepository {
       ORDER BY ${sortConfig.orderByClause}
       LIMIT ${limit + 1}
     `;
-    this.logger.info(`rawQuery: ${rawQuery}`) 
+    this.logger.info(`rawQuery: ${rawQuery}`);
 
     const rows: any[] = await this.prisma.$queryRawUnsafe(rawQuery);
 
@@ -205,7 +233,9 @@ export class ProductsRepository {
       include: PRODUCT_INCLUDE,
     });
 
-    const orderMap = new Map(ids.map((id: number, index: number) => [id, index]));
+    const orderMap = new Map(
+      ids.map((id: number, index: number) => [id, index]),
+    );
     const sortedProducts = products.sort(
       (a, b) => orderMap.get(a.id)! - orderMap.get(b.id)!,
     );
@@ -235,12 +265,12 @@ export class ProductsRepository {
         WHERE p.id != ${id} AND embedding IS NOT NULL
         ORDER BY similarity DESC
         LIMIT 5
-    `
-    const ids = rows.map(row => row.id);
+    `;
+    const ids = rows.map((row) => row.id);
     const result = await this.prisma.product.findMany({
-        where: { id: { in: ids }},
-        include: PRODUCT_INCLUDE
-    })
+      where: { id: { in: ids } },
+      include: PRODUCT_INCLUDE,
+    });
     return this.utils.enrichMany(result);
   }
 
@@ -248,7 +278,7 @@ export class ProductsRepository {
     const { images, variants, weightG, priceIdr, stock, sku, ...productData } =
       data;
 
-    return this.prisma.$transaction(async tx => {
+    return this.prisma.$transaction(async (tx) => {
       const product = await tx.product.update({
         where: { id },
         data: productData,
@@ -256,17 +286,19 @@ export class ProductsRepository {
       });
       let imageUpserts: Image[] = [];
       if (images && images.length > 0) {
-        imageUpserts = await Promise.all(images.map(async img => {
-          return await tx.image.upsert({
-            where: { publicId: img.publicId },
-            update: {
-              sortOrder: img.sortOrder,
-              altText: img.altText,
-              productId: id,
-            },
-            create: { ...img, productId: id },
-          });
-        }));
+        imageUpserts = await Promise.all(
+          images.map(async (img) => {
+            return await tx.image.upsert({
+              where: { publicId: img.publicId },
+              update: {
+                sortOrder: img.sortOrder,
+                altText: img.altText,
+                productId: id,
+              },
+              create: { ...img, productId: id },
+            });
+          }),
+        );
       }
       return { ...product, images: product.images.concat(imageUpserts ?? []) };
     });
@@ -276,6 +308,19 @@ export class ProductsRepository {
     return this.prisma.product.delete({
       where: { id },
       include: PRODUCT_INCLUDE,
+    });
+  }
+
+  bulkDelete(ids: number[]) {
+    return this.prisma.product.deleteMany({
+      where: { id: { in: ids } },
+    });
+  }
+
+  bulkUpdateProductStatus(data: { ids: number[]; isActive: boolean }) {
+    return this.prisma.product.updateMany({
+      where: { id: { in: data.ids } },
+      data: { isActive: data.isActive },
     });
   }
 }
