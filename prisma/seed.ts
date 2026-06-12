@@ -187,6 +187,116 @@ async function main() {
 
   console.log(`Inserted ${users.length} users.`);
 
+  console.log('Creating customer addresses...');
+
+  const customerUsers = await prisma.user.findMany({
+    where: { role: 'USER' },
+    select: { id: true },
+  });
+
+  const customerAddresses = [
+    {
+      userId: customerUsers[0]?.id,
+      name: 'Siti Rahayu',
+      phone: '081234567890',
+      provinceId: 6,
+      provinceName: 'DKI Jakarta',
+      cityId: 154,
+      cityName: 'Jakarta Selatan',
+      districtId: 1524,
+      districtName: 'Tebet',
+      subdistrictId: 15270,
+      subdistrictName: 'Tebet',
+      postalCode: '12810',
+      road: 'Jalan Tebet Barat Dalam V No. 45',
+      completeAddress: 'Jalan Tebet Barat Dalam V No. 45, Tebet, Jakarta Selatan, DKI Jakarta 12810',
+      detail: 'Rumah dengan pagar putih, depan toko roti',
+      usedFor: 'Rumah',
+    },
+    {
+      userId: customerUsers[0]?.id,
+      name: 'Kantor Siti',
+      phone: '081234567891',
+      provinceId: 6,
+      provinceName: 'DKI Jakarta',
+      cityId: 154,
+      cityName: 'Jakarta Pusat',
+      districtId: 1526,
+      districtName: 'Menteng',
+      subdistrictId: 15297,
+      subdistrictName: 'Menteng',
+      postalCode: '10310',
+      road: 'Jalan Menteng Raya No. 120',
+      completeAddress: 'Jalan Menteng Raya No. 120, Menteng, Jakarta Pusat, DKI Jakarta 10310',
+      detail: null,
+      usedFor: 'Kantor',
+    },
+    {
+      userId: customerUsers[1]?.id,
+      name: 'Dewi Lestari',
+      phone: '081298765432',
+      provinceId: 6,
+      provinceName: 'DKI Jakarta',
+      cityId: 155,
+      cityName: 'Jakarta Barat',
+      districtId: 1529,
+      districtName: 'Kebon Jeruk',
+      subdistrictId: 15317,
+      subdistrictName: 'Kebon Jeruk',
+      postalCode: '11530',
+      road: 'Jalan Kebon Jeruk No. 88',
+      completeAddress: 'Jalan Kebon Jeruk No. 88, Kebon Jeruk, Jakarta Barat, DKI Jakarta 11530',
+      detail: 'Rumah sudut dengan cat warna hijau',
+      usedFor: 'Rumah',
+    },
+    {
+      userId: customerUsers[2]?.id,
+      name: 'Rumah Rina',
+      phone: '082112345678',
+      provinceId: 6,
+      provinceName: 'DKI Jakarta',
+      cityId: 156,
+      cityName: 'Jakarta Utara',
+      districtId: 1536,
+      districtName: 'Penjaringan',
+      subdistrictId: 15358,
+      subdistrictName: 'Penjaringan',
+      postalCode: '14450',
+      road: 'Jalan Penjaringan Timur No. 12',
+      completeAddress: 'Jalan Penjaringan Timur No. 12, Penjaringan, Jakarta Utara, DKI Jakarta 14450',
+      detail: 'Depan sekolah, di dekat masjid',
+      usedFor: 'Rumah',
+    },
+    {
+      userId: customerUsers[3]?.id,
+      name: 'Rumah Budi',
+      phone: '085678901234',
+      provinceId: 6,
+      provinceName: 'DKI Jakarta',
+      cityId: 157,
+      cityName: 'Jakarta Timur',
+      districtId: 1547,
+      districtName: 'Cakarta',
+      subdistrictId: 15403,
+      subdistrictName: 'Cakarta',
+      postalCode: '13930',
+      road: 'Jalan Cakarta Raya No. 55',
+      completeAddress: 'Jalan Cakarta Raya No. 55, Cakarta, Jakarta Timur, DKI Jakarta 13930',
+      detail: 'Rumah berlantai 2 dengan garasi',
+      usedFor: 'Rumah',
+    },
+  ];
+
+  let addressesCreated = 0;
+  for (const address of customerAddresses) {
+    if (address.userId) {
+      await prisma.address.create({ data: address });
+      addressesCreated++;
+    }
+  }
+
+  console.log(`Inserted ${addressesCreated} customer addresses.`);
+
   console.log('Creating categories...');
 
   for (const category of categories) {
