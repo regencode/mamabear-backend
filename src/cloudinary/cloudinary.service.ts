@@ -125,4 +125,27 @@ export class CloudinaryService {
       );
     }
   }
+
+  async duplicateImage(imageUrl: string) {
+    try {
+      const result = await cloudinary.uploader.upload(imageUrl, {
+        folder: 'products',
+        transformation: [{ quality: 'auto' }, { fetch_format: 'auto' }],
+      });
+
+      return {
+        imageUrl: result.secure_url,
+        publicId: result.public_id,
+        width: result.width,
+        height: result.height,
+        fileSize: result.bytes,
+        format: result.format,
+        altText: '',
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to duplicate image in Cloudinary',
+      );
+    }
+  }
 }

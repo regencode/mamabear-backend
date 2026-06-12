@@ -33,7 +33,7 @@ settings:
   maxRedirects: 5
 
 examples:
-  - name: "Success (201)"
+  - name: Success (201)
     request:
       url: "{{baseUrl}}/api/cart/items"
       method: POST
@@ -47,10 +47,10 @@ examples:
           }
     response:
       status: 201
-      statusText: "Created"
+      statusText: Created
       headers:
         - name: Content-Type
-          value: "application/json; charset=utf-8"
+          value: application/json; charset=utf-8
       body:
         type: json
         data: |-
@@ -71,7 +71,7 @@ examples:
             },
             "timestamp": "2026-05-26T01:41:44.617Z"
           }
-  - name: "Validation Error (400)"
+  - name: Validation Error (400)
     request:
       url: "{{baseUrl}}/api/cart/items"
       method: POST
@@ -83,10 +83,10 @@ examples:
           }
     response:
       status: 400
-      statusText: "Bad Request"
+      statusText: Bad Request
       headers:
         - name: Content-Type
-          value: "application/json; charset=utf-8"
+          value: application/json; charset=utf-8
       body:
         type: json
         data: |-
