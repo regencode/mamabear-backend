@@ -2,9 +2,17 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { PinoLogger } from 'pino-nestjs';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserRoleDto } from './dto/update-user-role.dto';
+import { UpdateUserStatusDto } from './dto/update-user-status.dto';
 import { UsersRepository, USER_SELECT } from './users.repository';
 import { ServiceResult } from '@/common/ServiceResult';
-import { Prisma } from '@/generated/prisma';
+import { Prisma, Role } from '@/generated/prisma';
+import { AdminCustomersQueryDto } from './dto/admin-customers-query.dto';
+import { AdminUsersQueryDto } from './dto/admin-users-query.dto';
+import {
+  PagePaginationResponseDto,
+  PagePaginationMetaDto,
+} from '@/common/dto/response/page-pagination.response.dto';
 
 type UserPublic = Prisma.UserGetPayload<{ select: typeof USER_SELECT }>;
 
@@ -157,5 +165,168 @@ export class UsersService {
       });
       throw error;
     }
+  }
+
+  async updateRole(
+    targetId: string,
+    dto: UpdateUserRoleDto,
+    currentUser: { id: string; role: Role },
+  ): Promise<ServiceResult<UserPublic>> {
+    if (targetId === currentUser.id) {
+      throw new BadRequestException('Cannot change your own role');
+    }
+
+    const target = await this.usersRepository.findById(targetId);
+    if (!target) {
+      throw new NotFoundException(`User with id ${targetId} not found`);
+    }
+
+    if (
+      target.role === Role.SUPERADMIN &&
+      currentUser.role !== Role.SUPERADMIN
+    ) {
+      throw new BadRequestException(
+        'Only a SUPERADMIN can modify another SUPERADMIN',
+      );
+    }
+
+    if (dto.role === Role.SUPERADMIN && currentUser.role !== Role.SUPERADMIN) {
+      throw new BadRequestException(
+        'Only a SUPERADMIN can assign the SUPERADMIN role',
+      );
+    }
+
+    const result = await this.usersRepository.update(targetId, {
+      role: dto.role,
+    });
+    return {
+      success: true,
+      message: `User role updated to ${dto.role}`,
+      data: result,
+    };
+  }
+
+  async updateStatus(
+    targetId: string,
+    dto: UpdateUserStatusDto,
+    currentUser: { id: string; role: Role },
+  ): Promise<ServiceResult<UserPublic>> {
+    if (targetId === currentUser.id) {
+      throw new BadRequestException('Cannot change your own status');
+    }
+
+    const target = await this.usersRepository.findById(targetId);
+    if (!target) {
+      throw new NotFoundException(`User with id ${targetId} not found`);
+    }
+
+    if (
+      target.role === Role.SUPERADMIN &&
+      currentUser.role !== Role.SUPERADMIN
+    ) {
+      throw new BadRequestException(
+        'Only a SUPERADMIN can modify another SUPERADMIN',
+      );
+    }
+
+    const result = await this.usersRepository.update(targetId, {
+      isVerified: dto.isVerified,
+    });
+    return {
+      success: true,
+      message: `User verification status updated to ${dto.isVerified}`,
+      data: result,
+    };
+  }
+
+  async exportCustomersCsv(
+    query: AdminCustomersQueryDto,
+  ): Promise<string> {
+    const customers = await this.usersRepository.exportCustomers(query);
+
+    const escapeCsv = (val: any): string => {
+      if (val === null || val === undefined) return '';
+      const str = String(val);
+      if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
+    const header = [
+      'ID',
+      'Name',
+      'Email',
+      'Phone',
+      'Verified',
+      'Total Orders',
+      'Total Spent (IDR)',
+      'Avg Order Value (IDR)',
+      'Last Order Date',
+      'Registered At',
+    ].join(',');
+
+    const rows = customers.map((c) =>
+      [
+        escapeCsv(c.id),
+        escapeCsv(c.name),
+        escapeCsv(c.email),
+        escapeCsv(c.phone),
+        escapeCsv(c.isVerified ? 'Yes' : 'No'),
+        escapeCsv(c.totalOrders),
+        escapeCsv(c.totalSpent),
+        escapeCsv(c.averageOrderValue),
+        escapeCsv(c.lastOrderDate ? new Date(c.lastOrderDate).toISOString() : ''),
+        escapeCsv(new Date(c.createdAt).toISOString()),
+      ].join(','),
+    );
+
+    return [header, ...rows].join('\n');
+  }
+
+  async findCustomers(
+    query: AdminCustomersQueryDto,
+  ): Promise<ServiceResult<PagePaginationResponseDto<any>>> {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+    const { items, totalItems } =
+      await this.usersRepository.findCustomers(query);
+    const meta = new PagePaginationMetaDto(page, limit, totalItems);
+    const result = new PagePaginationResponseDto(items, meta);
+    return {
+      success: true,
+      message: `Returned ${items.length} customers (page ${page} of ${meta.totalPages})`,
+      data: result,
+    };
+  }
+
+  async findCustomerDetail(
+    id: string,
+  ): Promise<ServiceResult<any>> {
+    const customer = await this.usersRepository.findCustomerDetail(id);
+    if (!customer) {
+      throw new NotFoundException(`Customer with id ${id} not found`);
+    }
+    return {
+      success: true,
+      message: `Found customer with id ${id}`,
+      data: customer,
+    };
+  }
+
+  async findAdminUsers(
+    query: AdminUsersQueryDto,
+  ): Promise<ServiceResult<PagePaginationResponseDto<any>>> {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+    const { items, totalItems } =
+      await this.usersRepository.findAdminUsers(query);
+    const meta = new PagePaginationMetaDto(page, limit, totalItems);
+    const result = new PagePaginationResponseDto(items, meta);
+    return {
+      success: true,
+      message: `Returned ${items.length} admin users (page ${page} of ${meta.totalPages})`,
+      data: result,
+    };
   }
 }

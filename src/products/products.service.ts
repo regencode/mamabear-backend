@@ -20,6 +20,11 @@ import {
   FilterPaginationMetaDto,
   FilterPaginationResponseDto,
 } from './dto/filter-pagination-meta.dto';
+import { AdminProductsQueryDto } from './dto/admin-products-query.dto';
+import {
+  PagePaginationResponseDto,
+  PagePaginationMetaDto,
+} from '@/common/dto/response/page-pagination.response.dto';
 
 @Injectable()
 export class ProductsService {
@@ -51,6 +56,23 @@ export class ProductsService {
       data: result,
     };
   }
+
+  async findAdminProducts(
+    query: AdminProductsQueryDto,
+  ): Promise<ServiceResult<PagePaginationResponseDto<Product>>> {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+    const { items, totalItems } =
+      await this.productsRepository.findAdminProducts(query);
+    const meta = new PagePaginationMetaDto(page, limit, totalItems);
+    const result = new PagePaginationResponseDto<Product>(items, meta);
+    return {
+      success: true,
+      message: `Returned ${items.length} products (page ${page} of ${meta.totalPages})`,
+      data: result,
+    };
+  }
+
   async findRelatedProducts(slug: string): Promise<ServiceResult<Product[]>> {
     const resolvedProduct = await this.productsRepository.findBySlug(slug);
     if (!resolvedProduct)

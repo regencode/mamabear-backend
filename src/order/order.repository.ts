@@ -6,6 +6,11 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
+import {
+  AdminOrdersQueryDto,
+  AdminOrderSortBy,
+  AdminOrderSortOrder,
+} from './dto/admin-orders-query.dto';
 import { isUUID } from 'class-validator';
 
 const ORDERITEM_INCLUDE = {
@@ -352,6 +357,147 @@ export class OrderRepository {
           },
         },
       },
+    });
+  }
+
+  async findAllOrders(query: AdminOrdersQueryDto) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+    const skip = (page - 1) * limit;
+
+    const where: Prisma.OrderWhereInput = {};
+
+    if (query.status) {
+      where.status = query.status;
+    }
+
+    if (query.paymentMethod) {
+      where.paymentMethod = { contains: query.paymentMethod, mode: 'insensitive' };
+    }
+
+    if (query.startDate || query.endDate) {
+      where.createdAt = {};
+      if (query.startDate) where.createdAt.gte = new Date(query.startDate);
+      if (query.endDate) where.createdAt.lte = new Date(query.endDate);
+    }
+
+    if (query.search) {
+      const searchTerm = query.search;
+      const isSearchUUID = isUUID(searchTerm);
+      where.OR = [
+        ...(isSearchUUID ? [{ id: searchTerm }] : []),
+        { notes: { contains: searchTerm, mode: 'insensitive' } },
+        { user: { name: { contains: searchTerm, mode: 'insensitive' } } },
+        { user: { email: { contains: searchTerm, mode: 'insensitive' } } },
+      ];
+    }
+
+    const dir = query.sortOrder === AdminOrderSortOrder.ASC ? 'asc' : 'desc';
+
+    let orderBy: Prisma.OrderOrderByWithRelationInput;
+    switch (query.sortBy) {
+      case AdminOrderSortBy.STATUS:
+        orderBy = { status: dir };
+        break;
+      case AdminOrderSortBy.TOTAL:
+        orderBy = { subtotalIdr: dir };
+        break;
+      default:
+        orderBy = { createdAt: dir };
+        break;
+    }
+
+    const [items, totalItems] = await Promise.all([
+      this.prisma.order.findMany({
+        where,
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              phone: true,
+            },
+          },
+          orderItems: {
+            include: {
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                  images: {
+                    take: 1,
+                    select: { imageUrl: true, altText: true },
+                  },
+                },
+              },
+              variant: {
+                select: {
+                  id: true,
+                  name: true,
+                  priceIdr: true,
+                  stock: true,
+                  sku: true,
+                },
+              },
+            },
+          },
+          shippingAddress: true,
+          orderStatusHistory: {
+            orderBy: { createdAt: 'desc' },
+            take: 1,
+          },
+        },
+        orderBy,
+        skip,
+        take: limit,
+      }),
+      this.prisma.order.count({ where }),
+    ]);
+
+    return { items, totalItems };
+  }
+
+  async exportOrders(query: AdminOrdersQueryDto) {
+    const where: Prisma.OrderWhereInput = {};
+
+    if (query.status) {
+      where.status = query.status;
+    }
+    if (query.paymentMethod) {
+      where.paymentMethod = query.paymentMethod;
+    }
+    if (query.startDate || query.endDate) {
+      where.createdAt = {};
+      if (query.startDate) {
+        (where.createdAt as any).gte = new Date(query.startDate);
+      }
+      if (query.endDate) {
+        (where.createdAt as any).lte = new Date(query.endDate);
+      }
+    }
+    if (query.search) {
+      const searchTerm = query.search;
+      where.OR = [
+        { user: { name: { contains: searchTerm, mode: 'insensitive' } } },
+        { user: { email: { contains: searchTerm, mode: 'insensitive' } } },
+      ];
+    }
+
+    return this.prisma.order.findMany({
+      where,
+      include: {
+        user: { select: { name: true, email: true, phone: true } },
+        orderItems: {
+          include: {
+            product: { select: { name: true } },
+            variant: { select: { name: true } },
+          },
+        },
+        shippingAddress: true,
+      },
+      orderBy: { createdAt: 'desc' },
     });
   }
 }

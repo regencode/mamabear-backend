@@ -20,6 +20,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { Role } from '@/generated/prisma';
 import { Roles } from '@/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
+import { RolesGuard } from '@/auth/guard/roles.guard';
 import { ReviewsService } from '@/reviews/reviews.service';
 import { CursorPaginationRequestDto } from '@/common/dto/request/pagination.request.dto';
 import { CreateDiscountDto } from '@/discounts/dto/create-discount.dto';
@@ -27,12 +28,14 @@ import { DiscountsService } from '@/discounts/discounts.service';
 import { CreateVariantDto } from '@/variant/dto/create-variant.dto';
 import { UpdateVariantDto } from '@/variant/dto/update-variant.dto';
 import { VariantService } from '@/variant/variant.service';
+import { AdminProductsQueryDto } from './dto/admin-products-query.dto';
+import { ReviewPaginationDto } from '@/reviews/dto/review-pagination.dto';
 import { memoryStorage } from 'multer';
 
 @ApiTags('products (admin)')
 @Controller('admin/products')
-@UseGuards(new JwtAuthGuard())
-@Roles([Role.ADMIN])
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles([Role.ADMIN, Role.SUPERADMIN])
 export class ProductsAdminController {
   constructor(
     private readonly productsService: ProductsService,
@@ -40,6 +43,11 @@ export class ProductsAdminController {
     private readonly discountsService: DiscountsService,
     private readonly variantService: VariantService,
   ) {}
+
+  @Get()
+  findAllAdmin(@Query() query: AdminProductsQueryDto) {
+    return this.productsService.findAdminProducts(query);
+  }
 
   @Post()
   create(
@@ -84,7 +92,7 @@ export class ProductsAdminController {
   @Get(':id/reviews')
   findAllReviewsOfProduct(
     @Param('id') productId: number,
-    @Query() paginationDto: CursorPaginationRequestDto,
+    @Query() paginationDto: ReviewPaginationDto,
   ) {
     return this.reviewsService.findReviewsOfProduct(productId, paginationDto);
   }

@@ -2,6 +2,17 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import {
+  AdminCustomersQueryDto,
+  CustomerSortBy,
+  CustomerSortOrder,
+} from './dto/admin-customers-query.dto';
+import {
+  AdminUsersQueryDto,
+  AdminUsersSortBy,
+  AdminUsersSortOrder,
+} from './dto/admin-users-query.dto';
+import { PinoLogger } from 'pino-nestjs';
 
 export const USER_SELECT = {
   id: true,
@@ -16,7 +27,10 @@ export const USER_SELECT = {
 
 @Injectable()
 export class UsersRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly logger: PinoLogger,
+  ) {}
 
   create(data: CreateUserDto) {
     const { password, ...rest } = data;
@@ -62,5 +76,276 @@ export class UsersRepository {
       where: { id },
       select: USER_SELECT,
     });
+  }
+
+  async findCustomers(query: AdminCustomersQueryDto) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+    const offset = (page - 1) * limit;
+    const params: any[] = [];
+
+    const whereParts: string[] = [`WHERE u.role = 'USER'`];
+
+    if (query.search) {
+      const p = params.length + 1;
+      params.push(`%${query.search}%`);
+      whereParts.push(
+        `AND (u.name ILIKE $${p} OR u.email ILIKE $${p} OR u.phone ILIKE $${p})`,
+      );
+    }
+
+    if (query.isVerified !== undefined) {
+      const p = params.length + 1;
+      params.push(query.isVerified);
+      whereParts.push(`AND u."isVerified" = $${p}`);
+    }
+
+    const dir =
+      query.sortOrder === CustomerSortOrder.ASC ? 'ASC' : 'DESC';
+
+    let orderByClause: string;
+    switch (query.sortBy) {
+      case CustomerSortBy.NAME:
+        orderByClause = `u.name ${dir}`;
+        break;
+      case CustomerSortBy.EMAIL:
+        orderByClause = `u.email ${dir}`;
+        break;
+      case CustomerSortBy.TOTAL_SPENT:
+        orderByClause = `COALESCE(SUM(o."subtotalIdr" + o."shippingCostIdr"), 0) ${dir}`;
+        break;
+      case CustomerSortBy.TOTAL_ORDERS:
+        orderByClause = `COUNT(o.id) ${dir}`;
+        break;
+      default:
+        orderByClause = `u."createdAt" ${dir}`;
+        break;
+    }
+
+    const offsetParam = params.length + 1;
+    const limitParam = params.length + 2;
+    params.push(offset, limit);
+
+    const rawQuery = `
+      SELECT
+        u.id,
+        u.email,
+        u.name,
+        u.phone,
+        u.role,
+        u."isVerified",
+        u."createdAt",
+        u."updatedAt",
+        COUNT(o.id) AS "totalOrders",
+        COALESCE(SUM(o."subtotalIdr" + o."shippingCostIdr"), 0) AS "totalSpent",
+        COALESCE(
+          AVG(o."subtotalIdr" + o."shippingCostIdr")::numeric(12,2),
+          0
+        ) AS "averageOrderValue",
+        MAX(o."createdAt") AS "lastOrderDate"
+      FROM "User" u
+      LEFT JOIN "Order" o ON o."userId" = u.id
+      ${whereParts.join(' ')}
+      GROUP BY u.id
+      ORDER BY ${orderByClause}, u.id ASC
+      OFFSET $${offsetParam}
+      LIMIT $${limitParam}
+    `;
+
+    const countQuery = `
+      SELECT COUNT(*) AS "totalCount"
+      FROM "User" u
+      ${whereParts.join(' ')}
+    `;
+
+    this.logger.info(`findCustomers query: ${rawQuery}`);
+
+    const rows: any[] = await this.prisma.$queryRawUnsafe(
+      rawQuery,
+      ...params,
+    );
+    const countRows: any[] = await this.prisma.$queryRawUnsafe(
+      countQuery,
+      ...params.slice(0, -2),
+    );
+
+    const totalItems = Number(countRows[0]?.totalCount ?? 0);
+
+    const items = rows.map((row: any) => ({
+      id: row.id,
+      email: row.email,
+      name: row.name,
+      phone: row.phone,
+      role: row.role,
+      isVerified: row.isVerified,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+      totalOrders: Number(row.totalOrders),
+      totalSpent: Number(row.totalSpent),
+      averageOrderValue: Number(row.averageOrderValue),
+      lastOrderDate: row.lastOrderDate ?? null,
+    }));
+
+    return { items, totalItems };
+  }
+
+  async findCustomerDetail(id: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        ...USER_SELECT,
+        address: true,
+        orders: {
+          select: {
+            id: true,
+            status: true,
+            subtotalIdr: true,
+            shippingCostIdr: true,
+            createdAt: true,
+          },
+          orderBy: { createdAt: 'desc' },
+        },
+      },
+    });
+
+    if (!user) return null;
+
+    const orderStats = await this.prisma.order.aggregate({
+      where: { userId: id },
+      _count: { id: true },
+      _sum: { subtotalIdr: true, shippingCostIdr: true },
+      _max: { createdAt: true },
+    });
+
+    const totalOrders = orderStats._count.id;
+    const totalSpent =
+      (orderStats._sum.subtotalIdr ?? 0) +
+      (orderStats._sum.shippingCostIdr ?? 0);
+    const averageOrderValue =
+      totalOrders > 0 ? Math.round(totalSpent / totalOrders) : 0;
+
+    return {
+      ...user,
+      totalOrders,
+      totalSpent,
+      averageOrderValue,
+      lastOrderDate: orderStats._max.createdAt ?? null,
+    };
+  }
+
+  async findAdminUsers(query: AdminUsersQueryDto) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+    const skip = (page - 1) * limit;
+
+    const where: any = {};
+
+    if (query.role) {
+      where.role = query.role;
+    } else {
+      where.role = { in: ['ADMIN', 'SUPERADMIN'] };
+    }
+
+    if (query.search) {
+      where.OR = [
+        { name: { contains: query.search, mode: 'insensitive' } },
+        { email: { contains: query.search, mode: 'insensitive' } },
+      ];
+    }
+
+    if (query.isVerified !== undefined) {
+      where.isVerified = query.isVerified;
+    }
+
+    const dir = query.sortOrder === AdminUsersSortOrder.ASC ? 'asc' : 'desc';
+
+    let orderBy: any;
+    switch (query.sortBy) {
+      case AdminUsersSortBy.NAME:
+        orderBy = { name: dir };
+        break;
+      case AdminUsersSortBy.EMAIL:
+        orderBy = { email: dir };
+        break;
+      default:
+        orderBy = { createdAt: dir };
+        break;
+    }
+
+    const [items, totalItems] = await Promise.all([
+      this.prisma.user.findMany({
+        where,
+        select: USER_SELECT,
+        orderBy,
+        skip,
+        take: limit,
+      }),
+      this.prisma.user.count({ where }),
+    ]);
+
+    return { items, totalItems };
+  }
+
+  async exportCustomers(query: AdminCustomersQueryDto) {
+    const params: any[] = [];
+    const whereParts: string[] = [`WHERE u.role = 'USER'`];
+
+    if (query.search) {
+      const p = params.length + 1;
+      params.push(`%${query.search}%`);
+      whereParts.push(
+        `AND (u.name ILIKE $${p} OR u.email ILIKE $${p} OR u.phone ILIKE $${p})`,
+      );
+    }
+
+    if (query.isVerified !== undefined) {
+      const p = params.length + 1;
+      params.push(query.isVerified);
+      whereParts.push(`AND u."isVerified" = $${p}`);
+    }
+
+    const rawQuery = `
+      SELECT
+        u.id,
+        u.email,
+        u.name,
+        u.phone,
+        u.role,
+        u."isVerified",
+        u."createdAt",
+        u."updatedAt",
+        COUNT(o.id) AS "totalOrders",
+        COALESCE(SUM(o."subtotalIdr" + o."shippingCostIdr"), 0) AS "totalSpent",
+        COALESCE(
+          AVG(o."subtotalIdr" + o."shippingCostIdr")::numeric(12,2),
+          0
+        ) AS "averageOrderValue",
+        MAX(o."createdAt") AS "lastOrderDate"
+      FROM "User" u
+      LEFT JOIN "Order" o ON o."userId" = u.id
+      ${whereParts.join(' ')}
+      GROUP BY u.id
+      ORDER BY u."createdAt" DESC
+    `;
+
+    const rows: any[] = await this.prisma.$queryRawUnsafe(
+      rawQuery,
+      ...params,
+    );
+
+    return rows.map((row: any) => ({
+      id: row.id,
+      email: row.email,
+      name: row.name,
+      phone: row.phone,
+      role: row.role,
+      isVerified: row.isVerified,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+      totalOrders: Number(row.totalOrders),
+      totalSpent: Number(row.totalSpent),
+      averageOrderValue: Number(row.averageOrderValue),
+      lastOrderDate: row.lastOrderDate ?? null,
+    }));
   }
 }

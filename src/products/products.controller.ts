@@ -19,6 +19,7 @@ import { SearchRequestDto } from '@/search/dto/search-request.dto';
 import { SearchService } from '@/search/search.service';
 import { SearchAutocompleteOptionsDto } from '@/search/dto/search-autocomplete-options.dto';
 import { FilterProductsDto } from './dto/filter-products.dto';
+import { ReviewPaginationDto } from '@/reviews/dto/review-pagination.dto';
 
 @ApiTags('products')
 @Controller('products')
@@ -70,7 +71,7 @@ export class ProductsController {
   @Get(':slug/reviews')
   findAllReviewsOfProductBySlug(
     @Param('slug') slug: string,
-    @Query() paginationDto: CursorPaginationRequestDto,
+    @Query() paginationDto: ReviewPaginationDto,
   ) {
     return this.reviewsService.findReviewsOfProductBySlug(slug, paginationDto);
   }
