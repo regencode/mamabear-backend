@@ -103,6 +103,11 @@ export class ProductsAdminController {
     return this.productsService.update(+id, updateProductDto);
   }
 
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.productsService.remove(+id);
+  }
+
   @Post(':id/variants')
   createProductVariant(
     @Req() req,
