@@ -28,6 +28,7 @@ import { PaymentModule } from './payment/payment.module';
 import { ShippingModule } from './shipping/shipping.module';
 import { AddressesModule } from './addresses/addresses.module';
 import { OrderModule } from './order/order.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { OrderModule } from './order/order.module';
     ShippingModule,
     AddressesModule,
     OrderModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [AppService, CleanupService],
