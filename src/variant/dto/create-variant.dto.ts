@@ -1,10 +1,12 @@
 import {
+  IsArray,
   IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
   Min,
+  ValidateNested,
 } from 'class-validator';
 import { IsObject } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -23,8 +25,10 @@ export class CreateVariantDto {
   @IsNotEmpty()
   name: string;
 
-  @ApiPropertyOptional({ example: [] })
-  @IsObject()
+  @ApiPropertyOptional({ type: [CreateImageDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateImageDto)
   @IsOptional()
   images?: CreateImageDto[];
 
@@ -54,7 +58,7 @@ export class CreateVariantDto {
 
   @ApiPropertyOptional({ example: 0 })
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   @Min(0)
   sortOrder: number;
 }

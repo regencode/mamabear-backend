@@ -87,7 +87,7 @@ export class ProductsService {
         weightG: dto.weightG,
         stock: dto.stock,
         sku: dto.sku,
-        sortOrder: 0,
+        sortOrder: dto.categoryId || 0,
       };
 
       dto.variants.push(defaultVariant);

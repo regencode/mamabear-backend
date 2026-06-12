@@ -17,7 +17,7 @@ config:
 request:
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjN2Q3MWQ4My02MmMzLTRhOTMtYTAxMC00YzdmMDIzMmIyNmQiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwibmFtZSI6IkFkbWluIE1hbWFCZWFyIiwiaWF0IjoxNzgxMjUyMDE2LCJleHAiOjE3ODEyNTI5MTZ9.9JiUTOKxWyCJjc1EtFCQjlQjIPIi_mi9nNDpsWAsPN0
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjN2Q3MWQ4My02MmMzLTRhOTMtYTAxMC00YzdmMDIzMmIyNmQiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwibmFtZSI6IkFkbWluIE1hbWFCZWFyIiwiaWF0IjoxNzgxMjY4MjA5LCJleHAiOjE3ODEyNjkxMDl9.kPL8g0H7EAgYwlrHi1GEo-XXfAvDO8k7GnrAimpRNNw
   variables:
     - name: baseUrl
       value: http://localhost:3000

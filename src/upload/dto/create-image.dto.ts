@@ -1,5 +1,6 @@
 import { IsInt, IsOptional, IsString, IsNotEmpty } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 export class CreateImageDto {
   @ApiProperty({
@@ -11,6 +12,7 @@ export class CreateImageDto {
   imageUrl: string;
 
   @ApiProperty({ example: 1 })
+  @Type(() => Number)
   @IsInt()
   sortOrder: number;
 
