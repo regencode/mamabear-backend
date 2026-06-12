@@ -25,6 +25,25 @@ import { GetUserId } from '@/common/decorators/get-user-id-decorator';
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
+  @Post(':id/cancel')
+  cancelOrder(
+    @Req() req: any,
+    @Param('id') id: string,
+    @Body() dto: CancelOrderDto,
+  ) {
+    return this.orderService.cancelOrder(
+      req.user.role,
+      req.user.sub,
+      id,
+      dto.reason,
+    );
+  }
+
+  @Get(':id/invoice')
+  getInvoice(@Req() req: any, @Param('id') id: string) {
+    return this.orderService.getInvoice(req.user.sub, req.user.role, id);
+  }
+
   @Get(':id')
   findOne(@Req() req: any, @Param('id') id: string) {
     return this.orderService.getOrderById(req.user.sub, id);
@@ -33,11 +52,6 @@ export class OrderController {
   @Get()
   findAll(@Req() req: any, @Query() paginationDto: OrderPaginationDto) {
     return this.orderService.getOrdersByUserId(req.user.sub, paginationDto);
-  }
-
-  @Get(':id/invoice')
-  getInvoice(@Req() req: any, @Param('id') id: string) {
-    return this.orderService.getInvoice(req.user.sub, id);
   }
 
   // refactor below

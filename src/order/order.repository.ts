@@ -1,29 +1,33 @@
 import { OrderStatus, Prisma } from '@/generated/prisma';
 import { PrismaService } from '@/prisma/prisma.service';
-import { BadRequestException, Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { isUUID } from 'class-validator';
 
 const ORDERITEM_INCLUDE = {
-    product: { select: { name: true, slug: true } },
-    variant: {
-        select: {
-            name: true,
-            stock: true,
-            priceIdr: true,
-            images: {
-                take: 1,
-                select: { imageUrl: true, altText: true },
-            },
-        },
+  product: { select: { name: true, slug: true } },
+  variant: {
+    select: {
+      name: true,
+      stock: true,
+      priceIdr: true,
+      images: {
+        take: 1,
+        select: { imageUrl: true, altText: true },
+      },
     },
-}
+  },
+  quantity: true,
+};
 
 const ORDER_INCLUDE = {
-    shippingAddress: true,
-    orderItems: { select: ORDERITEM_INCLUDE },
-}
-
+  shippingAddress: true,
+  orderItems: { select: ORDERITEM_INCLUDE },
+};
 
 @Injectable()
 export class OrderRepository {
@@ -138,54 +142,66 @@ export class OrderRepository {
     });
   }
 
-  
-
   handleCompleteOrder(orderId: string) {
     return this.prisma.$transaction(async (tx) => {
-      if(!isUUID(orderId)) throw new UnprocessableEntityException(`Order id='${orderId}' must be in the form of UUID`);
+      if (!isUUID(orderId))
+        throw new UnprocessableEntityException(
+          `Order id='${orderId}' must be in the form of UUID`,
+        );
       const resolvedOrder = await tx.order.findUnique({
-          where: { id: orderId } 
-      })
-      if(!resolvedOrder) throw new UnprocessableEntityException(`Cannot process product sold increment: order with orderId=${orderId} does not exist`);
-      const order = await tx.order.update({ 
-          where: { id: resolvedOrder.id },
-          data: { status: OrderStatus.PAYMENT_PAID },
-          include: { orderItems: { include: ORDERITEM_INCLUDE } }
+        where: { id: orderId },
       });
-      if(order.orderItems.length <= 0) throw new UnprocessableEntityException(`Cannot process product sold increment: order with orderId=${orderId} has no order items`);
-      return order.orderItems.forEach(async item => {
-          const currentVariant = await tx.productVariant.findUnique({
-              where: {
-                  id: item.variantId,
-                  productId: item.productId,
-              },
-              select: { stock: true },
-          });
-          if(!currentVariant) throw new BadRequestException(`orderItems forEach: Variant variantId=${item.variantId} of Product productId=${item.productId} does not exist`)
-          if(currentVariant.stock < item.quantity) 
-              throw new BadRequestException(`orderItems forEach: Cannot decrement stock of variantId=${item.variantId} by ${item.quantity} (quantity must be less than ${currentVariant.stock})`)
-          const product = await tx.product.update({
-              where: {
-                  id: item.productId,
-              },
-              data: {
-                  totalSold: {
-                      increment: item.quantity,
-                  },
-              },
-          });
-          const variant = this.prisma.productVariant.update({
-              where: {
-                  id: item.variantId,
-                  productId: product.id,
-              },
-              data: {
-                  stock: {
-                      decrement: item.quantity,
-                  },
-              },
-          });
-          return variant;
+      if (!resolvedOrder)
+        throw new UnprocessableEntityException(
+          `Cannot process product sold increment: order with orderId=${orderId} does not exist`,
+        );
+      const order = await tx.order.update({
+        where: { id: resolvedOrder.id },
+        data: { status: OrderStatus.PAYMENT_PAID },
+        include: { orderItems: { include: ORDERITEM_INCLUDE } },
+      });
+      if (order.orderItems.length <= 0)
+        throw new UnprocessableEntityException(
+          `Cannot process product sold increment: order with orderId=${orderId} has no order items`,
+        );
+      return order.orderItems.forEach(async (item) => {
+        const currentVariant = await tx.productVariant.findUnique({
+          where: {
+            id: item.variantId,
+            productId: item.productId,
+          },
+          select: { stock: true },
+        });
+        if (!currentVariant)
+          throw new BadRequestException(
+            `orderItems forEach: Variant variantId=${item.variantId} of Product productId=${item.productId} does not exist`,
+          );
+        if (currentVariant.stock < item.quantity)
+          throw new BadRequestException(
+            `orderItems forEach: Cannot decrement stock of variantId=${item.variantId} by ${item.quantity} (quantity must be less than ${currentVariant.stock})`,
+          );
+        const product = await tx.product.update({
+          where: {
+            id: item.productId,
+          },
+          data: {
+            totalSold: {
+              increment: item.quantity,
+            },
+          },
+        });
+        const variant = this.prisma.productVariant.update({
+          where: {
+            id: item.variantId,
+            productId: product.id,
+          },
+          data: {
+            stock: {
+              decrement: item.quantity,
+            },
+          },
+        });
+        return variant;
       });
     });
   }
@@ -337,5 +353,9 @@ export class OrderRepository {
         },
       },
     });
+  }
+
+  findAll() {
+    return this.prisma.order.findMany();
   }
 }
