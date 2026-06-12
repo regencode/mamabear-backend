@@ -64,7 +64,8 @@ export class AuthController {
   @Post('/refresh')
   @UseGuards(RefreshGuard)
   async refresh(@Req() req: Request) {
-    const refreshToken = req.headers.authorization?.replace('Bearer ', '') ?? '';
+    const refreshToken =
+      req.headers.authorization?.replace('Bearer ', '') ?? '';
     return this.authService.refreshToken(refreshToken);
   }
 
@@ -103,6 +104,6 @@ export class AuthController {
 
   @Post('create-admin')
   createAdmin(@Body() dto: RegisterUserDto) {
-    return this.authService.createAdmin(dto);
+    return this.authService.createUser(dto);
   }
 }

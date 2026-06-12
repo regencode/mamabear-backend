@@ -25,7 +25,7 @@ const CART_INCLUDE = {
 };
 
 const CART_ITEM_WITH_CART_INCLUDE = {
-  product: { select: { id: true, name:true, isActive: true } },
+  product: { select: { id: true, name: true, isActive: true } },
   variant: {
     select: { id: true, stock: true, productId: true, weightG: true },
   },
@@ -155,6 +155,29 @@ export class CartRepository {
     return result;
   }
 
+  async recalculateCartTotals(cartId: string) {
+    const items = await this.prisma.cartItem.findMany({
+      where: { cartId },
+      select: { quantity: true, price: true },
+    });
+
+    const subtotalIdr = items.reduce(
+      (sum, item) => sum + item.quantity * Number(item.price),
+      0,
+    );
+
+    const TAX_RATE = 0.11;
+    const taxIdr = Math.round(subtotalIdr * TAX_RATE);
+
+    const updated = await this.prisma.cart.update({
+      where: { id: cartId },
+      data: { subtotalIdr: Math.round(subtotalIdr), taxIdr },
+    });
+
+    this.invalidateCache(cartId);
+    return updated;
+  }
+
   async findCartItemById(id: string) {
     return this.prisma.cartItem.findUnique({
       where: { id },
@@ -222,20 +245,26 @@ export class CartRepository {
   }
 
   clearCourierInformation(cartId: string) {
-      return this.prisma.cart.update({
-          where: { id: cartId },
-          data: { shippingCostIdr: 0, courierCode: null, courierName: null, shippingMethod: null, }
-      })
+    return this.prisma.cart.update({
+      where: { id: cartId },
+      data: {
+        shippingCostIdr: 0,
+        courierCode: null,
+        courierName: null,
+        shippingMethod: null,
+      },
+    });
   }
   async updateCourierInformation(cartId: string, dto: PatchCourierDto) {
-      return this.prisma.cart.update({
-          where: { id: cartId },
-          data: { shippingCostIdr: dto.shippingCostIdr, 
-              courierCode: dto.courierCode, 
-              courierName: dto.courierName, 
-              shippingMethod: dto.shippingMethod, 
-          }
-     })
+    return this.prisma.cart.update({
+      where: { id: cartId },
+      data: {
+        shippingCostIdr: dto.shippingCostIdr,
+        courierCode: dto.courierCode,
+        courierName: dto.courierName,
+        shippingMethod: dto.shippingMethod,
+      },
+    });
   }
 
   // Consolidate duplicate cart items (group by productId+variantId)
