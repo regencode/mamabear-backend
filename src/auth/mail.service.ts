@@ -31,4 +31,14 @@ export class MailService {
       text: `Klik link berikut untuk verify email anda: ${resetUrl}`,
     });
   }
+
+  async orderConfirmationEmail(email: string, orderId: string) {
+    const orderUrl = `${process.env.BACKEND_URL}/orders/${orderId}`;
+    await this.mailService.sendMail({
+      to: email,
+      subject: 'Order Confirmation',
+      text: `Pesanan Anda sudah di konfirmasi`,
+      html: `<p>Pesanan Anda sudah di konfirmasi.</p><p><a href="${orderUrl}">Lihat detail pesanan</a></p>`,
+    });
+  }
 }
