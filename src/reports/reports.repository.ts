@@ -1,6 +1,7 @@
 import { Role, OrderStatus } from '@/generated/prisma';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
+import { SalesReportQueryDto } from './dto/sales-report-query.dto';
 
 @Injectable()
 export class ReportsRepository {
@@ -118,6 +119,82 @@ export class ReportsRepository {
         subtotalIdr: true,
         taxIdr: true,
         shippingCostIdr: true,
+      },
+    });
+  }
+
+  async getSalesOrders(query: SalesReportQueryDto) {
+    return this.prisma.order.findMany({
+      where: {
+        status: query.status,
+
+        createdAt: {
+          gte: query.startDate ? new Date(query.startDate) : undefined,
+
+          lte: query.endDate ? new Date(query.endDate) : undefined,
+        },
+
+        orderItems: {
+          some: {
+            productId: query.productId,
+
+            product: {
+              categoryId: query.categoryId,
+            },
+          },
+        },
+      },
+
+      include: {
+        orderItems: {
+          include: {
+            product: {
+              include: {
+                category: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  async getProductPerformance(query: SalesReportQueryDto) {
+    return this.prisma.orderItem.findMany({
+      where: {
+        order: {
+          status: query.status,
+
+          createdAt: {
+            gte: query.startDate ? new Date(query.startDate) : undefined,
+
+            lte: query.endDate ? new Date(query.endDate) : undefined,
+          },
+        },
+
+        productId: query.productId,
+
+        product: {
+          categoryId: query.categoryId,
+        },
+      },
+
+      include: {
+        product: {
+          include: {
+            category: true,
+          },
+        },
+
+        variant: {
+          select: {
+            id: true,
+            name: true,
+            sku: true,
+          },
+        },
+
+        order: true,
       },
     });
   }
