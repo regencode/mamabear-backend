@@ -48,6 +48,8 @@ export class UsersRepository {
     order?: 'asc' | 'desc';
     page?: number;
     limit?: number;
+    isBlocked?: boolean;
+    isVerified?: boolean;
   }) {
     const search = query.search?.trim();
     const sortKey = query.sort ?? 'registered_at';
@@ -63,6 +65,14 @@ export class UsersRepository {
         { email: { contains: search, mode: 'insensitive' } },
         { phone: { contains: search, mode: 'insensitive' } },
       ];
+    }
+
+    if (typeof query.isBlocked !== 'undefined') {
+      where.isBlocked = query.isBlocked;
+    }
+
+    if (typeof query.isVerified !== 'undefined') {
+      where.isVerified = query.isVerified;
     }
 
     const total = await this.prisma.user.count({ where });
