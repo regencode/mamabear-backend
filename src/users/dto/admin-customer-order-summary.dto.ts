@@ -17,7 +17,7 @@ export class AdminCustomerOrderSummaryDto {
   shippingCostIdr: number;
 
   @ApiProperty()
-  total_amount: number;
+  totalAmount: number;
 
   @ApiProperty()
   createdAt: Date;

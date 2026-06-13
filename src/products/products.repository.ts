@@ -128,7 +128,8 @@ export class ProductsRepository {
       sortConfig.cursorKeys.includes('minPrice') &&
       decoded.minPrice !== undefined
     ) {
-      const dir = sortConfig.orderByClause.includes('ASC') ? '>=' : '<=';zzf      const p1 = params.length + 1;
+      const dir = sortConfig.orderByClause.includes('ASC') ? '>=' : '<=';
+      const p1 = params.length + 1;
       const p2 = params.length + 2;
       params.push(decoded.minPrice, decoded.id);
       return {

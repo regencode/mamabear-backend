@@ -8,7 +8,6 @@ import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 import { UpdateUserStatusDto } from './dto/update-user-status.dto';
 import { UsersRepository, USER_SELECT } from './users.repository';
 import { ServiceResult } from '@/common/ServiceResult';
-import { Prisma, Role } from '@/generated/prisma';
 import { AdminCustomersQueryDto } from './dto/admin-customers-query.dto';
 import { AdminUsersQueryDto } from './dto/admin-users-query.dto';
 import {
@@ -293,95 +292,146 @@ export class UsersService {
       data: result,
     };
   }
-
-  async exportCustomersCsv(
-    query: AdminCustomersQueryDto,
-  ): Promise<string> {
-    const customers = await this.usersRepository.exportCustomers(query);
-
-    const escapeCsv = (val: any): string => {
-      if (val === null || val === undefined) return '';
-      const str = String(val);
-      if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-        return `"${str.replace(/"/g, '""')}"`;
-      }
-      return str;
-    };
-
-    const header = [
-      'ID',
-      'Name',
-      'Email',
-      'Phone',
-      'Verified',
-      'Total Orders',
-      'Total Spent (IDR)',
-      'Avg Order Value (IDR)',
-      'Last Order Date',
-      'Registered At',
-    ].join(',');
-
-    const rows = customers.map((c) =>
-      [
-        escapeCsv(c.id),
-        escapeCsv(c.name),
-        escapeCsv(c.email),
-        escapeCsv(c.phone),
-        escapeCsv(c.isVerified ? 'Yes' : 'No'),
-        escapeCsv(c.totalOrders),
-        escapeCsv(c.totalSpent),
-        escapeCsv(c.averageOrderValue),
-        escapeCsv(c.lastOrderDate ? new Date(c.lastOrderDate).toISOString() : ''),
-        escapeCsv(new Date(c.createdAt).toISOString()),
-      ].join(','),
-    );
-
-    return [header, ...rows].join('\n');
-  }
-
   async findCustomers(
-    query: AdminCustomersQueryDto,
-  ): Promise<ServiceResult<PagePaginationResponseDto<any>>> {
-    const page = query.page ?? 1;
-    const limit = query.limit ?? 20;
-    const { items, totalItems } =
-      await this.usersRepository.findCustomers(query);
-    const meta = new PagePaginationMetaDto(page, limit, totalItems);
-    const result = new PagePaginationResponseDto(items, meta);
-    return {
-      success: true,
-      message: `Returned ${items.length} customers (page ${page} of ${meta.totalPages})`,
-      data: result,
-    };
-  }
-
-  async findCustomerDetail(
-    id: string,
-  ): Promise<ServiceResult<any>> {
-    const customer = await this.usersRepository.findCustomerDetail(id);
-    if (!customer) {
-      throw new NotFoundException(`Customer with id ${id} not found`);
+    query: ListCustomersQueryDto,
+  ): Promise<ServiceResult<{ items: AdminCustomerItem[]; total: number; page: number; limit: number }>> {
+    try {
+      const { items, totalItems } = await this.usersRepository.findCustomers(query);
+      this.logger.info({
+        message: 'Retrieved admin customer list',
+        endpoint: 'GET /admin/customers',
+        totalItems,
+        page: query.page,
+        limit: query.limit,
+        status: 'success',
+      });
+      return {
+        success: true,
+        message: `Found ${items.length} customers`,
+        data: {
+          items,
+          totalItems,
+          page: query.page ?? 1,
+          limit: query.limit ?? 10,
+        },
+      };
+    } catch (error: any) {
+      this.logger.error({
+        message: 'Failed to retrieve admin customers',
+        endpoint: 'GET /admin/customers',
+        status: 'error',
+        error: error.message,
+      });
+      throw error;
     }
-    return {
-      success: true,
-      message: `Found customer with id ${id}`,
-      data: customer,
-    };
   }
 
-  async findAdminUsers(
-    query: AdminUsersQueryDto,
-  ): Promise<ServiceResult<PagePaginationResponseDto<any>>> {
-    const page = query.page ?? 1;
-    const limit = query.limit ?? 20;
-    const { items, totalItems } =
-      await this.usersRepository.findAdminUsers(query);
-    const meta = new PagePaginationMetaDto(page, limit, totalItems);
-    const result = new PagePaginationResponseDto(items, meta);
-    return {
-      success: true,
-      message: `Returned ${items.length} admin users (page ${page} of ${meta.totalPages})`,
-      data: result,
-    };
+  async findCustomerDetail(id: string): Promise<ServiceResult<AdminCustomerDetail>> {
+    try {
+      const customer = await this.usersRepository.findCustomerDetail(id);
+      if (!customer) {
+        this.logger.warn({
+          message: 'Customer not found',
+          endpoint: 'GET /admin/customers/:id',
+          customerId: id,
+          status: 'failure',
+        });
+        throw new NotFoundException(`Customer with id ${id} not found`);
+      }
+
+      const orderStats = await this.usersRepository.aggregateCustomerOrders(id);
+      const orderHistory = await this.usersRepository.findCustomerOrderHistory(id);
+      const totalSpent = Number(orderStats._sum.subtotalIdr ?? 0) +
+        Number(orderStats._sum.taxIdr ?? 0) +
+        Number(orderStats._sum.shippingCostIdr ?? 0);
+      const totalOrders = Number(orderStats._count.id ?? 0);
+      const averageOrderValue = totalOrders > 0 ? totalSpent / totalOrders : 0;
+
+      const result: AdminCustomerDetail = {
+        id: customer.id,
+        name: customer.name,
+        email: customer.email,
+        phone: customer.phone,
+        role: customer.role,
+        isVerified: customer.isVerified,
+        registered_at: customer.createdAt,
+        updated_at: customer.updatedAt ?? null,
+        addresses: customer.address,
+        total_orders: totalOrders,
+        total_spent: totalSpent,
+        average_order_value: averageOrderValue,
+        last_order_date: orderStats._max.createdAt ?? null,
+        order_history: orderHistory,
+      };
+
+      this.logger.info({
+        message: 'Retrieved admin customer detail',
+        endpoint: 'GET /admin/customers/:id',
+        customerId: id,
+        status: 'success',
+      });
+      return {
+        success: true,
+        message: `Found customer detail for id ${id}`,
+        data: result,
+      };
+    } catch (error: any) {
+      if (error instanceof NotFoundException) throw error;
+      this.logger.error({
+        message: 'Failed to retrieve admin customer detail',
+        endpoint: 'GET /admin/customers/:id',
+        customerId: id,
+        status: 'error',
+        error: error.message,
+      });
+      throw error;
+    }
+  }
+ async exportCustomersToCSV(query: ListCustomersQueryDto, res: Response): Promise<void> {
+    try {
+      const { items } = await this.usersRepository.findCustomers(query);
+
+      const csvData = items.map((customer) => ({
+        ID: customer.id,
+        Name: customer.name,
+        Email: customer.email,
+        Phone: customer.phone,
+        'Total Orders': customer.totalOrders,
+        'Total Spent': customer.totalSpent,
+        'Registered At': new Date(customer.createdAt).toISOString(),
+      }));
+
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', `attachment; filename="customers_${new Date().toISOString().split('T')[0]}.csv"`);
+
+      const csvStream = format({ headers: true });
+      csvStream.pipe(res);
+
+      csvData.forEach((row) => csvStream.write(row));
+      csvStream.end();
+
+      this.logger.info({
+        message: 'Exported admin customers to CSV',
+        endpoint: 'GET /admin/customers/export',
+        total: items.length,
+        status: 'success',
+      });
+    } catch (error: any) {
+      this.logger.error({
+        message: 'Failed to export admin customers to CSV',
+        endpoint: 'GET /admin/customers/export',
+        status: 'error',
+        error: error.message,
+      });
+      if (!res.headersSent) {
+        res.status(500).json({
+          success: false,
+          statusCode: 500,
+          message: ['Failed to export customers'],
+          data: null,
+          timestamp: new Date().toISOString(),
+        });
+      }
+    }
   }
 }

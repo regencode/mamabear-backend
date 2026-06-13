@@ -43,6 +43,7 @@ export class OrderAdminController {
   @Get()
   findAllOrders(@Query() query: AdminOrdersQueryDto) {
     return this.orderService.findAllOrders(query);
+  }
 
   @Get(':id')
   findOrderById(@Param('id') id: string) {

@@ -1,6 +1,7 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ReportsService } from './reports.service';
+import { format } from 'fast-csv';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 import { RolesGuard } from '@/auth/guard/roles.guard';
 import { Roles } from '@/auth/decorators/roles.decorator';
@@ -11,6 +12,8 @@ import {
   PagePaginationMetaDto,
   PagePaginationResponseDto,
 } from '@/common/dto/response/page-pagination.response.dto';
+import { Response } from 'express';
+
 
 @ApiTags('reports (admin)')
 @Controller('admin/reports')
@@ -48,7 +51,7 @@ export class ReportsController {
     );
 
     const csvStream = format({
-      headers: true,
+      headers: true, 
     });
 
     csvStream.pipe(res);

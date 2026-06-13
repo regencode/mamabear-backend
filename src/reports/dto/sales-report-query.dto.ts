@@ -1,21 +1,28 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, IsDateString } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { OrderStatus } from '@/generated/prisma';
+import { Type } from 'class-transformer';
+import { IsEnum, IsNumber, IsOptional } from 'class-validator';
 
 export class SalesReportQueryDto {
-  @ApiPropertyOptional({ description: 'Start date (ISO string)' })
-  @IsDateString()
   @IsOptional()
   startDate?: string;
 
-  @ApiPropertyOptional({ description: 'End date (ISO string)' })
-  @IsDateString()
   @IsOptional()
   endDate?: string;
 
-  @ApiPropertyOptional({ description: 'Group by: day, week, month, year', default: 'day' })
-  @IsString()
   @IsOptional()
-  @Transform(({ value }) => value ?? 'day')
-  groupBy?: 'day' | 'week' | 'month' | 'year';
+  @Type(() => Number)
+  @IsNumber()
+  categoryId?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  productId?: number;
+
+  @IsOptional()
+  @IsEnum(OrderStatus)
+  status?: OrderStatus;
+
+  @IsOptional()
+  period?: 'daily' | 'weekly' | 'monthly';
 }
