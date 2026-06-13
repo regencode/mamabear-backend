@@ -4,7 +4,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { EmbeddingsService } from '@/embeddings/embeddings.service';
 import { ProductUtils } from '@/product-utils/product-utils';
-import { Image, Product } from '@/generated/prisma';
+import { Image, Prisma, Product } from '@/generated/prisma';
 import { FilterProductsDto } from './dto/filter-products.dto';
 import {
   AdminProductsQueryDto,
@@ -14,14 +14,13 @@ import {
 import { PinoLogger } from 'pino-nestjs';
 import { BadRequestException } from '@nestjs/common';
 
-
 export const PRODUCT_INCLUDE = {
   category: true,
   images: true,
   variants: {
-      include: {
-          images: true,
-      }
+    include: {
+      images: true,
+    },
   },
   highlight: true,
 };
@@ -34,41 +33,55 @@ type SortConfig = {
 @Injectable()
 export class ProductsRepository {
   constructor(
-     private readonly prisma: PrismaService,
-     private readonly utils: ProductUtils,
-     private readonly embedService: EmbeddingsService,
-     private readonly logger: PinoLogger,
+    private readonly prisma: PrismaService,
+    private readonly utils: ProductUtils,
+    private readonly embedService: EmbeddingsService,
+    private readonly logger: PinoLogger,
   ) {}
 
   create(data: CreateProductDto) {
     return this.prisma.$transaction(async (tx) => {
-        const { images, variants, weightG, priceIdr, stock, sku, ...productData } = data;
-        const product = await tx.product.create({ data: { ...productData }, include: PRODUCT_INCLUDE })
-        const embed = await this.embedService.generateEmbeddingsFromProduct(product);
-        tx.$executeRaw`
+      const {
+        images,
+        variants,
+        weightG,
+        priceIdr,
+        stock,
+        sku,
+        ...productData
+      } = data;
+      const product = await tx.product.create({
+        data: { ...productData },
+        include: PRODUCT_INCLUDE,
+      });
+      const embed =
+        await this.embedService.generateEmbeddingsFromProduct(product);
+      tx.$executeRaw`
             UPDATE "Product" 
             SET embedding = ${this.embedService.embeddingArrayToString(embed)}::vector
             WHERE id = ${product.id}
         `;
-        if(variants?.length) {
-            await tx.productVariant.createMany({
-                data: variants.map(v => ({...v, productId: product.id }))
-            })
-        }
-        if(images?.length) {
-            await tx.image.createMany({
-                data: images.map(img => ({...img, productId: product.id }))
-            })
-        }
-        return tx.product.findUnique({ where: { id: product.id }, include: PRODUCT_INCLUDE })
-    })
+      if (variants?.length) {
+        await tx.productVariant.createMany({
+          data: variants.map((v) => ({ ...v, productId: product.id })),
+        });
+      }
+      if (images?.length) {
+        await tx.image.createMany({
+          data: images.map((img) => ({ ...img, productId: product.id })),
+        });
+      }
+      return tx.product.findUnique({
+        where: { id: product.id },
+        include: PRODUCT_INCLUDE,
+      });
+    });
   }
-
 
   async findMany(args?: any) {
     const { select, include, ...other } = args;
-    const products = await this.prisma.product.findMany({ 
-        ...other, 
+    const products = await this.prisma.product.findMany({
+      ...other,
     });
     return this.utils.enrichMany(products);
   }
@@ -115,8 +128,7 @@ export class ProductsRepository {
       sortConfig.cursorKeys.includes('minPrice') &&
       decoded.minPrice !== undefined
     ) {
-      const dir = sortConfig.orderByClause.includes('ASC') ? '>=' : '<=';
-      const p1 = params.length + 1;
+      const dir = sortConfig.orderByClause.includes('ASC') ? '>=' : '<=';zzf      const p1 = params.length + 1;
       const p2 = params.length + 2;
       params.push(decoded.minPrice, decoded.id);
       return {
@@ -462,12 +474,12 @@ export class ProductsRepository {
         WHERE p.id != ${id} AND embedding IS NOT NULL
         ORDER BY similarity DESC
         LIMIT 5
-    `
-    const ids = rows.map(row => row.id);
+    `;
+    const ids = rows.map((row) => row.id);
     const result = await this.prisma.product.findMany({
-        where: { id: { in: ids }},
-        include: PRODUCT_INCLUDE
-    })
+      where: { id: { in: ids } },
+      include: PRODUCT_INCLUDE,
+    });
     return this.utils.enrichMany(result);
   }
 
@@ -475,7 +487,7 @@ export class ProductsRepository {
     const { images, variants, weightG, priceIdr, stock, sku, ...productData } =
       data;
 
-    return this.prisma.$transaction(async tx => {
+    return this.prisma.$transaction(async (tx) => {
       const product = await tx.product.update({
         where: { id },
         data: productData,
@@ -483,17 +495,19 @@ export class ProductsRepository {
       });
       let imageUpserts: Image[] = [];
       if (images && images.length > 0) {
-        imageUpserts = await Promise.all(images.map(async img => {
-          return await tx.image.upsert({
-            where: { publicId: img.publicId },
-            update: {
-              sortOrder: img.sortOrder,
-              altText: img.altText,
-              productId: id,
-            },
-            create: { ...img, productId: id },
-          });
-        }));
+        imageUpserts = await Promise.all(
+          images.map(async (img) => {
+            return await tx.image.upsert({
+              where: { publicId: img.publicId },
+              update: {
+                sortOrder: img.sortOrder,
+                altText: img.altText,
+                productId: id,
+              },
+              create: { ...img, productId: id },
+            });
+          }),
+        );
       }
       return { ...product, images: product.images.concat(imageUpserts ?? []) };
     });
@@ -503,6 +517,74 @@ export class ProductsRepository {
     return this.prisma.product.delete({
       where: { id },
       include: PRODUCT_INCLUDE,
+    });
+  }
+
+  bulkDelete(ids: number[]) {
+    return this.prisma.product.deleteMany({
+      where: { id: { in: ids } },
+    });
+  }
+
+  bulkUpdateProductStatus(data: { ids: number[]; isActive: boolean }) {
+    return this.prisma.product.updateMany({
+      where: { id: { in: data.ids } },
+      data: { isActive: data.isActive },
+    });
+  }
+
+  findAllForExport() {
+    return this.prisma.product.findMany({
+      where: { isActive: true },
+      select: {
+        name: true,
+        category: {
+          select: {
+            name: true,
+          },
+        },
+        variants: {
+          select: {
+            sku: true,
+            priceIdr: true,
+            stock: true,
+          },
+        },
+        totalSold: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
+  async findProductForDuplicate(productId: number) {
+    return this.prisma.product.findUnique({
+      where: { id: productId },
+      include: {
+        images: true,
+        variants: {
+          include: {
+            images: true,
+            discount: true,
+          },
+        },
+      },
+    });
+  }
+
+  async createDuplicatedProduct(data: any) {
+    return this.prisma.product.create({
+      data,
+      include: {
+        images: true,
+        variants: {
+          include: {
+            images: true,
+            discount: true,
+          },
+        },
+      },
     });
   }
 }

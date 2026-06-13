@@ -1,5 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Response } from 'express';
 import { PinoLogger } from 'pino-nestjs';
+import { format } from 'fast-csv';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserRoleDto } from './dto/update-user-role.dto';
@@ -13,8 +15,61 @@ import {
   PagePaginationResponseDto,
   PagePaginationMetaDto,
 } from '@/common/dto/response/page-pagination.response.dto';
+import { Prisma, OrderStatus, Role } from '@/generated/prisma';
+import { ListCustomersQueryDto } from './dto/list-customers-query.dto';
 
 type UserPublic = Prisma.UserGetPayload<{ select: typeof USER_SELECT }>;
+
+type AdminCustomerItem = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  total_orders: number;
+  total_spent: number;
+  registered_at: Date;
+};
+
+type AdminCustomerOrderSummary = {
+  id: string;
+  status: OrderStatus;
+  subtotalIdr: number;
+  taxIdr: number;
+  shippingCostIdr: number;
+  total_amount: number;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type AdminCustomerDetail = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: Role;
+  isVerified: boolean;
+  registered_at: Date;
+  updated_at: Date | null;
+  addresses: Array<{
+    id: number;
+    name: string;
+    phone: string;
+    provinceName: string;
+    cityName: string;
+    districtName: string;
+    subdistrictName: string;
+    postalCode: string;
+    road: string;
+    completeAddress: string;
+    detail: string | null;
+    usedFor: string;
+  }>;
+  total_orders: number;
+  total_spent: number;
+  average_order_value: number;
+  last_order_date: Date | null;
+  order_history: AdminCustomerOrderSummary[];
+};
 
 @Injectable()
 export class UsersService {

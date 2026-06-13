@@ -30,17 +30,58 @@ export class ReportsController {
   }
 
   @Get('products')
-  async getProductReport(@Query() query: ProductReportQueryDto) {
-    const { items, totalItems } =
-      await this.reportsService.getProductReport(query);
-    const page = query.page ?? 1;
-    const limit = query.limit ?? 20;
-    const meta = new PagePaginationMetaDto(page, limit, totalItems);
-    const result = new PagePaginationResponseDto(items, meta);
-    return {
-      success: true,
-      message: `Returned ${items.length} products (page ${page} of ${meta.totalPages})`,
-      data: result,
-    };
+  async getProductPerformance(@Query() query: SalesReportQueryDto) {
+    return this.reportsService.getProductPerformance(query);
+  }
+
+  @Get('products/export')
+  async exportProducts(
+    @Query() query: SalesReportQueryDto,
+    @Res() res: Response,
+  ) {
+    const result = await this.reportsService.getProductPerformance(query);
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename=product-report.csv',
+    );
+
+    const csvStream = format({
+      headers: true,
+    });
+
+    csvStream.pipe(res);
+
+    result.data.forEach((row) => {
+      csvStream.write(row);
+    });
+
+    csvStream.end();
+  }
+
+  @Get('sales/export')
+  async exportSales(@Query() query: SalesReportQueryDto, @Res() res: Response) {
+    const result = await this.reportsService.getSalesReport(query);
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename=sales-report.csv',
+    );
+
+    const csvStream = format({
+      headers: true,
+    });
+
+    csvStream.pipe(res);
+
+    csvStream.write({
+      totalRevenue: result.data.totalRevenue,
+      orderCount: result.data.orderCount,
+      avgOrderValue: result.data.avgOrderValue,
+    });
+
+    csvStream.end();
   }
 }

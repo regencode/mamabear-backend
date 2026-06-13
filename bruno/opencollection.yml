@@ -28,9 +28,9 @@ request:
     - name: productSlug
       value: ""
     - name: productId
-      value: "4"
+      value: "1"
     - name: variantId
-      value: "11"
+      value: "2"
     - name: reviewId
       value: ""
     - name: categorySlug

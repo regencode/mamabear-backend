@@ -1,3 +1,4 @@
+import { map } from 'rxjs/operators';
 import {
   BadRequestException,
   Injectable,
@@ -25,6 +26,9 @@ import {
   PagePaginationResponseDto,
   PagePaginationMetaDto,
 } from '@/common/dto/response/page-pagination.response.dto';
+import { BulkDeleteProductsDto } from './dto/bulk-delete-products.dto';
+import { BulkUpdateProductsStatusDto } from './dto/bulk-update-products-status.dto';
+import { CloudinaryService } from '@/cloudinary/cloudinary.service';
 
 @Injectable()
 export class ProductsService {
@@ -32,8 +36,18 @@ export class ProductsService {
     private readonly productsRepository: ProductsRepository,
     private readonly logger: PinoLogger,
     private readonly paginationService: CursorPaginationService,
+    private readonly cloudinary: CloudinaryService,
   ) {
     this.logger.setContext(ProductsService.name);
+  }
+
+  private generateSku(productSlug: string, variantValue: string): string {
+    const base = `${productSlug}-${variantValue}`;
+
+    return slugify(base, {
+      lower: false,
+      strict: true,
+    }).toUpperCase();
   }
 
   async findProductsWithFilter(
@@ -86,9 +100,7 @@ export class ProductsService {
       data: result,
     };
   }
-  async create(
-    dto: CreateProductDto,
-  ): Promise<ServiceResult<Product>> {
+  async create(dto: CreateProductDto): Promise<ServiceResult<Product>> {
     try {
       if (!dto.variants) dto.variants = [];
       const defaultVariant: CreateVariantDto = {
@@ -101,7 +113,6 @@ export class ProductsService {
       };
 
       dto.variants.push(defaultVariant);
-    
 
       const generatedSlug = slugify(dto.name, { lower: true, strict: true });
 
@@ -253,9 +264,13 @@ export class ProductsService {
   ): Promise<ServiceResult<Product>> {
     try {
       if (dto.name) {
-        let generatedSlug = dto.slug ? dto.slug : slugify(dto.name, { lower: true, strict: true });
-        const resolvedProduct = await this.productsRepository.findBySlug(generatedSlug);
-        if (resolvedProduct && resolvedProduct.id != id) // there exists another product with same slug
+        let generatedSlug = dto.slug
+          ? dto.slug
+          : slugify(dto.name, { lower: true, strict: true });
+        const resolvedProduct =
+          await this.productsRepository.findBySlug(generatedSlug);
+        if (resolvedProduct && resolvedProduct.id != id)
+          // there exists another product with same slug
           throw new BadRequestException(
             `Product with slug ${generatedSlug} already exists`,
           );
@@ -310,5 +325,176 @@ export class ProductsService {
       });
       throw error;
     }
+  }
+
+  async bulkDelete(
+    dto: BulkDeleteProductsDto,
+  ): Promise<ServiceResult<{ deletedCount: number }>> {
+    console.log('DTO:', dto);
+    const result = await this.productsRepository.bulkDelete(dto.ids);
+
+    console.log('RESULT:', result);
+
+    return {
+      success: true,
+      message: `Successfully deleted ${result.count} products`,
+      data: { deletedCount: result.count },
+    };
+  }
+
+  async bulkUpdateProductStatus(
+    dto: BulkUpdateProductsStatusDto,
+  ): Promise<ServiceResult<{ updatedCount: number }>> {
+    const result = await this.productsRepository.bulkUpdateProductStatus({
+      ids: dto.ids,
+      isActive: dto.isActive,
+    });
+
+    return {
+      success: true,
+      message: `Successfully updated status for ${result.count} products to ${dto.isActive ? 'active' : 'inactive'}`,
+      data: { updatedCount: result.count },
+    };
+  }
+
+  async exportProducts(): Promise<ServiceResult<any>> {
+    const products = await this.productsRepository.findAllForExport();
+
+    const exportData = products.map((p) => {
+      const prices = p.variants.map((v) => Number(v.priceIdr));
+
+      const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+      const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
+
+      const totalStock = p.variants.reduce((sum, v) => sum + (v.stock ?? 0), 0);
+
+      return {
+        name: p.name,
+        sku: p.variants[0]?.sku ?? '-',
+        priceIdr:
+          minPrice === maxPrice ? minPrice : `${minPrice} - ${maxPrice}`,
+        stock: totalStock,
+        totalSold: p.totalSold,
+        category: p.category?.name ?? '-',
+      };
+    });
+
+    return {
+      success: true,
+      message: 'Product exported successfully',
+      data: exportData,
+    };
+  }
+
+  async duplicateProduct(productId: number): Promise<ServiceResult<Product>> {
+    const product =
+      await this.productsRepository.findProductForDuplicate(productId);
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    const duplicatedSlug = `${product.slug}-copy-${Date.now()}`;
+
+    const duplicatedProductImages = await Promise.all(
+      product.images.map(async (image) => {
+        const uploaded = await this.cloudinary.duplicateImage(image.imageUrl);
+
+        return {
+          publicId: uploaded.publicId,
+          imageUrl: uploaded.imageUrl,
+          width: uploaded.width,
+          height: uploaded.height,
+          fileSize: uploaded.fileSize,
+          format: uploaded.format,
+          altText: image.altText,
+          sortOrder: image.sortOrder,
+        };
+      }),
+    );
+
+    const duplicatedVariants = await Promise.all(
+      product.variants.map(async (variant) => {
+        const duplicatedVariantImages = await Promise.all(
+          variant.images.map(async (image) => {
+            const uploaded = await this.cloudinary.duplicateImage(
+              image.imageUrl,
+            );
+
+            return {
+              publicId: uploaded.publicId,
+              imageUrl: uploaded.imageUrl,
+              width: uploaded.width,
+              height: uploaded.height,
+              fileSize: uploaded.fileSize,
+              format: uploaded.format,
+              altText: image.altText,
+              sortOrder: image.sortOrder,
+            };
+          }),
+        );
+
+        return {
+          name: variant.name,
+
+          sku: this.generateSku(duplicatedSlug, variant.name),
+
+          priceIdr: variant.priceIdr,
+          weightG: variant.weightG,
+          stock: variant.stock,
+          sortOrder: variant.sortOrder,
+
+          images: {
+            create: duplicatedVariantImages,
+          },
+
+          ...(variant.discount && {
+            discount: {
+              create: {
+                amount: variant.discount.amount,
+                isPercent: variant.discount.isPercent,
+                startedAt: variant.discount.startedAt,
+                endsAt: variant.discount.endsAt,
+              },
+            },
+          }),
+        };
+      }),
+    );
+
+    const result = await this.productsRepository.createDuplicatedProduct({
+      name: `${product.name} (Copy)`,
+
+      slug: duplicatedSlug,
+
+      isActive: false,
+      totalSold: 0,
+
+      categoryId: product.categoryId,
+      highlightId: product.highlightId,
+
+      description: product.description,
+      ingredients: product.ingredients,
+      usageInstructions: product.usageInstructions,
+
+      tags: product.tags,
+
+      metaTitle: product.metaTitle,
+      metaDescription: product.metaDescription,
+
+      images: {
+        create: duplicatedProductImages,
+      },
+
+      variants: {
+        create: duplicatedVariants,
+      },
+    });
+
+    return {
+      success: true,
+      message: `Product ${product.name} duplicated successfully`,
+      data: result,
+    };
   }
 }
