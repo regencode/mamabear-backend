@@ -31,9 +31,9 @@ export type AdminCustomerRow = {
   name: string;
   email: string;
   phone: string;
-  total_orders: string | number;
-  total_spent: string | number;
-  registered_at: Date;
+  totalOrders: string | number;
+  totalSpent: string | number;
+  registeredAt: Date;
 };
 
 @Injectable()
@@ -90,8 +90,10 @@ export class UsersRepository {
       subtotalIdr: Number(order.subtotalIdr),
       taxIdr: Number(order.taxIdr),
       shippingCostIdr: Number(order.shippingCostIdr),
-      total_amount:
-        Number(order.subtotalIdr) + Number(order.taxIdr) + Number(order.shippingCostIdr),
+      totalAmount:
+        Number(order.subtotalIdr) +
+        Number(order.taxIdr) +
+        Number(order.shippingCostIdr),
       createdAt: order.createdAt,
       updatedAt: order.updatedAt,
     }));
@@ -110,17 +112,17 @@ export class UsersRepository {
 
     return groups.map((g) => ({
       userId: g.userId,
-      total_orders: Number(g._count?.id ?? 0),
-      total_spent:
+      totalOrders: Number(g._count?.id ?? 0),
+      totalSpent:
         Number(g._sum?.subtotalIdr ?? 0) +
         Number(g._sum?.taxIdr ?? 0) +
         Number(g._sum?.shippingCostIdr ?? 0),
-      average_order_value:
+      averageOrderValue:
         (Number(g._sum?.subtotalIdr ?? 0) +
           Number(g._sum?.taxIdr ?? 0) +
           Number(g._sum?.shippingCostIdr ?? 0)) /
         (Number(g._count?.id ?? 0) || 1),
-      last_order_date: g._max?.createdAt ?? null,
+      lastOrderDate: g._max?.createdAt ?? null,
     }));
   }
 
@@ -180,8 +182,7 @@ export class UsersRepository {
       whereParts.push(`AND u."isVerified" = $${p}`);
     }
 
-    const dir =
-      query.sortOrder === CustomerSortOrder.ASC ? 'ASC' : 'DESC';
+    const dir = query.sortOrder === CustomerSortOrder.ASC ? 'ASC' : 'DESC';
 
     let orderByClause: string;
     switch (query.sortBy) {
@@ -240,10 +241,7 @@ export class UsersRepository {
 
     this.logger.info(`findCustomers query: ${rawQuery}`);
 
-    const rows: any[] = await this.prisma.$queryRawUnsafe(
-      rawQuery,
-      ...params,
-    );
+    const rows: any[] = await this.prisma.$queryRawUnsafe(rawQuery, ...params);
     const countRows: any[] = await this.prisma.$queryRawUnsafe(
       countQuery,
       ...params.slice(0, -2),
@@ -258,7 +256,7 @@ export class UsersRepository {
       phone: row.phone,
       role: row.role,
       isVerified: row.isVerified,
-      createdAt: row.createdAt,
+      registeredAt: row.createdAt,
       updatedAt: row.updatedAt,
       totalOrders: Number(row.totalOrders),
       totalSpent: Number(row.totalSpent),
@@ -426,10 +424,7 @@ export class UsersRepository {
       ORDER BY u."createdAt" DESC
     `;
 
-    const rows: any[] = await this.prisma.$queryRawUnsafe(
-      rawQuery,
-      ...params,
-    );
+    const rows: any[] = await this.prisma.$queryRawUnsafe(rawQuery, ...params);
 
     return rows.map((row: any) => ({
       id: row.id,
@@ -438,7 +433,7 @@ export class UsersRepository {
       phone: row.phone,
       role: row.role,
       isVerified: row.isVerified,
-      createdAt: row.createdAt,
+      registeredAt: row.createdAt,
       updatedAt: row.updatedAt,
       totalOrders: Number(row.totalOrders),
       totalSpent: Number(row.totalSpent),

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { PinoLogger } from 'pino-nestjs';
 import { format } from 'fast-csv';
@@ -15,7 +19,6 @@ import {
   PagePaginationMetaDto,
 } from '@/common/dto/response/page-pagination.response.dto';
 import { Prisma, OrderStatus, Role } from '@/generated/prisma';
-import { ListCustomersQueryDto } from './dto/list-customers-query.dto';
 
 type UserPublic = Prisma.UserGetPayload<{ select: typeof USER_SELECT }>;
 
@@ -24,9 +27,9 @@ type AdminCustomerItem = {
   name: string;
   email: string;
   phone: string;
-  total_orders: number;
-  total_spent: number;
-  registered_at: Date;
+  totalOrders: number;
+  totalSpent: number;
+  registeredAt: Date;
 };
 
 type AdminCustomerOrderSummary = {
@@ -35,7 +38,7 @@ type AdminCustomerOrderSummary = {
   subtotalIdr: number;
   taxIdr: number;
   shippingCostIdr: number;
-  total_amount: number;
+  totalAmount: number;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -47,8 +50,8 @@ type AdminCustomerDetail = {
   phone: string;
   role: Role;
   isVerified: boolean;
-  registered_at: Date;
-  updated_at: Date | null;
+  registeredAt: Date;
+  updatedAt: Date | null;
   addresses: Array<{
     id: number;
     name: string;
@@ -63,11 +66,11 @@ type AdminCustomerDetail = {
     detail: string | null;
     usedFor: string;
   }>;
-  total_orders: number;
-  total_spent: number;
-  average_order_value: number;
-  last_order_date: Date | null;
-  order_history: AdminCustomerOrderSummary[];
+  totalOrders: number;
+  totalSpent: number;
+  averageOrderValue: number;
+  lastOrderDate: Date | null;
+  orderHistory: AdminCustomerOrderSummary[];
 };
 
 @Injectable()
@@ -79,10 +82,17 @@ export class UsersService {
     this.logger.setContext(UsersService.name);
   }
 
-  async create(createUserDto: CreateUserDto): Promise<ServiceResult<UserPublic>> {
+  async create(
+    createUserDto: CreateUserDto,
+  ): Promise<ServiceResult<UserPublic>> {
     try {
-      const resolvedUser = await this.usersRepository.findByEmail(createUserDto.email);
-      if(resolvedUser) throw new BadRequestException(`User with email ${createUserDto.email} already exists`);
+      const resolvedUser = await this.usersRepository.findByEmail(
+        createUserDto.email,
+      );
+      if (resolvedUser)
+        throw new BadRequestException(
+          `User with email ${createUserDto.email} already exists`,
+        );
       const result = await this.usersRepository.create(createUserDto);
       this.logger.info({
         message: 'User created successfully',
@@ -169,7 +179,10 @@ export class UsersService {
     }
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<ServiceResult<UserPublic>> {
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<ServiceResult<UserPublic>> {
     try {
       const result = await this.usersRepository.update(id, updateUserDto);
       this.logger.info({
@@ -292,11 +305,17 @@ export class UsersService {
       data: result,
     };
   }
-  async findCustomers(
-    query: ListCustomersQueryDto,
-  ): Promise<ServiceResult<{ items: AdminCustomerItem[]; total: number; page: number; limit: number }>> {
+  async findCustomers(query: AdminCustomersQueryDto): Promise<
+    ServiceResult<{
+      items: AdminCustomerItem[];
+      total: number;
+      page: number;
+      limit: number;
+    }>
+  > {
     try {
-      const { items, totalItems } = await this.usersRepository.findCustomers(query);
+      const { items, totalItems } =
+        await this.usersRepository.findCustomers(query);
       this.logger.info({
         message: 'Retrieved admin customer list',
         endpoint: 'GET /admin/customers',
@@ -310,7 +329,7 @@ export class UsersService {
         message: `Found ${items.length} customers`,
         data: {
           items,
-          totalItems,
+          total: totalItems,
           page: query.page ?? 1,
           limit: query.limit ?? 10,
         },
@@ -326,7 +345,9 @@ export class UsersService {
     }
   }
 
-  async findCustomerDetail(id: string): Promise<ServiceResult<AdminCustomerDetail>> {
+  async findCustomerDetail(
+    id: string,
+  ): Promise<ServiceResult<AdminCustomerDetail>> {
     try {
       const customer = await this.usersRepository.findCustomerDetail(id);
       if (!customer) {
@@ -340,8 +361,10 @@ export class UsersService {
       }
 
       const orderStats = await this.usersRepository.aggregateCustomerOrders(id);
-      const orderHistory = await this.usersRepository.findCustomerOrderHistory(id);
-      const totalSpent = Number(orderStats._sum.subtotalIdr ?? 0) +
+      const orderHistory =
+        await this.usersRepository.findCustomerOrderHistory(id);
+      const totalSpent =
+        Number(orderStats._sum.subtotalIdr ?? 0) +
         Number(orderStats._sum.taxIdr ?? 0) +
         Number(orderStats._sum.shippingCostIdr ?? 0);
       const totalOrders = Number(orderStats._count.id ?? 0);
@@ -354,14 +377,14 @@ export class UsersService {
         phone: customer.phone,
         role: customer.role,
         isVerified: customer.isVerified,
-        registered_at: customer.createdAt,
-        updated_at: customer.updatedAt ?? null,
+        registeredAt: customer.createdAt,
+        updatedAt: customer.updatedAt ?? null,
         addresses: customer.address,
-        total_orders: totalOrders,
-        total_spent: totalSpent,
-        average_order_value: averageOrderValue,
-        last_order_date: orderStats._max.createdAt ?? null,
-        order_history: orderHistory,
+        totalOrders: totalOrders,
+        totalSpent: totalSpent,
+        averageOrderValue: averageOrderValue,
+        lastOrderDate: orderStats._max.createdAt ?? null,
+        orderHistory: orderHistory,
       };
 
       this.logger.info({
@@ -387,7 +410,10 @@ export class UsersService {
       throw error;
     }
   }
- async exportCustomersToCSV(query: ListCustomersQueryDto, res: Response): Promise<void> {
+  async exportCustomersToCSV(
+    query: AdminCustomersQueryDto,
+    res: Response,
+  ): Promise<void> {
     try {
       const { items } = await this.usersRepository.findCustomers(query);
 
@@ -398,11 +424,14 @@ export class UsersService {
         Phone: customer.phone,
         'Total Orders': customer.totalOrders,
         'Total Spent': customer.totalSpent,
-        'Registered At': new Date(customer.createdAt).toISOString(),
+        'Registered At': new Date(customer.registeredAt).toISOString(),
       }));
 
       res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-      res.setHeader('Content-Disposition', `attachment; filename="customers_${new Date().toISOString().split('T')[0]}.csv"`);
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename="customers_${new Date().toISOString().split('T')[0]}.csv"`,
+      );
 
       const csvStream = format({ headers: true });
       csvStream.pipe(res);
