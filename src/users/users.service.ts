@@ -305,34 +305,31 @@ export class UsersService {
       data: result,
     };
   }
-  async findCustomers(query: AdminCustomersQueryDto): Promise<
-    ServiceResult<{
-      items: AdminCustomerItem[];
-      total: number;
-      page: number;
-      limit: number;
-    }>
-  > {
+  async findCustomers(
+    query: AdminCustomersQueryDto,
+  ): Promise<ServiceResult<PagePaginationResponseDto<AdminCustomerItem>>> {
     try {
+      const page = query.page ?? 1;
+      const limit = query.limit ?? 20;
       const { items, totalItems } =
         await this.usersRepository.findCustomers(query);
       this.logger.info({
         message: 'Retrieved admin customer list',
         endpoint: 'GET /admin/customers',
         totalItems,
-        page: query.page,
-        limit: query.limit,
+        page,
+        limit,
         status: 'success',
       });
+      const meta = new PagePaginationMetaDto(page, limit, totalItems);
+      const result = new PagePaginationResponseDto<AdminCustomerItem>(
+        items,
+        meta,
+      );
       return {
         success: true,
-        message: `Found ${items.length} customers`,
-        data: {
-          items,
-          total: totalItems,
-          page: query.page ?? 1,
-          limit: query.limit ?? 10,
-        },
+        message: `Returned ${items.length} customers (page ${page} of ${meta.totalPages})`,
+        data: result,
       };
     } catch (error: any) {
       this.logger.error({

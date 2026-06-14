@@ -17,26 +17,23 @@ function genPublicId(): string {
 export const users = [
   {
     email: 'admin@mamabear.id',
-    hashedpassword:
-      '$2b$10$gsb6xe8g7zwboe4xo8mmd.4zvaq6zfuh3uazfozk3rrmzinn99/uk', // password is "admin"
+    hashedPassword: PLACEHOLDER_HASH,
     name: 'Super Admin',
     phone: '081200001111',
     role: 'SUPERADMIN' as const,
-    isverified: true,
+    isVerified: true,
   },
   {
     email: 'admin2@mamabear.id',
-    hashedpassword:
-      '$2b$10$gsb6xe8g7zwboe4xo8mmd.4zvaq6zfuh3uazfozk3rrmzinn99/uk', // password is "admin"
+    hashedPassword: PLACEHOLDER_HASH,
     name: 'admin mamabear',
     phone: '081200001111',
     role: 'ADMIN' as const,
-    isverified: true,
+    isVerified: true,
   },
   {
     email: 'siti.rahayu@email.com',
-    hashedPassword:
-      '$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK', // password is "admin"
+    hashedPassword: PLACEHOLDER_HASH,
     name: 'Siti Rahayu',
     phone: '081234567890',
     role: 'USER' as const,
@@ -44,8 +41,7 @@ export const users = [
   },
   {
     email: 'dewi.lestari@email.com',
-    hashedPassword:
-      '$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK', // password is "admin"
+    hashedPassword: PLACEHOLDER_HASH,
     name: 'Dewi Lestari',
     phone: '081298765432',
     role: 'USER' as const,
@@ -53,8 +49,7 @@ export const users = [
   },
   {
     email: 'rina.wati@email.com',
-    hashedPassword:
-      '$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK', // password is "admin"
+    hashedPassword: PLACEHOLDER_HASH,
     name: 'Rina Wati',
     phone: '082112345678',
     role: 'USER' as const,
@@ -62,8 +57,7 @@ export const users = [
   },
   {
     email: 'budi.santoso@email.com',
-    hashedPassword:
-      '$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK', // password is "admin"
+    hashedPassword: PLACEHOLDER_HASH,
     name: 'Budi Santoso',
     phone: '085678901234',
     role: 'USER' as const,

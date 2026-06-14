@@ -175,7 +175,9 @@ async function main() {
       "Category",
       "Highlight",
       "User",
-      "Setting"
+      "Setting",
+      "Cart",
+      "CartItem"
     RESTART IDENTITY CASCADE;
   `);
 
@@ -520,6 +522,65 @@ async function main() {
   }
 
   console.log(`Inserted ${totalReviews} reviews.`);
+
+  console.log('Creating carts...');
+
+  const allUsers = await prisma.user.findMany({
+    select: { id: true },
+  });
+
+  const allVariants = await prisma.productVariant.findMany({
+    select: { id: true, productId: true, priceIdr: true },
+  });
+
+  let totalCartItems = 0;
+
+  for (const user of allUsers) {
+    const cart = await prisma.cart.create({
+      data: {
+        userId: user.id,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+    });
+
+    const itemCount = randInt(2, 4);
+    const shuffled = [...allVariants].sort(() => Math.random() - 0.5);
+    const selected = shuffled.slice(0, itemCount);
+
+    for (const variant of selected) {
+      await prisma.cartItem.create({
+        data: {
+          cartId: cart.id,
+          productId: variant.productId,
+          variantId: variant.id,
+          quantity: randInt(1, 3),
+          price: variant.priceIdr,
+        },
+      });
+    }
+
+    const items = await prisma.cartItem.findMany({
+      where: { cartId: cart.id },
+      select: { quantity: true, price: true },
+    });
+
+    const subtotalIdr = items.reduce(
+      (sum, item) => sum + item.quantity * Number(item.price),
+      0,
+    );
+    const taxIdr = Math.round(subtotalIdr * 0.11);
+
+    await prisma.cart.update({
+      where: { id: cart.id },
+      data: { subtotalIdr: Math.round(subtotalIdr), taxIdr },
+    });
+
+    totalCartItems += selected.length;
+  }
+
+  console.log(
+    `Inserted ${allUsers.length} carts with ${totalCartItems} cart items.`,
+  );
 
   console.log('Upserting default settings...');
 
