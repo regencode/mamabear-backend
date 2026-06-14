@@ -15,9 +15,7 @@ http:
         "isActive": true,
         "slug": "bruno-highlight-{{runId}}"
       }
-  auth:
-    type: bearer
-    token: "{{jwtToken}}"
+  auth: inherit
 
 runtime:
   scripts:

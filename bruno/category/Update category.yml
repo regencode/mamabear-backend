@@ -13,9 +13,7 @@ http:
         "name": "Bruno Test Category (Updated)",
         "description": "Updated test category from Bruno"
       }
-  auth:
-    type: bearer
-    token: "{{jwtToken}}"
+  auth: inherit
 
 runtime:
   scripts:

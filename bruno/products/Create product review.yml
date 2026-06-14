@@ -16,9 +16,7 @@ http:
         "rating": 5,
         "imageUrls": []
       }
-  auth:
-    type: bearer
-    token: "{{jwtToken}}"
+  auth: inherit
 
 runtime:
   scripts:

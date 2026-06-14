@@ -14,9 +14,7 @@ http:
         "priceIdr": 55000,
         "stock": 75
       }
-  auth:
-    type: bearer
-    token: "{{jwtToken}}"
+  auth: inherit
 
 runtime:
   scripts:
