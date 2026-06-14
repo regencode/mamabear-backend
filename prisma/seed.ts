@@ -661,12 +661,6 @@ async function main() {
       description: 'In percent',
     },
     {
-      key: 'currency',
-      value: 'IDR',
-      type: 'string',
-      description: 'Rupiah',
-    },
-    {
       key: 'email',
       value: 'admin@mamabear.id',
       type: 'string',
@@ -676,6 +670,7 @@ async function main() {
       key: 'payment_type',
       value: JSON.stringify({
         qris: 'QRIS',
+        gopay: 'Gopay',
         debit: 'Debit',
         indomaret: 'Indomaret',
       }),
