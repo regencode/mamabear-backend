@@ -45,6 +45,16 @@ request:
       value: ""
     - name: cartItemId
       value: ""
+    - name: cartId
+      value: ""
+    - name: orderId
+      value: ""
+    - name: provinceId
+      value: "1"
+    - name: cityId
+      value: "1"
+    - name: districtId
+      value: "1"
 bundled: false
 extensions:
   bruno:

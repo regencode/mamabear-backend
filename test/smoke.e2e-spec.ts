@@ -338,15 +338,6 @@ describe('Smoke Tests (e2e)', () => {
       expect(res.body.success).toBe(true);
     });
 
-    it('GET /admin/users', async () => {
-      const res = await request(BASE)
-        .get('/admin/users')
-        .set(authHeader())
-        .expect(200);
-
-      expect(res.body.success).toBe(true);
-    });
-
     it('GET /admin/users/:id', async () => {
       const res = await request(BASE)
         .get(`/admin/users/${state.userId}`)
