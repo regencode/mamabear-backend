@@ -7,7 +7,7 @@ import sharp from 'sharp';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient, Product } from '../src/generated/prisma/client';
 
-import { products, users, categories, highlights } from './data.v2';
+import { products, users, categories, highlights } from './data';
 
 import { EmbeddingsService } from '@/embeddings/embeddings.service';
 import { getCloudinaryImage, uploadLocalImage } from './helper/cloudinary.seed';
