@@ -17,12 +17,21 @@ function genPublicId(): string {
 export const users = [
   {
     email: 'admin@mamabear.id',
-    hashedPassword:
-      '$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK', // password is "admin"
-    name: 'Admin MamaBear',
+    hashedpassword:
+      '$2b$10$gsb6xe8g7zwboe4xo8mmd.4zvaq6zfuh3uazfozk3rrmzinn99/uk', // password is "admin"
+    name: 'Super Admin',
+    phone: '081200001111',
+    role: 'SUPERADMIN' as const,
+    isverified: true,
+  },
+  {
+    email: 'admin2@mamabear.id',
+    hashedpassword:
+      '$2b$10$gsb6xe8g7zwboe4xo8mmd.4zvaq6zfuh3uazfozk3rrmzinn99/uk', // password is "admin"
+    name: 'admin mamabear',
     phone: '081200001111',
     role: 'ADMIN' as const,
-    isVerified: true,
+    isverified: true,
   },
   {
     email: 'siti.rahayu@email.com',
