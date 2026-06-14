@@ -358,4 +358,36 @@ export class OrderRepository {
   findAll() {
     return this.prisma.order.findMany();
   }
+
+  findAllForExport() {
+    return this.prisma.order.findMany({
+      select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        status: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
+        subtotalIdr: true,
+        shippingAddress: {
+          select: {
+            completeAddress: true,
+            detail: true,
+          },
+        },
+        shippingCostIdr: true,
+        courierName: true,
+        courierCode: true,
+        shippingMethod: true,
+        trackingNumber: true,
+        paymentMethod: true,
+      },
+    });
+  }
 }

@@ -231,4 +231,34 @@ export class OrderService {
   async findAll() {
     return this.repo.findAll();
   }
+
+  async exportOrders(): Promise<ServiceResult<any>> {
+    const orders = await this.repo.findAllForExport();
+
+    const rows = orders.map((order) => ({
+      //No detail for product and variant for now
+      OrderId: order.id,
+      OrderDate: order.createdAt.toISOString(),
+      LastUpdate: order.updatedAt.toISOString(),
+      OrderStatus: order.status,
+      UserId: order.user.id,
+      UserName: order.user.name,
+      UserEmail: order.user.email,
+      UserPhoneNumber: order.user.phone,
+      SubtotalIdr: order.subtotalIdr,
+      ShippingAddress: order.shippingAddress?.completeAddress,
+      ShippingCostIdr: order.shippingCostIdr,
+      CourierName: order.courierName,
+      CourierCode: order.courierCode,
+      shippingMethod: order.shippingMethod,
+      TrackingNumber: order.trackingNumber,
+      PaymentMethod: order.paymentMethod,
+    }));
+
+    return {
+      success: true,
+      message: 'Orders exported successfully',
+      data: rows,
+    };
+  }
 }
