@@ -25,16 +25,16 @@ settings:
   maxRedirects: 5
 
 examples:
-  - name: "Success (200)"
+  - name: Success (200)
     request:
       url: "{{baseUrl}}/api/admin/customers/53ff9709-69e4-4aba-a02b-4955381f5a1c"
       method: GET
     response:
       status: 200
-      statusText: "OK"
+      statusText: OK
       headers:
         - name: Content-Type
-          value: "application/json; charset=utf-8"
+          value: application/json; charset=utf-8
       body:
         type: json
         data: |-
@@ -92,16 +92,16 @@ examples:
             },
             "timestamp": "2026-05-25T14:24:08.485Z"
           }
-  - name: "Not Found (404)"
+  - name: Not Found (404)
     request:
       url: "{{baseUrl}}/api/admin/customers/00000000-0000-0000-0000-000000000000"
       method: GET
     response:
       status: 404
-      statusText: "Not Found"
+      statusText: Not Found
       headers:
         - name: Content-Type
-          value: "application/json; charset=utf-8"
+          value: application/json; charset=utf-8
       body:
         type: json
         data: |-
@@ -114,16 +114,16 @@ examples:
             "data": null,
             "timestamp": "2026-05-25T00:00:00.000Z"
           }
-  - name: "Unauthorized (401)"
+  - name: Unauthorized (401)
     request:
       url: "{{baseUrl}}/api/admin/customers/53ff9709-69e4-4aba-a02b-4955381f5a1c"
       method: GET
     response:
       status: 401
-      statusText: "Unauthorized"
+      statusText: Unauthorized
       headers:
         - name: Content-Type
-          value: "application/json; charset=utf-8"
+          value: application/json; charset=utf-8
       body:
         type: json
         data: |-

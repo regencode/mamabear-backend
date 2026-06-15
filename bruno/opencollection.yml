@@ -17,7 +17,7 @@ config:
 request:
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjN2Q3MWQ4My02MmMzLTRhOTMtYTAxMC00YzdmMDIzMmIyNmQiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwibmFtZSI6IkFkbWluIE1hbWFCZWFyIiwiaWF0IjoxNzgxMjY4MjA5LCJleHAiOjE3ODEyNjkxMDl9.kPL8g0H7EAgYwlrHi1GEo-XXfAvDO8k7GnrAimpRNNw
+    token: "{{jwtToken}}"
   variables:
     - name: baseUrl
       value: http://localhost:3000
@@ -45,6 +45,16 @@ request:
       value: ""
     - name: cartItemId
       value: ""
+    - name: cartId
+      value: ""
+    - name: orderId
+      value: ""
+    - name: provinceId
+      value: "1"
+    - name: cityId
+      value: "1"
+    - name: districtId
+      value: "1"
 bundled: false
 extensions:
   bruno:

@@ -1,6 +1,7 @@
 import { map } from 'rxjs/operators';
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
@@ -21,6 +22,11 @@ import {
   FilterPaginationMetaDto,
   FilterPaginationResponseDto,
 } from './dto/filter-pagination-meta.dto';
+import { AdminProductsQueryDto } from './dto/admin-products-query.dto';
+import {
+  PagePaginationResponseDto,
+  PagePaginationMetaDto,
+} from '@/common/dto/response/page-pagination.response.dto';
 import { BulkDeleteProductsDto } from './dto/bulk-delete-products.dto';
 import { BulkUpdateProductsStatusDto } from './dto/bulk-update-products-status.dto';
 import { CloudinaryService } from '@/cloudinary/cloudinary.service';
@@ -65,6 +71,23 @@ export class ProductsService {
       data: result,
     };
   }
+
+  async findAdminProducts(
+    query: AdminProductsQueryDto,
+  ): Promise<ServiceResult<PagePaginationResponseDto<Product>>> {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+    const { items, totalItems } =
+      await this.productsRepository.findAdminProducts(query);
+    const meta = new PagePaginationMetaDto(page, limit, totalItems);
+    const result = new PagePaginationResponseDto<Product>(items, meta);
+    return {
+      success: true,
+      message: `Returned ${items.length} products (page ${page} of ${meta.totalPages})`,
+      data: result,
+    };
+  }
+
   async findRelatedProducts(slug: string): Promise<ServiceResult<Product[]>> {
     const resolvedProduct = await this.productsRepository.findBySlug(slug);
     if (!resolvedProduct)
@@ -301,6 +324,14 @@ export class ProductsService {
         status: 'error',
         error: error.message,
       });
+      if (
+        error.code === 'P2003' ||
+        error.message?.includes('foreign key constraint')
+      ) {
+        throw new ConflictException(
+          'Cannot delete product: it is referenced by existing orders or cart items',
+        );
+      }
       throw error;
     }
   }
