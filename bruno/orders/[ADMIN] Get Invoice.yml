@@ -8,9 +8,7 @@ http:
   url: "{{baseUrl}}/api/admin/order/{{id}}/invoice"
   body:
     type: form-urlencoded
-  auth:
-    type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ODc1NWExOC1iZjMwLTQ5NmUtYWZhMC04NGJlNGY3MmM4ZmQiLCJlbWFpbCI6InNpdGkucmFoYXl1QGVtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwibmFtZSI6IlNpdGkgUmFoYXl1IiwiaWF0IjoxNzgxMTEwNDAzLCJleHAiOjE3ODExMTEzMDN9.jiiW7NavEu9jWfiGMYHPUhr83W_VxHmqAE_F4b7eorU
+  auth: inherit
 
 runtime:
   variables:

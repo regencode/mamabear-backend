@@ -6,9 +6,7 @@ info:
 http:
   method: GET
   url: "{{baseUrl}}/api/me/addresses/{{id}}"
-  auth:
-    type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMDM4NGJiMi02NzE0LTRhZmUtYTQzYi0xMDYwZDE5MDZjYmQiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwibmFtZSI6IkFkbWluIE1hbWFCZWFyIiwiaWF0IjoxNzgwNTcyNDc0LCJleHAiOjE3ODA1NzMzNzR9.5ghA07DM68ddc19r-vDU3McL_EN7QpStX3uH6I1HBP8
+  auth: inherit
 
 runtime:
   variables:

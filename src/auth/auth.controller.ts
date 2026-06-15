@@ -101,9 +101,4 @@ export class AuthController {
   verifyEmail(@Param('token') token: string) {
     return this.authService.verifyEmail(token);
   }
-
-  @Post('create-admin')
-  createAdmin(@Body() dto: RegisterUserDto) {
-    return this.authService.createUser(dto);
-  }
 }

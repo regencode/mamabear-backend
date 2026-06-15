@@ -37,9 +37,7 @@ http:
         value: Sebelah Indomaret besar (bukan indomaret kecil)
       - name: usedFor
         value: RUMAH2
-  auth:
-    type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiZjVlYmUyZi0yYjQ4LTRmOTMtYTE2Zi0yN2JkZTU4ZDRiNTYiLCJlbWFpbCI6InlvdXNzaWJhcmFuaTE3QGdtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwibmFtZSI6IllvdXMgU2liYXJhbmkiLCJpYXQiOjE3ODA5MjY1MjAsImV4cCI6MTc4MDkyNzQyMH0.7ICccKUwnfjrJ3KMk2j5kaHeNQbw0Ap-N_0H5I0m5GA
+  auth: inherit
 
 settings:
   encodeUrl: true

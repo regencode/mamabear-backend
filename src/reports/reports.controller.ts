@@ -1,29 +1,24 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-  Query,
-  Res,
-} from '@nestjs/common';
+import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { ReportsService } from './reports.service';
-import { CreateReportDto } from './dto/create-report.dto';
-import { UpdateReportDto } from './dto/update-report.dto';
+import { format } from 'fast-csv';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 import { RolesGuard } from '@/auth/guard/roles.guard';
-import { Role } from '@/generated/prisma';
 import { Roles } from '@/auth/decorators/roles.decorator';
-import { Response } from 'express';
-import { format } from '@fast-csv/format';
+import { Role } from '@/generated/prisma';
 import { SalesReportQueryDto } from './dto/sales-report-query.dto';
+import { ProductReportQueryDto } from './dto/product-report-query.dto';
+import {
+  PagePaginationMetaDto,
+  PagePaginationResponseDto,
+} from '@/common/dto/response/page-pagination.response.dto';
+import { Response } from 'express';
 
+
+@ApiTags('reports (admin)')
+@Controller('admin/reports')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles([Role.ADMIN, Role.SUPERADMIN])
-@Controller('admin/reports')
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 
@@ -33,7 +28,7 @@ export class ReportsController {
   }
 
   @Get('sales')
-  async getSalesReport(@Query() query: SalesReportQueryDto) {
+  getSalesReport(@Query() query: SalesReportQueryDto) {
     return this.reportsService.getSalesReport(query);
   }
 
@@ -56,7 +51,7 @@ export class ReportsController {
     );
 
     const csvStream = format({
-      headers: true,
+      headers: true, 
     });
 
     csvStream.pipe(res);

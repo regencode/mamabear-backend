@@ -17,9 +17,7 @@ http:
         "stock": 10,
         "sortOrder": 1
       }
-  auth:
-    type: bearer
-    token: "{{jwtToken}}"
+  auth: inherit
 
 runtime:
   scripts:

@@ -6,9 +6,7 @@ info:
 http:
   method: DELETE
   url: "{{baseUrl}}/api/admin/highlights/{{highlightId}}"
-  auth:
-    type: bearer
-    token: "{{jwtToken}}"
+  auth: inherit
 
 runtime:
   scripts:

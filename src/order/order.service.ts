@@ -10,9 +10,14 @@ import { OrderRepository } from './order.repository';
 import { ServiceResult } from '@/common/ServiceResult';
 import { OrderStatus } from '@/generated/prisma';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
+import { AdminOrdersQueryDto } from './dto/admin-orders-query.dto';
 import { MailService } from '@/auth/mail.service';
 import { UpdateTrackingDto } from './dto/update-tracking.dto';
 import { InvoicePaymentStatus, InvoiceStructure } from '@/types/invoice.type';
+import {
+  PagePaginationResponseDto,
+  PagePaginationMetaDto,
+} from '@/common/dto/response/page-pagination.response.dto';
 
 @Injectable()
 export class OrderService {
@@ -29,7 +34,9 @@ export class OrderService {
     if (!user) throw new NotFoundException('User not found');
 
     const order = await this.repo.createOrder(userId, dto);
-    await this.mailService.orderConfirmationEmail(user.email, order.id);
+    this.mailService
+      .orderConfirmationEmail(user.email, order.id)
+      .catch(() => {});
     return {
       success: true,
       message: `Order ${order.id} created successfully`,
@@ -69,7 +76,16 @@ export class OrderService {
       where.status = paginationDto.status;
     }
     if (paginationDto.search) {
-      where.notes = { contains: paginationDto.search, mode: 'insensitive' };
+      const searchTerm = paginationDto.search;
+      const { isUUID } = await import('class-validator');
+      if (isUUID(searchTerm)) {
+        where.OR = [
+          { id: searchTerm },
+          { notes: { contains: searchTerm, mode: 'insensitive' } },
+        ];
+      } else {
+        where.notes = { contains: searchTerm, mode: 'insensitive' };
+      }
     }
     if (paginationDto.startDate || paginationDto.endDate) {
       where.createdAt = {};
@@ -228,7 +244,84 @@ export class OrderService {
     };
   }
 
-  async findAll() {
-    return this.repo.findAll();
+  async findAllOrders(query: AdminOrdersQueryDto) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+    const { items, totalItems } = await this.repo.findAllOrders(query);
+    const meta = new PagePaginationMetaDto(page, limit, totalItems);
+    const result = new PagePaginationResponseDto(items, meta);
+    return {
+      success: true,
+      message: `Returned ${items.length} orders (page ${page} of ${meta.totalPages})`,
+      data: result,
+    };
+  }
+
+  async exportOrdersCsv(query: AdminOrdersQueryDto): Promise<string> {
+    const orders = await this.repo.exportOrders(query);
+
+    const escapeCsv = (val: any): string => {
+      if (val === null || val === undefined) return '';
+      const str = String(val);
+      if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
+    const header = [
+      'Order ID',
+      'Status',
+      'Customer Name',
+      'Customer Email',
+      'Customer Phone',
+      'Items',
+      'Subtotal (IDR)',
+      'Shipping Cost (IDR)',
+      'Total (IDR)',
+      'Payment Method',
+      'Courier',
+      'Tracking Number',
+      'Shipping Address',
+      'Created At',
+    ].join(',');
+
+    const rows = orders.map((o) => {
+      const items = o.orderItems
+        .map(
+          (oi) =>
+            `${oi.product.name} (${oi.variant.name}) x${oi.quantity}`,
+        )
+        .join('; ');
+
+      const addr = o.shippingAddress
+        ? [
+            o.shippingAddress.name,
+            o.shippingAddress.phone,
+            o.shippingAddress.completeAddress,
+          ]
+            .filter(Boolean)
+            .join(' - ')
+        : '';
+
+      return [
+        escapeCsv(o.id),
+        escapeCsv(o.status),
+        escapeCsv(o.user.name),
+        escapeCsv(o.user.email),
+        escapeCsv(o.user.phone),
+        escapeCsv(items),
+        escapeCsv(o.subtotalIdr),
+        escapeCsv(o.shippingCostIdr),
+        escapeCsv(o.subtotalIdr + o.shippingCostIdr),
+        escapeCsv(o.paymentMethod),
+        escapeCsv(o.courierName),
+        escapeCsv(o.trackingNumber),
+        escapeCsv(addr),
+        escapeCsv(o.createdAt.toISOString()),
+      ].join(',');
+    });
+
+    return [header, ...rows].join('\n');
   }
 }

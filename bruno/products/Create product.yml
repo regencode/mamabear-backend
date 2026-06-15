@@ -19,9 +19,7 @@ http:
         "stock": 10,
         "sku": "BRUNO-{{runId}}"
       }
-  auth:
-    type: bearer
-    token: "{{jwtToken}}"
+  auth: inherit
 
 runtime:
   scripts:

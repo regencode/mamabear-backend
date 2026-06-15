@@ -14,11 +14,11 @@ export class AdminCustomerItemDto {
   phone: string;
 
   @ApiProperty()
-  total_orders: number;
+  totalOrders: number;
 
   @ApiProperty()
-  total_spent: number;
+  totalSpent: number;
 
   @ApiProperty()
-  registered_at: Date;
+  registeredAt: Date;
 }

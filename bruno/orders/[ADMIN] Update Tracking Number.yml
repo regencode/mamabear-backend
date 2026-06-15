@@ -11,9 +11,7 @@ http:
     data:
       - name: trackingNumber
         value: JNE12345
-  auth:
-    type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZmEyMzVkYi02ZjAwLTQzOWItYWM0Ny1jN2VkYzcyNzNiNTEiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwibmFtZSI6IkFkbWluIE1hbWFCZWFyIiwiaWF0IjoxNzgxMTA5ODkzLCJleHAiOjE3ODExMTA3OTN9.fGxck0X7JadXe8Gxtnwo2q9Tc-MVwVtCGJ0FnYneYNQ
+  auth: inherit
 
 runtime:
   variables:
