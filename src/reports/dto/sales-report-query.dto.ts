@@ -1,6 +1,6 @@
 import { OrderStatus } from '@/generated/prisma';
 import { Type } from 'class-transformer';
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional } from 'class-validator';
 
 export class SalesReportQueryDto {
   @IsOptional()

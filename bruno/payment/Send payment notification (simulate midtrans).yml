@@ -18,7 +18,7 @@ http:
         "signature_key": "7aad784c43078f96a1c44c8c6e157e7f09b610f9e27ce6b3baa2db39e7eee86046644c35aa7b06c90609fcebf9f0cd4b69a9fd0f0256e7167001aa09693af8c3",
         "settlement_time": "2023-11-15 22:45:13",
         "payment_type": "gopay",
-        "order_id": "payment_notif_test_M484961216_089ccffc-a564-46a6-9a95-b74b84132819",
+        "order_id": "019eb265-b1ff-70ba-88ae-2b4bef12bca2",
         "merchant_id": "M484961216",
         "gross_amount": "105000.00",
         "fraud_status": "accept",

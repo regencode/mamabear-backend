@@ -38,9 +38,7 @@ http:
       - name: usedFor
         value: RUMAHAN
         disabled: true
-  auth:
-    type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYWRkOGVlMS0xZjYwLTRkYzktOWY2NS1kYzA3ZTU2N2VkNzciLCJlbWFpbCI6ImtlYmVqb2FuQGVtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwibmFtZSI6IlNpdGkgUmFoYXl1IiwiaWF0IjoxNzgwNTcyMDE2LCJleHAiOjE3ODA1NzI5MTZ9.GVeuEoBws4fD_Te7BTeGVPzJ17h3jF4qfuKOqEcOLGk
+  auth: inherit
 
 runtime:
   variables:

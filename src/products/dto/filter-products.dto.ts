@@ -66,6 +66,19 @@ export class FilterProductsDto {
     @Type(() => Number)
     ratingAscending?: SortDirection;
 
+    @ApiPropertyOptional({ description: 'Fuzzy search by name, slug, or description' })
+    @IsString()
+    @IsOptional()
+    search?: string;
+
+    @ApiPropertyOptional({ description: 'Minimum similarity threshold for fuzzy search (0-1)', default: 0.05 })
+    @IsNumber()
+    @IsOptional()
+    @Type(() => Number)
+    @Min(0)
+    @Max(1)
+    similarityThreshold?: number;
+
     @ApiPropertyOptional({ description: "Pagination cursor (base64-encoded)" })
     @IsString()
     @IsOptional()

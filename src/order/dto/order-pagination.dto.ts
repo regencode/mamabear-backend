@@ -25,22 +25,15 @@ export class OrderPaginationDto {
   @Max(20)
   limit?: number = 10;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ description: 'Search by order ID or notes' })
   @IsOptional()
   @IsString()
   search?: string;
 
-  @ApiPropertyOptional({
-    enum: OrderStatus,
-  })
+  @ApiPropertyOptional({ enum: OrderStatus })
   @IsOptional()
   @IsEnum(OrderStatus)
   status?: OrderStatus;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  customer?: string;
 
   @ApiPropertyOptional()
   @IsOptional()

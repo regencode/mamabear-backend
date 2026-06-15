@@ -5,7 +5,11 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/api/admin/customers?page=1&limit=10&sort=registered_at&order=desc"
+  url: "{{baseUrl}}/api/admin/customers?0="
+  params:
+    - name: "0"
+      value: ""
+      type: query
   auth: inherit
 
 runtime:
@@ -25,16 +29,16 @@ settings:
   maxRedirects: 5
 
 examples:
-  - name: "Success (200)"
+  - name: Success (200)
     request:
       url: "{{baseUrl}}/api/admin/customers?page=1&limit=10&sort=registered_at&order=desc"
       method: GET
     response:
       status: 200
-      statusText: "OK"
+      statusText: OK
       headers:
         - name: Content-Type
-          value: "application/json; charset=utf-8"
+          value: application/json; charset=utf-8
       body:
         type: json
         data: |-
@@ -71,16 +75,16 @@ examples:
             },
             "timestamp": "2026-05-25T14:24:08.470Z"
           }
-  - name: "Unauthorized (401)"
+  - name: Unauthorized (401)
     request:
       url: "{{baseUrl}}/api/admin/customers?page=1&limit=10"
       method: GET
     response:
       status: 401
-      statusText: "Unauthorized"
+      statusText: Unauthorized
       headers:
         - name: Content-Type
-          value: "application/json; charset=utf-8"
+          value: application/json; charset=utf-8
       body:
         type: json
         data: |-

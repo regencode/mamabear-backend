@@ -7,7 +7,6 @@ import {
   Patch,
   UseGuards,
   Query,
-  Res,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
@@ -20,8 +19,7 @@ import { SearchRequestDto } from '@/search/dto/search-request.dto';
 import { SearchService } from '@/search/search.service';
 import { SearchAutocompleteOptionsDto } from '@/search/dto/search-autocomplete-options.dto';
 import { FilterProductsDto } from './dto/filter-products.dto';
-import { format } from '@fast-csv/format';
-import { Response } from 'express';
+import { ReviewPaginationDto } from '@/reviews/dto/review-pagination.dto';
 
 @ApiTags('products')
 @Controller('products')
@@ -32,33 +30,6 @@ export class ProductsController {
     private readonly variantService: VariantService,
     private readonly searchService: SearchService,
   ) {}
-
-  @Get('exportss')
-  async exportProduct(@Res() res: Response) {
-    const result = await this.productsService.exportProducts();
-
-    res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', 'attachment; filename=products.csv');
-
-    const csvStream = format({
-      headers: ['Name', 'SKU', 'Price', 'Stock', 'Total Sold', 'Category'],
-    });
-
-    csvStream.pipe(res);
-
-    result.data.forEach((product) => {
-      csvStream.write({
-        Name: product.name,
-        SKU: product.sku,
-        Price: product.priceIdr,
-        Stock: product.stock,
-        'Total Sold': product.totalSold,
-        Category: product.category,
-      });
-    });
-
-    csvStream.end();
-  }
 
   @Get()
   findAll(@Query() paginationDto: CursorPaginationRequestDto) {
@@ -100,7 +71,7 @@ export class ProductsController {
   @Get(':slug/reviews')
   findAllReviewsOfProductBySlug(
     @Param('slug') slug: string,
-    @Query() paginationDto: CursorPaginationRequestDto,
+    @Query() paginationDto: ReviewPaginationDto,
   ) {
     return this.reviewsService.findReviewsOfProductBySlug(slug, paginationDto);
   }

@@ -6,9 +6,7 @@ info:
 http:
   method: GET
   url: "{{baseUrl}}/api/admin/products/{{productId}}"
-  auth:
-    type: bearer
-    token: "{{jwtToken}}"
+  auth: inherit
 
 runtime:
   scripts:
