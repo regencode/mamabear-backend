@@ -88,11 +88,6 @@ export class OrderAdminController {
     csvStream.end();
   }
 
-  @Get(':id')
-  findOrderById(@Param('id') id: string) {
-    return this.orderService.getOrderByIdForAdmin(id);
-  }
-
   @Get()
   findAllOrders(@Query() query: AdminOrdersQueryDto) {
     return this.orderService.findAllOrders(query);
