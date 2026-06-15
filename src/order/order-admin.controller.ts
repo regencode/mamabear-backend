@@ -19,6 +19,7 @@ import { RolesGuard } from '@/auth/guard/roles.guard';
 import { Roles } from '@/auth/decorators/roles.decorator';
 import { Role } from '@/generated/prisma';
 import { UpdateTrackingDto } from './dto/update-tracking.dto';
+import { format } from '@fast-csv/format';
 import { AdminOrdersQueryDto } from './dto/admin-orders-query.dto';
 import { Response } from 'express';
 
@@ -28,16 +29,68 @@ import { Response } from 'express';
 export class OrderAdminController {
   constructor(private readonly orderService: OrderService) {}
 
+  @Get(':id/invoice')
+  getInvoice(@Req() req: any, @Param('id') id: string) {
+    return this.orderService.getInvoice(req.user.sub, req.user.role, id);
+  }
+
   @Get('export')
-  @Header('Content-Type', 'text/csv')
-  async exportOrders(
-    @Query() query: AdminOrdersQueryDto,
-    @Res() res: Response,
-  ) {
-    const csv = await this.orderService.exportOrdersCsv(query);
-    const filename = `orders-export-${new Date().toISOString().slice(0, 10)}.csv`;
-    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    res.send(csv);
+  async exportOrders(@Res() res: Response) {
+    const result = await this.orderService.exportOrders();
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=orders.csv');
+
+    const csvStream = format({
+      headers: [
+        'Order ID',
+        'Order Date',
+        'Last Updated',
+        'Order Status',
+        'User ID',
+        'User Name',
+        'User Email',
+        'User Phone Number',
+        'Subtotal IDR',
+        'Shipping Address',
+        'Shipping Cost',
+        'Courier Name',
+        'Courier Code',
+        'Shipping Method',
+        'Tracking Number',
+        'Payment Method',
+      ],
+    });
+
+    csvStream.pipe(res);
+
+    result.data.forEach((order) => {
+      csvStream.write({
+        'Order ID': order.OrderId,
+        'Order Date': order.OrderDate,
+        'Last Updated': order.LastUpdate,
+        'Order Status': order.OrderStatus,
+        'User ID': order.UserId,
+        'User Name': order.UserName,
+        'User Email': order.UserEmail,
+        'User Phone Number': order.UserPhoneNumber,
+        'Subtotal IDR': order.SubtotalIdr,
+        'Shipping Address': order.ShippingAddress,
+        'Shipping Cost': order.ShippingCostIdr,
+        'Courier Name': order.CourierName,
+        'Courier Code': order.CourierCode,
+        'Shipping Method': order.shippingMethod,
+        'Tracking Number': order.TrackingNumber,
+        'Payment Method': order.PaymentMethod,
+      });
+    });
+
+    csvStream.end();
+  }
+
+  @Get(':id')
+  findOrderById(@Param('id') id: string) {
+    return this.orderService.getOrderByIdForAdmin(id);
   }
 
   @Get()
@@ -83,10 +136,5 @@ export class OrderAdminController {
     @Body() updateTrackingDto: UpdateTrackingDto,
   ) {
     return this.orderService.updateTrackingNumber(id, updateTrackingDto);
-  }
-
-  @Get(':id/invoice')
-  getInvoice(@Req() req: any, @Param('id') id: string) {
-    return this.orderService.getInvoice(req.user.sub, req.user.role, id);
   }
 }
