@@ -39,7 +39,7 @@ export class ProductsRepository {
     private readonly logger: PinoLogger,
   ) {}
 
-  create(data: CreateProductDto) {
+  async create(data: CreateProductDto) {
     return this.prisma.$transaction(async (tx) => {
       const {
         images,
@@ -50,27 +50,67 @@ export class ProductsRepository {
         sku,
         ...productData
       } = data;
+
       const product = await tx.product.create({
-        data: { ...productData },
+        data: {
+          ...productData,
+          variants: variants?.length
+            ? {
+                create: variants.map((v, index) => ({
+                  name: v.name,
+                  priceIdr: v.priceIdr,
+                  weightG: v.weightG,
+                  sku: v.sku ?? null,
+                  stock: v.stock ?? 0,
+                  sortOrder: v.sortOrder ?? index,
+                  images: v.images?.length
+                    ? {
+                        createMany: {
+                          data: v.images.map((img) => ({
+                            imageUrl: img.imageUrl,
+                            publicId: img.publicId,
+                            width: img.width ?? null,
+                            height: img.height ?? null,
+                            fileSize: img.fileSize ?? null,
+                            format: img.format ?? null,
+                            sortOrder: img.sortOrder ?? 0,
+                            altText: img.altText ?? null,
+                          })),
+                        },
+                      }
+                    : undefined,
+                })),
+              }
+            : undefined,
+          images: images?.length
+            ? {
+                createMany: {
+                  data: images.map((img) => ({
+                    imageUrl: img.imageUrl,
+                    publicId: img.publicId,
+                    width: img.width ?? null,
+                    height: img.height ?? null,
+                    fileSize: img.fileSize ?? null,
+                    format: img.format ?? null,
+                    sortOrder: img.sortOrder ?? 0,
+                    altText: img.altText ?? null,
+                  })),
+                },
+              }
+            : undefined,
+        },
         include: PRODUCT_INCLUDE,
       });
+
       const embed =
         await this.embedService.generateEmbeddingsFromProduct(product);
-      tx.$executeRaw`
-            UPDATE "Product" 
-            SET embedding = ${this.embedService.embeddingArrayToString(embed)}::vector
-            WHERE id = ${product.id}
-        `;
-      if (variants?.length) {
-        await tx.productVariant.createMany({
-          data: variants.map((v) => ({ ...v, productId: product.id })),
-        });
-      }
-      if (images?.length) {
-        await tx.image.createMany({
-          data: images.map((img) => ({ ...img, productId: product.id })),
-        });
-      }
+
+      await tx.$executeRaw`
+      UPDATE "Product"
+      SET embedding = ${this.embedService.embeddingArrayToString(embed)}::vector
+      WHERE id = ${product.id}
+    `;
+
       return tx.product.findUnique({
         where: { id: product.id },
         include: PRODUCT_INCLUDE,
