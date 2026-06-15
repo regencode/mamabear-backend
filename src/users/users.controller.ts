@@ -61,16 +61,4 @@ export class UsersController {
       role: req.user.role,
     });
   }
-
-  @Put(':id/status')
-  updateStatus(
-    @Param('id') id: string,
-    @Body() dto: UpdateUserStatusDto,
-    @Req() req: any,
-  ) {
-    return this.usersService.updateStatus(id, dto, {
-      id: req.user.sub,
-      role: req.user.role,
-    });
-  }
 }

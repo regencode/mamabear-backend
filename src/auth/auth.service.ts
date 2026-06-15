@@ -69,6 +69,17 @@ export class AuthService {
         throw new BadRequestException('Your account is not verified');
       }
 
+      if ((user as any).isBlocked) {
+        this.logger.warn({
+          message: 'Login attempt with blocked account',
+          endpoint: 'POST /auth/login',
+          email: dto.email,
+          userId: user.id,
+          status: 'failure',
+        });
+        throw new BadRequestException('Your account has been blocked');
+      }
+
       const payload = {
         sub: user.id,
         email: user.email,

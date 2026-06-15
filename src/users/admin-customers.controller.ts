@@ -18,6 +18,7 @@ import { Role } from '@/generated/prisma';
 import { AdminCustomersQueryDto } from './dto/admin-customers-query.dto';
 import { AdminCustomersListResponseDto } from './dto/admin-customers-list-response.dto';
 import { AdminCustomerDetailDto } from './dto/admin-customer-detail.dto';
+import { UpdateCustomerStatusDto } from './dto/update-customer-status.dto';
 import { UpdateUserStatusDto } from './dto/update-user-status.dto';
 
 @ApiTags('customers (admin)')
@@ -46,6 +47,7 @@ export class AdminCustomersController {
   }
 
   @Put(':id/status')
+  @ApiParam({ name: 'id', required: true })
   updateCustomerStatus(
     @Param('id') id: string,
     @Body() dto: UpdateUserStatusDto,
