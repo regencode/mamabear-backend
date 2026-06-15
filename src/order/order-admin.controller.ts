@@ -3,9 +3,11 @@ import {
   Body,
   Controller,
   Get,
+  Header,
   Param,
   Patch,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -18,6 +20,7 @@ import { Roles } from '@/auth/decorators/roles.decorator';
 import { Role } from '@/generated/prisma';
 import { UpdateTrackingDto } from './dto/update-tracking.dto';
 import { format } from '@fast-csv/format';
+import { AdminOrdersQueryDto } from './dto/admin-orders-query.dto';
 import { Response } from 'express';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -91,9 +94,13 @@ export class OrderAdminController {
   }
 
   @Get()
-  findAll() {
-    //Should have the pagination params here
-    return this.orderService.findAll();
+  findAllOrders(@Query() query: AdminOrdersQueryDto) {
+    return this.orderService.findAllOrders(query);
+  }
+
+  @Get(':id')
+  findOrderById(@Param('id') id: string) {
+    return this.orderService.getOrderByIdForAdmin(id);
   }
 
   @Post(':id/cancel')
@@ -103,8 +110,8 @@ export class OrderAdminController {
     @Body() dto: CancelOrderDto,
   ) {
     return this.orderService.cancelOrder(
-      req.sub.role,
-      req.sub.sub,
+      req.user.role,
+      req.user.sub,
       id,
       dto.reason,
     );

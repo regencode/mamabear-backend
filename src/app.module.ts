@@ -53,7 +53,6 @@ import { ReportsModule } from './reports/reports.module';
     UploadModule,
     ReviewsModule,
     HighlightsModule,
-    ReviewsModule,
     DiscountsModule,
     VariantModule,
     CloudinaryModule,

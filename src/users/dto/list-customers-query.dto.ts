@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsIn, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsIn, IsInt, IsOptional, IsString, Max, Min, IsBoolean } from 'class-validator';
 
 export class ListCustomersQueryDto {
   @ApiPropertyOptional({ description: 'Search customers by name, email, or phone' })
@@ -36,4 +36,24 @@ export class ListCustomersQueryDto {
   @Min(1)
   @Max(100)
   limit?: number = 10;
+
+  @ApiPropertyOptional({ description: 'Filter by blocked status' })
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => {
+    if (value === undefined || value === null) return undefined;
+    if (typeof value === 'boolean') return value;
+    return String(value).toLowerCase() === 'true';
+  })
+  isBlocked?: boolean;
+
+  @ApiPropertyOptional({ description: 'Filter by verification status' })
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => {
+    if (value === undefined || value === null) return undefined;
+    if (typeof value === 'boolean') return value;
+    return String(value).toLowerCase() === 'true';
+  })
+  isVerified?: boolean;
 }

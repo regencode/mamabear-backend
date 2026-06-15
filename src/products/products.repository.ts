@@ -6,6 +6,11 @@ import { EmbeddingsService } from '@/embeddings/embeddings.service';
 import { ProductUtils } from '@/product-utils/product-utils';
 import { Image, Prisma, Product } from '@/generated/prisma';
 import { FilterProductsDto } from './dto/filter-products.dto';
+import {
+  AdminProductsQueryDto,
+  AdminProductSortBy,
+  SortOrder,
+} from './dto/admin-products-query.dto';
 import { PinoLogger } from 'pino-nestjs';
 import { BadRequestException } from '@nestjs/common';
 
@@ -34,7 +39,7 @@ export class ProductsRepository {
     private readonly logger: PinoLogger,
   ) {}
 
-  create(data: CreateProductDto) {
+  async create(data: CreateProductDto) {
     return this.prisma.$transaction(async (tx) => {
       const {
         images,
@@ -45,27 +50,67 @@ export class ProductsRepository {
         sku,
         ...productData
       } = data;
+
       const product = await tx.product.create({
-        data: { ...productData },
+        data: {
+          ...productData,
+          variants: variants?.length
+            ? {
+                create: variants.map((v, index) => ({
+                  name: v.name,
+                  priceIdr: v.priceIdr,
+                  weightG: v.weightG,
+                  sku: v.sku ?? null,
+                  stock: v.stock ?? 0,
+                  sortOrder: v.sortOrder ?? index,
+                  images: v.images?.length
+                    ? {
+                        createMany: {
+                          data: v.images.map((img) => ({
+                            imageUrl: img.imageUrl,
+                            publicId: img.publicId,
+                            width: img.width ?? null,
+                            height: img.height ?? null,
+                            fileSize: img.fileSize ?? null,
+                            format: img.format ?? null,
+                            sortOrder: img.sortOrder ?? 0,
+                            altText: img.altText ?? null,
+                          })),
+                        },
+                      }
+                    : undefined,
+                })),
+              }
+            : undefined,
+          images: images?.length
+            ? {
+                createMany: {
+                  data: images.map((img) => ({
+                    imageUrl: img.imageUrl,
+                    publicId: img.publicId,
+                    width: img.width ?? null,
+                    height: img.height ?? null,
+                    fileSize: img.fileSize ?? null,
+                    format: img.format ?? null,
+                    sortOrder: img.sortOrder ?? 0,
+                    altText: img.altText ?? null,
+                  })),
+                },
+              }
+            : undefined,
+        },
         include: PRODUCT_INCLUDE,
       });
+
       const embed =
         await this.embedService.generateEmbeddingsFromProduct(product);
-      tx.$executeRaw`
-            UPDATE "Product" 
-            SET embedding = ${this.embedService.embeddingArrayToString(embed)}::vector
-            WHERE id = ${product.id}
-        `;
-      if (variants?.length) {
-        await tx.productVariant.createMany({
-          data: variants.map((v) => ({ ...v, productId: product.id })),
-        });
-      }
-      if (images?.length) {
-        await tx.image.createMany({
-          data: images.map((img) => ({ ...img, productId: product.id })),
-        });
-      }
+
+      await tx.$executeRaw`
+      UPDATE "Product"
+      SET embedding = ${this.embedService.embeddingArrayToString(embed)}::vector
+      WHERE id = ${product.id}
+    `;
+
       return tx.product.findUnique({
         where: { id: product.id },
         include: PRODUCT_INCLUDE,
@@ -117,34 +162,63 @@ export class ProductsRepository {
   private buildCursorCondition(
     sortConfig: SortConfig,
     decoded: Record<string, any>,
-  ): string {
-    const conditions: string[] = [];
+    params: any[],
+  ): { condition: string; params: any[] } {
     if (
       sortConfig.cursorKeys.includes('minPrice') &&
       decoded.minPrice !== undefined
     ) {
       const dir = sortConfig.orderByClause.includes('ASC') ? '>=' : '<=';
-      conditions.push(
-        `(MIN(pv."priceIdr"), p.id) ${dir} (${decoded.minPrice}, ${decoded.id})`,
-      );
-    } else if (
+      const p1 = params.length + 1;
+      const p2 = params.length + 2;
+      params.push(decoded.minPrice, decoded.id);
+      return {
+        condition: `AND (MIN(pv."priceIdr"), p.id) ${dir} ($${p1}, $${p2})`,
+        params,
+      };
+    }
+    if (
       sortConfig.cursorKeys.includes('createdAt') &&
       decoded.createdAt !== undefined
     ) {
       const dir = sortConfig.orderByClause.includes('ASC') ? '>=' : '<=';
-      conditions.push(
-        `(p."createdAt", p.id) ${dir} ('${decoded.createdAt}'::timestamp, ${decoded.id})`,
-      );
-    } else {
-      conditions.push(`p.id >= ${decoded.id}`);
+      const p1 = params.length + 1;
+      const p2 = params.length + 2;
+      params.push(new Date(decoded.createdAt), decoded.id);
+      return {
+        condition: `AND (p."createdAt", p.id) ${dir} ($${p1}::timestamp, $${p2})`,
+        params,
+      };
     }
-    return conditions.length > 0 ? `AND ${conditions.join(' AND ')}` : '';
+    const p1 = params.length + 1;
+    params.push(decoded.id);
+    return {
+      condition: `AND p.id >= $${p1}`,
+      params,
+    };
+  }
+
+  private buildFuzzySearchClause(
+    search: string,
+    threshold: number,
+    params: any[],
+  ): { clause: string; params: any[] } {
+    const pQuery = params.length + 1;
+    const pThreshold = params.length + 2;
+    params.push(search, threshold);
+    return {
+      clause: `AND (similarity(p.name, $${pQuery}) >= $${pThreshold}
+              OR similarity(p.slug, $${pQuery}) >= $${pThreshold}
+              OR similarity(COALESCE(p.description, ''), $${pQuery}) >= $${pThreshold})`,
+      params,
+    };
   }
 
   async findByFilter(query: FilterProductsDto) {
     const limit = query.limit ?? 10;
     const sortConfig = this.getSortConfig(query);
     const decodedCursor = query.cursor ? this.decodeCursor(query.cursor) : null;
+    const params: any[] = [];
 
     const needsVariantJoin =
       query.priceAscending !== undefined ||
@@ -155,12 +229,24 @@ export class ProductsRepository {
     const whereParts: string[] = ['WHERE 1=1'];
 
     if (query.categories && query.categories.length > 0) {
-      const cats = query.categories.map((c) => `'${c}'`).join(',');
-      whereParts.push(`AND c.slug IN (${cats})`);
+      const placeholders = query.categories.map(() => `$${params.length + 1}`);
+      params.push(...query.categories);
+      whereParts.push(`AND c.slug IN (${placeholders.join(',')})`);
     }
     if (query.highlights && query.highlights.length > 0) {
-      const highs = query.highlights.map((h) => `'${h}'`).join(',');
-      whereParts.push(`AND h.slug IN (${highs})`);
+      const placeholders = query.highlights.map(() => `$${params.length + 1}`);
+      params.push(...query.highlights);
+      whereParts.push(`AND h.slug IN (${placeholders.join(',')})`);
+    }
+
+    if (query.search) {
+      const threshold = query.similarityThreshold ?? 0.05;
+      const { clause } = this.buildFuzzySearchClause(
+        query.search,
+        threshold,
+        params,
+      );
+      whereParts.push(clause);
     }
 
     const havingParts: string[] = [];
@@ -172,15 +258,21 @@ export class ProductsRepository {
       );
     }
     if (query.minPrice !== undefined) {
-      havingParts.push(`AND MIN(pv."priceIdr") >= ${query.minPrice}`);
+      const p = params.length + 1;
+      params.push(query.minPrice);
+      havingParts.push(`AND MIN(pv."priceIdr") >= $${p}`);
     }
     if (query.maxPrice !== undefined) {
-      havingParts.push(`AND MIN(pv."priceIdr") <= ${query.maxPrice}`);
+      const p = params.length + 1;
+      params.push(query.maxPrice);
+      havingParts.push(`AND MIN(pv."priceIdr") <= $${p}`);
     }
 
-    const cursorCondition = decodedCursor
-      ? this.buildCursorCondition(sortConfig, decodedCursor)
-      : '';
+    let cursorCondition = '';
+    if (decodedCursor) {
+      const result = this.buildCursorCondition(sortConfig, decodedCursor, params);
+      cursorCondition = result.condition;
+    }
 
     const variantJoin = needsVariantJoin
       ? `LEFT JOIN "ProductVariant" pv ON pv."productId" = p.id`
@@ -193,6 +285,19 @@ export class ProductsRepository {
         ? `, MIN(pv."priceIdr") as "minPrice"`
         : '';
 
+    let orderByClause = sortConfig.orderByClause;
+    if (query.search) {
+      const pSearch = params.findIndex(
+        (p) => typeof p === 'string' && p === query.search,
+      );
+      if (pSearch !== -1) {
+        orderByClause = `similarity(p.name, $${pSearch + 1}) DESC, ${orderByClause}`;
+      }
+    }
+
+    const offsetParam = params.length + 1;
+    params.push(limit + 1);
+
     const rawQuery = `
       SELECT p.id ${selectPrice}
       FROM "Product" p
@@ -203,12 +308,12 @@ export class ProductsRepository {
       GROUP BY p.id
       HAVING 1=1 ${havingParts.length > 0 ? `${havingParts.join(' ')}` : ''}
       ${cursorCondition}
-      ORDER BY ${sortConfig.orderByClause}
-      LIMIT ${limit + 1}
+      ORDER BY ${orderByClause}
+      LIMIT $${offsetParam}
     `;
     this.logger.info(`rawQuery: ${rawQuery}`);
 
-    const rows: any[] = await this.prisma.$queryRawUnsafe(rawQuery);
+    const rows: any[] = await this.prisma.$queryRawUnsafe(rawQuery, ...params);
 
     let nextCursor: string | null = null;
     if (rows.length > limit) {
@@ -240,7 +345,152 @@ export class ProductsRepository {
       (a, b) => orderMap.get(a.id)! - orderMap.get(b.id)!,
     );
 
-    return { items: await this.utils.enrichMany(sortedProducts), nextCursor };
+    return {
+      items: await this.utils.enrichMany(sortedProducts),
+      nextCursor,
+    };
+  }
+
+  async findAdminProducts(query: AdminProductsQueryDto) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+    const offset = (page - 1) * limit;
+    const params: any[] = [];
+
+    const needsVariantJoin =
+      query.sortBy === AdminProductSortBy.PRICE ||
+      query.minPrice !== undefined ||
+      query.maxPrice !== undefined ||
+      query.inStock;
+
+    const whereParts: string[] = ['WHERE 1=1'];
+
+    if (query.categoryId !== undefined) {
+      const p = params.length + 1;
+      params.push(query.categoryId);
+      whereParts.push(`AND p."categoryId" = $${p}`);
+    }
+    if (query.isActive !== undefined) {
+      const p = params.length + 1;
+      params.push(query.isActive);
+      whereParts.push(`AND p."isActive" = $${p}`);
+    }
+    if (query.search) {
+      const threshold = query.similarityThreshold ?? 0.05;
+      const { clause } = this.buildFuzzySearchClause(
+        query.search,
+        threshold,
+        params,
+      );
+      whereParts.push(clause);
+    }
+
+    const havingParts: string[] = [];
+    if (query.inStock) {
+      havingParts.push(
+        `AND SUM(CASE WHEN pv.stock >= 1 THEN 1 ELSE 0 END) > 0`,
+      );
+    }
+    if (query.minPrice !== undefined) {
+      const p = params.length + 1;
+      params.push(query.minPrice);
+      havingParts.push(`AND MIN(pv."priceIdr") >= $${p}`);
+    }
+    if (query.maxPrice !== undefined) {
+      const p = params.length + 1;
+      params.push(query.maxPrice);
+      havingParts.push(`AND MIN(pv."priceIdr") <= $${p}`);
+    }
+
+    const variantJoin = needsVariantJoin
+      ? `LEFT JOIN "ProductVariant" pv ON pv."productId" = p.id`
+      : '';
+
+    let orderByClause: string;
+    switch (query.sortBy) {
+      case AdminProductSortBy.NAME: {
+        const dir =
+          query.sortOrder === SortOrder.ASC ? 'ASC' : 'DESC';
+        orderByClause = `p.name ${dir}, p.id ${dir}`;
+        break;
+      }
+      case AdminProductSortBy.PRICE: {
+        const dir =
+          query.sortOrder === SortOrder.ASC ? 'ASC' : 'DESC';
+        orderByClause = `MIN(pv."priceIdr") ${dir}, p.id ${dir}`;
+        break;
+      }
+      case AdminProductSortBy.TOTAL_SOLD: {
+        const dir =
+          query.sortOrder === SortOrder.ASC ? 'ASC' : 'DESC';
+        orderByClause = `p."totalSold" ${dir}, p.id ${dir}`;
+        break;
+      }
+      default: {
+        const dir =
+          query.sortOrder === SortOrder.ASC ? 'ASC' : 'DESC';
+        orderByClause = `p."createdAt" ${dir}, p.id ${dir}`;
+        break;
+      }
+    }
+
+    if (query.search) {
+      const pSearch = params.findIndex(
+        (p) => typeof p === 'string' && p === query.search,
+      );
+      if (pSearch !== -1) {
+        orderByClause = `similarity(p.name, $${pSearch + 1}) DESC, ${orderByClause}`;
+      }
+    }
+
+    const selectPrice =
+      query.sortBy === AdminProductSortBy.PRICE
+        ? `, MIN(pv."priceIdr") as "minPrice"`
+        : '';
+
+    const offsetParam = params.length + 1;
+    const limitParam = params.length + 2;
+    params.push(offset, limit);
+
+    const rawQuery = `
+      SELECT p.id ${selectPrice}, COUNT(*) OVER() AS "totalCount"
+      FROM "Product" p
+      ${variantJoin}
+      ${whereParts.join(' ')}
+      GROUP BY p.id
+      HAVING 1=1 ${havingParts.length > 0 ? havingParts.join(' ') : ''}
+      ORDER BY ${orderByClause}
+      OFFSET $${offsetParam}
+      LIMIT $${limitParam}
+    `;
+    this.logger.info(`findAdminProducts query: ${rawQuery}`);
+
+    const rows: any[] = await this.prisma.$queryRawUnsafe(rawQuery, ...params);
+
+    const totalItems =
+      rows.length > 0 ? Number(rows[0].totalCount) : 0;
+    const ids = rows.map((r: any) => r.id);
+
+    if (ids.length === 0) {
+      return { items: [], totalItems: 0 };
+    }
+
+    const products = await this.prisma.product.findMany({
+      where: { id: { in: ids } },
+      include: PRODUCT_INCLUDE,
+    });
+
+    const orderMap = new Map(
+      ids.map((id: number, index: number) => [id, index]),
+    );
+    const sortedProducts = products.sort(
+      (a, b) => orderMap.get(a.id)! - orderMap.get(b.id)!,
+    );
+
+    return {
+      items: await this.utils.enrichMany(sortedProducts),
+      totalItems,
+    };
   }
 
   async findById(id: number) {

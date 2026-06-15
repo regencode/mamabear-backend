@@ -25,6 +25,7 @@ model User {
   updatedAt               DateTime? @updatedAt
   reviews                 Review[]
   isVerified              Boolean   @default(false)
+  isBlocked               Boolean   @default(false)
   verificationToken       String?
   verificationTokenExpiry DateTime?
   resetToken              String?

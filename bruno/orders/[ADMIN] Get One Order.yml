@@ -8,9 +8,7 @@ http:
   url: "{{baseUrl}}/api/admin/order/{{id}}"
   body:
     type: form-urlencoded
-  auth:
-    type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZmEyMzVkYi02ZjAwLTQzOWItYWM0Ny1jN2VkYzcyNzNiNTEiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwibmFtZSI6IkFkbWluIE1hbWFCZWFyIiwiaWF0IjoxNzgxMTkxODQ5LCJleHAiOjE3ODExOTI3NDl9.VbczqNIU4j00nn7ESaGovj_GB8zaNv5sdwzv0O5ah6E
+  auth: inherit
 
 runtime:
   variables:

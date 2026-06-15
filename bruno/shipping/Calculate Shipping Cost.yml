@@ -13,9 +13,7 @@ http:
         value: "8133"
       - name: price
         value: lowest
-  auth:
-    type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYWRkOGVlMS0xZjYwLTRkYzktOWY2NS1kYzA3ZTU2N2VkNzciLCJlbWFpbCI6ImtlYmVqb2FuQGVtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwibmFtZSI6IlNpdGkgUmFoYXl1IiwiaWF0IjoxNzgwNDI4OTg3LCJleHAiOjE3ODA0Mjk4ODd9.GzUfitD0pCvII8aHKyJJCatpipNcLk7JgLxzYQiyN90
+  auth: inherit
 
 settings:
   encodeUrl: true

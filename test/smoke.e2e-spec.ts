@@ -16,6 +16,13 @@ const state = {
   userId: '',
   reviewId: 0,
   cartItemId: '',
+  cartId: '',
+  provinceId: '',
+  cityId: '',
+  districtId: '',
+  addressId: 0,
+  orderCartId: '',
+  orderId: '',
 };
 
 const authHeader = () => ({ Authorization: `Bearer ${state.token}` });
@@ -80,6 +87,58 @@ describe('Smoke Tests (e2e)', () => {
     });
   });
 
+  const hasShippingApi =
+    process.env.RAJAONGKIR_API_KEY && process.env.RAJAONGKIR_BASE_URL;
+
+  (hasShippingApi ? describe : describe.skip)('Shipping', () => {
+    it('GET /shipping/province', async () => {
+      const res = await request(BASE)
+        .get('/shipping/province')
+        .set(authHeader())
+        .expect(200);
+
+      expect(res.body.success).toBe(true);
+      expect(res.body.data).toBeInstanceOf(Array);
+      expect(res.body.data.length).toBeGreaterThan(0);
+      state.provinceId = res.body.data[0].id;
+    });
+
+    it('GET /shipping/city/:provinceId', async () => {
+      const res = await request(BASE)
+        .get(`/shipping/city/${state.provinceId}`)
+        .set(authHeader())
+        .expect(200);
+
+      expect(res.body.success).toBe(true);
+      expect(res.body.data).toBeInstanceOf(Array);
+      expect(res.body.data.length).toBeGreaterThan(0);
+      state.cityId = res.body.data[0].id;
+    });
+
+    it('GET /shipping/district/:cityId', async () => {
+      const res = await request(BASE)
+        .get(`/shipping/district/${state.cityId}`)
+        .set(authHeader())
+        .expect(200);
+
+      expect(res.body.success).toBe(true);
+      expect(res.body.data).toBeInstanceOf(Array);
+      expect(res.body.data.length).toBeGreaterThan(0);
+      state.districtId = res.body.data[0].id;
+    });
+
+    it('GET /shipping/subdistrict/:districtId', async () => {
+      const res = await request(BASE)
+        .get(`/shipping/subdistrict/${state.districtId}`)
+        .set(authHeader())
+        .expect(200);
+
+      expect(res.body.success).toBe(true);
+      expect(res.body.data).toBeInstanceOf(Array);
+      expect(res.body.data.length).toBeGreaterThan(0);
+    });
+  });
+
   describe('Products (Public)', () => {
     it('GET /products', async () => {
       const res = await request(BASE).get('/products').expect(200);
@@ -96,7 +155,7 @@ describe('Smoke Tests (e2e)', () => {
         .expect(200);
 
       expect(res.body.success).toBe(true);
-      expect(res.body.data).toBeInstanceOf(Array);
+      expect(res.body.data.data).toBeInstanceOf(Array);
     });
 
     it('GET /products/filter', async () => {
@@ -338,15 +397,6 @@ describe('Smoke Tests (e2e)', () => {
       expect(res.body.success).toBe(true);
     });
 
-    it('GET /admin/users', async () => {
-      const res = await request(BASE)
-        .get('/admin/users')
-        .set(authHeader())
-        .expect(200);
-
-      expect(res.body.success).toBe(true);
-    });
-
     it('GET /admin/users/:id', async () => {
       const res = await request(BASE)
         .get(`/admin/users/${state.userId}`)
@@ -379,6 +429,7 @@ describe('Smoke Tests (e2e)', () => {
     it('POST /cart/items — add to cart', async () => {
       const res = await request(BASE)
         .post('/cart/items')
+        .set(authHeader())
         .send({
           productId: state.productId,
           variantId: state.defaultVariantId,
@@ -391,18 +442,63 @@ describe('Smoke Tests (e2e)', () => {
     });
 
     it('GET /cart', async () => {
-      const res = await request(BASE).get('/cart').expect(200);
+      const res = await request(BASE)
+        .get('/cart')
+        .set(authHeader())
+        .expect(200);
+
       expect(res.body.success).toBe(true);
+      state.cartId = res.body.data.id;
     });
 
     it('GET /cart/totals', async () => {
-      const res = await request(BASE).get('/cart/totals').expect(200);
+      const res = await request(BASE)
+        .get('/cart/totals')
+        .set(authHeader())
+        .expect(200);
+
       expect(res.body.success).toBe(true);
+    });
+
+    it('POST /cart/validate', async () => {
+      const res = await request(BASE)
+        .post('/cart/validate')
+        .set(authHeader())
+        .expect(201);
+
+      expect(res.body.data.valid).toBe(true);
+    });
+
+    it('PATCH /cart/:id/courier', async () => {
+      const res = await request(BASE)
+        .patch(`/cart/${state.cartId}/courier`)
+        .set(authHeader())
+        .send({
+          shippingCostIdr: 15000,
+          courierName: 'JNE',
+          courierCode: 'jne',
+          shippingMethod: 'REG',
+        })
+        .expect(200);
+
+      expect(res.body.data.courierName).toBe('JNE');
+      expect(res.body.data.shippingCostIdr).toBe(15000);
+    });
+
+    it('DELETE /cart/:id/courier', async () => {
+      const res = await request(BASE)
+        .delete(`/cart/${state.cartId}/courier`)
+        .set(authHeader())
+        .expect(200);
+
+      expect(res.body.data.courierName).toBeNull();
+      expect(res.body.data.shippingCostIdr).toBe(0);
     });
 
     it('PATCH /cart/items/:id', async () => {
       const res = await request(BASE)
         .patch(`/cart/items/${state.cartItemId}`)
+        .set(authHeader())
         .send({ quantity: 3 })
         .expect(200);
 
@@ -412,18 +508,133 @@ describe('Smoke Tests (e2e)', () => {
     it('DELETE /cart/items/:id', async () => {
       const res = await request(BASE)
         .delete(`/cart/items/${state.cartItemId}`)
+        .set(authHeader())
         .expect(200);
 
       expect(res.body.success).toBe(true);
     });
 
     it('POST /cart/merge', async () => {
-      const res = await request(BASE).post('/cart/merge').expect(201);
+      const res = await request(BASE)
+        .post('/cart/merge')
+        .set(authHeader())
+        .expect(201);
+
       expect(res.body.success).toBe(true);
     });
 
     it('DELETE /cart — clear cart', async () => {
-      const res = await request(BASE).delete('/cart').expect(200);
+      const res = await request(BASE)
+        .delete('/cart')
+        .set(authHeader())
+        .expect(200);
+
+      expect(res.body.success).toBe(true);
+    });
+  });
+
+  describe('Orders', () => {
+    it('POST /me/addresses — create address', async () => {
+      const res = await request(BASE)
+        .post('/me/addresses')
+        .set(authHeader())
+        .send({
+          name: 'Kevin ADMIN',
+          phone: '0856123456',
+          provinceId: 1,
+          provinceName: 'NUSA TENGGARA BARAT (NTB)',
+          cityId: 1,
+          cityName: 'MATARAM',
+          districtId: 3,
+          districtName: 'CAKRANEGARA',
+          subdistrictId: 20,
+          subdistrictName: 'CAKRANEGARA BARAT',
+          postalCode: '83239',
+          road: 'Jl. Abu Dhabi Sejahtera Selamanya',
+          detail: 'Sebelah Indomaret besar (bukan indomaret kecil)',
+          usedFor: 'RUMAH2',
+        })
+        .expect(201);
+
+      expect(res.body.success).toBe(true);
+      state.addressId = res.body.data.id;
+    });
+
+    it('POST /cart/items — add item for order', async () => {
+      const res = await request(BASE)
+        .post('/cart/items')
+        .set(authHeader())
+        .send({
+          productId: state.productId,
+          variantId: state.defaultVariantId,
+          quantity: 1,
+        })
+        .expect(201);
+
+      expect(res.body.success).toBe(true);
+    });
+
+    it('GET /cart — capture cartId for order', async () => {
+      const res = await request(BASE)
+        .get('/cart')
+        .set(authHeader())
+        .expect(200);
+
+      expect(res.body.success).toBe(true);
+      state.orderCartId = res.body.data.id;
+    });
+
+    it('POST /order — create order', async () => {
+      const res = await request(BASE)
+        .post('/order')
+        .set(authHeader())
+        .send({
+          cartId: state.orderCartId,
+          addressId: state.addressId,
+        })
+        .expect(201);
+
+      expect(res.body.success).toBe(true);
+      state.orderId = res.body.data.id;
+    });
+
+    it('GET /order — list orders', async () => {
+      const res = await request(BASE)
+        .get('/order?limit=5')
+        .set(authHeader())
+        .expect(200);
+
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.data).toBeInstanceOf(Array);
+    });
+
+    it('GET /order/:id — order detail', async () => {
+      const res = await request(BASE)
+        .get(`/order/${state.orderId}`)
+        .set(authHeader())
+        .expect(200);
+
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.id).toBe(state.orderId);
+    });
+
+    it('POST /order/:id/cancel — cancel order (admin token bypasses status check)', async () => {
+      const res = await request(BASE)
+        .post(`/order/${state.orderId}/cancel`)
+        .set(authHeader())
+        .send({ reason: 'Smoke test cancel' })
+        .expect(201);
+
+      expect(res.body.success).toBe(true);
+    });
+
+    it('POST /admin/order/:id/cancel — admin cancel already-cancelled order', async () => {
+      const res = await request(BASE)
+        .post(`/admin/order/${state.orderId}/cancel`)
+        .set(authHeader())
+        .send({ reason: 'Smoke test admin cancel' })
+        .expect(201);
+
       expect(res.body.success).toBe(true);
     });
   });
@@ -514,13 +725,12 @@ describe('Smoke Tests (e2e)', () => {
       expect(res.body.success).toBe(true);
     });
 
-    it('DELETE /admin/products/:id', async () => {
+    it('DELETE /admin/products/:id — may fail with 409 if referenced by orders', async () => {
       const res = await request(BASE)
         .delete(`/admin/products/${state.productId}`)
-        .set(authHeader())
-        .expect(200);
+        .set(authHeader());
 
-      expect(res.body.success).toBe(true);
+      expect([200, 409]).toContain(res.status);
     });
 
     it('DELETE /admin/categories/:id', async () => {

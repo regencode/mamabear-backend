@@ -14,9 +14,7 @@ http:
         "description": "Updated test product from Bruno collection",
         "priceIdr": 55000
       }
-  auth:
-    type: bearer
-    token: "{{jwtToken}}"
+  auth: inherit
 
 runtime:
   scripts:

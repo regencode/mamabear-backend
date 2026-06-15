@@ -22,26 +22,26 @@ export class AdminCustomerDetailDto {
   isVerified: boolean;
 
   @ApiProperty()
-  registered_at: Date;
+  registeredAt: Date;
 
   @ApiProperty({ nullable: true })
-  updated_at: Date | null;
+  updatedAt: Date | null;
 
   @ApiProperty({ type: [AddressDto] })
   addresses: AddressDto[];
 
   @ApiProperty()
-  total_orders: number;
+  totalOrders: number;
 
   @ApiProperty()
-  total_spent: number;
+  totalSpent: number;
 
   @ApiProperty()
-  average_order_value: number;
+  averageOrderValue: number;
 
   @ApiProperty({ nullable: true })
-  last_order_date: Date | null;
+  lastOrderDate: Date | null;
 
   @ApiProperty({ type: [AdminCustomerOrderSummaryDto] })
-  order_history: AdminCustomerOrderSummaryDto[];
+  orderHistory: AdminCustomerOrderSummaryDto[];
 }
