@@ -177,7 +177,8 @@ async function main() {
       "User",
       "Setting",
       "Cart",
-      "CartItem"
+      "CartItem",
+      "Address"
     RESTART IDENTITY CASCADE;
   `);
 
@@ -298,6 +299,43 @@ async function main() {
   }
 
   console.log(`Inserted ${addressesCreated} customer addresses.`);
+
+  console.log('Creating addresses for all accounts...');
+
+  const allUsersForAddresses = await prisma.user.findMany({
+    select: { id: true, name: true },
+  });
+
+  const baseAddress = {
+    phone: '0856123456',
+    provinceId: 1,
+    provinceName: 'NUSA TENGGARA BARAT (NTB)',
+    cityId: 1,
+    cityName: 'MATARAM',
+    districtId: 3,
+    districtName: 'CAKRANEGARA',
+    subdistrictId: 20,
+    subdistrictName: 'CAKRANEGARA BARAT',
+    postalCode: '83239',
+    road: 'Jl. Abu Dhabi Sejahtera Selamanya',
+    detail: 'Sebelah rumah pak Bari',
+    usedFor: 'RUMAHAN',
+  };
+
+  let allAccountAddresses = 0;
+  for (const user of allUsersForAddresses) {
+    await prisma.address.create({
+      data: {
+        ...baseAddress,
+        userId: user.id,
+        name: user.name,
+        completeAddress: `${baseAddress.road}, ${baseAddress.subdistrictName}, ${baseAddress.districtName}, ${baseAddress.cityName}, ${baseAddress.provinceName} ${baseAddress.postalCode}`,
+      },
+    });
+    allAccountAddresses++;
+  }
+
+  console.log(`Inserted ${allAccountAddresses} addresses for all accounts.`);
 
   console.log('Creating categories...');
 

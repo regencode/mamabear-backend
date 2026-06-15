@@ -1,6 +1,7 @@
 import { map } from 'rxjs/operators';
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
@@ -323,6 +324,14 @@ export class ProductsService {
         status: 'error',
         error: error.message,
       });
+      if (
+        error.code === 'P2003' ||
+        error.message?.includes('foreign key constraint')
+      ) {
+        throw new ConflictException(
+          'Cannot delete product: it is referenced by existing orders or cart items',
+        );
+      }
       throw error;
     }
   }
