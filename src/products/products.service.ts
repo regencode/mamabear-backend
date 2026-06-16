@@ -105,11 +105,22 @@ export class ProductsService {
   async create(dto: CreateProductDto): Promise<ServiceResult<Product>> {
     try {
       if (!dto.variants) dto.variants = [];
+      const setSortOrders = dto.variants.map((v) => v.sortOrder);
+      const hasUndefined = setSortOrders.some(
+        (s) => s === undefined || s === null,
+      );
+      const hasDuplicate = new Set(setSortOrders).size !== setSortOrders.length;
 
       const normalizedVariants = dto.variants.map((v, index) => ({
         ...v,
-        sortOrder: index,
+        sortOrder:
+          hasUndefined || hasDuplicate ? index : (v.sortOrder as number),
       }));
+
+      const maxSortOrder =
+        normalizedVariants.length > 0
+          ? Math.max(...normalizedVariants.map((v) => v.sortOrder as number))
+          : -1;
 
       const defaultVariant: CreateVariantDto = {
         name: 'INTERNAL_DEFAULT',
@@ -117,7 +128,7 @@ export class ProductsService {
         weightG: dto.weightG,
         stock: dto.stock ?? 0,
         sku: dto.sku,
-        sortOrder: normalizedVariants.length,
+        sortOrder: maxSortOrder + 1,
       };
 
       normalizedVariants.push(defaultVariant);

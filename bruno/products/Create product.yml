@@ -22,13 +22,13 @@ http:
         "tags": ["formula", "toddler"],
         "images": [
       {
-          "imageUrl": "https://res.cloudinary.com/dfmgt1iel/image/upload/v1781622558/products/nevpxiwhdik3cc7sajot.jpg",
-          "publicId": "products/nevpxiwhdik3cc7sajot",
-          "width": 180,
-          "height": 180,
-          "fileSize": 6008,
+          "imageUrl": "https://res.cloudinary.com/dfmgt1iel/image/upload/v1781623028/products/xqdemqmppkm1mshomago.jpg",
+          "publicId": "products/xqdemqmppkm1mshomago",
+          "width": 1280,
+          "height": 720,
+          "fileSize": 62192,
           "format": "jpg",
-          "altText": "Pikacu",
+          "altText": "bg2",
           "sortOrder": 0
       }
         ],
@@ -41,13 +41,13 @@ http:
             "stock": 30,
             "images": [
               {
-             "imageUrl": "https://res.cloudinary.com/dfmgt1iel/image/upload/v1781622582/products/zqy8ccvajxyecvbfnt4p.jpg",
-          "publicId": "products/zqy8ccvajxyecvbfnt4p",
-          "width": 252,
-          "height": 180,
-          "fileSize": 4555,
+              "imageUrl": "https://res.cloudinary.com/dfmgt1iel/image/upload/v1781623062/products/qqmgoddptb8bru0yrg6w.jpg",
+          "publicId": "products/qqmgoddptb8bru0yrg6w",
+          "width": 4000,
+          "height": 2250,
+          "fileSize": 210509,
           "format": "jpg",
-          "altText": "PP",
+          "altText": "bg",
           "sortOrder": 0
               }
             ]
@@ -60,13 +60,13 @@ http:
             "stock": 20,
             "images":[
             {
-              "imageUrl": "https://res.cloudinary.com/dfmgt1iel/image/upload/v1781622615/products/wenrx6que28vdpjrznij.png",
-          "publicId": "products/wenrx6que28vdpjrznij",
-          "width": 2559,
-          "height": 1439,
-          "fileSize": 174025,
+             "imageUrl": "https://res.cloudinary.com/dfmgt1iel/image/upload/v1781623099/products/cgp5ldvfip8gzl4kqame.png",
+          "publicId": "products/cgp5ldvfip8gzl4kqame",
+          "width": 360,
+          "height": 360,
+          "fileSize": 3208,
           "format": "png",
-          "altText": "Screenshot 2026-05-26 031428.pdf",
+          "altText": "bpjs",
           "sortOrder": 0
           }
             ]
