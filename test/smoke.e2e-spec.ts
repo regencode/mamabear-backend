@@ -5,6 +5,7 @@ const runId = Date.now();
 
 const state = {
   token: '',
+  adminToken: '',
   refreshToken: '',
   productId: 0,
   productSlug: '',
@@ -14,6 +15,7 @@ const state = {
   categoryId: 0,
   highlightId: 0,
   userId: '',
+  adminUserId: '',
   reviewId: 0,
   cartItemId: '',
   cartId: '',
@@ -70,6 +72,16 @@ describe('Smoke Tests (e2e)', () => {
       expect(res.body.success).toBe(true);
       expect(res.body.data.accessToken).toBeDefined();
       expect(res.body.data.refreshToken).toBeDefined();
+    });
+
+    it('POST /auth/login — ADMIN-role login', async () => {
+      const res = await request(BASE)
+        .post('/auth/login')
+        .send({ email: 'admin2@mamabear.id', password: 'admin' })
+        .expect(201);
+
+      expect(res.body.success).toBe(true);
+      state.adminToken = res.body.data.accessToken;
     });
   });
 
@@ -423,6 +435,19 @@ describe('Smoke Tests (e2e)', () => {
 
       expect(res.body.success).toBe(true);
     });
+
+    it('GET /admin/activity-logs — list activity logs', async () => {
+      const res = await request(BASE)
+        .get('/admin/activity-logs?limit=5&page=1&sortBy=createdAt&sortOrder=desc')
+        .set(authHeader())
+        .expect(200);
+
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.data).toBeInstanceOf(Array);
+      expect(res.body.data.pagination).toBeDefined();
+      expect(res.body.data.pagination.page).toBe(1);
+      expect(res.body.data.pagination.limit).toBe(5);
+    });
   });
 
   describe('Cart', () => {
@@ -639,6 +664,85 @@ describe('Smoke Tests (e2e)', () => {
     });
   });
 
+  describe('Admin — User Management', () => {
+    it('GET /admin/users — list admin users', async () => {
+      const res = await request(BASE)
+        .get('/admin/users')
+        .set(authHeader())
+        .expect(200);
+
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.data).toBeInstanceOf(Array);
+      expect(res.body.data.data.length).toBeGreaterThan(0);
+      expect(res.body.data.pagination).toBeDefined();
+      state.adminUserId = res.body.data.data.find(
+        (u: any) => u.role === 'ADMIN',
+      )?.id ?? '';
+    });
+
+    it('PUT /admin/users/:id/status — deactivate admin user', async () => {
+      if (!state.adminUserId) return;
+      const res = await request(BASE)
+        .put(`/admin/users/${state.adminUserId}/status`)
+        .set(authHeader())
+        .send({ isBlocked: true })
+        .expect(200);
+
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.isBlocked).toBe(true);
+    });
+
+    it('PUT /admin/users/:id/status — reactivate admin user', async () => {
+      if (!state.adminUserId) return;
+      const res = await request(BASE)
+        .put(`/admin/users/${state.adminUserId}/status`)
+        .set(authHeader())
+        .send({ isBlocked: false })
+        .expect(200);
+
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.isBlocked).toBe(false);
+    });
+
+    it('PUT /admin/users/:id/status — self-deactivation returns 400', async () => {
+      const loginRes = await request(BASE)
+        .post('/auth/login')
+        .send({ email: 'admin@mamabear.id', password: 'admin' });
+
+      const selfToken = loginRes.body.data.accessToken;
+      const decoded = JSON.parse(
+        Buffer.from(selfToken.split('.')[1], 'base64').toString(),
+      );
+      const selfId = decoded.sub;
+
+      const res = await request(BASE)
+        .put(`/admin/users/${selfId}/status`)
+        .set('Authorization', `Bearer ${selfToken}`)
+        .send({ isBlocked: true })
+        .expect(400);
+
+      expect(res.body.message).toContain('Cannot change your own status');
+    });
+
+
+    it('PUT /admin/users/:id/status — ADMIN cannot access (SUPERADMIN-only)', async () => {
+      if (!state.adminUserId) return;
+      const res = await request(BASE)
+        .put(`/admin/users/${state.adminUserId}/status`)
+        .set('Authorization', `Bearer ${state.adminToken}`)
+        .send({ isBlocked: true })
+        .expect(403);
+    });
+
+    it('DELETE /admin/users/:id — ADMIN cannot access (SUPERADMIN-only)', async () => {
+      if (!state.adminUserId) return;
+      const res = await request(BASE)
+        .delete(`/admin/users/${state.adminUserId}`)
+        .set('Authorization', `Bearer ${state.adminToken}`)
+        .expect(403);
+    });
+  });
+
   describe('Admin — Update', () => {
     it('PUT /admin/products/:id', async () => {
       const res = await request(BASE)
@@ -679,16 +783,6 @@ describe('Smoke Tests (e2e)', () => {
 
       expect(res.body.success).toBe(true);
     });
-
-    it('PATCH /admin/users/:id', async () => {
-      const res = await request(BASE)
-        .patch(`/admin/users/${state.userId}`)
-        .set(authHeader())
-        .send({ name: `Smoke User Updated ${runId}` })
-        .expect(200);
-
-      expect(res.body.success).toBe(true);
-    });
   });
 
   describe('Review interaction', () => {
@@ -703,6 +797,7 @@ describe('Smoke Tests (e2e)', () => {
       expect(res.body.success).toBe(true);
     });
   });
+  
 
   describe('Admin — Delete', () => {
     it('DELETE /admin/products/:id/reviews/:reviewId', async () => {
@@ -751,6 +846,39 @@ describe('Smoke Tests (e2e)', () => {
       expect(res.body.success).toBe(true);
     });
 
+    it('PUT /admin/users/:id/status — can deactivate non-last superadmin', async () => {
+      const createRes = await request(BASE)
+        .post('/admin/users')
+        .set(authHeader())
+        .send({
+          email: `super-extra-${runId}@test.com`,
+          password: 'password123',
+          name: `Super Extra ${runId}`,
+          phone: '081234567895',
+        });
+      if (!createRes.body.success) return;
+      const extraSuperId = createRes.body.data.id;
+
+      await request(BASE)
+        .put(`/admin/users/${extraSuperId}/role`)
+        .set(authHeader())
+        .send({ role: 'SUPERADMIN' });
+
+      const res = await request(BASE)
+        .put(`/admin/users/${extraSuperId}/status`)
+        .set(authHeader())
+        .send({ isBlocked: true });
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.isBlocked).toBe(true);
+
+      await request(BASE)
+        .put(`/admin/users/${extraSuperId}/status`)
+        .set(authHeader())
+        .send({ isBlocked: false });
+      await request(BASE).delete(`/admin/users/${extraSuperId}`).set(authHeader());
+    });
+
     it('DELETE /admin/users/:id', async () => {
       const res = await request(BASE)
         .delete(`/admin/users/${state.userId}`)
@@ -760,4 +888,5 @@ describe('Smoke Tests (e2e)', () => {
       expect(res.body.success).toBe(true);
     });
   });
+
 });

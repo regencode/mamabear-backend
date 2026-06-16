@@ -22,6 +22,7 @@ import { UpdateTrackingDto } from './dto/update-tracking.dto';
 import { format } from '@fast-csv/format';
 import { AdminOrdersQueryDto } from './dto/admin-orders-query.dto';
 import { Response } from 'express';
+import { AdminActivityLogService } from '@/activity-log/admin-activity-log.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('order (admin)')
@@ -30,7 +31,10 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 @Controller('admin/order')
 @ApiBearerAuth('JwtAuthGuard')
 export class OrderAdminController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(
+    private readonly orderService: OrderService,
+    private readonly activityLogService: AdminActivityLogService,
+  ) {}
 
   @Get(':id/invoice')
   getInvoice(@Req() req: any, @Param('id') id: string) {
@@ -102,37 +106,48 @@ export class OrderAdminController {
   }
 
   @Post(':id/cancel')
-  cancelOrder(
+  async cancelOrder(
     @Req() req: any,
     @Param('id') id: string,
     @Body() dto: CancelOrderDto,
   ) {
-    return this.orderService.cancelOrder(
+    const result = await this.orderService.cancelOrder(
       req.user.role,
       req.user.sub,
       id,
       dto.reason,
     );
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'CANCEL', 'Order', id);
+    }
+    return result;
   }
 
   @Patch(':id/status')
-  update(
+  async update(
     @Req() req: any,
     @Param('id') id: string,
     @Body() updateOrderDto: UpdateOrderDto,
   ) {
-    return this.orderService.updateOrderStatus(
+    const result = await this.orderService.updateOrderStatus(
       req.user.sub,
       id,
       updateOrderDto,
     );
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'UPDATE_STATUS', 'Order', id);
+    }
+    return result;
   }
 
   @Patch(':id/tracking')
-  updateTrackingNumber(
+  async updateTrackingNumber(
+    @Req() req: any,
     @Param('id') id: string,
     @Body() updateTrackingDto: UpdateTrackingDto,
   ) {
-    return this.orderService.updateTrackingNumber(id, updateTrackingDto);
+    const result = await this.orderService.updateTrackingNumber(id, updateTrackingDto);
+    this.activityLogService.log(req.user.sub, 'UPDATE_TRACKING', 'Order', id);
+    return result;
   }
 }

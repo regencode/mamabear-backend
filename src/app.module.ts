@@ -29,6 +29,7 @@ import { ShippingModule } from './shipping/shipping.module';
 import { AddressesModule } from './addresses/addresses.module';
 import { OrderModule } from './order/order.module';
 import { ReportsModule } from './reports/reports.module';
+import { ActivityLogModule } from './activity-log/activity-log.module';
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { ReportsModule } from './reports/reports.module';
     AddressesModule,
     OrderModule,
     ReportsModule,
+    ActivityLogModule,
   ],
   controllers: [AppController],
   providers: [AppService, CleanupService],
