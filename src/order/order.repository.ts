@@ -16,6 +16,7 @@ import {
 import { isUUID } from 'class-validator';
 
 const ORDERITEM_INCLUDE = {
+  quantity: true,
   product: { select: { name: true, slug: true } },
   variant: {
     select: {
@@ -32,7 +33,7 @@ const ORDERITEM_INCLUDE = {
 
 const ORDER_INCLUDE = {
   shippingAddress: true,
-  orderItems: { select: ORDERITEM_INCLUDE },
+  orderItems: { include: ORDERITEM_INCLUDE },
 };
 
 @Injectable()
