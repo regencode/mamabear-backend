@@ -43,7 +43,6 @@ export class PaymentService {
                 error: this.FRONTEND_URL + "/payment/error",
             }
         } as any);
-        // TODO: add midtrans link to order (link is temporary anyway)
         const updatedOrder = this.orderRepository.update({ id: orderId }, { paymentRedirectUrl: transaction.redirect_url });
         return {
             success: true,
