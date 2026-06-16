@@ -60,5 +60,6 @@ export class CreateVariantDto {
   @Type(() => Number)
   @IsInt()
   @Min(0)
+  @IsOptional()
   sortOrder: number;
 }

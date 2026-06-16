@@ -40,18 +40,11 @@ export class ProductsRepository {
   ) {}
 
   async create(data: CreateProductDto) {
-    return this.prisma.$transaction(async (tx) => {
-      const {
-        images,
-        variants,
-        weightG,
-        priceIdr,
-        stock,
-        sku,
-        ...productData
-      } = data;
+    const { images, variants, weightG, priceIdr, stock, sku, ...productData } =
+      data;
 
-      const product = await tx.product.create({
+    const product = await this.prisma.$transaction(async (tx) => {
+      return tx.product.create({
         data: {
           ...productData,
           variants: variants?.length
@@ -101,20 +94,29 @@ export class ProductsRepository {
         },
         include: PRODUCT_INCLUDE,
       });
+    });
 
+    try {
       const embed =
         await this.embedService.generateEmbeddingsFromProduct(product);
 
-      await tx.$executeRaw`
+      await this.prisma.$executeRaw`
       UPDATE "Product"
       SET embedding = ${this.embedService.embeddingArrayToString(embed)}::vector
       WHERE id = ${product.id}
     `;
-
-      return tx.product.findUnique({
-        where: { id: product.id },
-        include: PRODUCT_INCLUDE,
+    } catch (embedError: any) {
+      this.logger.warn({
+        message:
+          'Embedding generation failed, product created without embedding',
+        productId: product.id,
+        error: embedError.message,
       });
+    }
+
+    return this.prisma.product.findUnique({
+      where: { id: product.id },
+      include: PRODUCT_INCLUDE,
     });
   }
 
@@ -270,7 +272,11 @@ export class ProductsRepository {
 
     let cursorCondition = '';
     if (decodedCursor) {
-      const result = this.buildCursorCondition(sortConfig, decodedCursor, params);
+      const result = this.buildCursorCondition(
+        sortConfig,
+        decodedCursor,
+        params,
+      );
       cursorCondition = result.condition;
     }
 
@@ -409,26 +415,22 @@ export class ProductsRepository {
     let orderByClause: string;
     switch (query.sortBy) {
       case AdminProductSortBy.NAME: {
-        const dir =
-          query.sortOrder === SortOrder.ASC ? 'ASC' : 'DESC';
+        const dir = query.sortOrder === SortOrder.ASC ? 'ASC' : 'DESC';
         orderByClause = `p.name ${dir}, p.id ${dir}`;
         break;
       }
       case AdminProductSortBy.PRICE: {
-        const dir =
-          query.sortOrder === SortOrder.ASC ? 'ASC' : 'DESC';
+        const dir = query.sortOrder === SortOrder.ASC ? 'ASC' : 'DESC';
         orderByClause = `MIN(pv."priceIdr") ${dir}, p.id ${dir}`;
         break;
       }
       case AdminProductSortBy.TOTAL_SOLD: {
-        const dir =
-          query.sortOrder === SortOrder.ASC ? 'ASC' : 'DESC';
+        const dir = query.sortOrder === SortOrder.ASC ? 'ASC' : 'DESC';
         orderByClause = `p."totalSold" ${dir}, p.id ${dir}`;
         break;
       }
       default: {
-        const dir =
-          query.sortOrder === SortOrder.ASC ? 'ASC' : 'DESC';
+        const dir = query.sortOrder === SortOrder.ASC ? 'ASC' : 'DESC';
         orderByClause = `p."createdAt" ${dir}, p.id ${dir}`;
         break;
       }
@@ -467,8 +469,7 @@ export class ProductsRepository {
 
     const rows: any[] = await this.prisma.$queryRawUnsafe(rawQuery, ...params);
 
-    const totalItems =
-      rows.length > 0 ? Number(rows[0].totalCount) : 0;
+    const totalItems = rows.length > 0 ? Number(rows[0].totalCount) : 0;
     const ids = rows.map((r: any) => r.id);
 
     if (ids.length === 0) {

@@ -10,7 +10,7 @@ http:
     type: json
     data: |-
       {
-        "name": "Brunos Product {{runId}} with image",
+        "name": "Brunos Product {{runId}} with Rawrrs",
         "description": "Test product from Bruno collection",
         "ingredients": "Test ingredients",
         "usageInstructions": "Test usage instructions",
@@ -22,8 +22,8 @@ http:
         "tags": ["formula", "toddler"],
         "images": [
       {
-          "imageUrl": "https://res.cloudinary.com/dfmgt1iel/image/upload/v1781267776/products/uhwc6aieu3jmn6dzibvq.jpg",
-          "publicId": "products/uhwc6aieu3jmn6dzibvq",
+          "imageUrl": "https://res.cloudinary.com/dfmgt1iel/image/upload/v1781622558/products/nevpxiwhdik3cc7sajot.jpg",
+          "publicId": "products/nevpxiwhdik3cc7sajot",
           "width": 180,
           "height": 180,
           "fileSize": 6008,
@@ -34,16 +34,15 @@ http:
         ],
         "variants": [
           {
-            "name": "S-26 Procal Gold 3 - 400g",
+            "name": "S-26 Procal Gold 3 - 400gg",
             "priceIdr": 120000,
             "weightG": 400,
             "sku": "S26-PROCAL-3-400",
             "stock": 30,
-            "sortOrder": 0,
             "images": [
               {
-                 "imageUrl": "https://res.cloudinary.com/dfmgt1iel/image/upload/v1781267873/products/v3ot2slx6m4lwbiljakn.jpg",
-          "publicId": "products/v3ot2slx6m4lwbiljakn",
+             "imageUrl": "https://res.cloudinary.com/dfmgt1iel/image/upload/v1781622582/products/zqy8ccvajxyecvbfnt4p.jpg",
+          "publicId": "products/zqy8ccvajxyecvbfnt4p",
           "width": 252,
           "height": 180,
           "fileSize": 4555,
@@ -54,21 +53,20 @@ http:
             ]
           },
           {
-            "name": "S-26 Procal Gold 3 - 700g",
+            "name": "S-26 Procal Gold 3 - 700gg",
             "priceIdr": 160000,
             "weightG": 700,
             "sku": "S26-PROCAL-3-700",
             "stock": 20,
-            "sortOrder": 2,
             "images":[
             {
-            "imageUrl": "https://res.cloudinary.com/dfmgt1iel/image/upload/v1781267935/products/krjbwna2m1cm0upw1vkw.jpg",
-          "publicId": "products/krjbwna2m1cm0upw1vkw",
-          "width": 4000,
-          "height": 2250,
-          "fileSize": 210509,
-          "format": "jpg",
-          "altText": "bg",
+              "imageUrl": "https://res.cloudinary.com/dfmgt1iel/image/upload/v1781622615/products/wenrx6que28vdpjrznij.png",
+          "publicId": "products/wenrx6que28vdpjrznij",
+          "width": 2559,
+          "height": 1439,
+          "fileSize": 174025,
+          "format": "png",
+          "altText": "Screenshot 2026-05-26 031428.pdf",
           "sortOrder": 0
           }
             ]

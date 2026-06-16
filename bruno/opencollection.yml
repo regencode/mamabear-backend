@@ -17,7 +17,7 @@ config:
 request:
   auth:
     type: bearer
-    token: "{{jwtToken}}"
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjN2Q3MWQ4My02MmMzLTRhOTMtYTAxMC00YzdmMDIzMmIyNmQiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwibmFtZSI6IkFkbWluIE1hbWFCZWFyIiwicGhvbmUiOiIwODEyMDAwMDExMTEiLCJpYXQiOjE3ODE2MjIzNjksImV4cCI6MTc4MTYyMzI2OX0._eKmsJDwf9dKSda0YiTheK4YzOF0DhUD8-v1IqeViVk
   variables:
     - name: baseUrl
       value: http://localhost:3000
