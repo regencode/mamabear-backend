@@ -43,7 +43,7 @@ export class PaymentService {
                 error: this.FRONTEND_URL + "/payment/error",
             }
         } as any);
-        const updatedOrder = this.orderRepository.update({ id: orderId }, { paymentRedirectUrl: transaction.redirect_url });
+        const updatedOrder = await this.orderRepository.update({ id: orderId }, { paymentRedirectUrl: transaction.redirect_url });
         return {
             success: true,
             message: `Created paymentRedirectUrl for order ${orderId}`,
