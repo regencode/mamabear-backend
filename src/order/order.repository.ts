@@ -14,7 +14,6 @@ import {
   AdminOrderSortOrder,
 } from './dto/admin-orders-query.dto';
 import { isUUID } from 'class-validator';
-import { Decimal } from '@prisma/client-runtime-utils';
 
 const ORDERITEM_INCLUDE = {
   product: { select: { name: true, slug: true } },
@@ -29,7 +28,6 @@ const ORDERITEM_INCLUDE = {
       },
     },
   },
-  quantity: true,
 };
 
 const ORDER_INCLUDE = {
