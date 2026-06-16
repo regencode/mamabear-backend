@@ -435,6 +435,19 @@ describe('Smoke Tests (e2e)', () => {
 
       expect(res.body.success).toBe(true);
     });
+
+    it('GET /admin/activity-logs — list activity logs', async () => {
+      const res = await request(BASE)
+        .get('/admin/activity-logs?limit=5&page=1&sortBy=createdAt&sortOrder=desc')
+        .set(authHeader())
+        .expect(200);
+
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.data).toBeInstanceOf(Array);
+      expect(res.body.data.pagination).toBeDefined();
+      expect(res.body.data.pagination.page).toBe(1);
+      expect(res.body.data.pagination.limit).toBe(5);
+    });
   });
 
   describe('Cart', () => {
