@@ -1,5 +1,6 @@
 import { Role, OrderStatus } from '@/generated/prisma';
 import { PrismaService } from '@/prisma/prisma.service';
+import { startOfDay, endOfDay } from '@/common/utils/date.util';
 import { Injectable } from '@nestjs/common';
 import { SalesReportQueryDto } from './dto/sales-report-query.dto';
 
@@ -129,9 +130,9 @@ export class ReportsRepository {
         status: query.status,
 
         createdAt: {
-          gte: query.startDate ? new Date(query.startDate) : undefined,
+          gte: query.startDate ? startOfDay(query.startDate) : undefined,
 
-          lte: query.endDate ? new Date(query.endDate) : undefined,
+          lte: query.endDate ? endOfDay(query.endDate) : undefined,
         },
 
         orderItems: {
@@ -166,9 +167,9 @@ export class ReportsRepository {
           status: query.status,
 
           createdAt: {
-            gte: query.startDate ? new Date(query.startDate) : undefined,
+            gte: query.startDate ? startOfDay(query.startDate) : undefined,
 
-            lte: query.endDate ? new Date(query.endDate) : undefined,
+            lte: query.endDate ? endOfDay(query.endDate) : undefined,
           },
         },
 

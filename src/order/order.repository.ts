@@ -1,5 +1,6 @@
 import { OrderStatus, Prisma } from '@/generated/prisma';
 import { PrismaService } from '@/prisma/prisma.service';
+import { startOfDay, endOfDay } from '@/common/utils/date.util';
 import {
   BadRequestException,
   ForbiddenException,
@@ -382,8 +383,8 @@ export class OrderRepository {
 
     if (query.startDate || query.endDate) {
       where.createdAt = {};
-      if (query.startDate) where.createdAt.gte = new Date(query.startDate);
-      if (query.endDate) where.createdAt.lte = new Date(query.endDate);
+      if (query.startDate) where.createdAt.gte = startOfDay(query.startDate);
+      if (query.endDate) where.createdAt.lte = endOfDay(query.endDate);
     }
 
     if (query.search) {
@@ -476,10 +477,10 @@ export class OrderRepository {
     if (query.startDate || query.endDate) {
       where.createdAt = {};
       if (query.startDate) {
-        (where.createdAt as any).gte = new Date(query.startDate);
+        (where.createdAt as any).gte = startOfDay(query.startDate);
       }
       if (query.endDate) {
-        (where.createdAt as any).lte = new Date(query.endDate);
+        (where.createdAt as any).lte = endOfDay(query.endDate);
       }
     }
     if (query.search) {

@@ -1,5 +1,6 @@
 import { PrismaService } from '@/prisma/prisma.service';
 import { Prisma } from '@/generated/prisma';
+import { startOfDay, endOfDay } from '@/common/utils/date.util';
 import { Injectable } from '@nestjs/common';
 import {
   AdminActivityLogQueryDto,
@@ -42,8 +43,8 @@ export class AdminActivityLogRepository {
 
     if (query.startDate || query.endDate) {
       where.createdAt = {};
-      if (query.startDate) where.createdAt.gte = new Date(query.startDate);
-      if (query.endDate) where.createdAt.lte = new Date(query.endDate);
+      if (query.startDate) where.createdAt.gte = startOfDay(query.startDate);
+      if (query.endDate) where.createdAt.lte = endOfDay(query.endDate);
     }
 
     const dir = query.sortOrder === ActivityLogSortOrder.ASC ? 'asc' : 'desc';

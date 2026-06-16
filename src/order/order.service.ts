@@ -1,4 +1,5 @@
 import { Order, Prisma, Role } from '@/generated/prisma';
+import { startOfDay, endOfDay } from '@/common/utils/date.util';
 import {
   BadRequestException,
   Injectable,
@@ -89,9 +90,9 @@ export class OrderService {
     if (paginationDto.startDate || paginationDto.endDate) {
       where.createdAt = {};
       if (paginationDto.startDate)
-        where.createdAt.gte = new Date(paginationDto.startDate);
+        where.createdAt.gte = startOfDay(paginationDto.startDate);
       if (paginationDto.endDate)
-        where.createdAt.lte = new Date(paginationDto.endDate);
+        where.createdAt.lte = endOfDay(paginationDto.endDate);
     }
 
     const limit = paginationDto.limit ?? 10;
