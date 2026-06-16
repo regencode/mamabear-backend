@@ -245,6 +245,9 @@ model Order {
   shippingMethod   String?
   // FROM CART //
 
+  // add when order create
+  paymentRedirectUrl String?
+
   // add later when get courier
   trackingNumber   String?
 

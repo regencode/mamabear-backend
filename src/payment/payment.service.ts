@@ -34,6 +34,7 @@ export class PaymentService {
                 }
             } as any);
             // TODO: add midtrans link to order (link is temporary anyway)
+            const updatedOrder = this.orderRepository.update({ id: orderId }, { paymentRedirectUrl: transaction.redirect_url });
             return {
                 success: true,
                 message: `Created new transaction for order ${orderId}`,
