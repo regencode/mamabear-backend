@@ -28,7 +28,7 @@ import { AdminActivityLogService } from '@/activity-log/admin-activity-log.servi
 @Controller('admin/users')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles([Role.ADMIN, Role.SUPERADMIN])
-export class UsersController {
+export class AdminUsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly activityLogService: AdminActivityLogService,
