@@ -101,25 +101,44 @@ export class ProductsService {
       data: result,
     };
   }
+
   async create(dto: CreateProductDto): Promise<ServiceResult<Product>> {
     try {
       if (!dto.variants) dto.variants = [];
+      const setSortOrders = dto.variants.map((v) => v.sortOrder);
+      const hasUndefined = setSortOrders.some(
+        (s) => s === undefined || s === null,
+      );
+      const hasDuplicate = new Set(setSortOrders).size !== setSortOrders.length;
+
+      const normalizedVariants = dto.variants.map((v, index) => ({
+        ...v,
+        sortOrder:
+          hasUndefined || hasDuplicate ? index : (v.sortOrder as number),
+      }));
+
+      const maxSortOrder =
+        normalizedVariants.length > 0
+          ? Math.max(...normalizedVariants.map((v) => v.sortOrder as number))
+          : -1;
+
       const defaultVariant: CreateVariantDto = {
         name: 'INTERNAL_DEFAULT',
         priceIdr: dto.priceIdr,
         weightG: dto.weightG,
-        stock: dto.stock,
+        stock: dto.stock ?? 0,
         sku: dto.sku,
-        sortOrder: dto.categoryId || 0,
+        sortOrder: maxSortOrder + 1,
       };
 
-      dto.variants.push(defaultVariant);
+      normalizedVariants.push(defaultVariant);
 
       const generatedSlug = slugify(dto.name, { lower: true, strict: true });
 
       const result = await this.productsRepository.create({
         ...dto,
         slug: generatedSlug,
+        variants: normalizedVariants,
         images: (dto.images ?? []).map((image) => ({
           imageUrl: image.imageUrl,
           publicId: image.publicId,
@@ -133,6 +152,7 @@ export class ProductsService {
       });
 
       if (!result) throw new BadRequestException('Cannot create product');
+
       this.logger.info({
         message: 'Product created successfully',
         endpoint: 'POST /products',
@@ -140,6 +160,7 @@ export class ProductsService {
         name: dto.name,
         status: 'success',
       });
+
       return {
         success: true,
         message: `Product ${dto.name} created successfully`,
@@ -152,6 +173,8 @@ export class ProductsService {
         name: dto.name,
         status: 'error',
         error: error.message,
+        code: error.code,
+        meta: error.meta,
       });
       throw error;
     }

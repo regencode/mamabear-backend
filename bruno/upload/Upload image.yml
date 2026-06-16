@@ -7,17 +7,12 @@ http:
   method: POST
   url: "{{baseUrl}}/api/admin/upload/image"
   body:
-    type: multipartForm
+    type: multipart-form
     data:
       - name: image
         type: file
-        value: /path/to/image.jpg
-      - name: productId
-        type: text
-        value: "1"
-      - name: sortOrder
-        type: text
-        value: "1"
+        value:
+          - C:\Users\PF45N\OneDrive\Pictures\bg.jpg
   auth: inherit
 
 runtime:
@@ -36,16 +31,16 @@ settings:
   maxRedirects: 5
 
 examples:
-  - name: "Success (201)"
+  - name: Success (201)
     request:
       url: "{{baseUrl}}/api/admin/upload/image"
       method: POST
     response:
       status: 201
-      statusText: "Created"
+      statusText: Created
       headers:
         - name: Content-Type
-          value: "application/json; charset=utf-8"
+          value: application/json; charset=utf-8
       body:
         type: json
         data: |-
@@ -65,16 +60,16 @@ examples:
             },
             "timestamp": "2026-05-25T00:00:00.000Z"
           }
-  - name: "Unauthorized (401)"
+  - name: Unauthorized (401)
     request:
       url: "{{baseUrl}}/api/admin/upload/image"
       method: POST
     response:
       status: 401
-      statusText: "Unauthorized"
+      statusText: Unauthorized
       headers:
         - name: Content-Type
-          value: "application/json; charset=utf-8"
+          value: application/json; charset=utf-8
       body:
         type: json
         data: |-
