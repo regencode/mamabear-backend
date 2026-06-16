@@ -610,7 +610,14 @@ async function main() {
 
     await prisma.cart.update({
       where: { id: cart.id },
-      data: { subtotalIdr: Math.round(subtotalIdr), taxIdr },
+      data: {
+        subtotalIdr: Math.round(subtotalIdr),
+        taxIdr,
+        shippingCostIdr: 15000,
+        courierName: 'JNE',
+        courierCode: 'jne',
+        shippingMethod: 'REG',
+      },
     });
 
     totalCartItems += selected.length;

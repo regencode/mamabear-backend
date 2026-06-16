@@ -8,7 +8,7 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { ReviewsService } from '@/reviews/reviews.service';
 import { CreateReviewDto } from '@/reviews/dto/create-review.dto';
@@ -81,6 +81,7 @@ export class ProductsController {
   }
 
   @UseGuards(new JwtAuthGuard())
+  @ApiBearerAuth('JwtAuthGuard')
   @Post(':slug/reviews')
   createReviewForProduct(
     @Param('slug') slug: string,
@@ -90,6 +91,7 @@ export class ProductsController {
   }
 
   @UseGuards(new JwtAuthGuard())
+  @ApiBearerAuth('JwtAuthGuard')
   @Patch(':slug/reviews/:reviewId/upvote')
   upvoteReviewOfProduct(@Param('reviewId') reviewId: number) {
     return this.reviewsService.upvoteReviewWithId(reviewId);

@@ -12,18 +12,22 @@ import {
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
-import { Roles } from '@/auth/decorators/roles.decorator';
-import { Role } from '@/generated/prisma';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
 import { CancelOrderDto } from './dto/cancel-order-item.dto';
 import { GetUserId } from '@/common/decorators/get-user-id-decorator';
+import { PinoLogger } from 'pino-nestjs';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-@UseGuards(new JwtAuthGuard())
+@ApiTags('order')
 @Controller('order')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('JwtAuthGuard')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(
+      private readonly orderService: OrderService,
+      private readonly logger: PinoLogger,
+  ) {}
 
   @Post(':id/cancel')
   cancelOrder(
@@ -57,9 +61,10 @@ export class OrderController {
   // refactor below
   @Post() // on checkout
   createOrderAfterCheckout(
-    @GetUserId() userId: string,
+    @Req() req: any,
     @Body() dto: CreateOrderDto,
   ) {
-    return this.orderService.createOrder(userId, dto); // orderId as param for everything below
+    this.logger.info(`Creating order for user with id ${req.user.sub}`);
+    return this.orderService.createOrder(req.user.sub, dto); // orderId as param for everything below
   }
 }

@@ -34,8 +34,7 @@ export class OrderService {
     if (!user) throw new NotFoundException('User not found');
 
     const order = await this.repo.createOrder(userId, dto);
-    this.mailService
-      .orderConfirmationEmail(user.email, order.id)
+    this.mailService.orderConfirmationEmail(user.email, order.id)
       .catch(() => {});
     return {
       success: true,

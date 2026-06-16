@@ -7,7 +7,7 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { HighlightsService } from './highlights.service';
 import { CreateHighlightDto } from './dto/create-highlight.dto';
 import { UpdateHighlightDto } from './dto/update-highlight.dto';
@@ -19,6 +19,7 @@ import { Role } from '@/generated/prisma';
 @Controller('admin/highlights')
 @UseGuards(new JwtAuthGuard())
 @Roles([Role.ADMIN])
+@ApiBearerAuth('JwtAuthGuard')
 export class HighlightsAdminController {
   constructor(private readonly highlightsService: HighlightsService) {}
 

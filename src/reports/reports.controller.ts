@@ -1,5 +1,5 @@
 import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ReportsService } from './reports.service';
 import { format } from 'fast-csv';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
@@ -19,6 +19,7 @@ import { Response } from 'express';
 @Controller('admin/reports')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles([Role.ADMIN, Role.SUPERADMIN])
+@ApiBearerAuth('JwtAuthGuard')
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 

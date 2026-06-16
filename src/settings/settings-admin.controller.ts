@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Put, Body, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { SettingsService } from './settings.service';
 import { UpdateSettingDto } from './dto/update-setting.dto';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
@@ -10,6 +10,7 @@ import { Role } from '@/generated/prisma';
 @Controller('admin/settings')
 @UseGuards(new JwtAuthGuard())
 @Roles([Role.ADMIN])
+@ApiBearerAuth('JwtAuthGuard')
 export class SettingsAdminController {
   constructor(private readonly settingsService: SettingsService) {}
 

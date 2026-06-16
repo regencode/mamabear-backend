@@ -9,7 +9,7 @@ import {
   UseGuards,
   Res,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login.dto';
 import { RegisterUserDto } from './dto/register.dto';
@@ -23,9 +23,17 @@ import { Request, Response } from 'express';
 
 @UseGuards(ThrottlerGuard)
 @ApiTags('auth')
+@ApiBearerAuth('JwtAuthGuard')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JwtAuthGuard')
+  me(@Req() req: any) {
+      return req.user;
+  }
 
   @Throttle({
     default: {
@@ -51,6 +59,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('/logout')
+  @ApiBearerAuth('JwtAuthGuard')
   logout(@Req() req: JwtPayload, @Res({ passthrough: true }) res: Response) {
     return this.authService.logout(req.sub, res);
   }

@@ -2,6 +2,7 @@ import { OrderStatus, Prisma } from '@/generated/prisma';
 import { PrismaService } from '@/prisma/prisma.service';
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -55,9 +56,17 @@ export class OrderRepository {
         throw new UnprocessableEntityException(
           `Cart with id ${dto.cartId} does not exist!`,
         );
+      if (cart.userId && cart.userId !== userId)
+        throw new ForbiddenException(
+          'Cart does not belong to the authenticated user',
+        );
       if (cart.items.length <= 0)
         throw new UnprocessableEntityException(
           `Cart with id ${dto.cartId} does not contain any items`,
+        );
+      if (!cart.courierCode)
+        throw new BadRequestException(
+          'Cart must have courier information before checkout',
         );
 
       const address = await tx.address.findFirst({

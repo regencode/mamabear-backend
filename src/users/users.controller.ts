@@ -11,7 +11,7 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -27,6 +27,7 @@ import { AdminUsersQueryDto } from './dto/admin-users-query.dto';
 @Controller('admin/users')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles([Role.ADMIN, Role.SUPERADMIN])
+@ApiBearerAuth('JwtAuthGuard')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
