@@ -15,7 +15,10 @@ import {
 } from './dto/admin-orders-query.dto';
 import { isUUID } from 'class-validator';
 
-const ORDERITEM_INCLUDE = {
+const ORDERITEM_SELECT = {
+  id: true,
+  productId: true,
+  variantId: true,
   quantity: true,
   product: { select: { name: true, slug: true } },
   variant: {
@@ -33,7 +36,7 @@ const ORDERITEM_INCLUDE = {
 
 const ORDER_INCLUDE = {
   shippingAddress: true,
-  orderItems: { include: ORDERITEM_INCLUDE },
+  orderItems: { select: ORDERITEM_SELECT },
 };
 
 @Injectable()
@@ -175,7 +178,7 @@ export class OrderRepository {
       const order = await tx.order.update({
         where: { id: resolvedOrder.id },
         data: { status: OrderStatus.PAYMENT_PAID },
-        include: { orderItems: { include: ORDERITEM_INCLUDE } },
+        include: { orderItems: { select: ORDERITEM_SELECT } },
       });
       if (order.orderItems.length <= 0)
         throw new UnprocessableEntityException(
