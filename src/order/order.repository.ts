@@ -64,10 +64,6 @@ export class OrderRepository {
         throw new UnprocessableEntityException(
           `Cart with id ${dto.cartId} does not contain any items`,
         );
-      if (!cart.courierCode)
-        throw new BadRequestException(
-          'Cart must have courier information before checkout',
-        );
 
       const address = await tx.address.findFirst({
         where: { id: dto.addressId, userId },

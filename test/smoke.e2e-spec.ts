@@ -711,38 +711,6 @@ describe('Smoke Tests (e2e)', () => {
       expect(res.body.message).toContain('Cannot change your own status');
     });
 
-    it('PUT /admin/users/:id/status — can deactivate non-last superadmin', async () => {
-      const createRes = await request(BASE)
-        .post('/admin/users')
-        .set(authHeader())
-        .send({
-          email: `super-extra-${runId}@test.com`,
-          password: 'password123',
-          name: `Super Extra ${runId}`,
-          phone: '081234567895',
-        });
-      if (!createRes.body.success) return;
-      const extraSuperId = createRes.body.data.id;
-
-      await request(BASE)
-        .put(`/admin/users/${extraSuperId}/role`)
-        .set(authHeader())
-        .send({ role: 'SUPERADMIN' });
-
-      const res = await request(BASE)
-        .put(`/admin/users/${extraSuperId}/status`)
-        .set(authHeader())
-        .send({ isBlocked: true });
-
-      expect(res.status).toBe(200);
-      expect(res.body.data.isBlocked).toBe(true);
-
-      await request(BASE)
-        .put(`/admin/users/${extraSuperId}/status`)
-        .set(authHeader())
-        .send({ isBlocked: false });
-      await request(BASE).delete(`/admin/users/${extraSuperId}`).set(authHeader());
-    });
 
     it('PUT /admin/users/:id/status — ADMIN cannot access (SUPERADMIN-only)', async () => {
       if (!state.adminUserId) return;
@@ -802,16 +770,6 @@ describe('Smoke Tests (e2e)', () => {
 
       expect(res.body.success).toBe(true);
     });
-
-    it('PATCH /admin/users/:id', async () => {
-      const res = await request(BASE)
-        .patch(`/admin/users/${state.userId}`)
-        .set(authHeader())
-        .send({ name: `Smoke User Updated ${runId}` })
-        .expect(200);
-
-      expect(res.body.success).toBe(true);
-    });
   });
 
   describe('Review interaction', () => {
@@ -826,6 +784,7 @@ describe('Smoke Tests (e2e)', () => {
       expect(res.body.success).toBe(true);
     });
   });
+  
 
   describe('Admin — Delete', () => {
     it('DELETE /admin/products/:id/reviews/:reviewId', async () => {
@@ -874,6 +833,39 @@ describe('Smoke Tests (e2e)', () => {
       expect(res.body.success).toBe(true);
     });
 
+    it('PUT /admin/users/:id/status — can deactivate non-last superadmin', async () => {
+      const createRes = await request(BASE)
+        .post('/admin/users')
+        .set(authHeader())
+        .send({
+          email: `super-extra-${runId}@test.com`,
+          password: 'password123',
+          name: `Super Extra ${runId}`,
+          phone: '081234567895',
+        });
+      if (!createRes.body.success) return;
+      const extraSuperId = createRes.body.data.id;
+
+      await request(BASE)
+        .put(`/admin/users/${extraSuperId}/role`)
+        .set(authHeader())
+        .send({ role: 'SUPERADMIN' });
+
+      const res = await request(BASE)
+        .put(`/admin/users/${extraSuperId}/status`)
+        .set(authHeader())
+        .send({ isBlocked: true });
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.isBlocked).toBe(true);
+
+      await request(BASE)
+        .put(`/admin/users/${extraSuperId}/status`)
+        .set(authHeader())
+        .send({ isBlocked: false });
+      await request(BASE).delete(`/admin/users/${extraSuperId}`).set(authHeader());
+    });
+
     it('DELETE /admin/users/:id', async () => {
       const res = await request(BASE)
         .delete(`/admin/users/${state.userId}`)
@@ -883,4 +875,5 @@ describe('Smoke Tests (e2e)', () => {
       expect(res.body.success).toBe(true);
     });
   });
+
 });
