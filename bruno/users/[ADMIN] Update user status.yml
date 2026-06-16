@@ -10,7 +10,7 @@ http:
     type: json
     data: |-
       {
-        "isVerified": true
+        "isBlocked": true
       }
   auth: inherit
 
@@ -26,7 +26,7 @@ settings:
   maxRedirects: 5
 
 examples:
-  - name: "Success - Verify (200)"
+  - name: "Success - Deactivate (200)"
     request:
       url: "{{baseUrl}}/api/admin/users/234657ea-5641-4824-a9f8-a933c4f18b29/status"
       method: PUT
@@ -34,7 +34,7 @@ examples:
         type: json
         data: |-
           {
-            "isVerified": true
+            "isBlocked": true
           }
     response:
       status: 200
@@ -49,21 +49,22 @@ examples:
             "success": true,
             "statusCode": 200,
             "message": [
-              "User verification status updated to true"
+              "User deactivated successfully"
             ],
             "data": {
               "id": "234657ea-5641-4824-a9f8-a933c4f18b29",
               "email": "rina.wati@email.com",
               "name": "Rina Wati",
               "phone": "082112345678",
-              "role": "USER",
+              "role": "ADMIN",
+              "isBlocked": true,
               "isVerified": true,
               "createdAt": "2026-06-11T15:01:06.321Z",
               "updatedAt": "2026-06-12T07:12:00.000Z"
             },
             "timestamp": "2026-06-12T07:12:00.000Z"
           }
-  - name: "Success - Unverify (200)"
+  - name: "Success - Reactivate (200)"
     request:
       url: "{{baseUrl}}/api/admin/users/234657ea-5641-4824-a9f8-a933c4f18b29/status"
       method: PUT
@@ -71,7 +72,7 @@ examples:
         type: json
         data: |-
           {
-            "isVerified": false
+            "isBlocked": false
           }
     response:
       status: 200
@@ -86,15 +87,16 @@ examples:
             "success": true,
             "statusCode": 200,
             "message": [
-              "User verification status updated to false"
+              "User reactivated successfully"
             ],
             "data": {
               "id": "234657ea-5641-4824-a9f8-a933c4f18b29",
               "email": "rina.wati@email.com",
               "name": "Rina Wati",
               "phone": "082112345678",
-              "role": "USER",
-              "isVerified": false,
+              "role": "ADMIN",
+              "isBlocked": false,
+              "isVerified": true,
               "createdAt": "2026-06-11T15:01:06.321Z",
               "updatedAt": "2026-06-12T07:12:00.000Z"
             },
@@ -108,7 +110,7 @@ examples:
         type: json
         data: |-
           {
-            "isVerified": false
+            "isBlocked": true
           }
     response:
       status: 400
@@ -128,6 +130,34 @@ examples:
             "data": null,
             "timestamp": "2026-06-12T07:12:00.000Z"
           }
+  - name: "Cannot deactivate last SUPERADMIN (400)"
+    request:
+      url: "{{baseUrl}}/api/admin/users/{{superAdminId}}/status"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "isBlocked": true
+          }
+    response:
+      status: 400
+      statusText: "Bad Request"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": false,
+            "statusCode": 400,
+            "message": [
+              "Cannot deactivate the last active SUPERADMIN"
+            ],
+            "data": null,
+            "timestamp": "2026-06-12T07:12:00.000Z"
+          }
   - name: "Not Found (404)"
     request:
       url: "{{baseUrl}}/api/admin/users/00000000-0000-0000-0000-000000000000/status"
@@ -136,7 +166,7 @@ examples:
         type: json
         data: |-
           {
-            "isVerified": true
+            "isBlocked": true
           }
     response:
       status: 404

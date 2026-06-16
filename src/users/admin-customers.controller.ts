@@ -19,14 +19,17 @@ import { AdminCustomersQueryDto } from './dto/admin-customers-query.dto';
 import { AdminCustomersListResponseDto } from './dto/admin-customers-list-response.dto';
 import { AdminCustomerDetailDto } from './dto/admin-customer-detail.dto';
 import { UpdateCustomerStatusDto } from './dto/update-customer-status.dto';
-import { UpdateUserStatusDto } from './dto/update-user-status.dto';
+import { AdminActivityLogService } from '@/activity-log/admin-activity-log.service';
 
 @ApiTags('customers (admin)')
 @Controller('admin/customers')
 @UseGuards(new JwtAuthGuard())
 @Roles([Role.ADMIN, Role.SUPERADMIN])
 export class AdminCustomersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly activityLogService: AdminActivityLogService,
+  ) {}
 
   @Get('export')
   async export(@Query() query: AdminCustomersQueryDto, @Res() res: Response) {
@@ -48,14 +51,15 @@ export class AdminCustomersController {
 
   @Put(':id/status')
   @ApiParam({ name: 'id', required: true })
-  updateCustomerStatus(
-    @Param('id') id: string,
-    @Body() dto: UpdateUserStatusDto,
+  async updateCustomerStatus(
     @Req() req: any,
+    @Param('id') id: string,
+    @Body() dto: UpdateCustomerStatusDto,
   ) {
-    return this.usersService.updateStatus(id, dto, {
-      id: req.user.sub,
-      role: req.user.role,
-    });
+    const result = await this.usersService.updateCustomerStatus(id, dto);
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'UPDATE_STATUS', 'Customer', id);
+    }
+    return result;
   }
 }

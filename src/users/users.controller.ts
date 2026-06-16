@@ -22,17 +22,31 @@ import { RolesGuard } from '@/auth/guard/roles.guard';
 import { Roles } from '@/auth/decorators/roles.decorator';
 import { Role } from '@/generated/prisma';
 import { AdminUsersQueryDto } from './dto/admin-users-query.dto';
+import { AdminActivityLogService } from '@/activity-log/admin-activity-log.service';
 
 @ApiTags('users')
 @Controller('admin/users')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles([Role.ADMIN, Role.SUPERADMIN])
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly activityLogService: AdminActivityLogService,
+  ) {}
+
+  @Get()
+  findAllAdmin(@Query() query: AdminUsersQueryDto) {
+    return this.usersService.findAllAdmin(query);
+  }
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @Roles([Role.SUPERADMIN])
+  async create(@Req() req: any, @Body() createUserDto: CreateUserDto) {
+    const result = await this.usersService.create(createUserDto);
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'CREATE', 'User', result.data.id);
+    }
+    return result;
   }
 
   @Get(':id')
@@ -41,24 +55,55 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  async update(@Req() req: any, @Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    const result = await this.usersService.update(id, updateUserDto);
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'UPDATE', 'User', id);
+    }
+    return result;
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  @Roles([Role.SUPERADMIN])
+  async remove(@Req() req: any, @Param('id') id: string) {
+    const result = await this.usersService.remove(id);
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'DELETE', 'User', id);
+    }
+    return result;
   }
 
   @Put(':id/role')
-  updateRole(
+  @Roles([Role.SUPERADMIN])
+  async updateRole(
+    @Req() req: any,
     @Param('id') id: string,
     @Body() dto: UpdateUserRoleDto,
-    @Req() req: any,
   ) {
-    return this.usersService.updateRole(id, dto, {
+    const result = await this.usersService.updateRole(id, dto, {
       id: req.user.sub,
       role: req.user.role,
     });
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'UPDATE_ROLE', 'User', id);
+    }
+    return result;
+  }
+
+  @Put(':id/status')
+  @Roles([Role.SUPERADMIN])
+  async updateStatus(
+    @Req() req: any,
+    @Param('id') id: string,
+    @Body() dto: UpdateUserStatusDto,
+  ) {
+    const result = await this.usersService.updateStatus(id, dto, {
+      id: req.user.sub,
+      role: req.user.role,
+    });
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'UPDATE_STATUS', 'User', id);
+    }
+    return result;
   }
 }

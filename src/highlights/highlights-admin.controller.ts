@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { HighlightsService } from './highlights.service';
@@ -14,29 +15,46 @@ import { UpdateHighlightDto } from './dto/update-highlight.dto';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 import { Roles } from '@/auth/decorators/roles.decorator';
 import { Role } from '@/generated/prisma';
+import { AdminActivityLogService } from '@/activity-log/admin-activity-log.service';
 
 @ApiTags('highlights (admin)')
 @Controller('admin/highlights')
 @UseGuards(new JwtAuthGuard())
 @Roles([Role.ADMIN])
 export class HighlightsAdminController {
-  constructor(private readonly highlightsService: HighlightsService) {}
+  constructor(
+    private readonly highlightsService: HighlightsService,
+    private readonly activityLogService: AdminActivityLogService,
+  ) {}
 
   @Post()
-  create(@Body() createHighlightDto: CreateHighlightDto) {
-    return this.highlightsService.create(createHighlightDto);
+  async create(@Req() req: any, @Body() createHighlightDto: CreateHighlightDto) {
+    const result = await this.highlightsService.create(createHighlightDto);
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'CREATE', 'Highlight', String(result.data.id));
+    }
+    return result;
   }
 
   @Patch(':id')
-  update(
+  async update(
+    @Req() req: any,
     @Param('id') id: string,
     @Body() updateHighlightDto: UpdateHighlightDto,
   ) {
-    return this.highlightsService.update(+id, updateHighlightDto);
+    const result = await this.highlightsService.update(+id, updateHighlightDto);
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'UPDATE', 'Highlight', id);
+    }
+    return result;
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.highlightsService.remove(+id);
+  async remove(@Req() req: any, @Param('id') id: string) {
+    const result = await this.highlightsService.remove(+id);
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'DELETE', 'Highlight', id);
+    }
+    return result;
   }
 }

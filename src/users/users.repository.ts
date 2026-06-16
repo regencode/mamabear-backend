@@ -163,6 +163,12 @@ export class UsersRepository {
     });
   }
 
+  countActiveSuperAdmins(): Promise<number> {
+    return this.prisma.user.count({
+      where: { role: Role.SUPERADMIN, isBlocked: false },
+    });
+  }
+
   delete(id: string) {
     return this.prisma.user.delete({
       where: { id },

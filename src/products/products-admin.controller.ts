@@ -36,6 +36,7 @@ import { BulkDeleteProductsDto } from './dto/bulk-delete-products.dto';
 import { BulkUpdateProductsStatusDto } from './dto/bulk-update-products-status.dto';
 import { format } from '@fast-csv/format';
 import { Response } from 'express';
+import { AdminActivityLogService } from '@/activity-log/admin-activity-log.service';
 
 @ApiTags('products (admin)')
 @Controller('admin/products')
@@ -47,6 +48,7 @@ export class ProductsAdminController {
     private readonly reviewsService: ReviewsService,
     private readonly discountsService: DiscountsService,
     private readonly variantService: VariantService,
+    private readonly activityLogService: AdminActivityLogService,
   ) {}
 
   @Get()
@@ -55,18 +57,30 @@ export class ProductsAdminController {
   }
 
   @Post()
-  create(@Body() dto: CreateProductDto) {
-    return this.productsService.create(dto);
+  async create(@Req() req: any, @Body() dto: CreateProductDto) {
+    const result = await this.productsService.create(dto);
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'CREATE', 'Product', String(result.data.id));
+    }
+    return result;
   }
 
   @Delete('bulk-delete')
-  bulkDelete(@Body() dto: BulkDeleteProductsDto) {
-    return this.productsService.bulkDelete(dto);
+  async bulkDelete(@Req() req: any, @Body() dto: BulkDeleteProductsDto) {
+    const result = await this.productsService.bulkDelete(dto);
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'BULK_DELETE', 'Product', dto.ids.join(','));
+    }
+    return result;
   }
 
   @Patch('bulk-publish')
-  bulkUpdateProductStatus(@Body() dto: BulkUpdateProductsStatusDto) {
-    return this.productsService.bulkUpdateProductStatus(dto);
+  async bulkUpdateProductStatus(@Req() req: any, @Body() dto: BulkUpdateProductsStatusDto) {
+    const result = await this.productsService.bulkUpdateProductStatus(dto);
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'BULK_UPDATE_STATUS', 'Product', dto.ids.join(','));
+    }
+    return result;
   }
 
   @Get('export')
@@ -102,27 +116,42 @@ export class ProductsAdminController {
   }
 
   @Post(':id/duplicate')
-  duplicateProduct(@Param('id') id: number) {
-    return this.productsService.duplicateProduct(id);
+  async duplicateProduct(@Req() req: any, @Param('id') id: number) {
+    const result = await this.productsService.duplicateProduct(id);
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'DUPLICATE', 'Product', String(id));
+    }
+    return result;
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productsService.update(+id, updateProductDto);
+  async update(@Req() req: any, @Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
+    const result = await this.productsService.update(+id, updateProductDto);
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'UPDATE', 'Product', id);
+    }
+    return result;
   }
+
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productsService.remove(+id);
+  async remove(@Req() req: any, @Param('id') id: string) {
+    const result = await this.productsService.remove(+id);
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'DELETE', 'Product', id);
+    }
+    return result;
   }
 
   @Post(':id/variants')
-  createProductVariant(
-    @Req() req,
+  async createProductVariant(
+    @Req() req: any,
     @Param('id') id: number,
     @Body() dto: CreateVariantDto,
   ) {
     dto.productId = id;
-    return this.variantService.createVariant(req.user.id, dto);
+    const result = await this.variantService.createVariant(req.user.id, dto);
+    this.activityLogService.log(req.user.sub, 'CREATE', 'ProductVariant', String(result.data?.id ?? id));
+    return result;
   }
 
   @Get(':id/variants')
@@ -139,35 +168,46 @@ export class ProductsAdminController {
   }
 
   @Delete(':id/reviews/:reviewId')
-  removeReview(@Param('reviewId') reviewId: number) {
-    return this.reviewsService.remove(reviewId);
+  async removeReview(@Req() req: any, @Param('reviewId') reviewId: number) {
+    const result = await this.reviewsService.remove(reviewId);
+    this.activityLogService.log(req.user.sub, 'DELETE', 'Review', String(reviewId));
+    return result;
   }
 
   @Post(':id/variants/:variantId/discount')
-  createDiscount(
+  async createDiscount(
+    @Req() req: any,
     @Param('variantId') variantId: number,
     @Body() dto: CreateDiscountDto,
   ) {
     dto.variantId = variantId;
-    return this.discountsService.create(dto);
+    const result = await this.discountsService.create(dto);
+    this.activityLogService.log(req.user.sub, 'CREATE', 'Discount', String(variantId));
+    return result;
   }
 
   @Put('variants/:id')
-  updateVariant(
-    @Req() req,
+  async updateVariant(
+    @Req() req: any,
     @Param('id') id: number,
     @Body() dto: UpdateVariantDto,
   ) {
-    return this.variantService.updateVariant(req.user.id, id, dto);
+    const result = await this.variantService.updateVariant(req.user.id, id, dto);
+    this.activityLogService.log(req.user.sub, 'UPDATE', 'ProductVariant', String(id));
+    return result;
   }
 
   @Delete('variants/:id')
-  deleteVariant(@Req() req, @Param('id') id: number) {
-    return this.variantService.deleteVariant(req.user.id, id);
+  async deleteVariant(@Req() req: any, @Param('id') id: number) {
+    const result = await this.variantService.deleteVariant(req.user.id, id);
+    this.activityLogService.log(req.user.sub, 'DELETE', 'ProductVariant', String(id));
+    return result;
   }
 
   @Delete('reviews/:id')
-  removeReviewStandalone(@Param('id') id: number) {
-    return this.reviewsService.remove(id);
+  async removeReviewStandalone(@Req() req: any, @Param('id') id: number) {
+    const result = await this.reviewsService.remove(id);
+    this.activityLogService.log(req.user.sub, 'DELETE', 'Review', String(id));
+    return result;
   }
 }

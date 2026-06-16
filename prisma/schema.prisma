@@ -35,6 +35,7 @@ model User {
   carts                   Cart[]
   orders                  Order[]
   address                 Address[]
+  activityLogs            AdminActivityLog[]
 }
 
 model Product {
@@ -347,4 +348,19 @@ model Address {
     usedFor          String        //Kantor, Rumah 
 
     user User @relation(fields: [userId], references: [id])
+}
+
+model AdminActivityLog {
+    id        Int      @id @default(autoincrement())
+    userId    String   @db.Uuid
+    action    String
+    entity    String
+    entityId  String?
+    createdAt DateTime @default(now())
+
+    user User @relation(fields: [userId], references: [id])
+
+    @@index([userId])
+    @@index([entity])
+    @@index([createdAt])
 }

@@ -338,15 +338,56 @@ export class UsersService {
       );
     }
 
-    const result = await this.usersRepository.update(targetId, {
-      isVerified: dto.isVerified,
-    });
+    if (dto.isBlocked && target.role === Role.SUPERADMIN) {
+      const activeSuperAdmins = await this.usersRepository.countActiveSuperAdmins();
+      if (activeSuperAdmins <= 1) {
+        throw new BadRequestException(
+          'Cannot deactivate the last active SUPERADMIN',
+        );
+      }
+    }
+
+    const result = await this.usersRepository.setBlocked(targetId, dto.isBlocked);
     return {
       success: true,
-      message: `User verification status updated to ${dto.isVerified}`,
+      message: `User ${dto.isBlocked ? 'deactivated' : 'reactivated'} successfully`,
       data: result,
     };
   }
+  async findAllAdmin(
+    query: AdminUsersQueryDto,
+  ): Promise<ServiceResult<PagePaginationResponseDto<UserPublic>>> {
+    try {
+      const page = query.page ?? 1;
+      const limit = query.limit ?? 20;
+      const { items, totalItems } =
+        await this.usersRepository.findAdminUsers(query);
+      this.logger.info({
+        message: 'Retrieved admin users list',
+        endpoint: 'GET /admin/users',
+        totalItems,
+        page,
+        limit,
+        status: 'success',
+      });
+      const meta = new PagePaginationMetaDto(page, limit, totalItems);
+      const result = new PagePaginationResponseDto<UserPublic>(items, meta);
+      return {
+        success: true,
+        message: `Returned ${items.length} admin users (page ${page} of ${meta.totalPages})`,
+        data: result,
+      };
+    } catch (error: any) {
+      this.logger.error({
+        message: 'Failed to retrieve admin users',
+        endpoint: 'GET /admin/users',
+        status: 'error',
+        error: error.message,
+      });
+      throw error;
+    }
+  }
+
   async findCustomers(
     query: AdminCustomersQueryDto,
   ): Promise<ServiceResult<PagePaginationResponseDto<AdminCustomerItem>>> {
