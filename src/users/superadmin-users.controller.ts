@@ -10,6 +10,7 @@ import {
   Query,
   UseGuards,
   Req,
+  ForbiddenException,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
@@ -45,7 +46,10 @@ export class SuperAdminUsersController {
 
   @Delete(':id')
   async remove(@Req() req: any, @Param('id') id: string) {
-    const result = await this.usersService.remove(id);
+    if(req.user.sub === id) {
+        throw new ForbiddenException('Cannot self delete current logged in user!');
+    }
+    const result = await this.usersService.remove(req.user, id);
     if (result.success) {
       this.activityLogService.log(req.user.sub, 'DELETE', 'User', id);
     }

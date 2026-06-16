@@ -39,71 +39,9 @@ export class AdminUsersController {
     return this.usersService.findAllAdmin(query);
   }
 
-  @Post()
-  @Roles([Role.SUPERADMIN])
-  async create(@Req() req: any, @Body() createUserDto: CreateUserDto) {
-    const result = await this.usersService.create(createUserDto);
-    if (result.success) {
-      this.activityLogService.log(req.user.sub, 'CREATE', 'User', result.data.id);
-    }
-    return result;
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
 
-  @Patch(':id')
-  async update(@Req() req: any, @Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    const result = await this.usersService.update(id, updateUserDto);
-    if (result.success) {
-      this.activityLogService.log(req.user.sub, 'UPDATE', 'User', id);
-    }
-    return result;
-  }
-
-  @Delete(':id')
-  @Roles([Role.SUPERADMIN])
-  async remove(@Req() req: any, @Param('id') id: string) {
-    const result = await this.usersService.remove(id);
-    if (result.success) {
-      this.activityLogService.log(req.user.sub, 'DELETE', 'User', id);
-    }
-    return result;
-  }
-
-  @Put(':id/role')
-  @Roles([Role.SUPERADMIN])
-  async updateRole(
-    @Req() req: any,
-    @Param('id') id: string,
-    @Body() dto: UpdateUserRoleDto,
-  ) {
-    const result = await this.usersService.updateRole(id, dto, {
-      id: req.user.sub,
-      role: req.user.role,
-    });
-    if (result.success) {
-      this.activityLogService.log(req.user.sub, 'UPDATE_ROLE', 'User', id);
-    }
-    return result;
-  }
-
-  @Put(':id/status')
-  @Roles([Role.SUPERADMIN])
-  async updateStatus(
-    @Req() req: any,
-    @Param('id') id: string,
-    @Body() dto: UpdateUserStatusDto,
-  ) {
-    const result = await this.usersService.updateStatus(id, dto, {
-      id: req.user.sub,
-      role: req.user.role,
-    });
-    if (result.success) {
-      this.activityLogService.log(req.user.sub, 'UPDATE_STATUS', 'User', id);
-    }
-    return result;
-  }
 }

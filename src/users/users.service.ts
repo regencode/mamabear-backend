@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -250,8 +251,10 @@ export class UsersService {
     }
   }
 
-  async remove(id: string): Promise<ServiceResult<UserPublic>> {
+  async remove(user: any, id: string): Promise<ServiceResult<UserPublic>> {
     try {
+      if(user.sub === id) 
+          throw new ForbiddenException('Cannot self-delete current logged in user!');
       const result = await this.usersRepository.delete(id);
       this.logger.info({
         message: 'User deleted successfully',
