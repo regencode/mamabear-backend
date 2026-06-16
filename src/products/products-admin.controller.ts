@@ -14,7 +14,7 @@ import {
   Patch,
   Res,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -42,6 +42,7 @@ import { AdminActivityLogService } from '@/activity-log/admin-activity-log.servi
 @Controller('admin/products')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles([Role.ADMIN, Role.SUPERADMIN])
+@ApiBearerAuth('JwtAuthGuard')
 export class ProductsAdminController {
   constructor(
     private readonly productsService: ProductsService,

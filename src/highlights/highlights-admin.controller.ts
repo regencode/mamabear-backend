@@ -8,7 +8,7 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { HighlightsService } from './highlights.service';
 import { CreateHighlightDto } from './dto/create-highlight.dto';
 import { UpdateHighlightDto } from './dto/update-highlight.dto';
@@ -21,6 +21,7 @@ import { AdminActivityLogService } from '@/activity-log/admin-activity-log.servi
 @Controller('admin/highlights')
 @UseGuards(new JwtAuthGuard())
 @Roles([Role.ADMIN])
+@ApiBearerAuth('JwtAuthGuard')
 export class HighlightsAdminController {
   constructor(
     private readonly highlightsService: HighlightsService,

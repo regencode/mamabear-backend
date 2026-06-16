@@ -23,10 +23,13 @@ import { format } from '@fast-csv/format';
 import { AdminOrdersQueryDto } from './dto/admin-orders-query.dto';
 import { Response } from 'express';
 import { AdminActivityLogService } from '@/activity-log/admin-activity-log.service';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('order (admin)')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles([Role.ADMIN, Role.SUPERADMIN])
 @Controller('admin/order')
+@ApiBearerAuth('JwtAuthGuard')
 export class OrderAdminController {
   constructor(
     private readonly orderService: OrderService,

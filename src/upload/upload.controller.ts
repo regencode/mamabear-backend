@@ -19,10 +19,13 @@ import { memoryStorage } from 'multer';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 import { Roles } from '@/auth/decorators/roles.decorator';
 import { Role } from '@/generated/prisma';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('upload (admin)')
 @UseGuards(JwtAuthGuard)
 @Roles([Role.ADMIN])
 @Controller('admin/upload')
+@ApiBearerAuth('JwtAuthGuard')
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 

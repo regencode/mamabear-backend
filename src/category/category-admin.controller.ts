@@ -8,7 +8,7 @@ import {
   Req,
   Put,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -21,6 +21,7 @@ import { AdminActivityLogService } from '@/activity-log/admin-activity-log.servi
 @Controller('admin/categories')
 @UseGuards(JwtAuthGuard)
 @Roles([Role.ADMIN])
+@ApiBearerAuth('JwtAuthGuard')
 export class CategoryAdminController {
   constructor(
     private readonly categoryService: CategoryService,

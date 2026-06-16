@@ -9,7 +9,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiParam } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiOkResponse, ApiParam } from '@nestjs/swagger';
 import { Response } from 'express';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
@@ -25,6 +25,7 @@ import { AdminActivityLogService } from '@/activity-log/admin-activity-log.servi
 @Controller('admin/customers')
 @UseGuards(new JwtAuthGuard())
 @Roles([Role.ADMIN, Role.SUPERADMIN])
+@ApiBearerAuth('JwtAuthGuard')
 export class AdminCustomersController {
   constructor(
     private readonly usersService: UsersService,

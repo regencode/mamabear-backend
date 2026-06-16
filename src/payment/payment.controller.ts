@@ -4,8 +4,11 @@ import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 import { PinoLogger } from 'pino-nestjs';
 import { Response } from 'express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('payment')
 @Controller('payment')
+@ApiBearerAuth('JwtAuthGuard')
 export class PaymentController {
   constructor(
       private readonly paymentService: PaymentService,
