@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { BadRequestException, HttpStatus, Injectable, NotFoundException, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, HttpStatus, Injectable, NotFoundException, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { ServiceResult } from '@/common/ServiceResult';
 import { QrisNotificationDto } from './dto/notifications.dto';
@@ -25,6 +25,7 @@ export class PaymentService {
         const { orderId, ...rest } = dto;
         const order = await this.orderRepository.findById(orderId);
         if(!order) throw new NotFoundException(`Order with orderId ${orderId} does not exist`);
+        if(order.userId != user.sub) throw new ForbiddenException(`Order ${orderId} does not belong to current user!`);
         const customerDetails : TransactionCustomerDto = {
             firstName: user.name,
             email: user.email,
