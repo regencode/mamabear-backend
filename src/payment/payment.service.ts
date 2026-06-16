@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { BadRequestException, HttpStatus, Injectable, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { ServiceResult } from '@/common/ServiceResult';
 import { QrisNotificationDto } from './dto/notifications.dto';
@@ -8,6 +8,8 @@ import { OrderRepository } from '@/order/order.repository';
 import crypto from 'crypto';
 import { OrderStatus } from '@/generated/prisma';
 import { Response } from 'express';
+import { NotFoundError } from 'rxjs';
+import { TransactionCustomerDto } from './dto/customer.dto';
 
 @Injectable()
 export class PaymentService {
@@ -19,27 +21,34 @@ export class PaymentService {
     FRONTEND_URL = process.env.FRONTEND_URL!;
     SERVER_KEY = process.env.MIDTRANS_SERVER_KEY!;
     // note: can only fit in transaction_details, customer_details does not work yet
-    async createTransaction(dto: CreateTransactionDto): Promise<ServiceResult<any>> {
-            const { orderId, subtotal, customerDetails, ...rest } = dto;
-            const transaction = await this.snap.createTransaction({
-                transaction_details: {
-                    order_id: orderId,
-                    gross_amount: subtotal,
-                },
-                customer_details: customerDetails,
-                callbacks: {
-                    success: this.FRONTEND_URL + "/payment/success",
-                    pending: this.FRONTEND_URL + "/payment/pending",
-                    error: this.FRONTEND_URL + "/payment/error",
-                }
-            } as any);
-            // TODO: add midtrans link to order (link is temporary anyway)
-            const updatedOrder = this.orderRepository.update({ id: orderId }, { paymentRedirectUrl: transaction.redirect_url });
-            return {
-                success: true,
-                message: `Created new transaction for order ${orderId}`,
-                data: transaction,
+    async createTransaction(user: any, dto: CreateTransactionDto): Promise<ServiceResult<any>> {
+        const { orderId, ...rest } = dto;
+        const order = await this.orderRepository.findById(orderId);
+        if(!order) throw new NotFoundException(`Order with orderId ${orderId} does not exist`);
+        const customerDetails : TransactionCustomerDto = {
+            firstName: user.name,
+            email: user.email,
+            phone: user.phone,
+        };
+        const transaction = await this.snap.createTransaction({
+            transaction_details: {
+                order_id: orderId,
+                gross_amount: order.grandTotalIdr,
+            },
+            customer_details: customerDetails,
+            callbacks: {
+                success: this.FRONTEND_URL + "/payment/success",
+                pending: this.FRONTEND_URL + "/payment/pending",
+                error: this.FRONTEND_URL + "/payment/error",
             }
+        } as any);
+        // TODO: add midtrans link to order (link is temporary anyway)
+        const updatedOrder = this.orderRepository.update({ id: orderId }, { paymentRedirectUrl: transaction.redirect_url });
+        return {
+            success: true,
+            message: `Created paymentRedirectUrl for order ${orderId}`,
+            data: updatedOrder,
+        }
     }
 
     async handleNotification(notification: any): Promise<ServiceResult<null>> {

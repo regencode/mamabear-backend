@@ -14,6 +14,7 @@ import {
   AdminOrderSortOrder,
 } from './dto/admin-orders-query.dto';
 import { isUUID } from 'class-validator';
+import { Decimal } from '@prisma/client-runtime-utils';
 
 const ORDERITEM_INCLUDE = {
   product: { select: { name: true, slug: true } },
@@ -81,6 +82,7 @@ export class OrderRepository {
           subtotalIdr: cart.subtotalIdr,
           taxIdr: cart.taxIdr,
           shippingCostIdr: cart.shippingCostIdr,
+          grandTotalIdr: cart.subtotalIdr + cart.taxIdr + cart.shippingCostIdr,
           courierName: cart.courierName,
           courierCode: cart.courierCode,
           shippingMethod: cart.shippingMethod,
@@ -151,6 +153,11 @@ export class OrderRepository {
         },
       },
     });
+  }
+  findById(orderId: string) {
+      return this.prisma.order.findUnique({
+          where: { id: orderId },
+      });
   }
 
   handleCompleteOrder(orderId: string) {
