@@ -15,7 +15,18 @@ http:
         "weightG": 100,
         "sku": "BRUNO-VAR-{{runId}}",
         "stock": 10,
-        "sortOrder": 1
+        "images" : [
+          {
+          "imageUrl": "https://res.cloudinary.com/dfmgt1iel/image/upload/v1781623894/products/mgemlpfyi8hljgdpamh3.jpg",
+          "publicId": "products/mgemlpfyi8hljgdpamh3",
+          "width": 286,
+          "height": 176,
+          "fileSize": 11266,
+          "format": "jpg",
+          "altText": "kominfo",
+          "sortOrder": 0
+          }
+        ]
       }
   auth: inherit
 
@@ -36,7 +47,7 @@ settings:
   maxRedirects: 5
 
 examples:
-  - name: "Success (201)"
+  - name: Success (201)
     request:
       url: "{{baseUrl}}/api/admin/products/1/variants"
       method: POST
@@ -53,10 +64,10 @@ examples:
           }
     response:
       status: 201
-      statusText: "Created"
+      statusText: Created
       headers:
         - name: Content-Type
-          value: "application/json; charset=utf-8"
+          value: application/json; charset=utf-8
       body:
         type: json
         data: |-
@@ -80,7 +91,7 @@ examples:
             },
             "timestamp": "2026-05-25T14:30:00.000Z"
           }
-  - name: "Unauthorized (401)"
+  - name: Unauthorized (401)
     request:
       url: "{{baseUrl}}/api/admin/products/1/variants"
       method: POST
@@ -92,10 +103,10 @@ examples:
           }
     response:
       status: 401
-      statusText: "Unauthorized"
+      statusText: Unauthorized
       headers:
         - name: Content-Type
-          value: "application/json; charset=utf-8"
+          value: application/json; charset=utf-8
       body:
         type: json
         data: |-
@@ -108,7 +119,7 @@ examples:
             "data": null,
             "timestamp": "2026-05-25T00:00:00.000Z"
           }
-  - name: "Validation Error (400)"
+  - name: Validation Error (400)
     request:
       url: "{{baseUrl}}/api/admin/products/1/variants"
       method: POST
@@ -122,10 +133,10 @@ examples:
           }
     response:
       status: 400
-      statusText: "Bad Request"
+      statusText: Bad Request
       headers:
         - name: Content-Type
-          value: "application/json; charset=utf-8"
+          value: application/json; charset=utf-8
       body:
         type: json
         data: |-
@@ -142,7 +153,7 @@ examples:
             "data": null,
             "timestamp": "2026-05-25T14:24:28.235Z"
           }
-  - name: "Product Not Found (400)"
+  - name: Product Not Found (400)
     request:
       url: "{{baseUrl}}/api/admin/products/999999/variants"
       method: POST
@@ -159,10 +170,10 @@ examples:
           }
     response:
       status: 400
-      statusText: "Bad Request"
+      statusText: Bad Request
       headers:
         - name: Content-Type
-          value: "application/json; charset=utf-8"
+          value: application/json; charset=utf-8
       body:
         type: json
         data: |-

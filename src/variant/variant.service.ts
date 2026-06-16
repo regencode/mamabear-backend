@@ -52,22 +52,33 @@ export class VariantService {
 
   async createVariant(
     userId: number,
+    productId: number,
     dto: CreateVariantDto,
   ): Promise<ServiceResult<ProductVariant>> {
-    if (!dto.productId) {
-      throw new BadRequestException('Product Id must be set!');
-    }
-
-    const product = await this.repo.findProductById(dto.productId);
+    const product = await this.repo.findProductById(productId);
     if (!product) throw new BadRequestException('Product not found');
 
     if (!dto.sku) {
-      const newSku = this.generateSku(product.slug, dto.name);
-      dto.sku = newSku;
+      dto.sku = this.generateSku(product.slug, dto.name);
     }
 
-    const result = await this.repo.createProductVariant({
+    const existingVariants =
+      await this.repo.findProductVariantsByProductId(productId);
+    const existingSortOrders = existingVariants.map((v) => v.sortOrder);
+    const maxSortOrder =
+      existingSortOrders.length > 0 ? Math.max(...existingSortOrders) : -1;
+
+    const isSortOrderConflict =
+      dto.sortOrder !== undefined && existingSortOrders.includes(dto.sortOrder);
+
+    const finalSortOrder =
+      dto.sortOrder !== undefined && !isSortOrderConflict
+        ? dto.sortOrder
+        : maxSortOrder + 1;
+
+    const result = await this.repo.createProductVariant(productId, {
       ...dto,
+      sortOrder: finalSortOrder,
       images: (dto.images ?? []).map((image, index) => ({
         imageUrl: image.imageUrl,
         publicId: image.publicId,
