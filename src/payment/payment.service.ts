@@ -10,12 +10,14 @@ import { OrderStatus } from '@/generated/prisma';
 import { Response } from 'express';
 import { NotFoundError } from 'rxjs';
 import { TransactionCustomerDto } from './dto/customer.dto';
+import { PinoLogger } from 'pino-nestjs';
 
 @Injectable()
 export class PaymentService {
     constructor(
         private readonly snap: MidtransService,
         private readonly orderRepository: OrderRepository,
+        private readonly logger: PinoLogger,
     ) {
     }
     FRONTEND_URL = process.env.FRONTEND_URL!;
@@ -86,8 +88,8 @@ export class PaymentService {
                         { status: OrderStatus.PAYMENT_PENDING }
                     );
                     break;
-
-                default:
+               default:
+                    this.logger.error(`Cannot proces transaction with status: ${transactionStatus}`);
                     throw new UnprocessableEntityException("Cannot process transaction with status: ", transactionStatus);
             }
             return {

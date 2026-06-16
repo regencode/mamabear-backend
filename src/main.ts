@@ -5,14 +5,14 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { TransformInterceptor } from './common/interceptors/transformer.interceptor';
 import { AllExceptionsFilter } from './common/filters/exceptions.filter';
-import { Logger } from 'pino-nestjs';
+import { Logger, PinoLogger } from 'pino-nestjs';
 import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
   app.use(cookieParser());
   app.useGlobalInterceptors(new TransformInterceptor());
-  app.useGlobalFilters(new AllExceptionsFilter());
+  app.useGlobalFilters(new AllExceptionsFilter(await app.resolve(PinoLogger)));
   app.setGlobalPrefix('/api');
 
   app.enableCors({

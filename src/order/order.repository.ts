@@ -175,6 +175,8 @@ export class OrderRepository {
         throw new UnprocessableEntityException(
           `Cannot process product sold increment: order with orderId=${orderId} does not exist`,
         );
+      if (resolvedOrder.status != OrderStatus.PAYMENT_PENDING)
+          throw new BadRequestException(`Cannot update status of order ${orderId}, order does not have PAYMENT_PENDING status`);
       const order = await tx.order.update({
         where: { id: resolvedOrder.id },
         data: { status: OrderStatus.PAYMENT_PAID },
