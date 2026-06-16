@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/api/admin/reports/sales?categoryId=1"
+  url: "{{baseUrl}}/api/admin/reports/sales"
   params:
     - name: startDate
       value: 2026-06-01
@@ -26,6 +26,7 @@ http:
     - name: categoryId
       value: "1"
       type: query
+      disabled: true
     - name: productId
       value: "1"
       type: query

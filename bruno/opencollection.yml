@@ -17,7 +17,7 @@ config:
 request:
   auth:
     type: bearer
-    token: "{{jwtToken}}"
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjN2Q3MWQ4My02MmMzLTRhOTMtYTAxMC00YzdmMDIzMmIyNmQiLCJlbWFpbCI6ImFkbWluQG1hbWFiZWFyLmlkIiwicm9sZSI6IkFETUlOIiwibmFtZSI6IkFkbWluIE1hbWFCZWFyIiwicGhvbmUiOiIwODEyMDAwMDExMTEiLCJpYXQiOjE3ODE2MjQ4NDcsImV4cCI6MTc4MTYyNTc0N30.lJFzFAdjPKZjMLt6unQ3NsaZyzKGlWyvkTmL9nchAME
   variables:
     - name: baseUrl
       value: http://localhost:3000
@@ -28,7 +28,7 @@ request:
     - name: productSlug
       value: ""
     - name: productId
-      value: "1"
+      value: "42"
     - name: variantId
       value: "2"
     - name: reviewId

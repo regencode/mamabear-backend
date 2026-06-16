@@ -5,9 +5,9 @@ import { UpdateVariantDto } from './dto/update-variant.dto';
 import { CreateVariantDto } from './dto/create-variant.dto';
 
 const VARIANT_INCLUDE = {
-    images: true,
-    discount: true,
-}
+  images: true,
+  discount: true,
+};
 
 @Injectable()
 export class VariantRepository {
@@ -18,15 +18,15 @@ export class VariantRepository {
   }
 
   findOne(variantId: number) {
-      return this.prisma.productVariant.findUnique({ 
-          where: { id: variantId },
-          include: VARIANT_INCLUDE,
-      });
+    return this.prisma.productVariant.findUnique({
+      where: { id: variantId },
+      include: VARIANT_INCLUDE,
+    });
   }
 
   update(variantId: number, dto: UpdateVariantDto) {
     const { images, ...variantData } = dto;
-    return this.prisma.$transaction(async tx => {
+    return this.prisma.$transaction(async (tx) => {
       const variant = await tx.productVariant.update({
         where: { id: variantId },
         data: variantData,
@@ -34,17 +34,19 @@ export class VariantRepository {
       });
       let imageUpserts: Image[] = [];
       if (images && images.length > 0) {
-        imageUpserts = await Promise.all(images.map(async img => {
-          return await tx.image.upsert({
-            where: { publicId: img.publicId },
-            update: {
-              sortOrder: img.sortOrder,
-              altText: img.altText,
-              variantId: variantId,
-            },
-            create: { ...img, variantId: variantId },
-          });
-        }));
+        imageUpserts = await Promise.all(
+          images.map(async (img) => {
+            return await tx.image.upsert({
+              where: { publicId: img.publicId },
+              update: {
+                sortOrder: img.sortOrder,
+                altText: img.altText,
+                variantId: variantId,
+              },
+              create: { ...img, variantId: variantId },
+            });
+          }),
+        );
       }
       return { ...variant, images: variant.images.concat(imageUpserts ?? []) };
     });
@@ -54,7 +56,7 @@ export class VariantRepository {
     return this.prisma.productVariant.delete({ where });
   }
 
-  createProductVariant(dto: CreateVariantDto) {
+  createProductVariant(productId: number, dto: CreateVariantDto) {
     return this.prisma.productVariant.create({
       data: {
         name: dto.name,
@@ -63,7 +65,7 @@ export class VariantRepository {
         sku: dto.sku,
         stock: dto.stock,
         sortOrder: dto.sortOrder,
-        product: { connect: { id: dto.productId } },
+        product: { connect: { id: productId } },
         images: dto.images?.length
           ? {
               create: dto.images.map((image) => ({
@@ -79,7 +81,7 @@ export class VariantRepository {
             }
           : undefined,
       },
-      include: VARIANT_INCLUDE
+      include: VARIANT_INCLUDE,
     });
   }
 
@@ -91,9 +93,9 @@ export class VariantRepository {
   }
 
   findProductBySlug(productSlug: string) {
-    return this.prisma.product.findUnique({ 
-        where: { slug: productSlug },
-        include: { variants: { include: VARIANT_INCLUDE }},
+    return this.prisma.product.findUnique({
+      where: { slug: productSlug },
+      include: { variants: { include: VARIANT_INCLUDE } },
     });
   }
 }
