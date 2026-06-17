@@ -1,0 +1,251 @@
+info:
+  name: Sync product images
+  type: http
+  seq: 100
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/admin/products/{{productId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "images": [
+          {
+            "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1/mamabear/product-main.jpg",
+            "publicId": "mamabear/product-main",
+            "sortOrder": 0,
+            "altText": "Product main image",
+            "width": 800,
+            "height": 600,
+            "fileSize": 45000,
+            "format": "jpg"
+          },
+          {
+            "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1/mamabear/product-alt.jpg",
+            "publicId": "mamabear/product-alt",
+            "sortOrder": 1,
+            "altText": "Product alternate image",
+            "width": 800,
+            "height": 600,
+            "fileSize": 38000,
+            "format": "jpg"
+          }
+        ]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: "Replace images (200)"
+    request:
+      url: "{{baseUrl}}/api/admin/products/1"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "images": [
+              {
+                "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1/mamabear/product-main.jpg",
+                "publicId": "mamabear/product-main",
+                "sortOrder": 0,
+                "altText": "Product main image",
+                "width": 800,
+                "height": 600,
+                "fileSize": 45000,
+                "format": "jpg"
+              },
+              {
+                "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1/mamabear/product-alt.jpg",
+                "publicId": "mamabear/product-alt",
+                "sortOrder": 1,
+                "altText": "Product alternate image",
+                "width": 800,
+                "height": 600,
+                "fileSize": 38000,
+                "format": "jpg"
+              }
+            ]
+          }
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": ["Product updated successfully"],
+            "data": {
+              "id": 1,
+              "name": "Test Product",
+              "slug": "test-product",
+              "images": [
+                {
+                  "id": 10,
+                  "publicId": "mamabear/product-main",
+                  "productId": 1,
+                  "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1/mamabear/product-main.jpg",
+                  "sortOrder": 0,
+                  "altText": "Product main image",
+                  "width": 800,
+                  "height": 600,
+                  "fileSize": 45000,
+                  "format": "jpg"
+                },
+                {
+                  "id": 11,
+                  "publicId": "mamabear/product-alt",
+                  "productId": 1,
+                  "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1/mamabear/product-alt.jpg",
+                  "sortOrder": 1,
+                  "altText": "Product alternate image",
+                  "width": 800,
+                  "height": 600,
+                  "fileSize": 38000,
+                  "format": "jpg"
+                }
+              ]
+            },
+            "timestamp": "2026-06-17T00:00:00.000Z"
+          }
+
+  - name: "Remove all images with empty array (200)"
+    request:
+      url: "{{baseUrl}}/api/admin/products/1"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "images": []
+          }
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": ["Product updated successfully"],
+            "data": {
+              "id": 1,
+              "name": "Test Product",
+              "slug": "test-product",
+              "images": []
+            },
+            "timestamp": "2026-06-17T00:00:00.000Z"
+          }
+
+  - name: "No-op when images omitted (200)"
+    request:
+      url: "{{baseUrl}}/api/admin/products/1"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Updated Name"
+          }
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": ["Product updated successfully"],
+            "data": {
+              "id": 1,
+              "name": "Updated Name",
+              "slug": "test-product",
+              "images": [
+                {
+                  "id": 10,
+                  "publicId": "mamabear/existing-img",
+                  "productId": 1,
+                  "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1/mamabear/existing-img.jpg",
+                  "sortOrder": 0,
+                  "altText": "Existing image",
+                  "width": 800,
+                  "height": 600,
+                  "fileSize": 45000,
+                  "format": "jpg"
+                }
+              ]
+            },
+            "timestamp": "2026-06-17T00:00:00.000Z"
+          }
+
+  - name: "Reorder and partially remove (200)"
+    description: "Send only one of two existing images with a new sortOrder — the missing image is deleted, the remaining one is updated"
+    request:
+      url: "{{baseUrl}}/api/admin/products/1"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "images": [
+              {
+                "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1/mamabear/product-alt.jpg",
+                "publicId": "mamabear/product-alt",
+                "sortOrder": 0,
+                "altText": "Reordered to first"
+              }
+            ]
+          }
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": ["Product updated successfully"],
+            "data": {
+              "id": 1,
+              "name": "Test Product",
+              "slug": "test-product",
+              "images": [
+                {
+                  "id": 11,
+                  "publicId": "mamabear/product-alt",
+                  "productId": 1,
+                  "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1/mamabear/product-alt.jpg",
+                  "sortOrder": 0,
+                  "altText": "Reordered to first",
+                  "width": 800,
+                  "height": 600,
+                  "fileSize": 38000,
+                  "format": "jpg"
+                }
+              ]
+            },
+            "timestamp": "2026-06-17T00:00:00.000Z"
+          }

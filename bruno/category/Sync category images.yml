@@ -1,0 +1,166 @@
+info:
+  name: Sync category images
+  type: http
+  seq: 102
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/admin/categories/{{categoryId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "images": [
+          {
+            "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1/mamabear/category-banner.jpg",
+            "publicId": "mamabear/category-banner",
+            "sortOrder": 0,
+            "altText": "Category banner image",
+            "width": 1200,
+            "height": 400,
+            "fileSize": 60000,
+            "format": "jpg"
+          }
+        ]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: "Replace category images (200)"
+    request:
+      url: "{{baseUrl}}/api/admin/categories/3"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "images": [
+              {
+                "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1/mamabear/category-banner.jpg",
+                "publicId": "mamabear/category-banner",
+                "sortOrder": 0,
+                "altText": "Category banner image",
+                "width": 1200,
+                "height": 400,
+                "fileSize": 60000,
+                "format": "jpg"
+              }
+            ]
+          }
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": ["Category Growing-up Formula updated successfully"],
+            "data": {
+              "id": 3,
+              "name": "Growing-up Formula",
+              "slug": "growing-up-formula",
+              "images": [
+                {
+                  "id": 30,
+                  "publicId": "mamabear/category-banner",
+                  "categoryId": 3,
+                  "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1/mamabear/category-banner.jpg",
+                  "sortOrder": 0,
+                  "altText": "Category banner image",
+                  "width": 1200,
+                  "height": 400,
+                  "fileSize": 60000,
+                  "format": "jpg"
+                }
+              ]
+            },
+            "timestamp": "2026-06-17T00:00:00.000Z"
+          }
+
+  - name: "Remove all category images with empty array (200)"
+    request:
+      url: "{{baseUrl}}/api/admin/categories/3"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "images": []
+          }
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": ["Category Growing-up Formula updated successfully"],
+            "data": {
+              "id": 3,
+              "name": "Growing-up Formula",
+              "slug": "growing-up-formula",
+              "images": []
+            },
+            "timestamp": "2026-06-17T00:00:00.000Z"
+          }
+
+  - name: "No-op when images omitted (200)"
+    request:
+      url: "{{baseUrl}}/api/admin/categories/3"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Updated Category Name"
+          }
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": ["Category Updated Category Name updated successfully"],
+            "data": {
+              "id": 3,
+              "name": "Updated Category Name",
+              "slug": "growing-up-formula",
+              "images": [
+                {
+                  "id": 30,
+                  "publicId": "mamabear/existing-cat-img",
+                  "categoryId": 3,
+                  "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1/mamabear/existing-cat-img.jpg",
+                  "sortOrder": 0,
+                  "altText": "Existing category image",
+                  "width": 1200,
+                  "height": 400,
+                  "fileSize": 60000,
+                  "format": "jpg"
+                }
+              ]
+            },
+            "timestamp": "2026-06-17T00:00:00.000Z"
+          }

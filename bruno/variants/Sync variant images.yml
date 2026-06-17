@@ -1,0 +1,166 @@
+info:
+  name: Sync variant images
+  type: http
+  seq: 101
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/admin/products/variants/{{variantId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "images": [
+          {
+            "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1/mamabear/variant-main.jpg",
+            "publicId": "mamabear/variant-main",
+            "sortOrder": 0,
+            "altText": "Variant main image",
+            "width": 600,
+            "height": 400,
+            "fileSize": 25000,
+            "format": "jpg"
+          }
+        ]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: "Replace variant images (200)"
+    request:
+      url: "{{baseUrl}}/api/admin/products/variants/2"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "images": [
+              {
+                "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1/mamabear/variant-main.jpg",
+                "publicId": "mamabear/variant-main",
+                "sortOrder": 0,
+                "altText": "Variant main image",
+                "width": 600,
+                "height": 400,
+                "fileSize": 25000,
+                "format": "jpg"
+              }
+            ]
+          }
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": ["Variant updated successfully"],
+            "data": {
+              "id": 2,
+              "productId": 1,
+              "name": "Test Variant",
+              "images": [
+                {
+                  "id": 20,
+                  "publicId": "mamabear/variant-main",
+                  "variantId": 2,
+                  "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1/mamabear/variant-main.jpg",
+                  "sortOrder": 0,
+                  "altText": "Variant main image",
+                  "width": 600,
+                  "height": 400,
+                  "fileSize": 25000,
+                  "format": "jpg"
+                }
+              ]
+            },
+            "timestamp": "2026-06-17T00:00:00.000Z"
+          }
+
+  - name: "Remove all variant images with empty array (200)"
+    request:
+      url: "{{baseUrl}}/api/admin/products/variants/2"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "images": []
+          }
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": ["Variant updated successfully"],
+            "data": {
+              "id": 2,
+              "productId": 1,
+              "name": "Test Variant",
+              "images": []
+            },
+            "timestamp": "2026-06-17T00:00:00.000Z"
+          }
+
+  - name: "No-op when images omitted (200)"
+    request:
+      url: "{{baseUrl}}/api/admin/products/variants/2"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Updated Variant Name"
+          }
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "application/json; charset=utf-8"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "statusCode": 200,
+            "message": ["Variant updated successfully"],
+            "data": {
+              "id": 2,
+              "productId": 1,
+              "name": "Updated Variant Name",
+              "images": [
+                {
+                  "id": 20,
+                  "publicId": "mamabear/existing-variant-img",
+                  "variantId": 2,
+                  "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1/mamabear/existing-variant-img.jpg",
+                  "sortOrder": 0,
+                  "altText": "Existing variant image",
+                  "width": 600,
+                  "height": 400,
+                  "fileSize": 25000,
+                  "format": "jpg"
+                }
+              ]
+            },
+            "timestamp": "2026-06-17T00:00:00.000Z"
+          }

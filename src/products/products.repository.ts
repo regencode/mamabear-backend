@@ -4,8 +4,9 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { EmbeddingsService } from '@/embeddings/embeddings.service';
 import { ProductUtils } from '@/product-utils/product-utils';
-import { Image, Prisma, Product } from '@/generated/prisma';
+import { Prisma, Product } from '@/generated/prisma';
 import { FilterProductsDto } from './dto/filter-products.dto';
+import { syncImages } from '@/common/utils/image.util';
 import {
   AdminProductsQueryDto,
   AdminProductSortBy,
@@ -535,23 +536,11 @@ export class ProductsRepository {
         data: productData,
         include: PRODUCT_INCLUDE,
       });
-      let imageUpserts: Image[] = [];
-      if (images && images.length > 0) {
-        imageUpserts = await Promise.all(
-          images.map(async (img) => {
-            return await tx.image.upsert({
-              where: { publicId: img.publicId },
-              update: {
-                sortOrder: img.sortOrder,
-                altText: img.altText,
-                productId: id,
-              },
-              create: { ...img, productId: id },
-            });
-          }),
-        );
+      let syncedImages = product.images;
+      if (images !== undefined) {
+        syncedImages = await syncImages(tx, 'productId', id, images);
       }
-      return { ...product, images: product.images.concat(imageUpserts ?? []) };
+      return { ...product, images: syncedImages };
     });
   }
 

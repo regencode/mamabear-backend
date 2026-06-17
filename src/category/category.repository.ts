@@ -2,7 +2,7 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { Image } from '@/generated/prisma';
+import { syncImages } from '@/common/utils/image.util';
 
 @Injectable()
 export class CategoryRepository {
@@ -49,26 +49,11 @@ export class CategoryRepository {
         data: categoryData,
         include: { images: true },
       });
-      let imageUpserts: Image[] = [];
-      if (images && images.length > 0) {
-        imageUpserts = await Promise.all(
-          images.map(async (img) => {
-            return await tx.image.upsert({
-              where: { publicId: img.publicId },
-              update: {
-                sortOrder: img.sortOrder,
-                altText: img.altText,
-                categoryId: id,
-              },
-              create: { ...img, categoryId: id },
-            });
-          }),
-        );
+      let syncedImages = category.images;
+      if (images !== undefined) {
+        syncedImages = await syncImages(tx, 'categoryId', id, images);
       }
-      return {
-        ...category,
-        images: category.images.concat(imageUpserts ?? []),
-      };
+      return { ...category, images: syncedImages };
     });
   }
 
