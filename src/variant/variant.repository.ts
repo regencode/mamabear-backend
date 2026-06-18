@@ -1,8 +1,9 @@
-import { Image, Prisma } from '@/generated/prisma';
+import { Prisma } from '@/generated/prisma';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateVariantDto } from './dto/update-variant.dto';
 import { CreateVariantDto } from './dto/create-variant.dto';
+import { syncImages } from '@/common/utils/image.util';
 
 const VARIANT_INCLUDE = {
   images: true,
@@ -32,23 +33,11 @@ export class VariantRepository {
         data: variantData,
         include: { images: true },
       });
-      let imageUpserts: Image[] = [];
-      if (images && images.length > 0) {
-        imageUpserts = await Promise.all(
-          images.map(async (img) => {
-            return await tx.image.upsert({
-              where: { publicId: img.publicId },
-              update: {
-                sortOrder: img.sortOrder,
-                altText: img.altText,
-                variantId: variantId,
-              },
-              create: { ...img, variantId: variantId },
-            });
-          }),
-        );
+      let syncedImages = variant.images;
+      if (images !== undefined) {
+        syncedImages = await syncImages(tx, 'variantId', variantId, images);
       }
-      return { ...variant, images: variant.images.concat(imageUpserts ?? []) };
+      return { ...variant, images: syncedImages };
     });
   }
 
