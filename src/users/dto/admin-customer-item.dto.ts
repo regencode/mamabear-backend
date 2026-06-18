@@ -14,6 +14,9 @@ export class AdminCustomerItemDto {
   phone: string;
 
   @ApiProperty()
+  isBlocked: boolean;
+
+  @ApiProperty()
   totalOrders: number;
 
   @ApiProperty()
