@@ -8,37 +8,61 @@ import {
   Req,
   Put,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 import { Roles } from '@/auth/decorators/roles.decorator';
 import { Role } from '@/generated/prisma';
+import { AdminActivityLogService } from '@/activity-log/admin-activity-log.service';
 
 @ApiTags('categories (admin)')
-@Controller('api/categories')
+@Controller('admin/categories')
 @UseGuards(JwtAuthGuard)
 @Roles([Role.ADMIN])
+@ApiBearerAuth('JwtAuthGuard')
 export class CategoryAdminController {
-  constructor(private readonly categoryService: CategoryService) {}
+  constructor(
+    private readonly categoryService: CategoryService,
+    private readonly activityLogService: AdminActivityLogService,
+  ) {}
 
   @Post()
-  create(@Req() req, @Body() dto: CreateCategoryDto) {
-    return this.categoryService.createCategory(req.user.id, dto);
+  async create(
+    @Req() req: any,
+    @Body() dto: CreateCategoryDto,
+  ) {
+    const result = await this.categoryService.createCategory(req.user.id, dto);
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'CREATE', 'Category', String(result.data.id));
+    }
+    return result;
   }
 
   @Put(':id')
-  update(
-    @Req() req,
+  async update(
+    @Req() req: any,
     @Param('id') categoryId: number,
     @Body() dto: UpdateCategoryDto,
   ) {
-    return this.categoryService.updateCategory(req.user.id, categoryId, dto);
+    const result = await this.categoryService.updateCategory(
+      req.user.id,
+      categoryId,
+      dto,
+    );
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'UPDATE', 'Category', String(categoryId));
+    }
+    return result;
   }
 
   @Delete(':id')
-  delete(@Req() req, @Param('id') categoryId: number) {
-    return this.categoryService.deleteCategory(req.user.id, categoryId);
+  async delete(@Req() req: any, @Param('id') categoryId: number) {
+    const result = await this.categoryService.deleteCategory(req.user.id, categoryId);
+    if (result.success) {
+      this.activityLogService.log(req.user.sub, 'DELETE', 'Category', String(categoryId));
+    }
+    return result;
   }
 }

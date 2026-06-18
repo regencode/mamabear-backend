@@ -1,108 +1,107 @@
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 
-
-
 const PLACEHOLDER_HASH =
-  "$2b$10$placeholderhashplaceholderhashplaceholderha";
-
-const IMAGE_BASE_URL =
-  "https://raw.githubusercontent.com/regencode/mamabear-backend/main/assets/images";
-
+  '$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK'; // password is "admin"
 function slugify(text: string): string {
   return text
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function genPublicId(): string {
+  return crypto.randomUUID();
 }
 
 export const users = [
   {
-    email: "admin@mamabear.id",
-    hashedPassword: "$2b$10$GSB6xe8g7ZwboE4Xo8mMd.4Zvaq6zFuh3UAzfOZK3rRmzINn99/uK", // password is "admin"
-    name: "Admin MamaBear",
-    phone: "081200001111",
-    role: "ADMIN" as const,
+    email: 'admin@mamabear.id',
+    hashedPassword: PLACEHOLDER_HASH,
+    name: 'Super Admin',
+    phone: '081200001111',
+    role: 'SUPERADMIN' as const,
     isVerified: true,
   },
   {
-    email: "siti.rahayu@email.com",
+    email: 'admin2@mamabear.id',
     hashedPassword: PLACEHOLDER_HASH,
-    name: "Siti Rahayu",
-    phone: "081234567890",
-    role: "USER" as const,
+    name: 'admin mamabear',
+    phone: '081200001111',
+    role: 'ADMIN' as const,
     isVerified: true,
   },
   {
-    email: "dewi.lestari@email.com",
+    email: 'siti.rahayu@email.com',
     hashedPassword: PLACEHOLDER_HASH,
-    name: "Dewi Lestari",
-    phone: "081298765432",
-    role: "USER" as const,
+    name: 'Siti Rahayu',
+    phone: '081234567890',
+    role: 'USER' as const,
     isVerified: true,
   },
   {
-    email: "rina.wati@email.com",
+    email: 'dewi.lestari@email.com',
     hashedPassword: PLACEHOLDER_HASH,
-    name: "Rina Wati",
-    phone: "082112345678",
-    role: "USER" as const,
+    name: 'Dewi Lestari',
+    phone: '081298765432',
+    role: 'USER' as const,
+    isVerified: true,
+  },
+  {
+    email: 'rina.wati@email.com',
+    hashedPassword: PLACEHOLDER_HASH,
+    name: 'Rina Wati',
+    phone: '082112345678',
+    role: 'USER' as const,
     isVerified: false,
   },
   {
-    email: "budi.santoso@email.com",
+    email: 'budi.santoso@email.com',
     hashedPassword: PLACEHOLDER_HASH,
-    name: "Budi Santoso",
-    phone: "085678901234",
-    role: "USER" as const,
+    name: 'Budi Santoso',
+    phone: '085678901234',
+    role: 'USER' as const,
     isVerified: true,
   },
 ];
 
 export const categories = [
   {
-    name: "Food",
-    slug: slugify("Food"),
-    description: "Makanan & camilan untuk ibu menyusui",
+    name: 'Maternity Supplies',
+    slug: slugify('Maternity Supplies'),
+    description: 'Makanan & minuman untuk ibu menyusui',
     isActive: true,
     sortOrder: 1,
   },
   {
-    name: "Drink",
-    slug: slugify("Drink"),
-    description: "Minuman pelancar & peningkat ASI",
+    name: 'ASI Booster',
+    slug: slugify('ASI Booster'),
+    description: 'Produk pelancar & peningkat ASI',
     isActive: true,
     sortOrder: 2,
-  },
-  {
-    name: "Other",
-    slug: slugify("Other"),
-    description: "Produk lainnya",
-    isActive: true,
-    sortOrder: 3,
   },
 ];
 
 export const highlights = [
   {
-    name: "New Additions",
-    slug: slugify("New Additions"),
-    description: "Produk terbaru dari MamaBear",
+    name: 'New Additions',
+    slug: slugify('New Additions'),
+    description: 'Produk terbaru dari MamaBear',
     isActive: true,
   },
   {
-    name: "Recommended",
-    slug: slugify("Recommended"),
-    description: "Rekomendasi terbaik untuk Mama",
+    name: 'Recommended',
+    slug: slugify('Recommended'),
+    description: 'Rekomendasi terbaik untuk Mama',
     isActive: true,
   },
 ];
 
 export const products = [
   {
-    name: "MamaBear AlmonMix Isi 6 Sachet - Minuman Serbuk dengan Almond - Kaya Nutrisi Untuk Ibu Menyusui BPOM HALAL",
-    slug: slugify("MamaBear AlmonMix Isi 6 Sachet"),
-    categoryId: 2,
+    name: 'MamaBear AlmonMix Isi 6 Sachet - Minuman Serbuk dengan Almond - Kaya Nutrisi Untuk Ibu Menyusui BPOM HALAL',
+    slug: slugify('MamaBear AlmonMix Isi 6 Sachet'),
+    categoryId: 1,
     highlightId: 2,
     description: `MamaBear AlmonMix Isi 6 Sachet
 Minuman Almond Kaya Nutrisi dengan Daun Katuk & Daun Kelor.
@@ -144,45 +143,142 @@ Meningkatkan mood untuk membantu mengurangi risiko baby blues.`,
     isActive: true,
     variants: [
       {
-        name: "INTERNAL_DEFAULT",
+        name: 'Cokelat',
         priceIdr: 80000,
         weightG: 180,
-        sku: "AL.MMBR",
+        sku: 'AL.MMBR',
         stock: 100,
         sortOrder: 0,
+        images: [
+          {
+            imageUrl: 'AlmonMix/Cokelat/AlmonMix-Cokelat.png',
+            sortOrder: 1,
+            altText: 'MamaBear AlmonMix Cokelat',
+          },
+        ],
+      },
+      {
+        name: 'Choco Hazelnut',
+        priceIdr: 80000,
+        weightG: 180,
+        sku: 'AL.MMBR',
+        stock: 100,
+        sortOrder: 1,
+        images: [
+          {
+            imageUrl: 'AlmonMix/Choco-Hazelnut/AlmonMix-Choco-Hazelnut.png',
+            sortOrder: 1,
+            altText: 'MamaBear AlmonMix Choco Hazelnut',
+          },
+        ],
+      },
+      {
+        name: 'Matcha',
+        priceIdr: 80000,
+        weightG: 180,
+        sku: 'AL.MMBR',
+        stock: 100,
+        sortOrder: 2,
+        images: [
+          {
+            imageUrl: 'AlmonMix/Matcha/AlmonMix-Matcha.png',
+            sortOrder: 1,
+            altText: 'MamaBear AlmonMix Matcha',
+          },
+        ],
+      },
+      {
+        name: 'Vanilla',
+        priceIdr: 80000,
+        weightG: 180,
+        sku: 'AL.MMBR',
+        stock: 100,
+        sortOrder: 3,
+        images: [
+          {
+            imageUrl: 'AlmonMix/Vanilla/AlmonMix-Vanilla.png',
+            sortOrder: 1,
+            altText: 'MamaBear AlmonMix Vanilla',
+          },
+        ],
+      },
+      {
+        name: 'Coffee Latte',
+        priceIdr: 80000,
+        weightG: 180,
+        sku: 'AL.MMBR',
+        stock: 100,
+        sortOrder: 4,
+        images: [
+          {
+            imageUrl: 'AlmonMix/Coffee-Latte/AlmonMix-Coffee-Latte.png',
+            sortOrder: 1,
+            altText: 'MamaBear AlmonMix Coffee Latte',
+          },
+        ],
+      },
+      {
+        name: 'Strawberry',
+        priceIdr: 80000,
+        weightG: 180,
+        sku: 'AL.MMBR',
+        stock: 100,
+        sortOrder: 5,
+        images: [
+          {
+            imageUrl: 'AlmonMix/Strawberry/AlmonMix-Strawberry.png',
+            sortOrder: 1,
+            altText: 'MamaBear AlmonMix Strawberry',
+          },
+        ],
+      },
+      {
+        name: 'Caramel',
+        priceIdr: 80000,
+        weightG: 180,
+        sku: 'AL.MMBR',
+        stock: 100,
+        sortOrder: 6,
+        images: [
+          {
+            imageUrl: 'AlmonMix/Caramel/AlmonMix-Caramel.png',
+            sortOrder: 1,
+            altText: 'MamaBear AlmonMix Caramel',
+          },
+        ],
       },
     ],
     images: [
       {
-        imageUrl: `${IMAGE_BASE_URL}/AlmonMix/AlmonMix-01.jpg`,
+        imageUrl: 'AlmonMix/AlmonMix-01.jpg',
         sortOrder: 1,
-        altText: "MamaBear AlmonMix 01",
+        altText: 'MamaBear AlmonMix 01',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/AlmonMix/AlmonMix-02.jpg`,
+        imageUrl: 'AlmonMix/AlmonMix-02.jpg',
         sortOrder: 2,
-        altText: "MamaBear AlmonMix 02",
+        altText: 'MamaBear AlmonMix 02',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/AlmonMix/AlmonMix-03.jpg`,
+        imageUrl: 'AlmonMix/AlmonMix-03.jpg',
         sortOrder: 3,
-        altText: "MamaBear AlmonMix 03",
+        altText: 'MamaBear AlmonMix 03',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/AlmonMix/AlmonMix-04.jpg`,
+        imageUrl: 'AlmonMix/AlmonMix-04.jpg',
         sortOrder: 4,
-        altText: "MamaBear AlmonMix 04",
+        altText: 'MamaBear AlmonMix 04',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/AlmonMix/AlmonMix-05.jpg`,
+        imageUrl: 'AlmonMix/AlmonMix-05.jpg',
         sortOrder: 5,
-        altText: "MamaBear AlmonMix 05",
+        altText: 'MamaBear AlmonMix 05',
       },
     ],
   },
   {
-    name: "MamaBear ZoyaMix Rasa Cokelat Isi 10 Sachet - Sereal Kaya Nutrisi untuk Ibu Menyusui Halal BPOM",
-    slug: slugify("MamaBear ZoyaMix Rasa Cokelat Isi 10 Sachet"),
+    name: 'MamaBear ZoyaMix Rasa Cokelat Isi 10 Sachet - Sereal Kaya Nutrisi untuk Ibu Menyusui Halal BPOM',
+    slug: slugify('MamaBear ZoyaMix Rasa Cokelat Isi 10 Sachet'),
     categoryId: 1,
     highlightId: 1,
     description: `MamaBear ZoyaMix Rasa Cokelat Isi 10 Sachet
@@ -219,55 +315,62 @@ Sumber Zat Besi.
     isActive: true,
     variants: [
       {
-        name: "INTERNAL_DEFAULT",
+        name: 'Cokelat',
         priceIdr: 80000,
         weightG: 300,
-        sku: "ZM.MMBR",
+        sku: 'ZM.MMBR',
         stock: 100,
         sortOrder: 0,
+        images: [
+          {
+            imageUrl: 'ZoyaMix/Cokelat/ZoyaMix-Cokelat-2.png',
+            sortOrder: 1,
+            altText: 'MamaBear ZoyaMix Cokelat',
+          },
+        ],
       },
     ],
     images: [
       {
-        imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-01.jpg`,
+        imageUrl: 'ZoyaMix/ZoyaMix-01.jpg',
         sortOrder: 1,
-        altText: "MamaBear ZoyaMix 01",
+        altText: 'MamaBear ZoyaMix 01',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-02.jpg`,
+        imageUrl: 'ZoyaMix/ZoyaMix-02.jpg',
         sortOrder: 2,
-        altText: "MamaBear ZoyaMix 02",
+        altText: 'MamaBear ZoyaMix 02',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-03.jpg`,
+        imageUrl: 'ZoyaMix/ZoyaMix-03.jpg',
         sortOrder: 3,
-        altText: "MamaBear ZoyaMix 03",
+        altText: 'MamaBear ZoyaMix 03',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-04.jpg`,
+        imageUrl: 'ZoyaMix/ZoyaMix-04.jpg',
         sortOrder: 4,
-        altText: "MamaBear ZoyaMix 04",
+        altText: 'MamaBear ZoyaMix 04',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-05.jpg`,
+        imageUrl: 'ZoyaMix/ZoyaMix-05.jpg',
         sortOrder: 5,
-        altText: "MamaBear ZoyaMix 05",
+        altText: 'MamaBear ZoyaMix 05',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-06.jpg`,
+        imageUrl: 'ZoyaMix/ZoyaMix-06.jpg',
         sortOrder: 6,
-        altText: "MamaBear ZoyaMix 06",
+        altText: 'MamaBear ZoyaMix 06',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/ZoyaMix/ZoyaMix-07.jpg`,
+        imageUrl: 'ZoyaMix/ZoyaMix-07.jpg',
         sortOrder: 7,
-        altText: "MamaBear ZoyaMix 07",
+        altText: 'MamaBear ZoyaMix 07',
       },
     ],
   },
   {
-    name: "MamaBear Teh Pelancar ASI Isi 20 Sachet - ASI Booster Pelancar Peningkat Produksi ASI BPOM dan Halal",
-    slug: slugify("MamaBear Teh Pelancar ASI Isi 20 Sachet"),
+    name: 'MamaBear Teh Pelancar ASI Isi 20 Sachet - ASI Booster Pelancar Peningkat Produksi ASI BPOM dan Halal',
+    slug: slugify('MamaBear Teh Pelancar ASI Isi 20 Sachet'),
     categoryId: 2,
     highlightId: 2,
     description: `MamaBear Teh Pelancar ASI Isi 20 Sachet
@@ -310,36 +413,93 @@ Mempercepat pemulihan & meningkatkan daya tahan tubuh (Habbatussauda).
     isActive: true,
     variants: [
       {
-        name: "INTERNAL_DEFAULT",
+        name: 'Strawberry',
         priceIdr: 65000,
         weightG: 60,
-        sku: "TPA.MMBR",
+        sku: 'TPA.MMBR',
         stock: 100,
         sortOrder: 0,
+        images: [
+          {
+            imageUrl: 'Teh/Strawberry/Teh-Strawberry-1.png',
+            sortOrder: 1,
+            altText: 'MamaBear Teh Strawberry 1',
+          },
+          {
+            imageUrl: 'Teh/Strawberry/Teh-Strawberry-2.png',
+            sortOrder: 2,
+            altText: 'MamaBear Teh Strawberry 2',
+          },
+          {
+            imageUrl: 'Teh/Strawberry/Teh-Strawberry-3.png',
+            sortOrder: 3,
+            altText: 'MamaBear Teh Strawberry 3',
+          },
+          {
+            imageUrl: 'Teh/Strawberry/Teh-Strawberry-Isi-5.png',
+            sortOrder: 4,
+            altText: 'MamaBear Teh Strawberry Isi 5',
+          },
+          {
+            imageUrl: 'Teh/Strawberry/Teh-Strawberry-Isi-10.png',
+            sortOrder: 5,
+            altText: 'MamaBear Teh Strawberry Isi 10',
+          },
+          {
+            imageUrl: 'Teh/Strawberry/Teh-Strawberry-Sachet.png',
+            sortOrder: 6,
+            altText: 'MamaBear Teh Strawberry Sachet',
+          },
+        ],
+      },
+      {
+        name: 'Blueberry',
+        priceIdr: 65000,
+        weightG: 60,
+        sku: 'TPA.MMBR',
+        stock: 100,
+        sortOrder: 1,
+        images: [
+          {
+            imageUrl: 'Teh/Blueberry/Teh-Blueberry-1.png',
+            sortOrder: 1,
+            altText: 'MamaBear Teh Blueberry 1',
+          },
+          {
+            imageUrl: 'Teh/Blueberry/Teh-Blueberry-2.png',
+            sortOrder: 2,
+            altText: 'MamaBear Teh Blueberry 2',
+          },
+          {
+            imageUrl: 'Teh/Blueberry/Teh-Blueberry-Sachet.png',
+            sortOrder: 3,
+            altText: 'MamaBear Teh Blueberry Sachet',
+          },
+        ],
       },
     ],
     images: [
       {
-        imageUrl: `${IMAGE_BASE_URL}/Teh/Lactation-Tea-01.jpg`,
+        imageUrl: 'Teh/Lactation-Tea-01.jpg',
         sortOrder: 1,
-        altText: "MamaBear Lactation Tea 01",
+        altText: 'MamaBear Lactation Tea 01',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/Teh/Lactation-Tea-02.jpg`,
+        imageUrl: 'Teh/Lactation-Tea-02.jpg',
         sortOrder: 2,
-        altText: "MamaBear Lactation Tea 02",
+        altText: 'MamaBear Lactation Tea 02',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/Teh/Lactation-Tea-03.jpg`,
+        imageUrl: 'Teh/Lactation-Tea-03.jpg',
         sortOrder: 3,
-        altText: "MamaBear Lactation Tea 03",
+        altText: 'MamaBear Lactation Tea 03',
       },
     ],
   },
   {
-    name: "MamaBear Kukis Almond Oat - Camilan Kaya Nutrisi untuk Ibu Menyusui Halal BPOM",
-    slug: slugify("MamaBear Kukis Almond Oat"),
-    categoryId: 1,
+    name: 'MamaBear Kukis Almond Oat - Camilan Kaya Nutrisi untuk Ibu Menyusui Halal BPOM',
+    slug: slugify('MamaBear Kukis Almond Oat'),
+    categoryId: 2,
     highlightId: 1,
     description: `MamaBear Kukis Almon Oat
 Memberi segala kebaikan untuk Mama selama masa menyusui dengan :
@@ -382,56 +542,95 @@ Penilaian yang Mama berikan sangat berharga bagi kami`,
     isActive: true,
     variants: [
       {
-        name: "INTERNAL_DEFAULT",
+        name: 'Choco Nut',
         priceIdr: 80000,
         weightG: 150,
-        sku: "KU.MMBR",
+        sku: 'KU.MMBR',
         stock: 100,
         sortOrder: 0,
+        images: [
+          {
+            imageUrl: 'Kukis-Almond-Oat/Choco-Nut/Kookie-Bites-Choco-Nut.png',
+            sortOrder: 1,
+            altText: 'MamaBear Kukis Choco Nut',
+          },
+        ],
+      },
+      {
+        name: 'Choco Chip',
+        priceIdr: 80000,
+        weightG: 150,
+        sku: 'KU.MMBR',
+        stock: 100,
+        sortOrder: 1,
+        images: [
+          {
+            imageUrl:
+              'Kukis-Almond-Oat/Choco-Chip/Kukis-Almond-Oat-CC-front.png',
+            sortOrder: 1,
+            altText: 'MamaBear Kukis Choco Chip',
+          },
+        ],
+      },
+      {
+        name: 'Cookies & Cream',
+        priceIdr: 80000,
+        weightG: 150,
+        sku: 'KU.MMBR',
+        stock: 100,
+        sortOrder: 2,
+        images: [
+          {
+            imageUrl:
+              'Kukis-Almond-Oat/Cookies-Cream/Kukis-Almond-Oat-CnC-front.png',
+            sortOrder: 1,
+            altText: 'MamaBear Kukis Cookies & Cream',
+          },
+        ],
       },
     ],
     images: [
       {
-        imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Cover-Kukis-Almond-Oat.png`,
+        imageUrl: 'Kukis-Almond-Oat/Cover-Kukis-Almond-Oat.png',
         sortOrder: 1,
-        altText: "Cover MamaBear Kukis Almond Oat",
+        altText: 'Cover MamaBear Kukis Almond Oat',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Almond-Oat-Cookies-Cream-02.jpg`,
+        imageUrl: 'Kukis-Almond-Oat/Almond-Oat-Cookies-Cream-02.jpg',
         sortOrder: 2,
-        altText: "Almond Oat Cookies Cream 02",
+        altText: 'Almond Oat Cookies Cream 02',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Almond-Oat-Cookies-Cream-03.jpg`,
+        imageUrl: 'Kukis-Almond-Oat/Almond-Oat-Cookies-Cream-03.jpg',
         sortOrder: 3,
-        altText: "Almond Oat Cookies Cream 03",
+        altText: 'Almond Oat Cookies Cream 03',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Almond-Oat-Cookies-Cream-04.jpg`,
+        imageUrl: 'Kukis-Almond-Oat/Almond-Oat-Cookies-Cream-04.jpg',
         sortOrder: 4,
-        altText: "Almond Oat Cookies Cream 04",
+        altText: 'Almond Oat Cookies Cream 04',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Almond-Oat-Choco-Chip-03.jpg`,
+        imageUrl: 'Kukis-Almond-Oat/Almond-Oat-Choco-Chip-03.jpg',
         sortOrder: 5,
-        altText: "Almond Oat Choco Chip 03",
+        altText: 'Almond Oat Choco Chip 03',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Kookie-Bites-Choco-Nut-02.jpg`,
+        imageUrl: 'Kukis-Almond-Oat/Kookie-Bites-Choco-Nut-02.jpg',
         sortOrder: 6,
-        altText: "Kookie Bites Choco Nut 02",
+        altText: 'Kookie Bites Choco Nut 02',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/Kukis-Almond-Oat/Kookie-Bites-Choco-Nut-04.jpg`,
+        imageUrl: 'Kukis-Almond-Oat/Kookie-Bites-Choco-Nut-04.jpg',
         sortOrder: 7,
-        altText: "Kookie Bites Choco Nut 04",
+        altText: 'Kookie Bites Choco Nut 04',
       },
     ],
   },
   {
-    name: "MamaBear ASI Booster 30 Kapsul - Pelancar ASI Fenugreek Free Halal BPOM",
-    slug: slugify("MamaBear ASI Booster 30 Kapsul"),
-    categoryId: 3,
+    name: 'MamaBear ASI Booster 30 Kapsul - Pelancar ASI Fenugreek Free Halal BPOM',
+    slug: slugify('MamaBear ASI Booster 30 Kapsul'),
+    categoryId: 2,
     highlightId: 2,
     description: `MAMABEAR KAPSUL ASI BOOSTER
 
@@ -469,34 +668,51 @@ CATATAN PEMESANAN:
     isActive: true,
     variants: [
       {
-        name: "INTERNAL_DEFAULT",
+        name: '30 kapsul',
         priceIdr: 100000,
         weightG: 30,
-        sku: "CP.AB30",
+        sku: 'CP.AB30',
         stock: 100,
         sortOrder: 0,
+        images: [
+          {
+            imageUrl: 'Kapsul/30-Kapsul/Kapsul-ASI-Booster-1.png',
+            sortOrder: 1,
+            altText: 'MamaBear Kapsul ASI Booster 1',
+          },
+          {
+            imageUrl: 'Kapsul/30-Kapsul/Kapsul-ASI-Booster-2.png',
+            sortOrder: 2,
+            altText: 'MamaBear Kapsul ASI Booster 2',
+          },
+          {
+            imageUrl: 'Kapsul/30-Kapsul/Kapsul-ASI-Booster-Pill.png',
+            sortOrder: 3,
+            altText: 'MamaBear Kapsul ASI Booster Pill',
+          },
+        ],
       },
     ],
     images: [
       {
-        imageUrl: `${IMAGE_BASE_URL}/Kapsul/Kapsul-01.jpg`,
+        imageUrl: 'Kapsul/Kapsul-01.jpg',
         sortOrder: 1,
-        altText: "MamaBear Kapsul 01",
+        altText: 'MamaBear Kapsul 01',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/Kapsul/Kapsul-02.jpg`,
+        imageUrl: 'Kapsul/Kapsul-02.jpg',
         sortOrder: 2,
-        altText: "MamaBear Kapsul 02",
+        altText: 'MamaBear Kapsul 02',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/Kapsul/Kapsul-03.jpg`,
+        imageUrl: 'Kapsul/Kapsul-03.jpg',
         sortOrder: 3,
-        altText: "MamaBear Kapsul 03",
+        altText: 'MamaBear Kapsul 03',
       },
       {
-        imageUrl: `${IMAGE_BASE_URL}/Kapsul/Kapsul-04.jpg`,
+        imageUrl: 'Kapsul/Kapsul-04.jpg',
         sortOrder: 4,
-        altText: "MamaBear Kapsul 04",
+        altText: 'MamaBear Kapsul 04',
       },
     ],
   },

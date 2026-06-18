@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/"
+  url: "{{baseUrl}}/api/"
   auth: inherit
 
 settings:
@@ -13,3 +13,18 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+
+examples:
+  - name: "Success (200) - Swagger UI"
+    request:
+      url: "{{baseUrl}}/api/"
+      method: GET
+    response:
+      status: 200
+      statusText: "OK"
+      headers:
+        - name: Content-Type
+          value: "text/html; charset=utf-8"
+      body:
+        type: text
+        data: "Returns Swagger UI HTML page at /api/"

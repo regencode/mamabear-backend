@@ -4,16 +4,24 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { TransformInterceptor } from './common/interceptors/transformer.interceptor';
-import { HttpExceptionFilter } from './common/filters/exceptions.filter';
-import { Logger } from 'pino-nestjs';
+import { AllExceptionsFilter } from './common/filters/exceptions.filter';
+import { Logger, PinoLogger } from 'pino-nestjs';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  app.use(cookieParser());
   app.useGlobalInterceptors(new TransformInterceptor());
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new AllExceptionsFilter(await app.resolve(PinoLogger)));
+  app.setGlobalPrefix('/api');
 
   app.enableCors({
-    origin: process.env.CORS_ORIGIN,
+    origin: [
+        process.env.CORS_ORIGIN,
+        "http://localhost:3000",
+        /^http:\/\/localhost:\d+$/,
+        'null',
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -23,7 +31,6 @@ async function bootstrap() {
     new ValidationPipe({
       transform: true,
       whitelist: true,
-      forbidNonWhitelisted: true,
     }),
   );
   const config = new DocumentBuilder()
@@ -47,7 +54,7 @@ async function bootstrap() {
 
   if (process.env.NODE_ENV == 'ci') {
     app.listen(process.env.PORT ?? 3000);
-    const timeMs = 10000;
+    const timeMs = 30000;
     console.log(`[ci] Aborting application within ${timeMs}`);
     setTimeout(async () => {
       await app.close();

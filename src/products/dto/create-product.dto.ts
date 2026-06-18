@@ -1,5 +1,6 @@
 import {
   IsBoolean,
+  IsInt,
   IsNumber,
   IsOptional,
   IsString,
@@ -9,8 +10,8 @@ import {
   Min,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { CreateProductImageDto } from './create-product-image.dto';
+import { Transform, Type } from 'class-transformer';
+import { CreateImageDto } from '@/upload/dto/create-image.dto';
 import { CreateVariantDto } from '@/variant/dto/create-variant.dto';
 
 export class CreateProductDto {
@@ -19,29 +20,41 @@ export class CreateProductDto {
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ example: 'Growing-up formula for children aged 1-3 years.' })
+  @ApiPropertyOptional({
+    example: 'Growing-up formula for children aged 1-3 years.',
+  })
   @IsString()
-  description: string;
+  @IsOptional()
+  description?: string;
 
-  @ApiProperty({ example: 'Growing-up formula for children aged 1-3 years.' })
+  @ApiPropertyOptional({
+    example: 'Growing-up formula for children aged 1-3 years.',
+  })
   @IsString()
-  ingredients: string;
+  @IsOptional()
+  ingredients?: string;
 
-  @ApiProperty({ example: 'Growing-up formula for children aged 1-3 years.' })
+  @ApiPropertyOptional({
+    example: 'Growing-up formula for children aged 1-3 years.',
+  })
   @IsString()
-  usageInstructions: string;
+  @IsOptional()
+  usageInstructions?: string;
 
   // put in default variant
   @ApiProperty({ example: 900 })
+  @Type(() => Number)
   @IsNumber()
   @IsNotEmpty()
   weightG: number;
 
   @ApiProperty({ example: 185000 })
+  @Type(() => Number)
   @IsNumber()
   priceIdr: number;
 
   @ApiPropertyOptional({ example: 50 })
+  @Type(() => Number)
   @IsNumber()
   @IsOptional()
   @Min(0)
@@ -58,14 +71,21 @@ export class CreateProductDto {
   @IsOptional()
   isActive?: boolean;
 
-  @ApiPropertyOptional({ type: [CreateProductImageDto] })
+  @ApiPropertyOptional({ type: [CreateImageDto] })
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateProductImageDto)
+  @Type(() => CreateImageDto)
   @IsOptional()
-  images?: CreateProductImageDto[];
+  images?: CreateImageDto[];
 
   @ApiPropertyOptional({ type: [CreateVariantDto] })
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return JSON.parse(value);
+    }
+
+    return value;
+  })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateVariantDto)
@@ -81,5 +101,16 @@ export class CreateProductDto {
   @IsArray()
   @IsOptional()
   tags?: string[];
-}
 
+  @ApiPropertyOptional({ example: 1 })
+  @Type(() => Number)
+  @IsInt()
+  @IsOptional()
+  categoryId?: number;
+
+  @ApiPropertyOptional({ example: 1 })
+  @Type(() => Number)
+  @IsInt()
+  @IsOptional()
+  highlightId?: number;
+}
