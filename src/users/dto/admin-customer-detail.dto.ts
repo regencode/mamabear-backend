@@ -19,6 +19,9 @@ export class AdminCustomerDetailDto {
   role: string;
 
   @ApiProperty()
+  isBlocked: boolean;
+
+  @ApiProperty()
   isVerified: boolean;
 
   @ApiProperty()

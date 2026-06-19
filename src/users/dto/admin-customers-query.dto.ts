@@ -33,6 +33,16 @@ export class AdminCustomersQueryDto extends PagePaginationRequestDto {
   @Transform(({ value }) => value === 'true' || value === true)
   isVerified?: boolean;
 
+  @ApiPropertyOptional({ description: 'Filter by blocked status' })
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => {
+    if (value === undefined || value === null) return undefined;
+    if (typeof value === 'boolean') return value;
+    return String(value).toLowerCase() === 'true';
+  })
+  isBlocked?: boolean;
+
   @ApiPropertyOptional({
     description: 'Sort field',
     enum: CustomerSortBy,

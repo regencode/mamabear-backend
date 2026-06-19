@@ -28,6 +28,9 @@ const REQUIRED_KEYS = new Set([
   'maint_mode',
 ]);
 
+// Keys that should always be treated as string regardless of stored type
+const STRING_ONLY_KEYS = new Set(['ig_link', 'fb_link', 'tr_link']);
+
 @Injectable()
 export class SettingsService implements OnModuleInit {
   private readonly logger = new Logger(SettingsService.name);
@@ -58,7 +61,8 @@ export class SettingsService implements OnModuleInit {
     try {
       const items = await this.repo.findAll();
       for (const it of items) {
-        const parsed = this.parseValue(it.type, it.value);
+        const parseType = STRING_ONLY_KEYS.has(it.key) ? 'string' : it.type;
+        const parsed = this.parseValue(parseType, it.value);
         this.cache.set(it.key, parsed);
         const alt = this.getAlternateKey(it.key);
         if (alt && !this.cache.has(alt)) this.cache.set(alt, parsed);
@@ -74,7 +78,8 @@ export class SettingsService implements OnModuleInit {
       const items = await this.repo.findAll();
       this.cache.clear();
       for (const it of items) {
-        const parsed = this.parseValue(it.type, it.value);
+        const parseType = STRING_ONLY_KEYS.has(it.key) ? 'string' : it.type;
+        const parsed = this.parseValue(parseType, it.value);
         this.cache.set(it.key, parsed);
         const alt = this.getAlternateKey(it.key);
         if (alt && !this.cache.has(alt)) this.cache.set(alt, parsed);
@@ -141,7 +146,10 @@ export class SettingsService implements OnModuleInit {
     }
 
     return this.repo.findByKey(key).then((existing) => {
-      const type = providedType ?? existing?.type ?? 'string';
+      let type = providedType ?? existing?.type ?? 'string';
+
+      // force certain keys to string regardless of provided/existing type
+      if (STRING_ONLY_KEYS.has(key)) type = 'string';
 
       if (!ALLOWED_TYPES.has(type))
         throw new BadRequestException(`Unsupported type: ${type}`);
@@ -186,7 +194,8 @@ export class SettingsService implements OnModuleInit {
       const out: UpdateSettingDto = {
         value: sanitizedValue,
       } as any;
-      if (dto.type) out.type = dto.type;
+      // always persist the canonical type determined above
+      out.type = type;
       if (dto.description)
         out.description = this.sanitizeString(dto.description);
       return out;

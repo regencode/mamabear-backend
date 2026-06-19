@@ -50,6 +50,8 @@ export class CartController {
             httpOnly: true,
             maxAge: 7 * 24 * 60 * 60 * 1000,
             sameSite: 'lax',
+            secure: true,
+            domain:process.env.SESSION_COOKIE_DOMAIN,
           });
         }
         result = { ...data.cart, totalWeight: 0 };
@@ -130,7 +132,9 @@ export class CartController {
       res.clearCookie('sessionId', {
           httpOnly: true,
           sameSite: 'lax',
-      })
+          secure: true,
+          domain: process.env.SESSION_COOKIE_DOMAIN,
+      });
       this.logger.info({
         message: `Cart merged successfully and sessionId cookie ${sessionId} deleted`,
         endpoint: 'POST /cart/merge',
@@ -198,6 +202,8 @@ export class CartController {
           httpOnly: true,
           maxAge: 7 * 24 * 60 * 60 * 1000,
           sameSite: 'lax',
+          secure: true,
+          domain:process.env.SESSION_COOKIE_DOMAIN,
         });
       }
       this.logger.info({
@@ -312,6 +318,8 @@ export class CartController {
           httpOnly: true,
           maxAge: 7 * 24 * 60 * 60 * 1000,
           sameSite: 'lax',
+          secure: true,
+          domain:process.env.SESSION_COOKIE_DOMAIN,
         });
       }
       const result = await this.cartService.clearCart(cart.id);

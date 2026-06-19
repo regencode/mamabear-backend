@@ -20,9 +20,11 @@ import { AdminCustomersListResponseDto } from './dto/admin-customers-list-respon
 import { AdminCustomerDetailDto } from './dto/admin-customer-detail.dto';
 import { UpdateCustomerStatusDto } from './dto/update-customer-status.dto';
 import { AdminActivityLogService } from '@/activity-log/admin-activity-log.service';
+import { APIKeys } from '@openrouter/sdk/sdk/apikeys.js';
 
 @ApiTags('customers (admin)')
 @Controller('admin/customers')
+@ApiBearerAuth('JwtAuthGuard')
 @UseGuards(new JwtAuthGuard())
 @Roles([Role.ADMIN, Role.SUPERADMIN])
 @ApiBearerAuth('JwtAuthGuard')

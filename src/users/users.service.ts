@@ -30,6 +30,7 @@ type AdminCustomerItem = {
   name: string;
   email: string;
   phone: string;
+  isBlocked: boolean;
   totalOrders: number;
   totalSpent: number;
   registeredAt: Date;
@@ -52,6 +53,7 @@ type AdminCustomerDetail = {
   email: string;
   phone: string;
   role: Role;
+  isBlocked: boolean;
   isVerified: boolean;
   registeredAt: Date;
   updatedAt: Date | null;
@@ -459,6 +461,7 @@ export class UsersService {
         email: customer.email,
         phone: customer.phone,
         role: customer.role,
+        isBlocked: customer.isBlocked,
         isVerified: customer.isVerified,
         registeredAt: customer.createdAt,
         updatedAt: customer.updatedAt ?? null,

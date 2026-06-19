@@ -198,6 +198,12 @@ export class UsersRepository {
       whereParts.push(`AND u."isVerified" = $${p}`);
     }
 
+    if (query.isBlocked !== undefined) {
+      const p = params.length + 1;
+      params.push(query.isBlocked);
+      whereParts.push(`AND u."isBlocked" = $${p}`);
+    }
+
     const dir = query.sortOrder === CustomerSortOrder.ASC ? 'ASC' : 'DESC';
 
     let orderByClause: string;
@@ -231,6 +237,7 @@ export class UsersRepository {
         u.phone,
         u.role,
         u."isVerified",
+        u."isBlocked",
         u."createdAt",
         u."updatedAt",
         COUNT(o.id) AS "totalOrders",
@@ -272,6 +279,7 @@ export class UsersRepository {
       phone: row.phone,
       role: row.role,
       isVerified: row.isVerified,
+      isBlocked: row.isBlocked,
       registeredAt: row.createdAt,
       updatedAt: row.updatedAt,
       totalOrders: Number(row.totalOrders),
@@ -424,6 +432,7 @@ export class UsersRepository {
         u.phone,
         u.role,
         u."isVerified",
+        u."isBlocked",
         u."createdAt",
         u."updatedAt",
         COUNT(o.id) AS "totalOrders",
@@ -449,6 +458,7 @@ export class UsersRepository {
       phone: row.phone,
       role: row.role,
       isVerified: row.isVerified,
+      isBlocked: row.isBlocked,
       registeredAt: row.createdAt,
       updatedAt: row.updatedAt,
       totalOrders: Number(row.totalOrders),
