@@ -49,7 +49,7 @@ export class CartController {
           res.cookie('sessionId', data.createdSessionId, {
             httpOnly: true,
             maxAge: 7 * 24 * 60 * 60 * 1000,
-            sameSite: 'lax',
+            sameSite: 'none',
             secure: true,
             domain:process.env.FRONTEND_URL,
           });
@@ -131,7 +131,7 @@ export class CartController {
       const result = await this.cartService.mergeCart(userId, sessionId);
       res.clearCookie('sessionId', {
           httpOnly: true,
-          sameSite: 'lax',
+          sameSite: 'none',
           secure: true,
           domain: process.env.FRONTEND_URL,
       });
@@ -201,7 +201,7 @@ export class CartController {
         res.cookie('sessionId', createdSessionId, {
           httpOnly: true,
           maxAge: 7 * 24 * 60 * 60 * 1000,
-          sameSite: 'lax',
+          sameSite: 'none',
           secure: true,
           domain:process.env.FRONTEND_URL,
         });
@@ -317,7 +317,7 @@ export class CartController {
         res.cookie('sessionId', createdSessionId, {
           httpOnly: true,
           maxAge: 7 * 24 * 60 * 60 * 1000,
-          sameSite: 'lax',
+          sameSite: 'none',
           secure: true,
           domain:process.env.FRONTEND_URL,
         });
